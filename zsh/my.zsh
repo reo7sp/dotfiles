@@ -28,7 +28,7 @@ fi
 export DOKKU_HOST= # Fill it with your data
 
 # aliases
-alias :e="vim"
+alias :e="env REOVIMRC_LIGHT=1 vim"
 alias :E="env REOVIMRC_LIGHT=0 vim"
 alias vi="vim"
 alias lvim="env REOVIMRC_LIGHT=1 vim"
