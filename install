@@ -1,0 +1,17 @@
+#!/bin/bash
+
+delimiter() {
+  python -c "print(' $1 '.center(80, '-'))"
+}
+
+do_install() {
+  delimiter "$1"
+  cd "$1"
+  ./install
+  cd ..
+  echo
+}
+
+for it in git vim zsh tmux; do
+  do_install "$it"
+done
