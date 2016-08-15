@@ -4,6 +4,13 @@ canexec() {
   hash $command 2>/dev/null
 }
 
+apip() {
+  echo 'pip:'
+  pip "$@"
+  echo 'pip3:'
+  pip3 "$@"
+}
+
 # settings
 export HISTCONTROL=erasedups:ignorespace
 ZSH_THEME="robbyrussell"
