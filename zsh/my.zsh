@@ -12,7 +12,7 @@ COMPLETION_WAITING_DOTS=true
 DISABLE_UPDATE_PROMPT=true
 
 # plugins
-plugins=(dirhistory common-aliases colored-man-pages fancy-ctrl-z cp z git github rails)
+plugins=(common-aliases colored-man-pages fancy-ctrl-z dirhistory cp z git github rails)
 
 # env
 export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:$PATH"
@@ -65,3 +65,6 @@ alias edit-zsh="$EDITOR ~/.oh-my-zsh/config/my.zsh; source ~/.zshrc"
 
 alias update-vim="REOVIMRC_LIGHT=0 vim -c ':PlugUpdate | :qa!'; REOVIMRC_LIGHT=1 vim -c ':PlugUpdate | :qa!'"
 alias update-zsh="upgrade_oh_my_zsh"
+alias update-brew="brew update && brew upgrade"
+alias update-apt="sudo apt-get update && sudo apt-get upgrade"
+
