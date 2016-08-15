@@ -54,7 +54,7 @@ alias mkcd="take"
 alias ssh-add="eval \`ssh-agent -s\`; ssh-add -l > /dev/null || ssh-add"
 alias tmux="tmux -2"
 
-alias dokku="ssh -t dokku@$DOKKU_HOST --"
+alias dokku="ssh -t dokku@\$DOKKU_HOST --"
 alias dokku-git-init="git remote remove dokku 2>/dev/null; git remote add dokku dokku@\$DOKKU_HOST:\${\$(pwd)##*/}; git remote -v | grep --color=never dokku"
 
 alias jn="jupyter notebook"
