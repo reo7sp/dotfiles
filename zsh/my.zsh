@@ -19,7 +19,7 @@ COMPLETION_WAITING_DOTS=true
 DISABLE_UPDATE_PROMPT=true
 
 # plugins
-plugins=(common-aliases colored-man-pages fancy-ctrl-z dirhistory cp z git github rails)
+plugins=(common-aliases colored-man-pages fancy-ctrl-z cp z git github rails colorize osx)
 
 # env
 export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:$PATH"
@@ -56,6 +56,7 @@ fi
 alias :q="exit"
 alias :wq="exit"
 
+alias ccat="colorize"
 alias mkcd="take"
 
 alias ssh-add="eval \`ssh-agent -s\`; ssh-add -l > /dev/null || ssh-add"
