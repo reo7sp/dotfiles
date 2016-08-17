@@ -1,8 +1,24 @@
 #!/bin/bash
 
+confirm() {
+  local message=$1
+
+  echo -n -e "${BWhite}$message${Color_Off} [Y/n] "
+  read response
+  case $response in
+    [yY][eE][sS]|[yY]|"")
+      true
+      ;;
+    *)
+      false
+      ;;
+  esac
+}
+
 git config --global user.name "Oleg Morozenkov"
 git config --global user.email "reo7sp@users.noreply.github.com"
 
-git config --global url.ssh://git@github.com/.insteadOf https://github.com/
-git config --global url.ssh://git@bitbucket.org/.insteadOf https://bitbucket.org/
-
+if confirm "Do you want to always use ssh instead of https to connect to github and bitbucket?"; then
+  git config --global url.ssh://git@github.com/.insteadOf https://github.com/
+  git config --global url.ssh://git@bitbucket.org/.insteadOf https://bitbucket.org/
+fi
