@@ -20,5 +20,7 @@ git config --global user.email "reo7sp@users.noreply.github.com"
 
 if confirm "Do you want to always use ssh instead of https to connect to github and bitbucket?"; then
   git config --global url.ssh://git@github.com/.insteadOf https://github.com/
+  git config --global --add url.ssh://git@github.com/.insteadOf https://reo7sp@github.com/
   git config --global url.ssh://git@bitbucket.org/.insteadOf https://bitbucket.org/
+  git config --global --add url.ssh://git@bitbucket.org/.insteadOf https://reo7sp@bitbucket.org/
 fi
