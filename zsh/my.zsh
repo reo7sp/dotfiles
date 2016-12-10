@@ -1,13 +1,13 @@
 # functions
 canexec() {
-  local command=$(echo $1 | awk '{print $1;}')
+  local command=$(echo $1 | awk "{print $1;}")
   hash $command 2>/dev/null
 }
 
 apip() {
-  echo 'pip:'
-  pip "$@"
-  echo 'pip3:'
+  echo "pip2:"
+  pip2 "$@"
+  echo "pip3:"
   pip3 "$@"
 }
 
@@ -19,7 +19,7 @@ COMPLETION_WAITING_DOTS=true
 DISABLE_UPDATE_PROMPT=true
 
 # plugins
-plugins=(common-aliases colored-man-pages fancy-ctrl-z cp z git github rails colorize osx)
+plugins=(common-aliases colored-man-pages fancy-ctrl-z git git-flow github z cp colorize)
 
 # env
 export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:$PATH"
@@ -67,8 +67,10 @@ alias dokku-git-init="git remote remove dokku 2>/dev/null; git remote add dokku 
 
 alias jn="jupyter notebook"
 alias jc="jupyter console"
+alias jqt="jupyter qtconsole"
 
 alias edit-vim="$EDITOR ~/.vimrc"
+alias edit-vim-inst="$EDITOR ~/.vimrc.user.install"
 alias edit-zsh="$EDITOR ~/.oh-my-zsh/config/my.zsh; source ~/.zshrc"
 
 alias update-vim="REOVIMRC_LIGHT=0 vim -c ':PlugUpdate | :qa!'; REOVIMRC_LIGHT=1 vim -c ':PlugUpdate | :qa!'"
@@ -76,3 +78,4 @@ alias update-zsh="upgrade_oh_my_zsh"
 alias update-brew="brew update && brew upgrade"
 alias update-apt="sudo apt-get update && sudo apt-get upgrade"
 
+alias reset-launchpad="defaults write com.apple.dock ResetLaunchPad -bool true; killall Dock"
