@@ -19,10 +19,11 @@ COMPLETION_WAITING_DOTS=true
 DISABLE_UPDATE_PROMPT=true
 
 # plugins
-plugins=(common-aliases colored-man-pages fancy-ctrl-z git git-flow github z cp colorize)
+plugins=(common-aliases colored-man-pages fancy-ctrl-z git git-flow github bundler z cp colorize)
 
 # env
 export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:$PATH"
+export PATH="$HOME/g/Exec/scripts:$PATH"
 export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
 
@@ -48,10 +49,6 @@ if canexec nvim; then
   alias lvim="env REOVIMRC_LIGHT=1 nvim"
   alias hvim="env REOVIMRC_LIGHT=0 nvim"
 fi
-if canexec mvim; then
-  alias :E="env REOVIMRC_LIGHT=0 mvim"
-  alias hvim="env REOVIMRC_LIGHT=0 mvim"
-fi
 
 alias :q="exit"
 alias :wq="exit"
@@ -59,7 +56,7 @@ alias :wq="exit"
 alias ccat="colorize"
 alias mkcd="take"
 
-alias ssh-add="eval \`ssh-agent -s\`; ssh-add -l > /dev/null || ssh-add"
+#alias ssh-add="eval \`ssh-agent -s\`; ssh-add -l > /dev/null || ssh-add"
 alias tmux="tmux -2"
 
 alias dokku="ssh -t dokku@\$DOKKU_HOST --"
@@ -68,6 +65,8 @@ alias dokku-git-init="git remote remove dokku 2>/dev/null; git remote add dokku 
 alias jn="jupyter notebook"
 alias jc="jupyter console"
 alias jqt="jupyter qtconsole"
+
+alias gds="gd --color | diff-so-fancy"
 
 alias edit-vim="$EDITOR ~/.vimrc"
 alias edit-vim-inst="$EDITOR ~/.vimrc.user.install"
