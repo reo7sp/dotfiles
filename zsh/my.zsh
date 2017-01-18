@@ -78,3 +78,4 @@ alias update-brew="brew update && brew upgrade"
 alias update-apt="sudo apt-get update && sudo apt-get upgrade"
 
 alias reset-launchpad="defaults write com.apple.dock ResetLaunchPad -bool true; killall Dock"
+alias battery="pmset -g batt"
