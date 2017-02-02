@@ -11,6 +11,10 @@ apip() {
   pip3 "$@"
 }
 
+gds() {
+  gd --color "$@" | diff-so-fancy | less
+}
+
 # settings
 export HISTCONTROL=erasedups:ignorespace
 ZSH_THEME="robbyrussell"
@@ -65,8 +69,6 @@ alias dokku-git-init="git remote remove dokku 2>/dev/null; git remote add dokku 
 alias jn="jupyter notebook"
 alias jc="jupyter console"
 alias jqt="jupyter qtconsole"
-
-alias gds="gd --color | diff-so-fancy"
 
 alias edit-vim="$EDITOR ~/.vimrc"
 alias edit-vim-inst="$EDITOR ~/.vimrc.user.install"
