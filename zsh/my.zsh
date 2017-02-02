@@ -71,6 +71,7 @@ alias gds="gd --color | diff-so-fancy"
 alias edit-vim="$EDITOR ~/.vimrc"
 alias edit-vim-inst="$EDITOR ~/.vimrc.user.install"
 alias edit-zsh="$EDITOR ~/.oh-my-zsh/config/my.zsh; source ~/.zshrc"
+alias edit-zshrc="$EDITOR ~/.zshrc; source ~/.zshrc"
 
 alias update-vim="REOVIMRC_LIGHT=0 vim -c ':PlugUpdate | :qa!'; REOVIMRC_LIGHT=1 vim -c ':PlugUpdate | :qa!'"
 alias update-zsh="upgrade_oh_my_zsh"
