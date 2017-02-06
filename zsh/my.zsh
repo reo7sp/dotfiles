@@ -1,3 +1,13 @@
+# settings
+export HISTCONTROL=erasedups:ignorespace
+ZSH_THEME="robbyrussell"
+ENABLE_CORRECTION=true
+COMPLETION_WAITING_DOTS=true
+DISABLE_UPDATE_PROMPT=true
+
+plugins=(common-aliases colored-man-pages fancy-ctrl-z git git-flow github bundler z cp colorize)
+
+
 # functions
 canexec() {
   local command=$(echo $1 | awk "{print $1;}")
@@ -15,15 +25,10 @@ gds() {
   gd --color "$@" | diff-so-fancy | less
 }
 
-# settings
-export HISTCONTROL=erasedups:ignorespace
-ZSH_THEME="robbyrussell"
-ENABLE_CORRECTION=true
-COMPLETION_WAITING_DOTS=true
-DISABLE_UPDATE_PROMPT=true
+newtmp() {
+  mkcd "$HOME/m/oneoff-code/$(date '+%Y-%m-%d')"
+}
 
-# plugins
-plugins=(common-aliases colored-man-pages fancy-ctrl-z git git-flow github bundler z cp colorize)
 
 # env
 export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:$PATH"
@@ -38,6 +43,7 @@ else
 fi
 
 export DOKKU_HOST= # Fill it with your data
+
 
 # aliases
 alias :e="env REOVIMRC_LIGHT=1 vim"
