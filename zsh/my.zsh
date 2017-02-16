@@ -5,7 +5,7 @@ ENABLE_CORRECTION=true
 COMPLETION_WAITING_DOTS=true
 DISABLE_UPDATE_PROMPT=true
 
-plugins=(common-aliases colored-man-pages fancy-ctrl-z git git-flow github bundler z cp colorize)
+plugins=(common-aliases colored-man-pages fancy-ctrl-z git github bundler cp colorize)
 
 
 # functions
@@ -88,3 +88,9 @@ alias update-apt="sudo apt-get update && sudo apt-get upgrade"
 
 alias reset-launchpad="defaults write com.apple.dock ResetLaunchPad -bool true; killall Dock"
 alias battery="pmset -g batt"
+
+alias пше="git"
+alias мшь="vim"
+if canexec nvim; then
+  alias мшь="nvim"
+fi
