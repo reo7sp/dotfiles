@@ -94,3 +94,5 @@ alias мшь="vim"
 if canexec nvim; then
   alias мшь="nvim"
 fi
+
+alias bauman-wifi="http --form POST https://lbpfs.bmstu.ru:8003/index.php\?zone\=bmstu_lb redirurl=/ auth_user=??? auth_pass=??? accept=Continue"
