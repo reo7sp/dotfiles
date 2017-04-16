@@ -12,6 +12,6 @@ do_install() {
   echo
 }
 
-for it in git vim zsh tmux; do
+for it in git vim zsh; do
   do_install "$it"
 done
