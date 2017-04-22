@@ -96,3 +96,5 @@ if canexec nvim; then
 fi
 
 alias bauman-wifi="http --form POST https://lbpfs.bmstu.ru:8003/index.php\?zone\=bmstu_lb redirurl=/ auth_user=??? auth_pass=??? accept=Continue"
+
+alias copy-ssh="cat ~/.ssh/id_rsa.pub | pbcopy"
