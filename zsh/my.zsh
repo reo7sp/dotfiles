@@ -10,7 +10,7 @@ plugins=(common-aliases colored-man-pages fancy-ctrl-z git github bundler cp col
 
 # functions
 canexec() {
-  local command=$(echo $1 | awk "{print $1;}")
+  local command=$1
   hash $command 2>/dev/null
 }
 
@@ -43,6 +43,8 @@ else
 fi
 
 export DOKKU_HOST= # Fill it with your data
+
+export GOPATH="$HOME/m/code/_go"
 
 
 # aliases
