@@ -5,7 +5,7 @@ ENABLE_CORRECTION=true
 COMPLETION_WAITING_DOTS=true
 DISABLE_UPDATE_PROMPT=true
 
-plugins=(common-aliases colored-man-pages fancy-ctrl-z git github bundler cp colorize)
+plugins=(common-aliases colored-man-pages fancy-ctrl-z git github cp colorize)
 
 
 # functions
@@ -100,3 +100,5 @@ fi
 alias bauman-wifi="http --form POST https://lbpfs.bmstu.ru:8003/index.php\?zone\=bmstu_lb redirurl=/ auth_user=??? auth_pass=??? accept=Continue"
 
 alias copy-ssh="cat ~/.ssh/id_rsa.pub | pbcopy"
+
+alias check-net="curl https://reo7sp.ru/check-net.html"
