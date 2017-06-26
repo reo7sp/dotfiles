@@ -89,7 +89,7 @@ alias reset-launchpad="defaults write com.apple.dock ResetLaunchPad -bool true; 
 alias battery="pmset -g batt"
 
 ## network
-alias check-net="curl https://reo7sp.ru/check-net.html"
+alias check-net="curl http://reo7sp.ru/check-net.html"
 
 ## bmstu
 alias bauman-wifi="http --form POST https://lbpfs.bmstu.ru:8003/index.php\?zone\=bmstu_lb redirurl=/ auth_user=??? auth_pass=??? accept=Continue"
