@@ -95,10 +95,10 @@ alias check-net="curl http://reo7sp.ru/check-net.html"
 alias bauman-wifi="http --form POST https://lbpfs.bmstu.ru:8003/index.php\?zone\=bmstu_lb redirurl=/ auth_user=??? auth_pass=??? accept=Continue"
 
 ## edit config
-alias edit-vim="$EDITOR ~/.vimrc"
-alias edit-vim-inst="$EDITOR ~/.vimrc.user.install"
-alias edit-zsh="$EDITOR ~/.oh-my-zsh/config/my.zsh; source ~/.zshrc"
-alias edit-zshrc="$EDITOR ~/.zshrc; source ~/.zshrc"
+alias edit-vim="vim ~/.vimrc"
+alias edit-vim-inst="vim ~/.vimrc.user.install"
+alias edit-zsh="vim ~/.oh-my-zsh/config/my.zsh; source ~/.zshrc"
+alias edit-zshrc="vim ~/.zshrc; source ~/.zshrc"
 
 ## update
 alias update-vim="REOVIMRC_LIGHT=0 vim -c ':PlugUpdate | :qa!'; REOVIMRC_LIGHT=1 vim -c ':PlugUpdate | :qa!'"
