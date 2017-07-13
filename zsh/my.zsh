@@ -84,6 +84,10 @@ alias dokku-git-init="git remote remove dokku 2>/dev/null; git remote add dokku 
 alias jn="jupyter notebook"
 alias jc="jupyter console"
 
+## virtualenvwrapper
+alias virtualenvwrapper="virtualenvwrapper_load; virtualenvwrapper"
+alias venv="virtualenvwrapper_load; virtualenvwrapper"
+
 ## mac
 alias reset-launchpad="defaults write com.apple.dock ResetLaunchPad -bool true; killall Dock"
 alias battery="pmset -g batt"
