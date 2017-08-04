@@ -94,7 +94,7 @@ bindkey '^[[B' history-substring-search-down
 alias edit-zsh="vim ~/.zshrc; source ~/.zshrc"
 alias edit-vim="vim ~/.vimrc"
 alias time-zsh="time zsh -i -c exit"
-alias time-vim="time vim -c ':e ~/.vimrc | :q!'"
+alias time-vim="time vim -c ':e ~/.zshrc | :q!'"
 
 ## general
 alias l="ls"
