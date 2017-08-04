@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cp ~/.oh-my-zsh/config/my.zsh my.zsh
-sed -i.bak 's/export DOKKU_HOST=.*$/export DOKKU_HOST=  # Fill it with your data/g' my.zsh
-sed -i.bak 's/auth_user=.* auth_pass=.* /auth_user=??? auth_pass=??? /g' my.zsh
-rm my.zsh.bak
+cp ~/.zshrc .zshrc
+sed -i.bak 's/export DOKKU_HOST=.*$/export DOKKU_HOST=  # Fill it with your data/g' .zshrc
+sed -i.bak 's/auth_user=.* auth_pass=.* /auth_user=??? auth_pass=??? /g' .zshrc
+rm .zshrc.bak
