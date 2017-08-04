@@ -113,6 +113,11 @@ if can-exec nvim; then
   alias vim="nvim"
 fi
 
+## git
+if can-exec hub; then
+  alias git=hub
+fi
+
 ## dokku
 alias dokku="ssh -t dokku@\$DOKKU_HOST --"
 alias dokku-git-init="git remote remove dokku 2>/dev/null; git remote add dokku dokku@\$DOKKU_HOST:\${\$(pwd)##*/}; git remote -v | grep --color=never dokku"
@@ -130,6 +135,3 @@ alias reset-launchpad="defaults write com.apple.dock ResetLaunchPad -bool true; 
 ## network
 alias check-net="curl http://reo7sp.ru/check-net.html"
 alias bauman-wifi="http --form POST https://lbpfs.bmstu.ru:8003/index.php\?zone\=bmstu_lb redirurl=/ auth_user=??? auth_pass=??? accept=Continue"
-
-## git
-alias git=hub
