@@ -1,0 +1,4 @@
+#!/bin/bash
+
+cp ~/.vimrc .vimrc
+mkdir -p nvim; cp ~/.config/nvim/init.vim nvim/init.vim

@@ -9,6 +9,7 @@ antibody bundle zsh-users/zsh-autosuggestions
 antibody bundle zuxfoucault/colored-man-pages_mod
 antibody bundle djui/alias-tips
 antibody bundle reo7sp/oh-my-zsh-git
+antibody bundle zsh-users/zsh-history-substring-search
 
 
 # functions
@@ -70,14 +71,22 @@ setopt HIST_VERIFY
 setopt HIST_EXPIRE_DUPS_FIRST
 
 
-# ctrl-w delete to slash
-autoload -U select-word-style
-select-word-style bash
-
-
 # colors
 export LSCOLORS='exfxcxdxbxegedabagacad'
 export CLICOLOR=true
+
+
+# keybids
+## shift-tab : go backward in menu (invert of tab)
+bindkey '^[[Z' reverse-menu-complete
+## ctrl-w delete to slash
+autoload -U select-word-style
+select-word-style bash
+## suggest accept
+bindkey '^J' autosuggest-accept
+## history
+bindkey '^[[A' history-substring-search-up
+bindkey '^[[B' history-substring-search-down
 
 
 # aliases
@@ -88,15 +97,20 @@ alias time-zsh="time zsh -i -c exit"
 alias time-vim="time vim -c ':e ~/.vimrc | :q!'"
 
 ## general
-alias l="ls -lh"
+alias l="ls"
+alias ll="ls -lh"
+alias la="ls -a"
+alias lla="ls -lah"
 alias grep="grep --color=auto"
 alias _="sudo"
+alias rm="rm -f"
+alias cp="cp -f"
+alias mv="mv -f"
+alias h="history 1"
 
 ## vim
-alias vi="vim"
 if can-exec nvim; then
   alias vim="nvim"
-  alias vi="nvim"
 fi
 
 ## dokku

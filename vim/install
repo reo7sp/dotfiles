@@ -1,5 +1,8 @@
 #!/bin/bash
 
-git clone --depth 1 https://github.com/reo7sp/ReoVimRC
-cd ReoVimRC
-./install
+mkdir -p ~/.vim/{bundle,backup,tmp,undo,sessions,spell,view}
+
+curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+
+cp .vimrc ~/.vimrc
+mkdir -p ~/.config/nvim; cp nvim/init.vim ~/.config/nvim/init.vim
