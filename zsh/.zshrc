@@ -1,41 +1,12 @@
-source <(antibody init)
-
-
-# plugins
-antibody bundle mafredri/zsh-async
-antibody bundle sindresorhus/pure
-antibody bundle zsh-users/zsh-completions
-antibody bundle zsh-users/zsh-autosuggestions
-antibody bundle zuxfoucault/colored-man-pages_mod
-antibody bundle djui/alias-tips
-antibody bundle reo7sp/oh-my-zsh-git
-antibody bundle zsh-users/zsh-history-substring-search
-
-
-# functions
-can-exec() {
-  hash "$@" 2>/dev/null
-}
-
-mkcd() {
-  mkdir -p "$@"
-  cd "$@"
-}
-
-new-tmp() {
-  mkcd "$HOME/m/oneoff-code/$(date '+%Y-%m-%d')"
-}
-
-quick-look() {
-  (( $# > 0 )) && qlmanage -p $* &>/dev/null &
-}
-
-
 # env
 export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:$PATH"
 export PATH="$HOME/g/Exec/scripts:$PATH"
 export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
+
+can-exec() {
+  hash "$@" 2>/dev/null
+}
 
 if can-exec nvim; then
   export EDITOR="nvim"
@@ -46,6 +17,18 @@ fi
 export DOKKU_HOST=  # Fill it with your data
 
 export GOPATH="$HOME/m/code/_go"
+
+
+# plugins
+source <(antibody init)
+antibody bundle mafredri/zsh-async
+antibody bundle sindresorhus/pure
+antibody bundle zsh-users/zsh-completions
+antibody bundle zsh-users/zsh-autosuggestions
+antibody bundle zuxfoucault/colored-man-pages_mod
+antibody bundle djui/alias-tips
+antibody bundle reo7sp/oh-my-zsh-git
+antibody bundle zsh-users/zsh-history-substring-search
 
 
 # history
@@ -107,6 +90,19 @@ alias rm="rm -f"
 alias cp="cp -f"
 alias mv="mv -f"
 alias h="history 1"
+
+mkcd() {
+  mkdir -p "$@"
+  cd "$@"
+}
+
+new-tmp() {
+  mkcd "$HOME/m/oneoff-code/$(date '+%Y-%m-%d')"
+}
+
+quick-look() {
+  (( $# > 0 )) && qlmanage -p $* &>/dev/null &
+}
 
 ## vim
 if can-exec nvim; then
