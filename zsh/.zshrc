@@ -129,5 +129,5 @@ alias jc="jupyter console"
 alias reset-launchpad="defaults write com.apple.dock ResetLaunchPad -bool true; killall Dock"
 
 ## network
-alias check-net="curl http://reo7sp.ru/check-net.html"
+alias check-net="curl http://files.reo7sp.ru/check-net/check-net.html"
 alias bauman-wifi="http --form POST https://lbpfs.bmstu.ru:8003/index.php\?zone\=bmstu_lb redirurl=/ auth_user=??? auth_pass=??? accept=Continue"
