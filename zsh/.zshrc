@@ -65,6 +65,9 @@ bindkey '^[[Z' reverse-menu-complete
 ## ctrl-w delete to slash
 autoload -U select-word-style
 select-word-style bash
+## ctrl-a, ctrl-e
+bindkey '^A' beginning-of-line
+bindkey '^E' end-of-line
 ## suggest accept
 bindkey '^J' autosuggest-accept
 ## history
