@@ -18,6 +18,8 @@ export DOKKU_HOST=  # Fill it with your data
 
 export GOPATH="$HOME/m/code/_go"
 
+source /usr/local/bin/virtualenvwrapper.sh
+
 
 # plugins
 source <(antibody init)
@@ -73,6 +75,7 @@ bindkey '^J' autosuggest-accept
 ## history
 bindkey '^[[A' history-substring-search-up
 bindkey '^[[B' history-substring-search-down
+bindkey '^R' history-incremental-search-backward
 
 
 # aliases
