@@ -6,3 +6,5 @@ curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.c
 
 cp .vimrc ~/.vimrc
 mkdir -p ~/.config/nvim; cp nvim/init.vim ~/.config/nvim/init.vim
+
+vim -c ":PlugInstall | :qa"
