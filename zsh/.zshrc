@@ -1,6 +1,9 @@
 # env
+export GOPATH="$HOME/m/code/_go"
+
 export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:$PATH"
 export PATH="$HOME/g/Exec/scripts:$PATH"
+export PATH="$GOPATH/bin:$PATH"
 export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
 
@@ -16,8 +19,7 @@ fi
 
 export DOKKU_HOST=  # Fill it with your data
 
-export GOPATH="$HOME/m/code/_go"
-
+export VIRTUALENVWRAPPER_PYTHON=/usr/local/bin/python3
 source /usr/local/bin/virtualenvwrapper.sh
 
 
@@ -84,6 +86,8 @@ alias edit-zsh="vim ~/.zshrc; source ~/.zshrc"
 alias edit-vim="vim ~/.vimrc"
 alias time-zsh="time zsh -i -c exit"
 alias time-vim="time vim -c ':e ~/.zshrc | :q!'"
+alias edit-ssh="vim ~/.ssh/config"
+alias view-ssh="cat ~/.ssh/config"
 
 ## general
 alias l="ls"
