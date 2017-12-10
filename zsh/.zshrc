@@ -141,3 +141,6 @@ alias reset-launchpad="defaults write com.apple.dock ResetLaunchPad -bool true; 
 ## network
 alias check-net="curl https://files.reo7sp.ru/check-net/check-net.html"
 alias bauman-wifi="http --form POST https://lbpfs.bmstu.ru:8003/index.php\?zone\=bmstu_lb redirurl=/ auth_user=??? auth_pass=??? accept=Continue"
+
+## random
+alias random-string="openssl rand -base64 12"
