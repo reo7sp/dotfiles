@@ -19,8 +19,11 @@ fi
 
 export DOKKU_HOST=  # Fill it with your data
 
-export VIRTUALENVWRAPPER_PYTHON=/usr/local/bin/python3
-source /usr/local/bin/virtualenvwrapper.sh
+if [[ -f /usr/local/bin/virtualenvwrapper.sh ]]
+then
+    export VIRTUALENVWRAPPER_PYTHON=/usr/local/bin/python3
+    source /usr/local/bin/virtualenvwrapper.sh
+fi
 
 
 # plugins
