@@ -90,7 +90,7 @@ alias edit-vim="vim ~/.vimrc"
 alias time-zsh="time zsh -i -c exit"
 alias time-vim="time vim -c ':e ~/.zshrc | :q!'"
 alias edit-ssh="vim ~/.ssh/config"
-alias view-ssh="cat ~/.ssh/config"
+alias show-ssh="cat ~/.ssh/config"
 
 ## general
 alias l="ls"
