@@ -2,8 +2,8 @@
 export GOPATH="$HOME/m/code/_go"
 
 export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:$PATH"
-export PATH="$HOME/g/Exec/scripts:$PATH"
 export PATH="$GOPATH/bin:$PATH"
+export PATH="$HOME/g/Exec/scripts:$PATH"
 export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
 
@@ -19,8 +19,7 @@ fi
 
 export DOKKU_HOST=  # Fill it with your data
 
-if [[ -f /usr/local/bin/virtualenvwrapper.sh ]]
-then
+if [[ -f /usr/local/bin/virtualenvwrapper.sh ]]; then
     export VIRTUALENVWRAPPER_PYTHON=/usr/local/bin/python3
     source /usr/local/bin/virtualenvwrapper.sh
 fi
@@ -84,14 +83,6 @@ bindkey '^R' history-incremental-search-backward
 
 
 # aliases
-## config
-alias edit-zsh="vim ~/.zshrc; source ~/.zshrc"
-alias edit-vim="vim ~/.vimrc"
-alias time-zsh="time zsh -i -c exit"
-alias time-vim="time vim -c ':e ~/.zshrc | :q!'"
-alias edit-ssh="vim ~/.ssh/config"
-alias show-ssh="cat ~/.ssh/config"
-
 ## general
 alias l="ls"
 alias ll="ls -lh"
@@ -117,10 +108,16 @@ quick-look() {
   (( $# > 0 )) && qlmanage -p $* &>/dev/null &
 }
 
+## zsh
+alias edit-zsh="vim ~/.zshrc; source ~/.zshrc"
+alias time-zsh="time zsh -i -c exit"
+
 ## vim
 if can-exec nvim; then
   alias vim="nvim"
 fi
+alias edit-vim="vim ~/.vimrc"
+alias time-vim="time vim -c ':e ~/.zshrc | :q!'"
 
 ## git
 if can-exec hub; then
@@ -133,6 +130,8 @@ alias dokku-git-init="git remote remove dokku 2>/dev/null; git remote add dokku 
 
 ## ssh
 alias copy-ssh="cat ~/.ssh/id_rsa.pub | pbcopy"
+alias edit-ssh="vim ~/.ssh/config"
+alias show-ssh="cat ~/.ssh/config"
 
 ## jupyter
 alias jn="jupyter notebook"
@@ -147,6 +146,9 @@ alias bauman-wifi="http --form POST https://lbpfs.bmstu.ru:8003/index.php\?zone\
 
 ## random
 alias random-string="openssl rand -base64 12"
+
+## home page
+alias edit-home="code $HOME/m/code/home/index.html"
 
 
 # custom
