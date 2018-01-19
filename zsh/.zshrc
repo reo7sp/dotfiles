@@ -148,7 +148,7 @@ alias bauman-wifi="http --form POST https://lbpfs.bmstu.ru:8003/index.php\?zone\
 alias random-string="openssl rand -base64 12"
 
 ## home page
-alias edit-home="code $HOME/m/code/home/index.html"
+alias edit-home="vim $HOME/m/code/home/index.html"
 
 
 # custom

@@ -15,16 +15,17 @@ Plug 'tpope/vim-repeat'
 Plug 'vim-scripts/AutoComplPop'
 Plug 'maxbrunsfeld/vim-yankstack'
 Plug 'Raimondi/delimitMate'
-Plug 'ConradIrwin/vim-bracketed-paste'
-Plug 'editorconfig/editorconfig-vim'
+Plug 'terryma/vim-multiple-cursors'
 Plug 'tpope/vim-surround'
 Plug 'scrooloose/nerdcommenter'
-Plug 'terryma/vim-multiple-cursors'
+Plug 'tpope/vim-sleuth'
+Plug 'editorconfig/editorconfig-vim'
+Plug 'ConradIrwin/vim-bracketed-paste'
 Plug 'pbrisbin/vim-mkdir'
 
 " " navigation
-Plug 'scrooloose/nerdtree'
 Plug 'tpope/vim-unimpaired'
+Plug 'scrooloose/nerdtree'
 Plug 'ap/vim-buftabline'
 
 " " appearance
