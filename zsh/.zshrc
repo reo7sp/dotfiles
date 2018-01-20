@@ -11,6 +11,21 @@ can-exec() {
   hash "$@" 2>/dev/null
 }
 
+confirm() {
+  local message=$1
+
+  echo -n -e "${BWhite}$message${Color_Off} [Y/n] "
+  read response
+  case $response in
+    [yY][eE][sS]|[yY]|"")
+      true
+      ;;
+    *)
+      false
+      ;;
+  esac
+}
+
 if can-exec nvim; then
   export EDITOR="nvim"
 else
@@ -148,7 +163,8 @@ alias bauman-wifi="http --form POST https://lbpfs.bmstu.ru:8003/index.php\?zone\
 alias random-string="openssl rand -base64 12"
 
 ## home page
-alias edit-home="vim $HOME/m/code/home/index.html"
+alias edit-home="vim $HOME/m/code/home/index.html; echo; confirm 'Commit?' && commit-home"
+alias commit-home="cd $HOME/m/code/home && gaa && gc -m \"\$(date)\" && gp && cd -"
 
 
 # custom
