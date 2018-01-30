@@ -1,5 +1,5 @@
 # env
-export GOPATH="$HOME/m/code/_go"
+export GOPATH="$HOME/Documents/code/_go"
 
 export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:$PATH"
 export PATH="$GOPATH/bin:$PATH"
@@ -158,6 +158,7 @@ alias reset-launchpad="defaults write com.apple.dock ResetLaunchPad -bool true; 
 ## network
 alias check-net="curl https://files.reo7sp.ru/check-net/check-net.html"
 alias bauman-wifi="http --form POST https://lbpfs.bmstu.ru:8003/index.php\?zone\=bmstu_lb redirurl=/ auth_user=??? auth_pass=??? accept=Continue"
+alias show-ports="lsof -iTCP -sTCP:LISTEN -n -P"
 
 ## random
 alias random-string="openssl rand -base64 12"
