@@ -118,8 +118,8 @@ quick-look() {
 ## zsh
 alias edit-zsh="vim ~/.zshrc; source ~/.zshrc"
 alias time-zsh="time zsh -i -c exit"
-alias edit-lzsh="vim ~/.local.zshrc; source ~/.local.zshrc"
-alias show-lzsh="cat ~/.local.zshrc"
+alias edit-pzsh="vim ~/.proj.zshrc; source ~/.proj.zshrc"
+alias show-pzsh="cat ~/.proj.zshrc"
 
 ## vim
 if can-exec nvim; then
@@ -162,10 +162,10 @@ alias edit-home="vim $HOME/m/code/home/index.html; echo; confirm 'Commit?' && co
 alias commit-home="cd $HOME/m/code/home && gaa && gc -m \"\$(date)\" && gp && cd -"
 
 
-# custom local
+# custom for projects
 
-if [[ -f ~/.local.zshrc ]]; then
-    source ~/.local.zshrc
+if [[ -f ~/.proj.zshrc ]]; then
+    source ~/.proj.zshrc
 fi
 
 
