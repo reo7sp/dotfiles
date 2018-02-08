@@ -1,8 +1,5 @@
 # env
-export GOPATH="$HOME/Documents/code/_go"
-
 export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:$PATH"
-export PATH="$GOPATH/bin:$PATH"
 export PATH="$HOME/g/Exec/scripts:$PATH"
 export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
@@ -33,11 +30,6 @@ else
 fi
 
 export DOKKU_HOST=  # Fill it with your data
-
-if [[ -f /usr/local/bin/virtualenvwrapper.sh ]]; then
-    export VIRTUALENVWRAPPER_PYTHON=/usr/local/bin/python3
-    source /usr/local/bin/virtualenvwrapper.sh
-fi
 
 
 # plugins
@@ -178,6 +170,15 @@ fi
 
 
 # custom
+
+export GOPATH="$HOME/Documents/code/_go"
+export PATH="$GOPATH/bin:$PATH"
+
+
+if [[ -f /usr/local/bin/virtualenvwrapper.sh ]]; then
+    export VIRTUALENVWRAPPER_PYTHON=/usr/local/bin/python3
+    source /usr/local/bin/virtualenvwrapper.sh
+fi
 
 
 export NVM_DIR="$HOME/.nvm"
