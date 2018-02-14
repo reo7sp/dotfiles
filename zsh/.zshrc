@@ -40,7 +40,8 @@ antibody bundle zsh-users/zsh-completions
 antibody bundle zsh-users/zsh-autosuggestions
 antibody bundle zuxfoucault/colored-man-pages_mod
 antibody bundle djui/alias-tips
-antibody bundle reo7sp/oh-my-zsh-git
+antibody bundle reo7sp/zimfw-git
+antibody bundle reo7sp/zimfw-git folder:functions kind:path
 antibody bundle zsh-users/zsh-history-substring-search
 
 
@@ -72,7 +73,7 @@ export LSCOLORS='exfxcxdxbxegedabagacad'
 export CLICOLOR=true
 
 
-# keybids
+# keybinds
 ## shift-tab : go backward in menu (invert of tab)
 bindkey '^[[Z' reverse-menu-complete
 ## ctrl-w delete to slash
@@ -87,6 +88,13 @@ bindkey '^J' autosuggest-accept
 bindkey '^[[A' history-substring-search-up
 bindkey '^[[B' history-substring-search-down
 bindkey '^R' history-incremental-search-backward
+
+
+# misc
+autoload -Uz bracketed-paste-url-magic
+zle -N bracketed-paste bracketed-paste-url-magic
+autoload -Uz url-quote-magic
+zle -N self-insert url-quote-magic
 
 
 # aliases
@@ -132,6 +140,7 @@ alias time-vim="time vim -c ':e ~/.zshrc | :q!'"
 if can-exec hub; then
   alias git=hub
 fi
+alias ghelp="less $(antibody list | grep zimfw-git)/README.md"
 
 ## dokku
 alias dokku="ssh -t dokku@\$DOKKU_HOST --"
