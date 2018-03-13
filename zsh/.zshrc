@@ -5,7 +5,7 @@ export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
 
 can-exec() {
-  hash "$@" 2>/dev/null
+  which "$1" 2>/dev/null 1>/dev/null
 }
 
 confirm() {
@@ -140,11 +140,11 @@ alias time-vim="time vim -c ':e ~/.zshrc | :q!'"
 if can-exec hub; then
   alias git=hub
 fi
-alias ghelp="less $(antibody list | grep zimfw-git)/README.md"
+alias ghelp="less $(antibody list | grep zimfw-git)/init.zsh"
 
 ## dokku
-alias dokku="ssh -t dokku@\$DOKKU_HOST --"
-alias dokku-git-init="git remote remove dokku 2>/dev/null; git remote add dokku dokku@\$DOKKU_HOST:\${\$(pwd)##*/}; git remote -v | grep --color=never dokku"
+#alias dokku="ssh -t dokku@\$DOKKU_HOST --"
+#alias dokku-git-init="git remote remove dokku 2>/dev/null; git remote add dokku dokku@\$DOKKU_HOST:\${\$(pwd)##*/}; git remote -v | grep --color=never dokku"
 
 ## ssh
 alias copy-ssh="cat ~/.ssh/id_rsa.pub | pbcopy"
@@ -168,13 +168,13 @@ alias random-string="openssl rand -base64 12"
 
 ## home page
 alias edit-home="vim $HOME/m/code/home/index.html; echo; confirm 'Commit?' && commit-home"
-alias commit-home="cd $HOME/m/code/home && gaa && gc -m \"\$(date)\" && gp && cd -"
+alias commit-home="cd $HOME/m/code/home && git add -A && git commit -m \"\$(date)\" && gp && cd -"
 
 
 # custom for projects
 
 if [[ -f ~/.proj.zshrc ]]; then
-    source ~/.proj.zshrc
+  source ~/.proj.zshrc
 fi
 
 
@@ -184,11 +184,18 @@ export GOPATH="$HOME/Documents/code/_go"
 export PATH="$GOPATH/bin:$PATH"
 
 
-if [[ -f /usr/local/bin/virtualenvwrapper.sh ]]; then
+if can-exec virtualenvwrapper; then
+else
+  if [[ -f /usr/local/bin/virtualenvwrapper.sh ]]; then
     export VIRTUALENVWRAPPER_PYTHON=/usr/local/bin/python3
     source /usr/local/bin/virtualenvwrapper.sh
+  fi
 fi
 
 
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+if can-exec nvm; then
+else
+  export NVM_DIR="$HOME/.nvm"
+  [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+fi
+export PATH="/usr/local/opt/openssl/bin:$PATH"

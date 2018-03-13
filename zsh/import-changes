@@ -3,4 +3,5 @@
 cp ~/.zshrc .zshrc
 sed -i.bak 's/export DOKKU_HOST=.*$/export DOKKU_HOST=  # Fill it with your data/g' .zshrc
 sed -i.bak 's/auth_user=.* auth_pass=.* /auth_user=??? auth_pass=??? /g' .zshrc
+sed -i.bak 's/alias dokku/#alias dokku/g' .zshrc
 rm .zshrc.bak
