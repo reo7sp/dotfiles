@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 do_install() {
   echo "$1:"

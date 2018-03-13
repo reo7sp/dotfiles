@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 cp ~/.zshrc .zshrc
 sed -i.bak 's/export DOKKU_HOST=.*$/export DOKKU_HOST=  # Fill it with your data/g' .zshrc
