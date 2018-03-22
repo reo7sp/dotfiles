@@ -130,7 +130,9 @@ set foldlevelstart=99
 
 set nowrap
 set linebreak
-set breakindent
+if exists('+breakindent')
+  set breakindent
+endif
 set showbreak=+++\ 
 
 " " gvim
