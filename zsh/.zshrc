@@ -110,7 +110,7 @@ alias cp="cp -f"
 alias mv="mv -f"
 alias h="history 1"
 alias lcd="cd \$(pwd -P)"
-alias tosudo="ZDOTDIR=\$HOME sudo zsh"
+alias tosudo="sudo ZDOTDIR=\$HOME zsh"
 
 mkcd() {
   mkdir -p "$@"
