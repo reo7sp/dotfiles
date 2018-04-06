@@ -1,6 +1,5 @@
 # env
 export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:$PATH"
-export PATH="$HOME/g/Exec/scripts:$PATH"
 export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
 
@@ -29,8 +28,6 @@ else
   export EDITOR="vim"
 fi
 
-export DOKKU_HOST=  # Fill it with your data
-
 
 # plugins
 source <(antibody init)
@@ -41,7 +38,7 @@ antibody bundle zsh-users/zsh-autosuggestions
 antibody bundle zuxfoucault/colored-man-pages_mod
 antibody bundle djui/alias-tips
 antibody bundle reo7sp/zimfw-git
-antibody bundle reo7sp/zimfw-git folder:functions kind:path
+export PATH="$(antibody list | grep zimfw-git)/functions:$PATH"
 antibody bundle zsh-users/zsh-history-substring-search
 
 
@@ -97,12 +94,12 @@ alias ll="ls -lh"
 alias la="ls -a"
 alias lla="ls -lah"
 alias grep="grep --color=auto"
-alias _="sudo"
 alias rm="rm -f"
 alias cp="cp -f"
 alias mv="mv -f"
 alias h="history 1"
 alias lcd="cd \$(pwd -P)"
+alias _="sudo"
 alias tosudo="sudo ZDOTDIR=\$HOME zsh"
 
 mkcd() {
@@ -138,8 +135,17 @@ fi
 alias ghelp="less $(antibody list | grep zimfw-git)/init.zsh"
 
 ## dokku
-#alias dokku="ssh -t dokku@\$DOKKU_HOST --"
-#alias dokku-git-init="git remote remove dokku 2>/dev/null; git remote add dokku dokku@\$DOKKU_HOST:\${\$(pwd)##*/}; git remote -v | grep --color=never dokku"
+dokku-at() {
+  local host=$1
+  shift
+  ssh -t "dokku@$host" -- "$@"
+}
+
+dokku-git-init() {
+  local host=$1
+  git remote remove dokku 2>/dev/null; git remote add dokku "dokku@$host:${$(pwd)##*/}"
+  git remote -v | grep --color=never dokku
+}
 
 ## ssh
 alias copy-ssh="cat ~/.ssh/id_rsa.pub | pbcopy"
@@ -161,10 +167,6 @@ alias show-ports="lsof -iTCP -sTCP:LISTEN -n -P"
 ## random
 alias random-string="openssl rand -base64 12"
 
-## home page
-alias edit-home="vim $HOME/m/code/home/index.html; echo; confirm 'Commit?' && commit-home"
-alias commit-home="cd $HOME/m/code/home && git add -A && git commit -m \"\$(date)\" && gp && cd -"
-
 
 # custom for projects
 
@@ -179,18 +181,16 @@ export GOPATH="$HOME/Documents/code/_go"
 export PATH="$GOPATH/bin:$PATH"
 
 
-if can-exec virtualenvwrapper; then
-else
-  if [[ -f /usr/local/bin/virtualenvwrapper.sh ]]; then
-    export VIRTUALENVWRAPPER_PYTHON=/usr/local/bin/python3
-    source /usr/local/bin/virtualenvwrapper.sh
-  fi
-fi
+use-virtualenvwrapper() {
+  export VIRTUALENVWRAPPER_PYTHON=/usr/local/bin/python3
+  source /usr/local/bin/virtualenvwrapper.sh
+}
 
 
-if can-exec nvm; then
-else
+use-nvm() {
   export NVM_DIR="$HOME/.nvm"
-  [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-fi
+  [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+}
+
+
 export PATH="/usr/local/opt/openssl/bin:$PATH"
