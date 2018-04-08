@@ -3,9 +3,8 @@ set -e
 
 mkdir -p ~/.vim/{bundle,backup,tmp,undo,sessions,spell,view}
 
-curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-
-cp .vimrc ~/.vimrc
+cp vimrc ~/.vimrc
 mkdir -p ~/.config/nvim; cp nvim/init.vim ~/.config/nvim/init.vim
 
+curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 vim -c ":PlugInstall | :qa"

@@ -3,4 +3,7 @@ set -eo pipefail
 
 curl -sL https://git.io/antibody | bash -s
 
-cp .zshrc ~/.zshrc
+if [[ ! -f ~/.zshrc ]]; then
+  cp zshrc ~/.zshrc
+fi
+cp my.zshrc ~/.my.zshrc

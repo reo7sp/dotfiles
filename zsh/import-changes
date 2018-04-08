@@ -1,6 +1,7 @@
 #!/bin/bash
 set -e
 
-cp ~/.zshrc .zshrc
-sed -i.bak 's/auth_user=.* auth_pass=.* /auth_user=??? auth_pass=??? /g' .zshrc
-rm .zshrc.bak
+cp ~/.my.zshrc my.zshrc
+
+sed -i.bak 's/auth_user=.* auth_pass=.* /auth_user=??? auth_pass=??? /g' my.zshrc
+rm my.zshrc.bak

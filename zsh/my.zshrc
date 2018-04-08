@@ -116,10 +116,9 @@ quick-look() {
 }
 
 ## zsh
-alias edit-zsh="vim ~/.zshrc; source ~/.zshrc"
+alias edit-zsh="vim ~/.my.zshrc; source ~/.zshrc"
+alias edit-zshrc="vim ~/.zshrc; source ~/.zshrc"
 alias time-zsh="time zsh -i -c exit"
-alias edit-pzsh="vim ~/.proj.zshrc; source ~/.proj.zshrc"
-alias show-pzsh="cat ~/.proj.zshrc"
 
 ## vim
 if can-exec nvim; then
@@ -158,6 +157,13 @@ alias jc="jupyter console"
 
 ## mac
 alias reset-launchpad="defaults write com.apple.dock ResetLaunchPad -bool true; killall Dock"
+
+mount-ntfs() {
+  local disk=$1
+  sudo mkdir -p /Volumes/NTFS
+  sudo /usr/local/bin/ntfs-3g "$1" /Volumes/NTFS -olocal -oallow_other
+}
+
 
 ## network
 alias check-net="curl https://files.reo7sp.ru/check-net/check-net.html"
