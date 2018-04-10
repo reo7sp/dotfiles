@@ -2,31 +2,7 @@
 export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:$PATH"
 export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
-
-can-exec() {
-  which "$1" 2>/dev/null 1>/dev/null
-}
-
-confirm() {
-  local message=$1
-
-  echo -n -e "${BWhite}$message${Color_Off} [Y/n] "
-  read response
-  case $response in
-    [yY][eE][sS]|[yY]|"")
-      true
-      ;;
-    *)
-      false
-      ;;
-  esac
-}
-
-if can-exec nvim; then
-  export EDITOR="nvim"
-else
-  export EDITOR="vim"
-fi
+export EDITOR="_vim"
 
 
 # plugins
@@ -102,6 +78,25 @@ alias lcd="cd \$(pwd -P)"
 alias _="sudo"
 alias tosudo="sudo ZDOTDIR=\$HOME zsh"
 
+can-exec() {
+  which "$1" 2>/dev/null 1>/dev/null
+}
+
+confirm() {
+  local message=$1
+
+  echo -n -e "${BWhite}$message${Color_Off} [Y/n] "
+  read response
+  case $response in
+    [yY][eE][sS]|[yY]|"")
+      true
+      ;;
+    *)
+      false
+      ;;
+  esac
+}
+
 mkcd() {
   mkdir -p "$@"
   cd "$@"
@@ -122,10 +117,18 @@ alias time-zsh="time zsh -i -c exit"
 
 ## vim
 if can-exec nvim; then
-  alias vim="nvim && beam-cursor"
+  _vim() {
+    nvim "$@"
+    beam-cursor
+  }
 else
-  alias vim="vim && beam-cursor"
+  local real_vim=$(which vim)
+  _vim() {
+    real_vim "$@"
+    beam-cursor
+  }
 fi
+alias vim="_vim"
 alias edit-vim="vim ~/.vimrc"
 alias time-vim="time vim -c ':e ~/.zshrc | :q!'"
 
