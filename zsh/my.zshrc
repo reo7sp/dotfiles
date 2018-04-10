@@ -122,7 +122,9 @@ alias time-zsh="time zsh -i -c exit"
 
 ## vim
 if can-exec nvim; then
-  alias vim="nvim"
+  alias vim="nvim && beam-cursor"
+else
+  alias vim="vim && beam-cursor"
 fi
 alias edit-vim="vim ~/.vimrc"
 alias time-vim="time vim -c ':e ~/.zshrc | :q!'"
@@ -162,6 +164,10 @@ mount-ntfs() {
   local disk=$1
   sudo mkdir -p /Volumes/NTFS
   sudo /usr/local/bin/ntfs-3g "$1" /Volumes/NTFS -olocal -oallow_other
+}
+
+beam-cursor() {
+  echo -n -e '\x1b]1337;CursorShape=1\x07'
 }
 
 
