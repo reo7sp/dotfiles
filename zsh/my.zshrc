@@ -187,9 +187,12 @@ dokku-git-init() {
   git remote -v | grep --color=never dokku
 }
 
-## jupyter
+## python
 alias jn="jupyter notebook"
 alias jc="jupyter console"
+alias py="python"
+alias p2="python2"
+alias p3="python3"
 
 ## macos
 alias reset-launchpad="defaults write com.apple.dock ResetLaunchPad -bool true; killall Dock"
@@ -216,31 +219,3 @@ alias show-ports="lsof -iTCP -sTCP:LISTEN -n -P"
 
 ## random
 alias random-string="openssl rand -base64 12"
-
-
-# custom for projects
-
-if [[ -f ~/.proj.zshrc ]]; then
-  source ~/.proj.zshrc
-fi
-
-
-# custom
-
-export GOPATH="$HOME/Documents/code/_go"
-export PATH="$GOPATH/bin:$PATH"
-
-
-use-virtualenvwrapper() {
-  export VIRTUALENVWRAPPER_PYTHON=/usr/local/bin/python3
-  source /usr/local/bin/virtualenvwrapper.sh
-}
-
-
-use-nvm() {
-  export NVM_DIR="$HOME/.nvm"
-  [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-}
-
-
-export PATH="/usr/local/opt/openssl/bin:$PATH"
