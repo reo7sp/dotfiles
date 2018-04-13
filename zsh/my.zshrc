@@ -29,6 +29,13 @@ else
 fi
 
 
+if uname -a | grep Darwin > /dev/null 2>1; then
+  export IS_MACOS=1
+else
+  export IS_MACOS=0
+fi
+
+
 # plugins
 source <(antibody init)
 antibody bundle mafredri/zsh-async
@@ -131,18 +138,35 @@ alias time-zsh="time zsh -i -c exit"
 if can-exec nvim; then
   _vim() {
     nvim "$@"
-    beam-cursor
+    if [[ $IS_MACOS == 1 ]]; then
+      cursor-beam
+    fi
   }
 else
   local real_vim=$(which vim)
   _vim() {
     real_vim "$@"
-    beam-cursor
+    if [[ $IS_MACOS == 1 ]]; then
+      cursor-beam
+    fi
   }
 fi
 alias vim="_vim"
 alias edit-vim="vim ~/.vimrc"
 alias time-vim="time vim -c ':e ~/.zshrc | :q!'"
+
+## ssh
+alias copy-ssh="cat ~/.ssh/id_rsa.pub | pbcopy"
+alias edit-ssh="vim ~/.ssh/config"
+alias show-ssh="cat ~/.ssh/config"
+
+_ssh() {
+  cursor-block
+  ssh "$@"
+  cursor-beam
+}
+
+alias ssh="_ssh"
 
 ## git
 if can-exec hub; then
@@ -163,16 +187,11 @@ dokku-git-init() {
   git remote -v | grep --color=never dokku
 }
 
-## ssh
-alias copy-ssh="cat ~/.ssh/id_rsa.pub | pbcopy"
-alias edit-ssh="vim ~/.ssh/config"
-alias show-ssh="cat ~/.ssh/config"
-
 ## jupyter
 alias jn="jupyter notebook"
 alias jc="jupyter console"
 
-## mac
+## macos
 alias reset-launchpad="defaults write com.apple.dock ResetLaunchPad -bool true; killall Dock"
 
 mount-ntfs() {
@@ -181,7 +200,11 @@ mount-ntfs() {
   sudo /usr/local/bin/ntfs-3g "$1" /Volumes/NTFS -olocal -oallow_other
 }
 
-beam-cursor() {
+cursor-block() {
+  echo -n -e '\x1b]1337;CursorShape=0\x07'
+}
+
+cursor-beam() {
   echo -n -e '\x1b]1337;CursorShape=1\x07'
 }
 
