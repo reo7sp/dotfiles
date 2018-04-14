@@ -4,11 +4,12 @@ set -e
 do_install() {
   echo "$1:"
   cd "$1"
-  ./install
+  shift
+  ./install "$@"
   cd ..
   echo
 }
 
 for it in git vim zsh; do
-  do_install "$it"
+  do_install "$it" "$@"
 done

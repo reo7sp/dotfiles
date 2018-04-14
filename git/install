@@ -1,19 +1,30 @@
 #!/bin/bash
 set -e
 
+key=$1
+if [[ $key == "-q" ]]; then
+  QUICK_INSTALL=1
+else
+  QUICK_INSTALL=0
+fi
+
 confirm() {
   local message=$1
 
-  echo -n -e "${BWhite}$message${Color_Off} [Y/n] "
-  read response
-  case $response in
-    [yY][eE][sS]|[yY]|"")
-      true
-      ;;
-    *)
-      false
-      ;;
-  esac
+  if [[ $QUICK_INSTALL == 1 ]]; then
+    false
+  else
+    echo -n -e "${BWhite}$message${Color_Off} [y/N] "
+    read response
+    case $response in
+      [yY][eE][sS]|[yY])
+        true
+        ;;
+      *)
+        false
+        ;;
+    esac
+  fi
 }
 
 git config --global user.name "Oleg Morozenkov"
