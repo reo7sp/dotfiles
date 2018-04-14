@@ -218,4 +218,4 @@ alias bauman-wifi="http --form POST https://lbpfs.bmstu.ru:8003/index.php\?zone\
 alias show-ports="lsof -iTCP -sTCP:LISTEN -n -P"
 
 ## random
-alias random-string="openssl rand -base64 12"
+alias random-string="openssl rand -hex 16"
