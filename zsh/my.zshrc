@@ -29,7 +29,7 @@ else
 fi
 
 
-if uname -a | grep Darwin > /dev/null 2>1; then
+if uname -a | grep Darwin > /dev/null; then
   export IS_MACOS=1
 else
   export IS_MACOS=0
