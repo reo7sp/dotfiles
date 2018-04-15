@@ -145,7 +145,7 @@ if can-exec nvim; then
 else
   real_vim=$(which vim)
   _vim() {
-    real_vim "$@"
+    $real_vim "$@"
     if [[ $IS_MACOS == 1 ]]; then
       cursor-beam
     fi
