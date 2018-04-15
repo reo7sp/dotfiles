@@ -143,7 +143,7 @@ if can-exec nvim; then
     fi
   }
 else
-  local real_vim=$(which vim)
+  real_vim=$(which vim)
   _vim() {
     real_vim "$@"
     if [[ $IS_MACOS == 1 ]]; then
