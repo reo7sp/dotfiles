@@ -1,4 +1,5 @@
-source ~/.my.zshrc
+ZDOTDIR=${ZDOTDIR:-$HOME}
+source "$ZDOTDIR/.my.zshrc"
 
 
 # custom
