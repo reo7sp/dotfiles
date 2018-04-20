@@ -1,8 +1,10 @@
 #!/bin/bash
 
-curl -sL https://git.io/antibody | bash -s
+can-exec() {
+  which "$1" 2>/dev/null 1>/dev/null
+}
 
-if [[ ! -f ~/.zshrc ]]; then
-  cp zshrc ~/.zshrc
-fi
+
+can-exec antibody || curl -sL https://git.io/antibody | bash -s
+[ -f ~/.zshrc ] || cp zshrc ~/.zshrc
 cp my.zshrc ~/.my.zshrc
