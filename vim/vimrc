@@ -22,6 +22,7 @@ Plug 'tpope/vim-sleuth'
 Plug 'editorconfig/editorconfig-vim'
 Plug 'ConradIrwin/vim-bracketed-paste'
 Plug 'pbrisbin/vim-mkdir'
+Plug 'danro/rename.vim'
 
 " " navigation
 Plug 'tpope/vim-unimpaired'
