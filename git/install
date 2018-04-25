@@ -30,11 +30,9 @@ confirm() {
 git config --global user.name "Oleg Morozenkov"
 git config --global user.email "m@oleg.rocks"
 
-if confirm "Do you want to always use ssh instead of https to connect to github and bitbucket?"; then
+if confirm "Do you want to always use ssh instead of https to connect to github?"; then
   git config --global url.ssh://git@github.com/.insteadOf https://github.com/
   git config --global --add url.ssh://git@github.com/.insteadOf https://reo7sp@github.com/
-  git config --global url.ssh://git@bitbucket.org/.insteadOf https://bitbucket.org/
-  git config --global --add url.ssh://git@bitbucket.org/.insteadOf https://reo7sp@bitbucket.org/
 fi
 
 if confirm "Use diff-so-fancy?"; then
