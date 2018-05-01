@@ -199,7 +199,6 @@ alias p3="python3"
 alias reset-launchpad="defaults write com.apple.dock ResetLaunchPad -bool true; killall Dock"
 
 mount-ntfs() {
-  local disk=$1
   sudo mkdir -p /Volumes/NTFS
   sudo /usr/local/bin/ntfs-3g "$1" /Volumes/NTFS -olocal -oallow_other
 }
@@ -211,7 +210,6 @@ cursor-block() {
 cursor-beam() {
   echo -n -e '\x1b]1337;CursorShape=1\x07'
 }
-
 
 ## network
 alias check-net="curl https://files.reo7sp.ru/check-net/check-net.html"
