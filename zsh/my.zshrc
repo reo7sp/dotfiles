@@ -216,7 +216,11 @@ alias check-net="curl https://files.reo7sp.ru/check-net/check-net.html"
 alias bauman-wifi="http --form POST https://lbpfs.bmstu.ru:8003/index.php\?zone\=bmstu_lb redirurl=/ auth_user=??? auth_pass=??? accept=Continue"
 alias show-ports="lsof -iTCP -sTCP:LISTEN -n -P"
 
-## random
+## util
 random-string() {
   openssl rand -hex "$1"
+}
+
+timestamp() {
+  date +%s
 }
