@@ -86,6 +86,9 @@ select-word-style bash
 ## ctrl-a, ctrl-e
 bindkey '^A' beginning-of-line
 bindkey '^E' end-of-line
+## alt-b, alt-f
+bindkey '\eb' emacs-backward-word
+bindkey '\ef' emacs-forward-word
 ## suggest accept
 bindkey '^J' autosuggest-accept
 ## history
