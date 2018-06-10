@@ -27,6 +27,7 @@ confirm() {
   fi
 }
 
+
 git config --global user.name "Oleg Morozenkov"
 git config --global user.email "m@oleg.rocks"
 

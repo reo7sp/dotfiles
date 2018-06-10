@@ -1,4 +1,31 @@
 #!/bin/bash
+set -e
+
+key=$1
+if [[ $key == "-q" ]]; then
+  QUICK_INSTALL=1
+else
+  QUICK_INSTALL=0
+fi
+
+confirm() {
+  local message=$1
+
+  if [[ $QUICK_INSTALL == 1 ]]; then
+    false
+  else
+    echo -n -e "${BWhite}$message${Color_Off} [y/N] "
+    read response
+    case $response in
+      [yY][eE][sS]|[yY])
+        true
+        ;;
+      *)
+        false
+        ;;
+    esac
+  fi
+}
 
 can-exec() {
   which "$1" 2>/dev/null 1>/dev/null
@@ -6,5 +33,11 @@ can-exec() {
 
 
 can-exec antibody || ./install-antibody
-[ -f ~/.zshrc ] || cp zshrc ~/.zshrc
+if [ -f ~/.zshrc ]; then
+  if confirm "Do you want to overwrite ~/.zshrc?"; then
+    cp zshrc ~/.zshrc
+  fi
+else
+  cp zshrc ~/.zshrc
+fi
 cp my.zshrc ~/.my.zshrc
