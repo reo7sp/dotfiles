@@ -5,6 +5,6 @@ can-exec() {
 }
 
 
-can-exec antibody || curl -sL https://git.io/antibody | bash -s
+can-exec antibody || ./install-antibody
 [ -f ~/.zshrc ] || cp zshrc ~/.zshrc
 cp my.zshrc ~/.my.zshrc

@@ -37,6 +37,7 @@ fi
 
 
 # plugins
+export PATH="$HOME/.antibody:$PATH"
 source <(antibody init)
 antibody bundle mafredri/zsh-async
 antibody bundle sindresorhus/pure
