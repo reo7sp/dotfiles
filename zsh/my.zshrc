@@ -119,7 +119,7 @@ alias h="history 1"
 alias prettyjson="python -m json.tool"
 alias lcd="cd \$(pwd -P)"
 alias _="sudo"
-alias tosudo="sudo ZDOTDIR=\$HOME zsh"
+alias tosudo="sudo ZDOTDIR=\$HOME PATH=\$PATH zsh"
 
 mkcd() {
   mkdir -p "$@"
