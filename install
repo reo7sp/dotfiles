@@ -10,6 +10,16 @@ do_install() {
   echo
 }
 
-for it in git vim zsh; do
-  do_install "$it" "$@"
+modules="git vim zsh"
+args=
+if [[ ! -z $1 ]]; then
+  if [[ $1 == "-q" ]]; then
+    args=$1
+    shift
+  fi
+  modules=$@
+fi
+
+for it in $modules; do
+  do_install $it $args
 done
