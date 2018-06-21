@@ -23,6 +23,7 @@ Plug 'editorconfig/editorconfig-vim'
 Plug 'ConradIrwin/vim-bracketed-paste'
 Plug 'pbrisbin/vim-mkdir'
 Plug 'danro/rename.vim'
+Plug 'ntpeters/vim-better-whitespace'
 
 " " navigation
 Plug 'tpope/vim-unimpaired'
@@ -108,9 +109,6 @@ set shiftwidth=4
 set tabstop=4
 set softtabstop=4
 set expandtab
-
-set list
-set listchars=tab:»\ ,trail:·,nbsp:·,precedes:<,extends:>
 
 set mat=2
 
