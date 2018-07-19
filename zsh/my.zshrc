@@ -198,6 +198,8 @@ alias jc="jupyter console"
 alias py="python"
 alias p2="python2"
 alias p3="python3"
+alias pip2="python2 -m pip"
+alias pip3="python3 -m pip"
 
 ## macos
 alias reset-launchpad="defaults write com.apple.dock ResetLaunchPad -bool true; killall Dock"
