@@ -40,11 +40,11 @@ cd dotfiles
 ## Help
 
 ```sh
-./install [-q] [MODULES]    — installs dotfiles
+./install [-q] MODULES    — installs dotfiles
 ```
 
 ```sh
-./update [-q] [MODULES]     — updates dotfiles
+./update [-q] MODULES     — updates dotfiles
 ```
 
 Available modules: `zsh`, `vim`, `git`.

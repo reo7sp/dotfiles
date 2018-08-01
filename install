@@ -10,7 +10,7 @@ do_install() {
   echo
 }
 
-modules="git vim zsh"
+modules=
 args=
 if [[ ! -z $1 ]]; then
   if [[ $1 == "-q" ]]; then
@@ -18,6 +18,11 @@ if [[ ! -z $1 ]]; then
     shift
   fi
   modules=$@
+fi
+
+if [[ $modules == "" ]]; then
+  echo "Please specify modules. Available: zsh vim git"
+  echo "USAGE: ./install [-q] MODULES"
 fi
 
 for it in $modules; do
