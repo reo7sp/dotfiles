@@ -99,10 +99,7 @@ bindkey '^R' history-incremental-search-backward
 
 
 # glob
-unsetopt extended_glob
-setopt no_extended_glob
-setopt no_bare_glob_qual
-setopt NO_NOMATCH
+unsetopt nomatch
 
 
 # aliases
