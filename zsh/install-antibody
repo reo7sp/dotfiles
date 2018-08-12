@@ -16,16 +16,16 @@ download() {
     exit 1
   }
   echo "Downloading antibody $version for $(uname -s)_$(uname -m)..."
-  rm -f /tmp/antibody.tar.gz
-  curl -s -L -o /tmp/antibody.tar.gz \
+  rm -f "$TMPDIR/antibody.tar.gz"
+  curl -s -L -o "$TMPDIR/antibody.tar.gz" \
     "$DOWNLOAD_URL/$version/antibody_$(uname -s)_$(uname -m).tar.gz"
 }
 
 extract() {
-  tar -xf /tmp/antibody.tar.gz -C "$TMPDIR"
+  tar -xf "$TMPDIR/antibody.tar.gz" -C "$TMPDIR/extracted"
 }
 
 download
 extract || true
 mkdir -p $HOME/.antibody
-mv -f "$TMPDIR"/antibody $HOME/.antibody/antibody
+mv -f "$TMPDIR/extracted/antibody" $HOME/.antibody/antibody
