@@ -174,7 +174,7 @@ alias ssh="_ssh"
 if can-exec hub; then
   alias git=hub
 fi
-alias ghelp="less $(antibody list | grep zimfw-git)/init.zsh"
+alias aliases-git="less $(antibody list | grep zimfw-git)/init.zsh"
 
 ## dokku
 dokku-at() {
