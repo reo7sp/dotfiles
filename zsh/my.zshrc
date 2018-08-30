@@ -140,17 +140,11 @@ alias time-zsh="time zsh -i -c exit"
 if can-exec nvim; then
   _vim() {
     nvim "$@"
-    if [[ $IS_MACOS == 1 ]]; then
-      cursor-beam
-    fi
   }
 else
   real_vim=$(which vim)
   _vim() {
     $real_vim "$@"
-    if [[ $IS_MACOS == 1 ]]; then
-      cursor-beam
-    fi
   }
 fi
 alias vim="_vim"
@@ -161,14 +155,6 @@ alias time-vim="time vim -c ':e ~/.zshrc | :q!'"
 alias copy-ssh="cat ~/.ssh/id_rsa.pub | pbcopy"
 alias edit-ssh="vim ~/.ssh/config"
 alias show-ssh="cat ~/.ssh/config"
-
-_ssh() {
-  cursor-block
-  ssh "$@"
-  cursor-beam
-}
-
-alias ssh="_ssh"
 
 ## git
 if can-exec hub; then
