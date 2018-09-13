@@ -162,6 +162,12 @@ if can-exec hub; then
 fi
 alias aliases-git="less $(antibody list | grep zimfw-git)/init.zsh"
 
+gfcd() {
+  local repo=$1
+  git clone "$repo"
+  cd ${repo##*/}
+}
+
 ## dokku
 dokku-at() {
   local host=$1
