@@ -168,19 +168,6 @@ gfcd() {
   cd ${repo##*/}
 }
 
-## dokku
-dokku-at() {
-  local host=$1
-  shift
-  ssh -t "dokku@$host" -- "$@"
-}
-
-dokku-git-init() {
-  local host=$1
-  git remote remove dokku 2>/dev/null; git remote add dokku "dokku@$host:${$(pwd)##*/}"
-  git remote -v | grep --color=never dokku
-}
-
 ## python
 alias jn="jupyter notebook"
 alias jc="jupyter console"
@@ -197,7 +184,7 @@ mount-ntfs() {
 }
 
 ## network
-alias check-net="curl https://files.reo7sp.ru/check-net/check-net.html"
+alias check-net="curl https://files.olezh.es/check-net/check-net.html"
 alias bauman-wifi="http --form POST https://lbpfs.bmstu.ru:8003/index.php\?zone\=bmstu_lb redirurl=/ auth_user=??? auth_pass=??? accept=Continue"
 
 if [[ $IS_MACOS -eq 1 ]]; then
@@ -205,6 +192,23 @@ if [[ $IS_MACOS -eq 1 ]]; then
 else
   alias show-ports="netstat -lntu"
 fi
+
+## dokku
+dokku-at() {
+  local host=$1
+  shift
+  ssh -t "dokku@$host" -- "$@"
+}
+
+dokku-git-init() {
+  local host=$1
+  git remote remove dokku 2>/dev/null; git remote add dokku "dokku@$host:${$(pwd)##*/}"
+  git remote -v | grep --color=never dokku
+}
+
+## sublime text
+alias t="subl"
+alias tt="subl ."
 
 ## util
 random-string() {
