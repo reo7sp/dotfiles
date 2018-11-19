@@ -127,7 +127,7 @@ new-tmp() {
   mkcd "$HOME/m/oneoff-code/$(date '+%Y-%m-%d')"
 }
 
-quick-look() {
+ql() {
   (( $# > 0 )) && qlmanage -p $* &>/dev/null &
 }
 
@@ -196,18 +196,15 @@ mount-ntfs() {
   sudo /usr/local/bin/ntfs-3g "$1" /Volumes/NTFS -olocal -oallow_other
 }
 
-cursor-block() {
-  echo -n -e '\x1b]1337;CursorShape=0\x07'
-}
-
-cursor-beam() {
-  echo -n -e '\x1b]1337;CursorShape=1\x07'
-}
-
 ## network
 alias check-net="curl https://files.reo7sp.ru/check-net/check-net.html"
 alias bauman-wifi="http --form POST https://lbpfs.bmstu.ru:8003/index.php\?zone\=bmstu_lb redirurl=/ auth_user=??? auth_pass=??? accept=Continue"
-alias show-ports="lsof -iTCP -sTCP:LISTEN -n -P"
+
+if [[ $IS_MACOS -eq 1 ]]; then
+  alias show-ports="lsof -iTCP -sTCP:LISTEN -n -P"
+else
+  alias show-ports="netstat -lntu"
+fi
 
 ## util
 random-string() {
