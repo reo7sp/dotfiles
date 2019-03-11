@@ -88,8 +88,8 @@ select-word-style bash
 bindkey '^A' beginning-of-line
 bindkey '^E' end-of-line
 ## alt-b, alt-f
-bindkey '\eb' emacs-backward-word
-bindkey '\ef' emacs-forward-word
+bindkey '\eb' backward-word
+bindkey '\ef' forward-word
 ## suggest accept
 bindkey '^J' autosuggest-accept
 ## history
@@ -131,11 +131,6 @@ ql() {
   (( $# > 0 )) && qlmanage -p $* &>/dev/null &
 }
 
-## zsh
-alias edit-zsh="vim ~/.my.zshrc; source ~/.zshrc"
-alias edit-zshrc="vim ~/.zshrc; source ~/.zshrc"
-alias time-zsh="time zsh -i -c exit"
-
 ## vim
 if can-exec nvim; then
   _vim() {
@@ -150,6 +145,11 @@ fi
 alias vim="_vim"
 alias edit-vim="vim ~/.vimrc"
 alias time-vim="time vim -c ':e ~/.zshrc | :q!'"
+
+## zsh
+alias edit-zsh="vim ~/.my.zshrc; source ~/.zshrc"
+alias edit-zshrc="vim ~/.zshrc; source ~/.zshrc"
+alias time-zsh="time zsh -i -c exit"
 
 ## ssh
 alias copy-ssh="cat ~/.ssh/id_rsa.pub | pbcopy"
