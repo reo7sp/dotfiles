@@ -215,8 +215,11 @@ t() {
   fi
 }
 
+## tig
+alias gh="tig"
+
 ## source tree
-alias st="stree"
+alias ghh="stree"
 
 ## util
 random-string() {
