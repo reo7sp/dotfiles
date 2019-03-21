@@ -127,8 +127,8 @@ new-tmp() {
   mkcd "$HOME/m/oneoff-code/$(date '+%Y-%m-%d')"
 }
 
-ql() {
-  (( $# > 0 )) && qlmanage -p $* &>/dev/null &
+hs() {
+  history 1 | grep "$@"
 }
 
 ## vim
@@ -207,8 +207,16 @@ dokku-git-init() {
 }
 
 ## sublime text
-alias t="subl"
-alias tt="subl ."
+t() {
+  if [[ -z $1 ]]; then
+    subl .
+  else
+    subl "$@"
+  fi
+}
+
+## source tree
+alias st="stree"
 
 ## util
 random-string() {
@@ -218,3 +226,4 @@ random-string() {
 timestamp() {
   date +%s
 }
+
