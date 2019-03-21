@@ -221,6 +221,9 @@ alias gh="tig"
 ## source tree
 alias ghh="stree"
 
+# fzf
+alias f="fzf"
+
 ## util
 random-string() {
   openssl rand -hex "$1"
