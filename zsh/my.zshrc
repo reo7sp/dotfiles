@@ -168,6 +168,9 @@ gfcd() {
   cd ${repo##*/}
 }
 
+alias gcwip="git add -A && git commit -m 'wip'"
+alias gcu="git add -A && git commit --amend --reuse-message HEAD"
+
 ## python
 alias jn="jupyter notebook"
 alias jc="jupyter console"
