@@ -157,6 +157,10 @@ alias copy-ssh="cat ~/.ssh/id_rsa.pub | pbcopy"
 alias edit-ssh="vim ~/.ssh/config"
 alias show-ssh="cat ~/.ssh/config"
 
+sshz() {
+  ssh -t "$1" zsh
+}
+
 ## git
 if can-exec hub; then
   alias git=hub
