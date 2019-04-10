@@ -143,6 +143,7 @@ else
   }
 fi
 alias vim="_vim"
+
 alias edit-vim="vim ~/.vimrc"
 alias time-vim="time vim -c ':e ~/.zshrc | :q!'"
 
@@ -160,6 +161,7 @@ alias show-ssh="cat ~/.ssh/config"
 if can-exec hub; then
   alias git=hub
 fi
+
 alias aliases-git="less $(antibody list | grep zimfw-git)/init.zsh"
 
 gfcd() {
@@ -184,6 +186,10 @@ alias reset-launchpad="defaults write com.apple.dock ResetLaunchPad -bool true; 
 mount-ntfs() {
   sudo mkdir -p /Volumes/NTFS
   sudo /usr/local/bin/ntfs-3g "$1" /Volumes/NTFS -olocal -oallow_other
+}
+
+edit-hosts() {
+  $EDITOR /etc/hosts
 }
 
 ## network
