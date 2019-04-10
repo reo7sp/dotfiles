@@ -203,7 +203,7 @@ alias bauman-wifi="http --form POST https://lbpfs.bmstu.ru:8003/index.php\?zone\
 if [[ $IS_MACOS -eq 1 ]]; then
   alias show-ports="lsof -iTCP -sTCP:LISTEN -n -P"
 else
-  alias show-ports="netstat -lntu"
+  alias show-ports="netstat -tulpn"
 fi
 
 ## dokku
