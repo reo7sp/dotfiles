@@ -137,7 +137,9 @@ if can-exec nvim; then
     nvim "$@"
   }
 else
-  real_vim=$(which vim)
+  if [[ -z $real_vim ]]; then
+    real_vim=$(which vim)
+  fi
   _vim() {
     $real_vim "$@"
   }
