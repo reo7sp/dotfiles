@@ -116,6 +116,7 @@ alias h="history 1"
 alias lcd="cd \$(pwd -P)"
 alias _="sudo"
 alias ssu="su -m -c zsh"
+alias dsu="sudo ZDOTDIR=\$HOME PATH=\$PATH zsh"
 
 mkcd() {
   mkdir -p "$@"
