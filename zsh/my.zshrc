@@ -185,6 +185,9 @@ alias jc="jupyter console"
 alias py="python"
 alias p2="python2"
 alias p3="python3"
+alias pt="python -m ptpython"
+alias pt2="python2 -m ptpython"
+alias pt3="python3 -m ptpython"
 
 ## macos
 alias reset-launchpad="defaults write com.apple.dock ResetLaunchPad -bool true; killall Dock"
@@ -232,9 +235,6 @@ t() {
 
 ## tig
 alias gh="tig"
-
-## source tree
-alias ghh="stree"
 
 # fzf
 alias f="fzf"
