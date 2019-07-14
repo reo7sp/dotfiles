@@ -28,7 +28,6 @@ else
   export EDITOR="vim"
 fi
 
-
 if uname -a | grep Darwin > /dev/null; then
   export IS_MACOS=1
 else
@@ -188,6 +187,20 @@ gfcd() {
 alias gcwip="git add -A && git commit -m 'wip'"
 alias gcu="git add -A && git commit --amend --reuse-message HEAD"
 
+alias gh="tig"
+
+## fzf
+alias f="fzf"
+
+## sublime text
+t() {
+  if [[ -z $1 ]]; then
+    subl .
+  else
+    subl "$@"
+  fi
+}
+
 ## python
 alias jn="jupyter notebook"
 alias jc="jupyter console"
@@ -206,10 +219,6 @@ mount-ntfs() {
   sudo /usr/local/bin/ntfs-3g "$1" /Volumes/NTFS -olocal -oallow_other
 }
 
-edit-hosts() {
-  $EDITOR /etc/hosts
-}
-
 ## network
 alias check-net="curl https://files.olezh.es/check-net/check-net.html"
 alias bauman-wifi="http --form POST https://lbpfs.bmstu.ru:8003/index.php\?zone\=bmstu_lb redirurl=/ auth_user=??? auth_pass=??? accept=Continue"
@@ -219,6 +228,12 @@ if [[ $IS_MACOS -eq 1 ]]; then
 else
   alias show-ports="netstat -tulpn"
 fi
+
+edit-hosts() {
+  $EDITOR /etc/hosts
+}
+
+alias show-hosts='cat /etc/hosts'
 
 ## dokku
 dokku-at() {
@@ -232,21 +247,6 @@ dokku-git-init() {
   git remote remove dokku 2>/dev/null; git remote add dokku "dokku@$host:${$(pwd)##*/}"
   git remote -v | grep --color=never dokku
 }
-
-## sublime text
-t() {
-  if [[ -z $1 ]]; then
-    subl .
-  else
-    subl "$@"
-  fi
-}
-
-## tig
-alias gh="tig"
-
-# fzf
-alias f="fzf"
 
 ## util
 random-string() {
