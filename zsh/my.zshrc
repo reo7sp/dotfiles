@@ -107,16 +107,8 @@ unsetopt nomatch
 alias ll="ls -lh"
 alias la="ls -a"
 alias lla="ls -lah"
-alias grep="grep --color=auto"
-alias g="grep --color=auto"
-alias rm="rm -f"
-alias cp="cp -f"
-alias mv="mv -f"
-alias h="history 1"
+
 alias lcd="cd \$(pwd -P)"
-alias _="sudo"
-alias suz="su -m -c zsh"
-alias sudz="sudo ZDOTDIR=\$HOME PATH=\$PATH zsh"
 
 mkcd() {
   mkdir -p "$@"
@@ -126,6 +118,23 @@ mkcd() {
 new-tmp() {
   mkcd "$HOME/m/oneoff-code/$(date '+%Y-%m-%d')"
 }
+
+alias grep="grep --color=auto"
+alias g="grep --color=auto"
+
+if can-exec colordiff; then
+  alias diff='colordiff'
+fi
+
+alias rm="rm -f"
+alias cp="cp -f"
+alias mv="mv -f"
+
+alias _="sudo"
+alias suz="su -m -c zsh"
+alias sudz="sudo ZDOTDIR=\$HOME PATH=\$PATH zsh"
+
+alias h="history 1"
 
 hs() {
   history 1 | grep "$@"
