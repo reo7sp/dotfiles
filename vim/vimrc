@@ -16,14 +16,12 @@ Plug 'vim-scripts/AutoComplPop'
 Plug 'maxbrunsfeld/vim-yankstack'
 Plug 'Raimondi/delimitMate'
 Plug 'terryma/vim-multiple-cursors'
-Plug 'tpope/vim-surround'
 Plug 'scrooloose/nerdcommenter'
 Plug 'tpope/vim-sleuth'
 Plug 'editorconfig/editorconfig-vim'
 Plug 'ConradIrwin/vim-bracketed-paste'
 Plug 'pbrisbin/vim-mkdir'
 Plug 'danro/rename.vim'
-Plug 'ntpeters/vim-better-whitespace'
 
 " " navigation
 Plug 'tpope/vim-unimpaired'
@@ -56,10 +54,10 @@ let g:rainbow_active = 1
 " " terryma/vim-multiple-cursors
 let g:multi_cursor_use_default_mapping = 0
 noremap <c-g> <nop>
-noremap <c-u> <nop>
+noremap <c-h> <nop>
 noremap <c-k> <nop>
 let g:multi_cursor_next_key='<C-g>'
-let g:multi_cursor_prev_key='<C-u>'
+let g:multi_cursor_prev_key='<C-h>'
 let g:multi_cursor_skip_key='<C-k>'
 let g:multi_cursor_quit_key='<Esc>'
 
@@ -211,3 +209,4 @@ set timeout
 set timeoutlen=1000
 set ttimeout
 set ttimeoutlen=10
+
