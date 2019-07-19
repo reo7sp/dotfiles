@@ -181,7 +181,9 @@ alias aliases-git="less $(antibody list | grep zimfw-git)/init.zsh"
 gfcd() {
   local repo=$1
   git clone "$repo"
-  cd ${repo##*/}
+  local repo=${repo##*/}
+  local repo=${repo%.git}
+  cd "$repo"
 }
 
 alias gcwip="git add -A && git commit -m 'wip'"
