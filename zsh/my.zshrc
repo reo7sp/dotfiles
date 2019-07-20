@@ -89,6 +89,8 @@ bindkey '^E' end-of-line
 ## alt-b, alt-f
 bindkey '\eb' backward-word
 bindkey '\ef' forward-word
+## ctrl-u
+bindkey '^U' backward-kill-line
 ## suggest accept
 bindkey '^J' autosuggest-accept
 ## history
