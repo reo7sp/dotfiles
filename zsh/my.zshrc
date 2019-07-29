@@ -233,11 +233,8 @@ else
   alias show-ports="netstat -tulpn"
 fi
 
-edit-hosts() {
-  $EDITOR /etc/hosts
-}
-
-alias show-hosts='cat /etc/hosts'
+alias edit-hosts="vim /etc/hosts"
+alias show-hosts="cat /etc/hosts"
 
 ## dokku
 dokku-at() {
