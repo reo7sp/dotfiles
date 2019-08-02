@@ -155,6 +155,7 @@ else
   }
 fi
 alias vim="_vim"
+alias v="_vim"
 
 alias edit-vim="vim ~/.vimrc"
 alias time-vim="time vim -c ':e ~/.zshrc | :q!'"
@@ -204,6 +205,9 @@ t() {
     subl "$@"
   fi
 }
+
+## tmux
+alias tt="tmux"
 
 ## python
 alias jn="jupyter notebook"
