@@ -211,7 +211,10 @@ tt() {
   tmux -2 a || tmux -2 new
 }
 
-alias ttcl="tmux clear-history"
+ttcl() {
+  clear
+  tmux clear-history
+}
 
 ## python
 alias jn="jupyter notebook"
