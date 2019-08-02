@@ -208,7 +208,7 @@ t() {
 
 ## tmux
 tt() {
-  tmux a -2 || tmux new -2
+  tmux -2 a || tmux -2 new
 }
 
 ## python
