@@ -121,7 +121,9 @@ new-tmp() {
 }
 
 alias grep="grep --color=auto"
+
 alias g="grep --color=auto"
+alias l="less"
 
 if can-exec colordiff; then
   alias diff='colordiff'
