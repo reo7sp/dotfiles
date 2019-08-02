@@ -207,7 +207,9 @@ t() {
 }
 
 ## tmux
-alias tt="tmux"
+tt() {
+  tmux a -2 || tmux new -2
+}
 
 ## python
 alias jn="jupyter notebook"
