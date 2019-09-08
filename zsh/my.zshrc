@@ -121,7 +121,6 @@ new-tmp() {
 }
 
 alias grep="grep --color=auto"
-alias l="less"
 
 if can-exec colordiff; then
   alias diff='colordiff'
@@ -155,7 +154,6 @@ else
   }
 fi
 alias vim="_vim"
-alias v="_vim"
 
 alias edit-vim="vim ~/.vimrc"
 alias time-vim="time vim -c ':e ~/.zshrc | :q!'"
