@@ -134,12 +134,6 @@ alias _="sudo"
 alias suz="su -m -c zsh"
 alias sudz="sudo ZDOTDIR=\$HOME PATH=\$PATH zsh"
 
-alias h="history 1"
-
-hs() {
-  history 1 | grep "$@"
-}
-
 ## vim
 if can-exec nvim; then
   _vim() {
@@ -215,14 +209,11 @@ ttcl() {
 }
 
 ## python
-alias jn="jupyter notebook"
-alias jc="jupyter console"
-alias py="python"
 alias p2="python2"
 alias p3="python3"
-alias pt="python -m ptpython"
-alias pt2="python2 -m ptpython"
-alias pt3="python3 -m ptpython"
+alias pp2="python2 -m ptpython"
+alias pp3="python3 -m ptpython"
+alias jn="jupyter notebook"
 
 ## macos
 alias reset-launchpad="defaults write com.apple.dock ResetLaunchPad -bool true; killall Dock"
@@ -244,19 +235,6 @@ fi
 
 alias edit-hosts="vim /etc/hosts"
 alias show-hosts="cat /etc/hosts"
-
-## dokku
-dokku-at() {
-  local host=$1
-  shift
-  ssh -t "dokku@$host" -- "$@"
-}
-
-dokku-git-init() {
-  local host=$1
-  git remote remove dokku 2>/dev/null; git remote add dokku "dokku@$host:${$(pwd)##*/}"
-  git remote -v | grep --color=never dokku
-}
 
 ## util
 random-string() {
