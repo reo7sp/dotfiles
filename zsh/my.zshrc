@@ -45,7 +45,7 @@ antibody bundle zsh-users/zsh-autosuggestions
 antibody bundle zuxfoucault/colored-man-pages_mod
 antibody bundle djui/alias-tips
 antibody bundle reo7sp/zimfw-git
-export PATH="$(antibody list | grep zimfw-git)/functions:$PATH"
+export PATH="$(antibody list | grep zimfw | perl -lne 'print $1 if /\s+(.+)/')/functions:$PATH"
 antibody bundle zsh-users/zsh-history-substring-search
 
 
