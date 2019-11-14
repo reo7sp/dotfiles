@@ -195,7 +195,10 @@ tf() {
   t $(f)
 }
 cdf() {
-  cd $(find . -type d -print 2> /dev/null | fgrep -v '.git' | fzf-tmux)
+  cd $(find . -depth 5 -type d -not -path '*/\.*' -print 2> /dev/null | fzf-tmux)
+}
+cdfm() {
+  cd $(find .          -type d -not -path '*/\.*' -print 2> /dev/null | fzf-tmux)
 }
 
 ## sublime text
