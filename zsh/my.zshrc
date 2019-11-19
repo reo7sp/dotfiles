@@ -80,8 +80,12 @@ export CLICOLOR=true
 ## shift-tab : go backward in menu (invert of tab)
 bindkey '^[[Z' reverse-menu-complete
 ## ctrl-w delete to slash
-autoload -U select-word-style
-select-word-style bash
+backward-kill-dir () {
+    local WORDCHARS=${WORDCHARS/\/}
+    zle backward-kill-word
+}
+zle -N backward-kill-dir
+bindkey '^W' backward-kill-dir
 ## ctrl-a, ctrl-e
 bindkey '^A' beginning-of-line
 bindkey '^E' end-of-line
