@@ -208,9 +208,9 @@ cdfm() {
 ## sublime text
 t() {
   if [[ -z $1 ]]; then
-    subl .
+    subl --add .
   else
-    subl "$@"
+    subl --add "$@"
   fi
 }
 
