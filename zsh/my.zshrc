@@ -208,6 +208,14 @@ cdfm() {
 ## sublime text
 t() {
   if [[ -z $1 ]]; then
+    subl .
+  else
+    subl "$@"
+  fi
+}
+
+tt() {
+  if [[ -z $1 ]]; then
     subl --add .
   else
     subl --add "$@"
@@ -215,11 +223,11 @@ t() {
 }
 
 ## tmux
-tt() {
+tm() {
   tmux -2 a || tmux -2 new
 }
 
-ttcl() {
+tmcl() {
   clear
   tmux clear-history
 }
