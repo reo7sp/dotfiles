@@ -6,6 +6,7 @@ test -z "$TMPDIR" && TMPDIR="$(mktemp -d)"
 last_version() {
   curl -s https://raw.githubusercontent.com/getantibody/homebrew-tap/master/Formula/antibody.rb |
     grep url |
+    head -1 |
     cut -f8 -d'/'
 }
 
