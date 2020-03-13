@@ -174,6 +174,10 @@ if can-exec hub; then
   alias git=hub
 fi
 
+g() {
+  git "$@"
+}
+
 alias aliases-git="less $(antibody list | grep zimfw-git)/init.zsh"
 
 gfcd() {
@@ -222,6 +226,23 @@ tt() {
   fi
 }
 
+## sublime merge
+m() {
+  if [[ -z $1 ]]; then
+    smerge -n .
+  else
+    smerge -n "$@"
+  fi
+}
+
+mm() {
+  if [[ -z $1 ]]; then
+    smerge .
+  else
+    smerge "$@"
+  fi
+}
+
 ## tmux
 tm() {
   tmux -2 a || tmux -2 new
@@ -248,9 +269,6 @@ mount-ntfs() {
 }
 
 ## network
-alias check-net="curl https://files.olezh.es/check-net/check-net.html"
-alias bauman-wifi="http --form POST https://lbpfs.bmstu.ru:8003/index.php\?zone\=bmstu_lb redirurl=/ auth_user=??? auth_pass=??? accept=Continue"
-
 if [[ $IS_MACOS -eq 1 ]]; then
   alias show-ports="lsof -iTCP -sTCP:LISTEN -n -P"
 else
