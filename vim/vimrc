@@ -24,7 +24,6 @@ Plug 'pbrisbin/vim-mkdir'
 Plug 'danro/rename.vim'
 
 " " navigation
-Plug 'tpope/vim-unimpaired'
 Plug 'scrooloose/nerdtree'
 Plug 'ap/vim-buftabline'
 
@@ -53,11 +52,11 @@ let g:rainbow_active = 1
 
 " " terryma/vim-multiple-cursors
 let g:multi_cursor_use_default_mapping = 0
-noremap <c-g> <nop>
-noremap <c-h> <nop>
+noremap <c-d> <nop>
+noremap <c-e> <nop>
 noremap <c-k> <nop>
-let g:multi_cursor_next_key='<C-g>'
-let g:multi_cursor_prev_key='<C-h>'
+let g:multi_cursor_next_key='<C-d>'
+let g:multi_cursor_prev_key='<C-e>'
 let g:multi_cursor_skip_key='<C-k>'
 let g:multi_cursor_quit_key='<Esc>'
 
@@ -79,10 +78,6 @@ nnoremap <c-s> :wa<cr>
 inoremap <c-s> <c-o>:wa<cr>
 vnoremap <c-s> <esc>:wa<cr>gv
 cmap w!! w !sudo tee % >/dev/null
-
-nnoremap [op :set clipboard=unnamed<CR>
-nnoremap ]op :set clipboard=<CR>
-nnoremap cop :set <C-R>=&clipboard == 'unnamed' ? 'clipboard=' : 'clipboard=unnamed'<CR><CR>
 
 
 " colors
