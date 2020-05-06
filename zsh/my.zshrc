@@ -193,6 +193,13 @@ alias gcu="git add -A && git commit --amend --reuse-message HEAD"
 
 alias gh="tig"
 
+gbd() {
+  for d in $@; do
+    git branch -D $d
+    git branch -rD origin/$d
+  done
+}
+
 ## fzf
 alias f="fzf"
 
