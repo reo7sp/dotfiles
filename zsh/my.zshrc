@@ -90,8 +90,18 @@ bindkey '^W' backward-kill-dir
 bindkey '^A' beginning-of-line
 bindkey '^E' end-of-line
 ## alt-b, alt-f
-bindkey '\eb' backward-word
-bindkey '\ef' forward-word
+backward-word-dir () {
+    local WORDCHARS=${WORDCHARS/\/}
+    zle backward-word
+}
+forward-word-dir () {
+    local WORDCHARS=${WORDCHARS/\/}
+    zle forward-word
+}
+zle -N backward-word-dir
+zle -N forward-word-dir
+bindkey '\eb' backward-word-dir
+bindkey '\ef' forward-word-dir
 ## ctrl-u
 bindkey '^U' backward-kill-line
 ## suggest accept
