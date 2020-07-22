@@ -77,35 +77,19 @@ export CLICOLOR=true
 
 
 # keybinds
-## shift-tab : go backward in menu (invert of tab)
+WORDCHARS='*_-.[]~;!#$%^(){}<>@'
+## shift-tab
 bindkey '^[[Z' reverse-menu-complete
-## ctrl-w delete to slash
-backward-kill-dir () {
-    local WORDCHARS=${WORDCHARS/\/}
-    zle backward-kill-word
-}
-zle -N backward-kill-dir
-bindkey '^W' backward-kill-dir
+## ctrl-w
+bindkey '^W' backward-kill-word
 ## ctrl-a, ctrl-e
 bindkey '^A' beginning-of-line
 bindkey '^E' end-of-line
 ## alt-b, alt-f
-backward-word-dir () {
-    local WORDCHARS=${WORDCHARS/\/}
-    zle backward-word
-}
-forward-word-dir () {
-    local WORDCHARS=${WORDCHARS/\/}
-    zle forward-word
-}
-zle -N backward-word-dir
-zle -N forward-word-dir
-bindkey '\eb' backward-word-dir
-bindkey '\ef' forward-word-dir
+bindkey '\eb' backward-word
+bindkey '\ef' forward-word
 ## ctrl-u
 bindkey '^U' backward-kill-line
-## suggest accept
-bindkey '^J' autosuggest-accept
 ## history
 bindkey '^[[A' history-substring-search-up
 bindkey '^[[B' history-substring-search-down
