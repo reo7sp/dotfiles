@@ -190,7 +190,7 @@ alias gh="tig"
 gbd() {
   for d in $@; do
     git branch -D $d
-    git branch -rD origin/$d
+    git push origin --delete $d
   done
 }
 
