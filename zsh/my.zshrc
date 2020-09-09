@@ -183,6 +183,9 @@ gfcd() {
 }
 
 alias gcwip="git add -A && git commit -m 'wip'"
+alias gcfix="git add -A && git commit -m 'fix'"
+alias gckik="git add -A && git commit -m 'wip'"
+
 alias gcu="git add -A && git commit --amend --reuse-message HEAD"
 
 alias gh="tig"
