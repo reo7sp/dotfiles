@@ -52,12 +52,12 @@ let g:rainbow_active = 1
 
 " " terryma/vim-multiple-cursors
 let g:multi_cursor_use_default_mapping = 0
-noremap <c-d> <nop>
-noremap <c-e> <nop>
-noremap <c-k> <nop>
-let g:multi_cursor_next_key='<C-d>'
-let g:multi_cursor_prev_key='<C-e>'
-let g:multi_cursor_skip_key='<C-k>'
+noremap <A-d> <nop>
+noremap <A-e> <nop>
+noremap <A-k> <nop>
+let g:multi_cursor_next_key='<A-d>'
+let g:multi_cursor_prev_key='<A-e>'
+let g:multi_cursor_skip_key='<A-k>'
 let g:multi_cursor_quit_key='<Esc>'
 
 
