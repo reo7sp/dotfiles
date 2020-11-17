@@ -77,7 +77,7 @@ export CLICOLOR=true
 
 
 # keybinds
-WORDCHARS='*_-.[]~;!#$%^(){}<>@'
+WORDCHARS='*[]~;!#$%^(){}<>@'
 ## shift-tab
 bindkey '^[[Z' reverse-menu-complete
 ## ctrl-w
