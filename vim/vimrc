@@ -192,7 +192,7 @@ if &shell =~# 'fish$'
   set shell=/bin/bash
 endif
 
-set mouse=a
+set mouse=i
 set hidden
 set lazyredraw
 set noerrorbells
