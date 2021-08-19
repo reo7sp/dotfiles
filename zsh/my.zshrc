@@ -39,7 +39,7 @@ fi
 export PATH="$HOME/.antibody:$PATH"
 source <(antibody init)
 antibody bundle mafredri/zsh-async
-antibody bundle sindresorhus/pure
+antibody bundle reo7sp/pure
 antibody bundle zsh-users/zsh-completions
 antibody bundle zsh-users/zsh-autosuggestions
 antibody bundle zuxfoucault/colored-man-pages_mod
