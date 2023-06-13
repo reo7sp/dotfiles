@@ -263,6 +263,7 @@ alias p3="python3"
 alias pp2="python2 -m ptpython"
 alias pp3="python3 -m ptpython"
 alias jn="jupyter notebook"
+alias jl="jupyter lab"
 
 ## macos
 alias reset-launchpad="defaults write com.apple.dock ResetLaunchPad -bool true; killall Dock"
@@ -279,7 +280,7 @@ else
   alias show-ports="netstat -tulpn"
 fi
 
-alias edit-hosts="vim /etc/hosts"
+alias edit-hosts="sudo vim /etc/hosts"
 alias show-hosts="cat /etc/hosts"
 
 ## util
