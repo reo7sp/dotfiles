@@ -206,6 +206,9 @@ vimf() {
 tf() {
   t $(f)
 }
+cf() {
+  c $(f)
+}
 cdf() {
   cd $(find . -depth 5 -type d -not -path '*/\.*' -print 2> /dev/null | fzf-tmux)
 }
@@ -244,6 +247,15 @@ mm() {
     smerge .
   else
     smerge "$@"
+  fi
+}
+
+## vs code
+c() {
+  if [[ -z $1 ]]; then
+    code .
+  else
+    code "$@"
   fi
 }
 
