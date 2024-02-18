@@ -218,6 +218,7 @@ cdfm() {
 
 ## sublime text
 t() {
+  lcd
   if [[ -z $1 ]]; then
     subl .
   else
@@ -226,6 +227,7 @@ t() {
 }
 
 tt() {
+  lcd
   if [[ -z $1 ]]; then
     subl --add .
   else
@@ -235,6 +237,7 @@ tt() {
 
 ## sublime merge
 m() {
+  lcd
   if [[ -z $1 ]]; then
     smerge -n .
   else
@@ -243,6 +246,7 @@ m() {
 }
 
 mm() {
+  lcd
   if [[ -z $1 ]]; then
     smerge .
   else
@@ -252,6 +256,7 @@ mm() {
 
 ## vs code
 c() {
+  lcd
   if [[ -z $1 ]]; then
     code .
   else
