@@ -254,16 +254,6 @@ mm() {
   fi
 }
 
-## vs code
-c() {
-  lcd
-  if [[ -z $1 ]]; then
-    code .
-  else
-    code "$@"
-  fi
-}
-
 ## tmux
 tm() {
   tmux -2 a || tmux -2 new
