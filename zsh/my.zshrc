@@ -120,7 +120,7 @@ new-tmp() {
 alias grep="grep --color=auto"
 
 if can-exec colordiff; then
-  alias diff='colordiff'
+  alias diff="colordiff"
 fi
 
 alias rm="rm -f"
@@ -203,15 +203,15 @@ alias f="fzf"
 vimf() {
   vim $(f)
 }
+
 tf() {
   t $(f)
 }
-cf() {
-  c $(f)
-}
+
 cdf() {
   cd $(find . -depth 5 -type d -not -path '*/\.*' -print 2> /dev/null | fzf-tmux)
 }
+
 cdfm() {
   cd $(find .          -type d -not -path '*/\.*' -print 2> /dev/null | fzf-tmux)
 }
@@ -271,14 +271,6 @@ alias pp2="python2 -m ptpython"
 alias pp3="python3 -m ptpython"
 alias jn="jupyter notebook"
 alias jl="jupyter lab"
-
-## macos
-alias reset-launchpad="defaults write com.apple.dock ResetLaunchPad -bool true; killall Dock"
-
-mount-ntfs() {
-  sudo mkdir -p /Volumes/NTFS
-  sudo /usr/local/bin/ntfs-3g "$1" /Volumes/NTFS -olocal -oallow_other
-}
 
 ## network
 if [[ $IS_MACOS -eq 1 ]]; then
