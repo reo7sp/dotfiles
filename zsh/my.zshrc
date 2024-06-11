@@ -106,7 +106,9 @@ alias ll="ls -lh"
 alias la="ls -a"
 alias lla="ls -lah"
 
-alias lcd="cd \$(pwd -P)"
+lcd() {
+  cd "$(pwd -P)"
+}
 
 mkcd() {
   mkdir -p "$@"
