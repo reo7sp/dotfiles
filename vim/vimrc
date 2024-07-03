@@ -26,10 +26,10 @@ Plug 'danro/rename.vim'
 " " navigation
 Plug 'scrooloose/nerdtree'
 Plug 'ap/vim-buftabline'
+Plug 'easymotion/vim-easymotion'
 
 " " appearance
 Plug 'morhetz/gruvbox'
-Plug 'luochen1990/rainbow'
 Plug 'mhinz/vim-signify'
 Plug 'ekalinin/Dockerfile.vim'
 Plug 'vim-scripts/nginx.vim'
@@ -39,6 +39,13 @@ call plug#end()
 
 
 " plugin settings
+" " easymotion/vim-easymotion
+let g:EasyMotion_do_mapping = 0
+nmap s <Plug>(easymotion-overwin-f)
+let g:EasyMotion_smartcase = 1
+map <Leader>j <Plug>(easymotion-j)
+map <Leader>k <Plug>(easymotion-k)
+
 " " maxbrunsfeld/vim-yankstack
 let g:yankstack_map_keys = 0
 nmap <leader>p <Plug>yankstack_substitute_older_paste
@@ -46,9 +53,6 @@ nmap <leader>P <Plug>yankstack_substitute_newer_paste
 
 " " scrooloose/nerdtree
 map <leader>f :NERDTreeToggle<CR>
-
-" " luochen1990/rainbow
-let g:rainbow_active = 1
 
 " " terryma/vim-multiple-cursors
 let g:multi_cursor_use_default_mapping = 0
