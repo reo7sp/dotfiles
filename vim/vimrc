@@ -26,7 +26,7 @@ Plug 'danro/rename.vim'
 " " navigation
 Plug 'scrooloose/nerdtree'
 Plug 'ap/vim-buftabline'
-Plug 'easymotion/vim-easymotion'
+Plug 'justinmk/vim-sneak'
 
 " " appearance
 Plug 'morhetz/gruvbox'
@@ -39,12 +39,9 @@ call plug#end()
 
 
 " plugin settings
-" " easymotion/vim-easymotion
-let g:EasyMotion_do_mapping = 0
-nmap s <Plug>(easymotion-overwin-f)
-let g:EasyMotion_smartcase = 1
-map <Leader>j <Plug>(easymotion-j)
-map <Leader>k <Plug>(easymotion-k)
+" " justinmk/vim-sneak
+autocmd VimEnter * noremap s <Plug>Sneak_s
+let g:sneak#use_ic_scs = 1
 
 " " maxbrunsfeld/vim-yankstack
 let g:yankstack_map_keys = 0
@@ -207,4 +204,3 @@ set timeout
 set timeoutlen=1000
 set ttimeout
 set ttimeoutlen=10
-
