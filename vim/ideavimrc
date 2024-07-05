@@ -1,6 +1,6 @@
 let mapleader=","
 
-"set rnu
+set relativenumber
 set ignorecase
 set smartcase
 set ideajoin

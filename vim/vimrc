@@ -93,6 +93,7 @@ colorscheme gruvbox
 " vim settings
 " " editor appearance
 set number
+set relativenumber
 set cul
 set showmatch
 set scrolloff=5
