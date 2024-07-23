@@ -206,6 +206,10 @@ vimf() {
   vim $(f)
 }
 
+vf() {
+  vim $(f)
+}
+
 tf() {
   t $(f)
 }
@@ -216,6 +220,16 @@ cdf() {
 
 cdfm() {
   cd $(find .          -type d -not -path '*/\.*' -print 2> /dev/null | fzf-tmux)
+}
+
+## vim
+v() {
+  lcd
+  if [[ -z $1 ]]; then
+    $EDITOR .
+  else
+    $EDITOR "$@"
+  fi
 }
 
 ## sublime text
