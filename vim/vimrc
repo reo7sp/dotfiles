@@ -7,15 +7,16 @@ let mapleader = ","
 call plug#begin('~/.vim/bundle')
 
 " " generic
-Plug 'Shougo/vimproc.vim', { 'do': 'make' }
+Plug 'Shougo/vimproc.vim', {'do': 'make'}
 Plug 'tpope/vim-sensible'
 Plug 'tpope/vim-repeat'
 
 " " editing
-Plug 'vim-scripts/AutoComplPop'
-Plug 'maxbrunsfeld/vim-yankstack'
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'Raimondi/delimitMate'
+Plug 'junegunn/vim-slash'
 Plug 'terryma/vim-multiple-cursors'
+Plug 'maxbrunsfeld/vim-yankstack'
 Plug 'scrooloose/nerdcommenter'
 Plug 'tpope/vim-sleuth'
 Plug 'editorconfig/editorconfig-vim'
@@ -24,9 +25,15 @@ Plug 'pbrisbin/vim-mkdir'
 Plug 'danro/rename.vim'
 
 " " navigation
-Plug 'scrooloose/nerdtree'
 Plug 'ap/vim-buftabline'
+Plug 'moll/vim-bbye'
+Plug 'vim-scripts/BufOnly.vim'
 Plug 'justinmk/vim-sneak'
+Plug 'nvim-lua/plenary.nvim'
+Plug 'nvim-telescope/telescope.nvim', {'tag': '0.1.8'}
+Plug 'lambdalisue/vim-fern'
+Plug 'lambdalisue/vim-fern-hijack'
+Plug 'lambdalisue/vim-fern-git-status'
 
 " " appearance
 Plug 'morhetz/gruvbox'
@@ -39,17 +46,122 @@ call plug#end()
 
 
 " plugin settings
+" " ap/vim-buftabline
+let g:buftabline_numbers = 2
+
+" " junegunn/vim-slash
+noremap <plug>(slash-after) zz
+
 " " justinmk/vim-sneak
 autocmd VimEnter * noremap s <Plug>Sneak_s
 let g:sneak#use_ic_scs = 1
+
+" " neoclide/coc.vim
+inoremap <silent><expr> <TAB>
+      \ coc#pum#visible() ? coc#pum#next(1) :
+      \ CheckBackspace() ? "\<Tab>" :
+      \ coc#refresh()
+inoremap <expr><S-TAB> coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"
+
+inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm()
+                              \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+
+function! CheckBackspace() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
+
+if has('nvim')
+  inoremap <silent><expr> <c-space> coc#refresh()
+else
+  inoremap <silent><expr> <c-@> coc#refresh()
+endif
+
+nmap <silent> gd <Plug>(coc-definition)
+nmap <silent> gy <Plug>(coc-type-definition)
+nmap <silent> gi <Plug>(coc-implementation)
+nmap <silent> gr <Plug>(coc-references)
+nmap <silent> [g <Plug>(coc-diagnostic-prev)
+nmap <silent> ]g <Plug>(coc-diagnostic-next)
+nnoremap <silent> K :call ShowDocumentation()<CR>
+
+function! ShowDocumentation()
+  if CocAction('hasProvider', 'hover')
+    call CocActionAsync('doHover')
+  else
+    call feedkeys('K', 'in')
+  endif
+endfunction
+
+autocmd CursorHold * silent call CocActionAsync('highlight')
+
+xmap if <Plug>(coc-funcobj-i)
+omap if <Plug>(coc-funcobj-i)
+xmap af <Plug>(coc-funcobj-a)
+omap af <Plug>(coc-funcobj-a)
+xmap ic <Plug>(coc-classobj-i)
+omap ic <Plug>(coc-classobj-i)
+xmap ac <Plug>(coc-classobj-a)
+omap ac <Plug>(coc-classobj-a)
+
+command! -nargs=0 Format :call CocActionAsync('format')
+command! -nargs=0 OR   :call     CocActionAsync('runCommand', 'editor.action.organizeImport')
+command! -nargs=? Fold :call     CocAction('fold', <f-args>)
+
+set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
 
 " " maxbrunsfeld/vim-yankstack
 let g:yankstack_map_keys = 0
 nmap <leader>p <Plug>yankstack_substitute_older_paste
 nmap <leader>P <Plug>yankstack_substitute_newer_paste
 
-" " scrooloose/nerdtree
-map <leader>f :NERDTreeToggle<CR>
+" " nvim-telescope/telescope
+nnoremap <leader>ff <cmd>Telescope find_files<cr>
+nnoremap <leader>fg <cmd>Telescope live_grep<cr>
+nnoremap <leader>fb <cmd>Telescope buffers<cr>
+nnoremap <leader>fh <cmd>Telescope help_tags<cr>
+
+" " lambdalisue/vim-fern
+map <leader>t :Fern . -drawer -stay -toggle -reveal=%<CR>
+let g:fern#default_hidden = 1
+
+function! s:init_fern() abort
+  set nornu
+  set nonu
+
+  nmap <buffer> e <Plug>(fern-action-open:edit)
+  nmap <buffer> ge <Plug>(fern-action-open:edit)<C-w>p
+  nmap <buffer> o <Plug>(fern-action-open:edit)
+  nmap <buffer> go <Plug>(fern-action-open:edit)<C-w>p
+  nmap <buffer> i <Plug>(fern-action-open:split)
+  nmap <buffer> gi <Plug>(fern-action-open:split)<C-w>p
+  nmap <buffer> s <Plug>(fern-action-open:vsplit)
+  nmap <buffer> gs <Plug>(fern-action-open:vsplit)<C-w>p
+  nmap <buffer> c <Plug>(fern-action-enter)
+  nmap <buffer> u <Plug>(fern-action-leave)
+  nmap <buffer> I <Plug>(fern-action-hidden-toggle)
+  nmap <buffer> q :<C-u>quit<CR>
+
+  nmap <buffer><expr>
+      \ <Plug>(fern-my-expand-or-collapse)
+      \ fern#smart#leaf(
+      \   "\<Plug>(fern-action-collapse)",
+      \   "\<Plug>(fern-action-expand)",
+      \   "\<Plug>(fern-action-collapse)",
+      \ )
+
+  nmap <buffer><nowait> <CR> <Plug>(fern-my-expand-or-collapse)
+
+  nmap <buffer> <silent> <c-k> :wincmd k<CR>
+  nmap <buffer> <silent> <c-j> :wincmd j<CR>
+  nmap <buffer> <silent> <c-h> :wincmd h<CR>
+  nmap <buffer> <silent> <c-l> :wincmd l<CR>
+endfunction
+
+augroup fern-custom
+  autocmd! *
+  autocmd FileType fern call s:init_fern()
+augroup END
 
 " " terryma/vim-multiple-cursors
 let g:multi_cursor_use_default_mapping = 0
@@ -68,17 +180,37 @@ nnoremap j gj
 nnoremap k gk
 noremap <F1> <ESC>
 
-nnoremap - :noh<cr>
-
-nnoremap _ :bp<CR>
-nnoremap + :bn<CR>
-nnoremap <leader>q :bp<cr>:bd #<cr>
-cmap bq bd
-
 nnoremap <c-s> :wa<cr>
 inoremap <c-s> <c-o>:wa<cr>
 vnoremap <c-s> <esc>:wa<cr>gv
-cmap w!! w !sudo tee % >/dev/null
+cnoreabbrev w!! w !sudo tee % >/dev/null
+cnoreabbrev Wqa wqa
+cnoreabbrev Qa qa
+cnoreabbrev Q q
+
+nmap <silent> <c-k> :wincmd k<CR>
+nmap <silent> <c-j> :wincmd j<CR>
+nmap <silent> <c-h> :wincmd h<CR>
+nmap <silent> <c-l> :wincmd l<CR>
+
+cnoreabbrev bq Bdelete
+cnoreabbrev bqo BufOnly
+
+nnoremap <leader>q :bdelete<cr>  
+nnoremap <C-P> :bprev<CR>
+nnoremap <C-N> :bnext<CR>
+nmap <leader>1 <Plug>BufTabLine.Go(1)
+nmap <leader>2 <Plug>BufTabLine.Go(2)
+nmap <leader>3 <Plug>BufTabLine.Go(3)
+nmap <leader>4 <Plug>BufTabLine.Go(4)
+nmap <leader>5 <Plug>BufTabLine.Go(5)
+nmap <leader>6 <Plug>BufTabLine.Go(6)
+nmap <leader>7 <Plug>BufTabLine.Go(7)
+nmap <leader>8 <Plug>BufTabLine.Go(8)
+nmap <leader>9 <Plug>BufTabLine.Go(9)
+nmap <leader>0 <Plug>BufTabLine.Go(-1)
+nnoremap <silent> <leader><Tab>    :bnext<CR> 
+nnoremap <silent> <leader><S-Tab>  :bprevious<CR>
 
 
 " colors
@@ -161,6 +293,7 @@ set whichwrap+=<,>,h,l
 set completeopt=longest,menuone,preview
 set splitright
 set splitbelow
+set signcolumn=yes
 
 set modeline
 set modelines=5
@@ -168,8 +301,12 @@ set modelines=5
 set undofile
 set autoread
 set autowriteall
+set nobackup
+set nowritebackup
 
 set nospell
+
+set updatetime=300
 
 " " encoding
 set encoding=utf-8
