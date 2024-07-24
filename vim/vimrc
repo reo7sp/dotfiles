@@ -120,8 +120,8 @@ endif
 
 " " maxbrunsfeld/vim-yankstack
 let g:yankstack_map_keys = 0
-nmap <leader>p <Plug>yankstack_substitute_older_paste
-nmap <leader>P <Plug>yankstack_substitute_newer_paste
+nnoremap <leader>o <Plug>yankstack_substitute_older_paste
+nnoremap <leader>O <Plug>yankstack_substitute_newer_paste
 
 " " nvim-telescope/telescope
 nnoremap <leader>ff <cmd>Telescope find_files<cr>
@@ -203,6 +203,11 @@ nmap <silent> <c-l> :wincmd l<CR>
 
 cnoreabbrev bq Bdelete
 cnoreabbrev bqo BufOnly
+
+noremap <leader>y "+y
+noremap <leader>Y "+Y
+noremap <leader>p "+p
+noremap <leader>P "+P
 
 nnoremap <leader>q :bdelete<cr>  
 nnoremap <C-P> :bprev<CR>
