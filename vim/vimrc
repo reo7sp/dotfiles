@@ -12,7 +12,11 @@ Plug 'tpope/vim-sensible'
 Plug 'tpope/vim-repeat'
 
 " " editing
-Plug 'neoclide/coc.nvim', {'branch': 'release'}
+if has('nvim') || has('patch-9.0.0438')
+  Plug 'neoclide/coc.nvim', {'branch': 'release'}
+else
+  Plug 'vim-scripts/AutoComplPop'
+endif
 Plug 'Raimondi/delimitMate'
 Plug 'junegunn/vim-slash'
 Plug 'terryma/vim-multiple-cursors'
@@ -31,9 +35,11 @@ Plug 'vim-scripts/BufOnly.vim'
 Plug 'justinmk/vim-sneak'
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-telescope/telescope.nvim', {'tag': '0.1.8'}
-Plug 'lambdalisue/vim-fern'
-Plug 'lambdalisue/vim-fern-hijack'
-Plug 'lambdalisue/vim-fern-git-status'
+if has('nvim') || has('patch-8.1.0994')
+  Plug 'lambdalisue/vim-fern'
+  Plug 'lambdalisue/vim-fern-hijack'
+  Plug 'lambdalisue/vim-fern-git-status'
+endif
 
 " " appearance
 Plug 'morhetz/gruvbox'
@@ -57,58 +63,60 @@ autocmd VimEnter * noremap s <Plug>Sneak_s
 let g:sneak#use_ic_scs = 1
 
 " " neoclide/coc.vim
-inoremap <silent><expr> <TAB>
-      \ coc#pum#visible() ? coc#pum#next(1) :
-      \ CheckBackspace() ? "\<Tab>" :
-      \ coc#refresh()
-inoremap <expr><S-TAB> coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"
+if has('nvim') || has('patch-9.0.0438')
+  inoremap <silent><expr> <TAB>
+        \ coc#pum#visible() ? coc#pum#next(1) :
+        \ CheckBackspace() ? "\<Tab>" :
+        \ coc#refresh()
+  inoremap <expr><S-TAB> coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"
 
-inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm()
-                              \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+  inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm()
+                                \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
 
-function! CheckBackspace() abort
-  let col = col('.') - 1
-  return !col || getline('.')[col - 1]  =~# '\s'
-endfunction
+  function! CheckBackspace() abort
+    let col = col('.') - 1
+    return !col || getline('.')[col - 1]  =~# '\s'
+  endfunction
 
-if has('nvim')
-  inoremap <silent><expr> <c-space> coc#refresh()
-else
-  inoremap <silent><expr> <c-@> coc#refresh()
-endif
-
-nmap <silent> gd <Plug>(coc-definition)
-nmap <silent> gy <Plug>(coc-type-definition)
-nmap <silent> gi <Plug>(coc-implementation)
-nmap <silent> gr <Plug>(coc-references)
-nmap <silent> [g <Plug>(coc-diagnostic-prev)
-nmap <silent> ]g <Plug>(coc-diagnostic-next)
-nnoremap <silent> K :call ShowDocumentation()<CR>
-
-function! ShowDocumentation()
-  if CocAction('hasProvider', 'hover')
-    call CocActionAsync('doHover')
+  if has('nvim')
+    inoremap <silent><expr> <c-space> coc#refresh()
   else
-    call feedkeys('K', 'in')
+    inoremap <silent><expr> <c-@> coc#refresh()
   endif
-endfunction
 
-autocmd CursorHold * silent call CocActionAsync('highlight')
+  nmap <silent> gd <Plug>(coc-definition)
+  nmap <silent> gy <Plug>(coc-type-definition)
+  nmap <silent> gi <Plug>(coc-implementation)
+  nmap <silent> gr <Plug>(coc-references)
+  nmap <silent> [g <Plug>(coc-diagnostic-prev)
+  nmap <silent> ]g <Plug>(coc-diagnostic-next)
+  nnoremap <silent> K :call ShowDocumentation()<CR>
 
-xmap if <Plug>(coc-funcobj-i)
-omap if <Plug>(coc-funcobj-i)
-xmap af <Plug>(coc-funcobj-a)
-omap af <Plug>(coc-funcobj-a)
-xmap ic <Plug>(coc-classobj-i)
-omap ic <Plug>(coc-classobj-i)
-xmap ac <Plug>(coc-classobj-a)
-omap ac <Plug>(coc-classobj-a)
+  function! ShowDocumentation()
+    if CocAction('hasProvider', 'hover')
+      call CocActionAsync('doHover')
+    else
+      call feedkeys('K', 'in')
+    endif
+  endfunction
 
-command! -nargs=0 Format :call CocActionAsync('format')
-command! -nargs=0 OR   :call     CocActionAsync('runCommand', 'editor.action.organizeImport')
-command! -nargs=? Fold :call     CocAction('fold', <f-args>)
+  autocmd CursorHold * silent call CocActionAsync('highlight')
 
-set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
+  xmap if <Plug>(coc-funcobj-i)
+  omap if <Plug>(coc-funcobj-i)
+  xmap af <Plug>(coc-funcobj-a)
+  omap af <Plug>(coc-funcobj-a)
+  xmap ic <Plug>(coc-classobj-i)
+  omap ic <Plug>(coc-classobj-i)
+  xmap ac <Plug>(coc-classobj-a)
+  omap ac <Plug>(coc-classobj-a)
+
+  command! -nargs=0 Format :call CocActionAsync('format')
+  command! -nargs=0 OR   :call     CocActionAsync('runCommand', 'editor.action.organizeImport')
+  command! -nargs=? Fold :call     CocAction('fold', <f-args>)
+
+  set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
+endif
 
 " " maxbrunsfeld/vim-yankstack
 let g:yankstack_map_keys = 0
@@ -293,7 +301,9 @@ set whichwrap+=<,>,h,l
 set completeopt=longest,menuone,preview
 set splitright
 set splitbelow
-set signcolumn=yes
+if exists('+signcolumn')
+  set signcolumn=yes
+endif
 
 set modeline
 set modelines=5
