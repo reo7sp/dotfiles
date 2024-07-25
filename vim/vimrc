@@ -52,9 +52,6 @@ call plug#end()
 
 
 " plugin settings
-" " ap/vim-buftabline
-let g:buftabline_numbers = 2
-
 " " junegunn/vim-slash
 noremap <plug>(slash-after) zz
 
