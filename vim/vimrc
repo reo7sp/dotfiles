@@ -118,6 +118,8 @@ if has('nvim') || has('patch-9.0.0438')
   command! -nargs=? Fold :call     CocAction('fold', <f-args>)
 
   set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
+
+  let g:coc_global_extensions = ['coc-json', 'coc-yaml', 'coc-sh', '@yaegassy/coc-pylsp', 'coc-go', 'coc-lua', 'coc-docker']
 endif
 
 " " maxbrunsfeld/vim-yankstack
@@ -185,7 +187,6 @@ let g:multi_cursor_quit_key='<Esc>'
 
 
 " vim mappings
-map 0 ^
 nnoremap j gj
 nnoremap k gk
 noremap <F1> <ESC>
