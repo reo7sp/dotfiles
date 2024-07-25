@@ -64,6 +64,8 @@ let g:sneak#use_ic_scs = 1
 
 " " neoclide/coc.vim
 if has('nvim') || has('patch-9.0.0438')
+  call coc#config('suggest.noselect', 'true')
+
   inoremap <silent><expr> <TAB>
         \ coc#pum#visible() ? coc#pum#next(1) :
         \ CheckBackspace() ? "\<Tab>" :
