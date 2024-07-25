@@ -1,0 +1,6 @@
+let mapleader=","
+
+set ignorecase
+set smartcase
+
+nnoremap <leader>t :Neovintageous action=toggle_side_bar<CR>
