@@ -161,10 +161,10 @@ function! s:init_fern() abort
 
   nmap <buffer><nowait> <CR> <Plug>(fern-my-expand-or-collapse)
 
-  nmap <buffer> <silent> <c-k> :wincmd k<CR>
-  nmap <buffer> <silent> <c-j> :wincmd j<CR>
-  nmap <buffer> <silent> <c-h> :wincmd h<CR>
-  nmap <buffer> <silent> <c-l> :wincmd l<CR>
+  nnoremap <buffer> <C-J> <C-W><C-J>
+  nnoremap <buffer> <C-K> <C-W><C-K>
+  nnoremap <buffer> <C-L> <C-W><C-L>
+  nnoremap <buffer> <C-H> <C-W><C-H>
 endfunction
 
 augroup fern-custom
