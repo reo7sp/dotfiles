@@ -242,15 +242,6 @@ t() {
   fi
 }
 
-tt() {
-  lcd
-  if [[ -z $1 ]]; then
-    subl --add .
-  else
-    subl --add "$@"
-  fi
-}
-
 ## sublime merge
 m() {
   lcd
@@ -258,15 +249,6 @@ m() {
     smerge -n .
   else
     smerge -n "$@"
-  fi
-}
-
-mm() {
-  lcd
-  if [[ -z $1 ]]; then
-    smerge .
-  else
-    smerge "$@"
   fi
 }
 
