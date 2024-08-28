@@ -209,9 +209,11 @@ noremap <leader>Y "+Y
 noremap <leader>p "+p
 noremap <leader>P "+P
 
-nnoremap <leader>q :bdelete<cr>  
 nnoremap <C-P> :bprev<CR>
 nnoremap <C-N> :bnext<CR>
+nnoremap <silent> <leader><Tab>    :bnext<CR> 
+nnoremap <silent> <leader><S-Tab>  :bprevious<CR>
+nnoremap <leader>q :bdelete<cr>  
 nmap <leader>1 <Plug>BufTabLine.Go(1)
 nmap <leader>2 <Plug>BufTabLine.Go(2)
 nmap <leader>3 <Plug>BufTabLine.Go(3)
@@ -222,8 +224,6 @@ nmap <leader>7 <Plug>BufTabLine.Go(7)
 nmap <leader>8 <Plug>BufTabLine.Go(8)
 nmap <leader>9 <Plug>BufTabLine.Go(9)
 nmap <leader>0 <Plug>BufTabLine.Go(-1)
-nnoremap <silent> <leader><Tab>    :bnext<CR> 
-nnoremap <silent> <leader><S-Tab>  :bprevious<CR>
 
 
 " colors
