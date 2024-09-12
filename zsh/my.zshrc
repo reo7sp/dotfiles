@@ -270,6 +270,9 @@ alias pp3="python3 -m ptpython"
 alias jn="jupyter notebook"
 alias jl="jupyter lab"
 
+# k8s
+alias k="kubectl"
+
 ## network
 if [[ $IS_MACOS -eq 1 ]]; then
   alias show-ports="lsof -iTCP -sTCP:LISTEN -n -P"
