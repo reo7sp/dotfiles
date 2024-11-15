@@ -265,12 +265,9 @@ tmcl() {
 ## python
 alias p="python3"
 alias p2="python2"
-alias p3="python3"
-alias pp="ptpython"
-alias pp2="python2 -m ptpython"
-alias pp3="python3 -m ptpython"
+alias pp="python3 -m ptpython || ptpython"
+alias ppinstall="pip3 install ptpython"
 alias jn="jupyter notebook"
-alias jl="jupyter lab"
 
 # k8s
 alias k="kubectl"
