@@ -19,28 +19,30 @@ else
   Plug 'vim-scripts/AutoComplPop'
 endif
 Plug 'Raimondi/delimitMate'
+Plug 'tpope/vim-sleuth'
+Plug 'ntpeters/vim-better-whitespace'
 Plug 'junegunn/vim-slash'
+Plug 'ConradIrwin/vim-bracketed-paste'
 Plug 'terryma/vim-multiple-cursors'
 Plug 'maxbrunsfeld/vim-yankstack'
 Plug 'mbbill/undotree'
 Plug 'scrooloose/nerdcommenter'
-Plug 'tpope/vim-sleuth'
-Plug 'editorconfig/editorconfig-vim'
-Plug 'ConradIrwin/vim-bracketed-paste'
 Plug 'pbrisbin/vim-mkdir'
-Plug 'danro/rename.vim'
-Plug 'ntpeters/vim-better-whitespace'
 
 " " navigation
 Plug 'justinmk/vim-sneak'
+Plug 'vim-airline/vim-airline'
 Plug 'ap/vim-buftabline'
+Plug 'nathanaelkane/vim-indent-guides'
 Plug 'moll/vim-bbye'
 Plug 'vim-scripts/BufOnly.vim'
-Plug 'vim-airline/vim-airline'
-Plug 'nathanaelkane/vim-indent-guides'
 Plug 'airblade/vim-gitgutter'
 Plug 'nvim-lua/plenary.nvim'
-Plug 'nvim-telescope/telescope.nvim', {'tag': '0.1.8'}
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plug 'junegunn/fzf.vim'
+Plug 'kien/ctrlp.vim'
+Plug 'tacahiroy/ctrlp-funky'
+Plug 'sgur/ctrlp-extensions.vim'
 if has('nvim') || has('patch-8.1.0994')
   Plug 'lambdalisue/vim-fern'
   Plug 'lambdalisue/vim-fern-hijack'
@@ -49,7 +51,6 @@ endif
 
 " " appearance
 Plug 'morhetz/gruvbox'
-Plug 'mhinz/vim-signify'
 Plug 'ekalinin/Dockerfile.vim'
 Plug 'vim-scripts/nginx.vim'
 
@@ -125,19 +126,30 @@ if has('nvim') || has('patch-9.0.0438')
   let g:coc_global_extensions = ['coc-json', 'coc-yaml', 'coc-sh', '@yaegassy/coc-pylsp', 'coc-go', 'coc-lua', 'coc-docker']
 endif
 
-" " scrooloose/nerdcommenter
-nmap <C-_> <Plug>NERDCommenterToggle
-
 " " maxbrunsfeld/vim-yankstack
 let g:yankstack_map_keys = 0
 nnoremap ]y <Plug>yankstack_substitute_older_paste
 nnoremap [y <Plug>yankstack_substitute_newer_paste
 
-" " nvim-telescope/telescope
-nnoremap <leader>sf <cmd>Telescope find_files<cr>
-nnoremap <leader>sg <cmd>Telescope live_grep<cr>
-nnoremap <leader>sb <cmd>Telescope buffers<cr>
-nnoremap <leader>st <cmd>Telescope help_tags<cr>
+" " scrooloose/nerdcommenter
+nmap <C-_> <Plug>NERDCommenterToggle
+
+" " terryma/vim-multiple-cursors
+let g:multi_cursor_use_default_mapping = 0
+noremap <A-d> <nop>
+noremap <A-e> <nop>
+noremap <A-k> <nop>
+let g:multi_cursor_next_key='<A-d>'
+let g:multi_cursor_prev_key='<A-e>'
+let g:multi_cursor_skip_key='<A-k>'
+let g:multi_cursor_quit_key='<Esc>'
+
+" " vim-airline/vim-airline
+let g:airline#extensions#whitespace#enabled = 0
+
+" " kien/ctrlp.vim
+let g:ctrlp_map = '<leader>e'
+let g:ctrlp_cmd = 'CtrlP'
 
 " " lambdalisue/vim-fern
 map <leader>t :Fern . -drawer -stay -toggle -reveal=%<CR>
@@ -181,24 +193,10 @@ augroup fern-custom
   autocmd FileType fern call s:init_fern()
 augroup END
 
-" " terryma/vim-multiple-cursors
-let g:multi_cursor_use_default_mapping = 0
-noremap <A-d> <nop>
-noremap <A-e> <nop>
-noremap <A-k> <nop>
-let g:multi_cursor_next_key='<A-d>'
-let g:multi_cursor_prev_key='<A-e>'
-let g:multi_cursor_skip_key='<A-k>'
-let g:multi_cursor_quit_key='<Esc>'
-
-" " vim-airline/vim-airline
-let g:airline#extensions#whitespace#enabled = 0
-
 
 " vim mappings
 nnoremap j gj
 nnoremap k gk
-noremap <F1> <ESC>
 
 cnoreabbrev w!! w !sudo tee % >/dev/null
 cnoreabbrev Wqa wqa
