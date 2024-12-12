@@ -10,6 +10,7 @@ call plug#begin('~/.vim/bundle')
 Plug 'Shougo/vimproc.vim', {'do': 'make'}
 Plug 'tpope/vim-sensible'
 Plug 'tpope/vim-repeat'
+Plug 'tpope/vim-unimpaired'
 
 " " editing
 if has('nvim') || has('patch-9.0.0438')
@@ -124,16 +125,19 @@ if has('nvim') || has('patch-9.0.0438')
   let g:coc_global_extensions = ['coc-json', 'coc-yaml', 'coc-sh', '@yaegassy/coc-pylsp', 'coc-go', 'coc-lua', 'coc-docker']
 endif
 
+" " scrooloose/nerdcommenter
+nmap <C-_> <Plug>NERDCommenterToggle
+
 " " maxbrunsfeld/vim-yankstack
 let g:yankstack_map_keys = 0
-nnoremap <leader>o <Plug>yankstack_substitute_older_paste
-nnoremap <leader>O <Plug>yankstack_substitute_newer_paste
+nnoremap ]y <Plug>yankstack_substitute_older_paste
+nnoremap [y <Plug>yankstack_substitute_newer_paste
 
 " " nvim-telescope/telescope
-nnoremap <leader>ff <cmd>Telescope find_files<cr>
-nnoremap <leader>fg <cmd>Telescope live_grep<cr>
-nnoremap <leader>fb <cmd>Telescope buffers<cr>
-nnoremap <leader>fh <cmd>Telescope help_tags<cr>
+nnoremap <leader>sf <cmd>Telescope find_files<cr>
+nnoremap <leader>sg <cmd>Telescope live_grep<cr>
+nnoremap <leader>sb <cmd>Telescope buffers<cr>
+nnoremap <leader>st <cmd>Telescope help_tags<cr>
 
 " " lambdalisue/vim-fern
 map <leader>t :Fern . -drawer -stay -toggle -reveal=%<CR>
@@ -196,9 +200,6 @@ nnoremap j gj
 nnoremap k gk
 noremap <F1> <ESC>
 
-nnoremap <c-s> :wa<cr>
-inoremap <c-s> <c-o>:wa<cr>
-vnoremap <c-s> <esc>:wa<cr>gv
 cnoreabbrev w!! w !sudo tee % >/dev/null
 cnoreabbrev Wqa wqa
 cnoreabbrev Qa qa
@@ -217,11 +218,8 @@ noremap <leader>Y "+Y
 noremap <leader>p "+p
 noremap <leader>P "+P
 
-nnoremap <C-P> :bprev<CR>
-nnoremap <C-N> :bnext<CR>
-nnoremap <silent> <leader><Tab>    :bnext<CR>
-nnoremap <silent> <leader><S-Tab>  :bprevious<CR>
-nnoremap <leader>q :bdelete<cr>
+nnoremap <C-P> :bp<CR>
+nnoremap <C-N> :bn<CR>
 nmap <leader>1 <Plug>BufTabLine.Go(1)
 nmap <leader>2 <Plug>BufTabLine.Go(2)
 nmap <leader>3 <Plug>BufTabLine.Go(3)
