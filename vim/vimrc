@@ -66,6 +66,8 @@ autocmd VimEnter * noremap s <Plug>Sneak_s
 let g:sneak#use_ic_scs = 1
 
 " " neoclide/coc.vim
+let g:coc_disable_startup_warning = 1
+
 if has('nvim') || has('patch-9.0.0438')
   call coc#config('suggest.noselect', 'true')
 
