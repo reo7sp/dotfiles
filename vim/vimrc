@@ -52,6 +52,7 @@ endif
 Plug 'morhetz/gruvbox'
 Plug 'ekalinin/Dockerfile.vim'
 Plug 'vim-scripts/nginx.vim'
+Plug 'johejo/gomod.vim'
 
 
 call plug#end()
