@@ -49,7 +49,7 @@ if has('nvim') || has('patch-8.1.0994')
 endif
 
 " " appearance
-Plug 'morhetz/gruvbox'
+Plug 'sainnhe/sonokai'
 Plug 'ekalinin/Dockerfile.vim'
 Plug 'vim-scripts/nginx.vim'
 Plug 'johejo/gomod.vim'
@@ -233,13 +233,17 @@ nmap <leader>0 <Plug>BufTabLine.Go(-1)
 
 
 " colors
-let g:gruvbox_contrast_dark='hard'
-
 syntax enable
 set background=dark
 set t_Co=256
-colorscheme gruvbox
+if has('termguicolors')
+  set termguicolors
+endif
 
+let g:sonokai_enable_italic = 1
+
+colorscheme sonokai
+let g:airline_theme = 'sonokai'
 
 " vim settings
 " " editor appearance
