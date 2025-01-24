@@ -45,7 +45,7 @@ Plug 'airblade/vim-gitgutter'
 Plug 'moll/vim-bbye'
 Plug 'vim-scripts/BufOnly.vim'
 if has('nvim')
-  Plug 'nvim-telescope/telescope.nvim', { 'tag': '0.1.8' }
+  Plug 'nvim-telescope/telescope.nvim', {'tag': '0.1.8'}
   Plug 'smartpde/telescope-recent-files'
 endif
 if has('nvim') || has('patch-8.1.0994')
