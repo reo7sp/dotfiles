@@ -28,6 +28,9 @@ Plug 'ConradIrwin/vim-bracketed-paste'
 Plug 'nathanaelkane/vim-indent-guides'
 Plug 'ntpeters/vim-better-whitespace'
 if has('nvim')
+  Plug 'Pocco81/auto-save.nvim'
+endif
+if has('nvim')
   Plug 'gbprod/yanky.nvim'
   Plug 'debugloop/telescope-undo.nvim'
 else
@@ -130,6 +133,11 @@ if has('nvim') || has('patch-9.0.0438')
   nnoremap <leader>flc <cmd>CocList commands<cr>
 
   let g:coc_global_extensions = ['coc-json', 'coc-yaml', 'coc-sh', '@yaegassy/coc-pylsp', 'coc-go', 'coc-lua', 'coc-docker']
+endif
+
+" " Pocco81/auto-save.nvim
+if has('nvim')
+  lua require('auto-save').setup({})
 endif
 
 " " gbprod/yanky.nvim or maxbrunsfeld/vim-yankstack
