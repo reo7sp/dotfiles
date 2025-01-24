@@ -8,9 +8,12 @@ call plug#begin('~/.vim/bundle')
 
 " " generic
 Plug 'Shougo/vimproc.vim', {'do': 'make'}
+if has('nvim')
+  Plug 'nvim-lua/plenary.nvim'
+  Plug 'kkharji/sqlite.lua'
+endif
 Plug 'tpope/vim-sensible'
 Plug 'tpope/vim-repeat'
-Plug 'tpope/vim-unimpaired'
 
 " " editing
 if has('nvim') || has('patch-9.0.0438')
@@ -20,28 +23,31 @@ else
 endif
 Plug 'Raimondi/delimitMate'
 Plug 'tpope/vim-sleuth'
-Plug 'ntpeters/vim-better-whitespace'
 Plug 'junegunn/vim-slash'
 Plug 'ConradIrwin/vim-bracketed-paste'
-Plug 'terryma/vim-multiple-cursors'
-Plug 'maxbrunsfeld/vim-yankstack'
-Plug 'mbbill/undotree'
+Plug 'nathanaelkane/vim-indent-guides'
+Plug 'ntpeters/vim-better-whitespace'
+if has('nvim')
+  Plug 'gbprod/yanky.nvim'
+  Plug 'debugloop/telescope-undo.nvim'
+else
+  Plug 'maxbrunsfeld/vim-yankstack'
+endif
 Plug 'scrooloose/nerdcommenter'
 Plug 'pbrisbin/vim-mkdir'
 
 " " navigation
 Plug 'justinmk/vim-sneak'
+Plug 'tpope/vim-unimpaired'
 Plug 'vim-airline/vim-airline'
 Plug 'ap/vim-buftabline'
-Plug 'nathanaelkane/vim-indent-guides'
+Plug 'airblade/vim-gitgutter'
 Plug 'moll/vim-bbye'
 Plug 'vim-scripts/BufOnly.vim'
-Plug 'airblade/vim-gitgutter'
-Plug 'junegunn/fzf'
-Plug 'junegunn/fzf.vim'
-Plug 'kien/ctrlp.vim'
-Plug 'tacahiroy/ctrlp-funky'
-Plug 'sgur/ctrlp-extensions.vim'
+if has('nvim')
+  Plug 'nvim-telescope/telescope.nvim', { 'tag': '0.1.8' }
+  Plug 'smartpde/telescope-recent-files'
+endif
 if has('nvim') || has('patch-8.1.0994')
   Plug 'lambdalisue/vim-fern'
   Plug 'lambdalisue/vim-fern-hijack'
@@ -53,7 +59,6 @@ Plug 'sainnhe/sonokai'
 Plug 'ekalinin/Dockerfile.vim'
 Plug 'vim-scripts/nginx.vim'
 Plug 'johejo/gomod.vim'
-
 
 call plug#end()
 
@@ -77,15 +82,12 @@ if has('nvim') || has('patch-9.0.0438')
         \ CheckBackspace() ? "\<Tab>" :
         \ coc#refresh()
   inoremap <expr><S-TAB> coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"
-
   inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm()
                                 \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
-
   function! CheckBackspace() abort
     let col = col('.') - 1
     return !col || getline('.')[col - 1]  =~# '\s'
   endfunction
-
   if has('nvim')
     inoremap <silent><expr> <c-space> coc#refresh()
   else
@@ -99,7 +101,6 @@ if has('nvim') || has('patch-9.0.0438')
   nmap <silent> [g <Plug>(coc-diagnostic-prev)
   nmap <silent> ]g <Plug>(coc-diagnostic-next)
   nnoremap <silent> K :call ShowDocumentation()<CR>
-
   function! ShowDocumentation()
     if CocAction('hasProvider', 'hover')
       call CocActionAsync('doHover')
@@ -107,7 +108,6 @@ if has('nvim') || has('patch-9.0.0438')
       call feedkeys('K', 'in')
     endif
   endfunction
-
   autocmd CursorHold * silent call CocActionAsync('highlight')
 
   xmap if <Plug>(coc-funcobj-i)
@@ -119,39 +119,56 @@ if has('nvim') || has('patch-9.0.0438')
   xmap ac <Plug>(coc-classobj-a)
   omap ac <Plug>(coc-classobj-a)
 
+  command! -nargs=? Fold :call CocAction('fold', <f-args>)
   command! -nargs=0 Format :call CocActionAsync('format')
-  command! -nargs=0 OR   :call     CocActionAsync('runCommand', 'editor.action.organizeImport')
-  command! -nargs=? Fold :call     CocAction('fold', <f-args>)
+  command! -nargs=0 FormatImports :call CocActionAsync('runCommand', 'editor.action.organizeImport')
 
   set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
+
+  nnoremap <leader>fs <cmd>CocList outline<cr>
+  nnoremap <leader>fa <cmd>CocList symbols<cr>
+  nnoremap <leader>flc <cmd>CocList commands<cr>
 
   let g:coc_global_extensions = ['coc-json', 'coc-yaml', 'coc-sh', '@yaegassy/coc-pylsp', 'coc-go', 'coc-lua', 'coc-docker']
 endif
 
-" " maxbrunsfeld/vim-yankstack
-let g:yankstack_map_keys = 0
-nnoremap ]y <Plug>yankstack_substitute_older_paste
-nnoremap [y <Plug>yankstack_substitute_newer_paste
+" " gbprod/yanky.nvim or maxbrunsfeld/vim-yankstack
+if has('nvim')
+  lua require('yanky').setup({})
+  lua vim.keymap.set({"n","x"}, "p", "<Plug>(YankyPutAfter)")
+  lua vim.keymap.set({"n","x"}, "P", "<Plug>(YankyPutBefore)")
+  lua vim.keymap.set({"n","x"}, "gp", "<Plug>(YankyGPutAfter)")
+  lua vim.keymap.set({"n","x"}, "gP", "<Plug>(YankyGPutBefore)")
+  lua vim.keymap.set("n", "[y", "<Plug>(YankyPreviousEntry)")
+  lua vim.keymap.set("n", "]y", "<Plug>(YankyNextEntry)")
+else
+  let g:yankstack_map_keys = 0
+  nnoremap ]y <Plug>yankstack_substitute_older_paste
+  nnoremap [y <Plug>yankstack_substitute_newer_paste
+endif
 
 " " scrooloose/nerdcommenter
-nmap <C-_> <Plug>NERDCommenterToggle
-
-" " terryma/vim-multiple-cursors
-let g:multi_cursor_use_default_mapping = 0
-noremap <A-d> <nop>
-noremap <A-e> <nop>
-noremap <A-k> <nop>
-let g:multi_cursor_next_key='<A-d>'
-let g:multi_cursor_prev_key='<A-e>'
-let g:multi_cursor_skip_key='<A-k>'
-let g:multi_cursor_quit_key='<Esc>'
+nnoremap <C-/> <Plug>NERDCommenterToggle
+nnoremap <C-_> <Plug>NERDCommenterToggle
 
 " " vim-airline/vim-airline
 let g:airline#extensions#whitespace#enabled = 0
 
-" " kien/ctrlp.vim
-let g:ctrlp_map = '<leader>e'
-let g:ctrlp_cmd = 'CtrlP'
+" " nvim-telescope/telescope.nvim
+if has('nvim')
+  lua require('telescope').setup({ defaults = require('telescope.themes').get_ivy() })
+  lua require('telescope').load_extension('recent_files')
+  lua require('telescope').load_extension('yank_history')
+  lua require('telescope').load_extension('undo')
+  nnoremap <leader>ff <cmd>lua require('telescope.builtin').find_files()<cr>
+  nnoremap <leader>fe <cmd>lua require('telescope').extensions.recent_files.pick({only_cwd = true})<cr>
+  nnoremap <leader>fg <cmd>lua require('telescope.builtin').live_grep()<cr>
+  nnoremap <leader>fb <cmd>lua require('telescope.builtin').buffers()<cr>
+  nnoremap <leader>fy <cmd>lua require('telescope').extensions.yank_history.yank_history()<cr>
+  nnoremap <leader>fu <cmd>lua require('telescope').extensions.undo.undo()<cr>
+  nnoremap <leader>fc <cmd>lua require('telescope.builtin').commands()<cr>
+  nnoremap <leader>f/ <cmd>Telescope<cr>
+endif
 
 " " lambdalisue/vim-fern
 map <leader>t :Fern . -drawer -stay -toggle -reveal=%<CR>
@@ -209,6 +226,10 @@ nnoremap <C-J> <C-W><C-J>
 nnoremap <C-K> <C-W><C-K>
 nnoremap <C-L> <C-W><C-L>
 nnoremap <C-H> <C-W><C-H>
+
+nnoremap <C-S> :w<CR>
+inoremap <C-S> <Esc>:w<CR>l
+vnoremap <C-S> <Esc>:w<CR>
 
 cnoreabbrev bq Bdelete
 cnoreabbrev bqo BufOnly
