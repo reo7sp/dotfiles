@@ -136,6 +136,7 @@ alias sudz="sudo ZDOTDIR=\$HOME PATH=\$PATH zsh"
 ## vim
 if can-exec nvim; then
   _vim() {
+    lcd
     nvim "$@"
   }
 else
@@ -143,6 +144,7 @@ else
     real_vim=$(which vim)
   fi
   _vim() {
+    lcd
     $real_vim "$@"
   }
 fi
