@@ -18,6 +18,7 @@ Plug 'tpope/vim-repeat'
 " " editing
 if has('nvim') || has('patch-9.0.0438')
   Plug 'neoclide/coc.nvim', {'branch': 'release'}
+  let g:coc_global_extensions = ['coc-json', 'coc-yaml', 'coc-sh', 'coc-pyright', 'coc-go', 'coc-lua', 'coc-html', 'coc-css', 'coc-tsserver', 'coc-docker']
 else
   Plug 'vim-scripts/AutoComplPop'
 endif
@@ -131,8 +132,6 @@ if has('nvim') || has('patch-9.0.0438')
   nnoremap <leader>fs <cmd>CocList outline<cr>
   nnoremap <leader>fa <cmd>CocList symbols<cr>
   nnoremap <leader>flc <cmd>CocList commands<cr>
-
-  let g:coc_global_extensions = ['coc-json', 'coc-yaml', 'coc-sh', '@yaegassy/coc-pylsp', 'coc-go', 'coc-lua', 'coc-docker']
 endif
 
 " " Pocco81/auto-save.nvim
