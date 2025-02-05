@@ -271,7 +271,7 @@ alias pp="python3 -m ptpython || ptpython"
 alias ppinstall="pip3 install ptpython"
 alias jn="jupyter notebook"
 
-# k8s
+## k8s
 alias k="kubectl"
 
 ## network

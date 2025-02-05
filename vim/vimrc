@@ -410,7 +410,7 @@ set ttimeoutlen=10
 
 
 " neovide
-if exists("g:neovide")
+if exists('g:neovide')
   set guifont=Jetbrains\ Mono:h14
   set linespace=1
 
@@ -429,8 +429,8 @@ if exists("g:neovide")
   lua vim.keymap.set('v', '<D-v>', '"+P')
   lua vim.keymap.set('c', '<D-v>', '<C-R>+')
   lua vim.keymap.set('i', '<D-v>', '<ESC>l"+Pli')
-  lua vim.api.nvim_set_keymap('', '<D-v>', '+p<CR>', { noremap = true, silent = true})
-  lua vim.api.nvim_set_keymap('!', '<D-v>', '<C-R>+', { noremap = true, silent = true})
-  lua vim.api.nvim_set_keymap('t', '<D-v>', '<C-R>+', { noremap = true, silent = true})
-  lua vim.api.nvim_set_keymap('v', '<D-v>', '<C-R>+', { noremap = true, silent = true})
+  lua vim.api.nvim_set_keymap('', '<D-v>', '+p<CR>', { noremap = true, silent = true })
+  lua vim.api.nvim_set_keymap('!', '<D-v>', '<C-R>+', { noremap = true, silent = true })
+  lua vim.api.nvim_set_keymap('t', '<D-v>', '<C-R>+', { noremap = true, silent = true })
+  lua vim.api.nvim_set_keymap('v', '<D-v>', '<C-R>+', { noremap = true, silent = true })
 end
