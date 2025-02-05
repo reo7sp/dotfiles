@@ -1,5 +1,12 @@
 set nocompatible
 
+language en_US
+language messages en_US
+language ctype en_US
+language time en_US
+set langmenu=en_US
+let $LANG = 'en_US'
+
 let mapleader = ","
 
 
@@ -138,6 +145,7 @@ endif
 " " gbprod/yanky.nvim or maxbrunsfeld/vim-yankstack
 if has('nvim')
   lua require('yanky').setup({})
+
   lua vim.keymap.set({"n","x"}, "p", "<Plug>(YankyPutAfter)")
   lua vim.keymap.set({"n","x"}, "P", "<Plug>(YankyPutBefore)")
   lua vim.keymap.set({"n","x"}, "gp", "<Plug>(YankyGPutAfter)")
@@ -146,6 +154,7 @@ if has('nvim')
   lua vim.keymap.set("n", "]y", "<Plug>(YankyNextEntry)")
 else
   let g:yankstack_map_keys = 0
+
   nnoremap ]y <Plug>yankstack_substitute_older_paste
   nnoremap [y <Plug>yankstack_substitute_newer_paste
 endif
@@ -156,6 +165,7 @@ nnoremap <C-_> <Plug>NERDCommenterToggle
 
 " " justinmk/vim-sneak
 autocmd VimEnter * noremap s <Plug>Sneak_s
+
 let g:sneak#use_ic_scs = 1
 
 " " vim-airline/vim-airline
@@ -167,6 +177,7 @@ if has('nvim')
   lua require('telescope').load_extension('recent_files')
   lua require('telescope').load_extension('yank_history')
   lua require('telescope').load_extension('undo')
+
   nnoremap <leader>ff <cmd>lua require('telescope.builtin').find_files()<cr>
   nnoremap <leader>fe <cmd>lua require('telescope').extensions.recent_files.pick({only_cwd = true})<cr>
   nnoremap <leader>fg <cmd>lua require('telescope.builtin').live_grep()<cr>
@@ -178,8 +189,9 @@ if has('nvim')
 endif
 
 " " lambdalisue/vim-fern
-nnoremap <leader>t :Fern . -drawer -stay -toggle -reveal=%<CR>
 let g:fern#default_hidden = 1
+
+nnoremap <leader>t :Fern . -drawer -stay -toggle -reveal=%<CR>
 
 function! s:init_fern() abort
   set nornu
@@ -395,3 +407,30 @@ set timeout
 set timeoutlen=1000
 set ttimeout
 set ttimeoutlen=10
+
+
+" neovide
+if exists("g:neovide")
+  set guifont=Jetbrains\ Mono:h14
+  set linespace=1
+
+  lua vim.g.neovide_hide_mouse_when_typing = true
+  lua vim.g.neovide_position_animation_length = 0
+  lua vim.g.neovide_cursor_animation_length = 0.00
+  lua vim.g.neovide_cursor_trail_size = 0
+  lua vim.g.neovide_cursor_animate_in_insert_mode = false
+  lua vim.g.neovide_cursor_animate_command_line = false
+  lua vim.g.neovide_scroll_animation_far_lines = 0
+  lua vim.g.neovide_scroll_animation_length = 0.00
+
+  lua vim.keymap.set('n', '<D-s>', ':w<CR>')
+  lua vim.keymap.set('v', '<D-c>', '"+y')
+  lua vim.keymap.set('n', '<D-v>', '"+P')
+  lua vim.keymap.set('v', '<D-v>', '"+P')
+  lua vim.keymap.set('c', '<D-v>', '<C-R>+')
+  lua vim.keymap.set('i', '<D-v>', '<ESC>l"+Pli')
+  lua vim.api.nvim_set_keymap('', '<D-v>', '+p<CR>', { noremap = true, silent = true})
+  lua vim.api.nvim_set_keymap('!', '<D-v>', '<C-R>+', { noremap = true, silent = true})
+  lua vim.api.nvim_set_keymap('t', '<D-v>', '<C-R>+', { noremap = true, silent = true})
+  lua vim.api.nvim_set_keymap('v', '<D-v>', '<C-R>+', { noremap = true, silent = true})
+end
