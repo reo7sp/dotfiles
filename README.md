@@ -4,11 +4,11 @@ My config files.
 
 _How zsh looks:_
 
-![zsh screenshot](https://i.imgur.com/AwJoXBy.png)
+![zsh screenshot](https://i.imgur.com/r8oyIlw.png)
 
 _How vim looks:_
 
-![vim screenshot](https://i.imgur.com/qnRuVqt.png)
+![vim screenshot](https://i.imgur.com/QfgfpMP.png)
 
 ## How to install
 
