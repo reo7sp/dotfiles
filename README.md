@@ -10,6 +10,8 @@ _How vim looks:_
 
 ![vim screenshot](https://i.imgur.com/QfgfpMP.png)
 
+For Sublime Text configs go to [sublime-dotfiles repo](https://github.com/reo7sp/sublime-dotfiles?tab=readme-ov-file#sublime-dotfiles).
+
 ## How to install
 
 ```sh
@@ -23,7 +25,7 @@ cd dotfiles
 ```sh
 git clone --depth 1 https://github.com/reo7sp/dotfiles
 cd dotfiles
-./install -q vim zsh
+./install -q zsh vim
 ```
 
 ## Help
@@ -36,3 +38,7 @@ cd dotfiles
 ```
 
 Available modules: `zsh`, `vim`, `git`.
+
+## Tips and tricks
+
+See [README_TIPS_AND_TRICKS.md](./README_TIPS_AND_TRICKS.md).
