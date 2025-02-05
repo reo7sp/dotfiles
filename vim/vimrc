@@ -25,12 +25,12 @@ endif
 Plug 'Raimondi/delimitMate'
 Plug 'tpope/vim-sleuth'
 Plug 'junegunn/vim-slash'
-Plug 'ConradIrwin/vim-bracketed-paste'
-Plug 'nathanaelkane/vim-indent-guides'
-Plug 'ntpeters/vim-better-whitespace'
 if has('nvim')
   Plug 'Pocco81/auto-save.nvim'
 endif
+Plug 'ConradIrwin/vim-bracketed-paste'
+Plug 'nathanaelkane/vim-indent-guides'
+Plug 'ntpeters/vim-better-whitespace'
 if has('nvim')
   Plug 'gbprod/yanky.nvim'
   Plug 'debugloop/telescope-undo.nvim'
@@ -68,13 +68,6 @@ call plug#end()
 
 
 " plugin settings
-" " junegunn/vim-slash
-noremap <plug>(slash-after) zz
-
-" " justinmk/vim-sneak
-autocmd VimEnter * noremap s <Plug>Sneak_s
-let g:sneak#use_ic_scs = 1
-
 " " neoclide/coc.vim
 let g:coc_disable_startup_warning = 1
 
@@ -134,6 +127,9 @@ if has('nvim') || has('patch-9.0.0438')
   nnoremap <leader>flc <cmd>CocList commands<cr>
 endif
 
+" " junegunn/vim-slash
+noremap <plug>(slash-after) zz
+
 " " Pocco81/auto-save.nvim
 if has('nvim')
   lua require('auto-save').setup({})
@@ -158,6 +154,10 @@ endif
 nnoremap <C-/> <Plug>NERDCommenterToggle
 nnoremap <C-_> <Plug>NERDCommenterToggle
 
+" " justinmk/vim-sneak
+autocmd VimEnter * noremap s <Plug>Sneak_s
+let g:sneak#use_ic_scs = 1
+
 " " vim-airline/vim-airline
 let g:airline#extensions#whitespace#enabled = 0
 
@@ -178,7 +178,7 @@ if has('nvim')
 endif
 
 " " lambdalisue/vim-fern
-map <leader>t :Fern . -drawer -stay -toggle -reveal=%<CR>
+nnoremap <leader>t :Fern . -drawer -stay -toggle -reveal=%<CR>
 let g:fern#default_hidden = 1
 
 function! s:init_fern() abort
@@ -248,16 +248,16 @@ noremap <leader>P "+P
 
 nnoremap <C-P> :bp<CR>
 nnoremap <C-N> :bn<CR>
-nmap <leader>1 <Plug>BufTabLine.Go(1)
-nmap <leader>2 <Plug>BufTabLine.Go(2)
-nmap <leader>3 <Plug>BufTabLine.Go(3)
-nmap <leader>4 <Plug>BufTabLine.Go(4)
-nmap <leader>5 <Plug>BufTabLine.Go(5)
-nmap <leader>6 <Plug>BufTabLine.Go(6)
-nmap <leader>7 <Plug>BufTabLine.Go(7)
-nmap <leader>8 <Plug>BufTabLine.Go(8)
-nmap <leader>9 <Plug>BufTabLine.Go(9)
-nmap <leader>0 <Plug>BufTabLine.Go(-1)
+nnoremap <leader>1 <Plug>BufTabLine.Go(1)
+nnoremap <leader>2 <Plug>BufTabLine.Go(2)
+nnoremap <leader>3 <Plug>BufTabLine.Go(3)
+nnoremap <leader>4 <Plug>BufTabLine.Go(4)
+nnoremap <leader>5 <Plug>BufTabLine.Go(5)
+nnoremap <leader>6 <Plug>BufTabLine.Go(6)
+nnoremap <leader>7 <Plug>BufTabLine.Go(7)
+nnoremap <leader>8 <Plug>BufTabLine.Go(8)
+nnoremap <leader>9 <Plug>BufTabLine.Go(9)
+nnoremap <leader>0 <Plug>BufTabLine.Go(-1)
 
 
 " colors
