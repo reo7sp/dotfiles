@@ -36,7 +36,6 @@ if has('nvim')
   Plug 'Pocco81/auto-save.nvim'
 endif
 Plug 'ConradIrwin/vim-bracketed-paste'
-Plug 'nathanaelkane/vim-indent-guides'
 Plug 'ntpeters/vim-better-whitespace'
 if has('nvim')
   Plug 'gbprod/yanky.nvim'
@@ -285,6 +284,8 @@ let g:sonokai_enable_italic = 1
 
 colorscheme sonokai
 let g:airline_theme = 'sonokai'
+
+set colorcolumn=80,120
 
 " vim settings
 " " editor appearance
