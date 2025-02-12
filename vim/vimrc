@@ -182,6 +182,7 @@ if has('nvim')
   nnoremap <leader>fe <cmd>lua require('telescope').extensions.recent_files.pick({only_cwd = true})<cr>
   nnoremap <leader>fg <cmd>lua require('telescope.builtin').live_grep()<cr>
   nnoremap <leader>fb <cmd>lua require('telescope.builtin').buffers()<cr>
+  nnoremap <leader>fj <cmd>lua require('telescope.builtin').jumplist()<cr>
   nnoremap <leader>fy <cmd>lua require('telescope').extensions.yank_history.yank_history()<cr>
   nnoremap <leader>fu <cmd>lua require('telescope').extensions.undo.undo()<cr>
   nnoremap <leader>fc <cmd>lua require('telescope.builtin').commands()<cr>
