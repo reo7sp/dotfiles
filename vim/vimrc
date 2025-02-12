@@ -57,6 +57,8 @@ Plug 'vim-scripts/BufOnly.vim'
 if has('nvim')
   Plug 'nvim-telescope/telescope.nvim', {'tag': '0.1.8'}
   Plug 'smartpde/telescope-recent-files'
+  Plug 'nvim-telescope/telescope-live-grep-args.nvim'
+  Plug 'princejoogie/dir-telescope.nvim'
 endif
 if has('nvim') || has('patch-8.1.0994')
   Plug 'lambdalisue/vim-fern'
@@ -175,12 +177,16 @@ let g:airline#extensions#whitespace#enabled = 0
 if has('nvim')
   lua require('telescope').setup({ defaults = require('telescope.themes').get_ivy() })
   lua require('telescope').load_extension('recent_files')
+  lua require('telescope').load_extension('dir')
+  lua require('telescope').load_extension('live_grep_args')
   lua require('telescope').load_extension('yank_history')
   lua require('telescope').load_extension('undo')
 
   nnoremap <leader>ff <cmd>lua require('telescope.builtin').find_files()<cr>
+  nnoremap <leader>fdf <cmd>lua require('telescope').extensions.dir.find_files()<cr>
   nnoremap <leader>fe <cmd>lua require('telescope').extensions.recent_files.pick({only_cwd = true})<cr>
-  nnoremap <leader>fg <cmd>lua require('telescope.builtin').live_grep()<cr>
+  nnoremap <leader>fg <cmd>lua require('telescope').extensions.live_grep_args.live_grep_args()<cr>
+  nnoremap <leader>fdg <cmd>lua require('telescope').extensions.dir.live_grep()<cr>
   nnoremap <leader>fb <cmd>lua require('telescope.builtin').buffers()<cr>
   nnoremap <leader>fj <cmd>lua require('telescope.builtin').jumplist()<cr>
   nnoremap <leader>fy <cmd>lua require('telescope').extensions.yank_history.yank_history()<cr>
