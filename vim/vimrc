@@ -64,6 +64,7 @@ if has('nvim') || has('patch-8.1.0994')
   Plug 'lambdalisue/vim-fern-hijack'
   Plug 'lambdalisue/vim-fern-git-status'
 endif
+Plug 'tpope/vim-fugitive'
 
 " " appearance
 Plug 'sainnhe/sonokai'
