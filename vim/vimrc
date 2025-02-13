@@ -259,6 +259,7 @@ vnoremap <C-S> <Esc>:w<CR>
 
 cnoreabbrev bq Bdelete
 cnoreabbrev bqo BufOnly
+cnoreabbrev bo BufOnly
 
 noremap <leader>y "+y
 noremap <leader>Y "+Y
