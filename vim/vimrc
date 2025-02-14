@@ -1,4 +1,6 @@
 set nocompatible
+let g:loaded_netrwPlugin = 1
+let g:loaded_netrw = 1
 
 language en_US
 language messages en_US
@@ -68,10 +70,8 @@ if has('nvim')
   Plug 'nvim-telescope/telescope-live-grep-args.nvim'
   Plug 'princejoogie/dir-telescope.nvim'
 endif
-if has('nvim') || has('patch-8.1.0994')
-  Plug 'lambdalisue/vim-fern'
-  Plug 'lambdalisue/vim-fern-hijack'
-  Plug 'lambdalisue/vim-fern-git-status'
+if has('nvim')
+  Plug 'nvim-tree/nvim-tree.lua'
 endif
 
 " " commands
@@ -271,51 +271,38 @@ if has('nvim')
   nnoremap <leader>fu <cmd>lua require('telescope').extensions.undo.undo()<cr>
   nnoremap <leader>fc <cmd>lua require('telescope.builtin').commands()<cr>
   nnoremap <leader>fs <cmd>lua require('telescope.builtin').lsp_document_symbols()<cr>
-  nnoremap <leader>fa <cmd>lua require('telescope.builtin').lsp_workspace_symbols()<cr>
+  nnoremap <leader>fa <cmd>lua require('telescope.builtin').lsp_dynamic_workspace_symbols()<cr>
 endif
 
-" " lambdalisue/vim-fern
-let g:fern#default_hidden = 1
+" " nvim-tree/nvim-tree.lua
+if has('nvim')
+  nnoremap <leader>t :NvimTreeToggle<CR><C-W><C-W>
 
-nnoremap <leader>t :Fern . -drawer -stay -toggle -reveal=%<CR>
-
-function! s:init_fern() abort
-  set nornu
-  set nonu
-
-  nmap <buffer> e <Plug>(fern-action-open:edit)
-  nmap <buffer> ge <Plug>(fern-action-open:edit)<C-w>p
-  nmap <buffer> o <Plug>(fern-action-open:edit)
-  nmap <buffer> go <Plug>(fern-action-open:edit)<C-w>p
-  nmap <buffer> i <Plug>(fern-action-open:split)
-  nmap <buffer> gi <Plug>(fern-action-open:split)<C-w>p
-  nmap <buffer> s <Plug>(fern-action-open:vsplit)
-  nmap <buffer> gs <Plug>(fern-action-open:vsplit)<C-w>p
-  nmap <buffer> c <Plug>(fern-action-enter)
-  nmap <buffer> u <Plug>(fern-action-leave)
-  nmap <buffer> I <Plug>(fern-action-hidden-toggle)
-  nmap <buffer> q :<C-u>quit<CR>
-
-  nmap <buffer><expr>
-      \ <Plug>(fern-my-expand-or-collapse)
-      \ fern#smart#leaf(
-      \   "\<Plug>(fern-action-collapse)",
-      \   "\<Plug>(fern-action-expand)",
-      \   "\<Plug>(fern-action-collapse)",
-      \ )
-
-  nmap <buffer><nowait> <CR> <Plug>(fern-my-expand-or-collapse)
-
-  nnoremap <buffer> <C-J> <C-W><C-J>
-  nnoremap <buffer> <C-K> <C-W><C-K>
-  nnoremap <buffer> <C-L> <C-W><C-L>
-  nnoremap <buffer> <C-H> <C-W><C-H>
-endfunction
-
-augroup fern-custom
-  autocmd! *
-  autocmd FileType fern call s:init_fern()
-augroup END
+  lua << EOF
+    require("nvim-tree").setup({
+      renderer = {
+        icons = {
+          show = {
+            file = false,
+            folder = false,
+            folder_arrow = false,
+            git = false,
+            modified = false,
+            hidden = false,
+            diagnostics = false,
+            bookmarks = false,
+          }
+        }
+      },
+      update_focused_file = {
+        enable = true,
+      },
+      filters = {
+        custom = { "^.git$" },
+      }
+    })
+EOF
+endif
 
 " " nvim-treesitter/nvim-treesitter
 if has('nvim')
