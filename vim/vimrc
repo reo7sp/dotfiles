@@ -123,7 +123,7 @@ EOF
 EOF
   lua << EOF
   require('mason-lspconfig').setup({
-    ensure_installed = { 'clangd', 'cmake', 'bashls', 'cssls', 'dockerls', 'gopls', 'html', 'ts_ls', 'jsonls', 'lua_ls', 'nginx_language_server', 'vacuum', 'perlnavigator', 'puppet', 'pyright', 'yamlls' },
+    ensure_installed = { 'cmake', 'bashls', 'cssls', 'dockerls', 'gopls', 'html', 'ts_ls', 'jsonls', 'lua_ls', 'nginx_language_server', 'vacuum', 'perlnavigator', 'puppet', 'pyright', 'yamlls' },
     handlers = {
       function(server_name)
         require('lspconfig')[server_name].setup({})
