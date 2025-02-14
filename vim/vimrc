@@ -42,7 +42,7 @@ Plug 'Raimondi/delimitMate'
 Plug 'tpope/vim-sleuth'
 Plug 'junegunn/vim-slash'
 if has('nvim')
-  Plug 'Pocco81/auto-save.nvim'
+  Plug 'okuuva/auto-save.nvim'
 endif
 Plug 'ConradIrwin/vim-bracketed-paste'
 Plug 'ntpeters/vim-better-whitespace'
