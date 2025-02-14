@@ -23,9 +23,18 @@ Plug 'tpope/vim-sensible'
 Plug 'tpope/vim-repeat'
 
 " " editing
-if has('nvim') || has('patch-9.0.0438')
-  Plug 'neoclide/coc.nvim', {'branch': 'release'}
-  let g:coc_global_extensions = ['coc-json', 'coc-yaml', 'coc-sh', 'coc-pyright', 'coc-go', 'coc-lua', 'coc-html', 'coc-css', 'coc-tsserver', 'coc-docker']
+if has('nvim')
+  Plug 'neovim/nvim-lspconfig'
+  Plug 'williamboman/mason.nvim'
+  Plug 'williamboman/mason-lspconfig.nvim'
+  Plug 'hrsh7th/nvim-cmp'
+  Plug 'hrsh7th/cmp-nvim-lsp'
+  Plug 'hrsh7th/cmp-buffer'
+  Plug 'hrsh7th/cmp-path'
+  Plug 'L3MON4D3/LuaSnip'
+  Plug 'saadparwaiz1/cmp_luasnip'
+  Plug 'rafamadriz/friendly-snippets'
+  Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 else
   Plug 'vim-scripts/AutoComplPop'
 endif
@@ -77,63 +86,124 @@ call plug#end()
 
 
 " plugin settings
-" " neoclide/coc.vim
-let g:coc_disable_startup_warning = 1
+" " hrsh7th/nvim-cmp
+function! LspAttached() abort
+  nnoremap <buffer> K <cmd>lua vim.lsp.buf.hover()<cr>
+  nnoremap <buffer> gd <cmd>lua require('telescope.builtin').lsp_definitions()<cr>
+  nnoremap <buffer> gD <cmd>lua require('telescope.builtin').lsp_implementations()<cr>
+  nnoremap <buffer> gi <cmd>lua require('telescope.builtin').lsp_implementations()<cr>
+  nnoremap <buffer> gt <cmd>lua require('telescope.builtin').lsp_type_definitions()<cr>
+  nnoremap <buffer> gr <cmd>lua require('telescope.builtin').lsp_references()<cr>
+  nnoremap <buffer> gs <cmd>lua vim.lsp.buf.signature_help()<cr>
+  nnoremap <buffer> <leader>lr <cmd>lua vim.lsp.buf.rename()<cr>
+  nnoremap <buffer> <leader>lf <cmd>lua vim.lsp.buf.format({async = true})<cr>
+  xnoremap <buffer> <leader>lf <cmd>lua vim.lsp.buf.format({async = true})<cr>
+  nnoremap <buffer> <leader>lc <cmd>lua vim.lsp.buf.code_action()<cr>
+endfunction
 
-if has('nvim') || has('patch-9.0.0438')
-  call coc#config('suggest.noselect', 'true')
+if has('nvim')
+  autocmd LspAttach * call LspAttached()
 
-  inoremap <silent><expr> <TAB>
-        \ coc#pum#visible() ? coc#pum#next(1) :
-        \ CheckBackspace() ? "\<Tab>" :
-        \ coc#refresh()
-  inoremap <expr><S-TAB> coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"
-  inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm()
-                                \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
-  function! CheckBackspace() abort
-    let col = col('.') - 1
-    return !col || getline('.')[col - 1]  =~# '\s'
-  endfunction
-  if has('nvim')
-    inoremap <silent><expr> <c-space> coc#refresh()
-  else
-    inoremap <silent><expr> <c-@> coc#refresh()
-  endif
+  lua << EOF
+  local lspconfig_defaults = require('lspconfig').util.default_config
+  lspconfig_defaults.capabilities = vim.tbl_deep_extend(
+    'force',
+    lspconfig_defaults.capabilities,
+    require('cmp_nvim_lsp').default_capabilities()
+  )
+EOF
+  lua << EOF
+  require('mason').setup({})
+EOF
+  lua << EOF
+  require('mason-lspconfig').setup({
+    ensure_installed = { 'clangd', 'cmake', 'bashls', 'cssls', 'dockerls', 'gopls', 'html', 'ts_ls', 'jsonls', 'lua_ls', 'nginx_language_server', 'vacuum', 'perlnavigator', 'puppet', 'pyright', 'yamlls' },
+    handlers = {
+      function(server_name)
+        require('lspconfig')[server_name].setup({})
+      end,
+    }
+  })
+EOF
+  lua << EOF
+  require('luasnip.loaders.from_vscode').lazy_load()
+EOF
+  lua << EOF
+  local cmp = require('cmp')
+  cmp.setup({
+    sources = {
+      {name = 'path'},
+      {name = 'nvim_lsp'},
+      {name = 'luasnip', keyword_length = 2},
+      {name = 'buffer', keyword_length = 3},
+    },
+    preselect = 'none',
+    completion = {
+        completeopt = 'menu,menuone,noinsert,noselect'
+    },
+    snippet = {
+      expand = function(args)
+        require('luasnip').lsp_expand(args.body)
+      end,
+    },
+    mapping = cmp.mapping.preset.insert({
+      ['<C-b>'] = cmp.mapping.scroll_docs(-4),
+      ['<C-f>'] = cmp.mapping.scroll_docs(4),
+      ['<C-Space>'] = cmp.mapping.complete(),
+      ["<C-e>"] = cmp.mapping.close(),
+      ["<CR>"] = cmp.mapping(function(fallback)
+        if cmp.visible() then
+          if luasnip.expandable() then
+            luasnip.expand()
+          else
+            cmp.confirm({ select = true })
+          end
+        else
+          fallback()
+        end
+      end),
+      ['<Tab>'] = cmp.mapping(function(fallback)
+        if cmp.visible() then
+          local entry = cmp.get_selected_entry()
+          if not entry then
+            cmp.select_next_item({ behavior = cmp.SelectBehavior.Select })
+          end
+          cmp.confirm()
+        elseif require('luasnip').expand_or_jumpable() then
+          require('luasnip').expand_or_jump()
+        else
+          fallback()
+        end
+      end, { "i", "s" }),
+      ['<S-Tab>'] = cmp.mapping(function(fallback)
+        if cmp.visible() then
+          cmp.select_prev_item()
+        elseif require('luasnip').jumpable(-1) then
+          require('luasnip').jump(-1)
+        else
+          fallback()
+        end
+      end, { 'i', 's' }),
+    }),
+  })
+EOF
 
-  nmap <silent> gd <Plug>(coc-definition)
-  nmap <silent> gy <Plug>(coc-type-definition)
-  nmap <silent> gi <Plug>(coc-implementation)
-  nmap <silent> gr <Plug>(coc-references)
-  nmap <silent> [g <Plug>(coc-diagnostic-prev)
-  nmap <silent> ]g <Plug>(coc-diagnostic-next)
-  nnoremap <silent> K :call ShowDocumentation()<CR>
-  function! ShowDocumentation()
-    if CocAction('hasProvider', 'hover')
-      call CocActionAsync('doHover')
-    else
-      call feedkeys('K', 'in')
-    endif
-  endfunction
-  autocmd CursorHold * silent call CocActionAsync('highlight')
+  augroup NvimCmp
+  au!
+  au FileType TelescopePrompt lua require('cmp').setup.buffer { enabled = false }
+  augroup END
+endif
 
-  xmap if <Plug>(coc-funcobj-i)
-  omap if <Plug>(coc-funcobj-i)
-  xmap af <Plug>(coc-funcobj-a)
-  omap af <Plug>(coc-funcobj-a)
-  xmap ic <Plug>(coc-classobj-i)
-  omap ic <Plug>(coc-classobj-i)
-  xmap ac <Plug>(coc-classobj-a)
-  omap ac <Plug>(coc-classobj-a)
-
-  command! -nargs=? Fold :call CocAction('fold', <f-args>)
-  command! -nargs=0 Format :call CocActionAsync('format')
-  command! -nargs=0 FormatImports :call CocActionAsync('runCommand', 'editor.action.organizeImport')
-
-  set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
-
-  nnoremap <leader>fs <cmd>CocList outline<cr>
-  nnoremap <leader>fa <cmd>CocList symbols<cr>
-  nnoremap <leader>flc <cmd>CocList commands<cr>
+" " nvim-treesitter/nvim-treesitter
+if has('nvim')
+  lua << EOF
+    require("nvim-treesitter.configs").setup({
+      ensure_installed = { "c", "go", "python", "lua", "javascript", "typescript", "tsx", "html", "vim", "json", "yaml" },
+      sync_install = false,
+      auto_install = true,
+      highlight = { enable = true },
+  })
+EOF
 endif
 
 " " junegunn/vim-slash
@@ -192,7 +262,8 @@ if has('nvim')
   nnoremap <leader>fy <cmd>lua require('telescope').extensions.yank_history.yank_history()<cr>
   nnoremap <leader>fu <cmd>lua require('telescope').extensions.undo.undo()<cr>
   nnoremap <leader>fc <cmd>lua require('telescope.builtin').commands()<cr>
-  nnoremap <leader>f/ <cmd>Telescope<cr>
+  nnoremap <leader>fs <cmd>lua require('telescope.builtin').lsp_document_symbols()<cr>
+  nnoremap <leader>fa <cmd>lua require('telescope.builtin').lsp_workspace_symbols()<cr>
 endif
 
 " " lambdalisue/vim-fern
@@ -294,6 +365,8 @@ colorscheme sonokai
 let g:airline_theme = 'sonokai'
 
 set colorcolumn=80,120
+
+let g:vimsyn_embed = 'l'
 
 " vim settings
 " " editor appearance
@@ -443,4 +516,4 @@ if exists('g:neovide')
   lua vim.api.nvim_set_keymap('!', '<D-v>', '<C-R>+', { noremap = true, silent = true })
   lua vim.api.nvim_set_keymap('t', '<D-v>', '<C-R>+', { noremap = true, silent = true })
   lua vim.api.nvim_set_keymap('v', '<D-v>', '<C-R>+', { noremap = true, silent = true })
-end
+endif
