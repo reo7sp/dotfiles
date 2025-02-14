@@ -51,3 +51,7 @@ if confirm "Use diff-so-fancy?"; then
   git config --global color.diff.new        "green bold"
   git config --global color.diff.whitespace "red reverse"
 fi
+
+if confirm "Use difftastic?"; then
+  git config --global diff.external difft
+fi

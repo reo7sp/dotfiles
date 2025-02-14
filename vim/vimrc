@@ -34,18 +34,17 @@ if has('nvim')
   Plug 'L3MON4D3/LuaSnip'
   Plug 'saadparwaiz1/cmp_luasnip'
   Plug 'rafamadriz/friendly-snippets'
-  Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 else
   Plug 'vim-scripts/AutoComplPop'
 endif
 Plug 'Raimondi/delimitMate'
-Plug 'tpope/vim-sleuth'
 Plug 'junegunn/vim-slash'
+Plug 'ConradIrwin/vim-bracketed-paste'
 if has('nvim')
   Plug 'okuuva/auto-save.nvim'
 endif
-Plug 'ConradIrwin/vim-bracketed-paste'
 Plug 'ntpeters/vim-better-whitespace'
+Plug 'tpope/vim-sleuth'
 if has('nvim')
   Plug 'gbprod/yanky.nvim'
   Plug 'debugloop/telescope-undo.nvim'
@@ -60,9 +59,9 @@ Plug 'justinmk/vim-sneak'
 Plug 'tpope/vim-unimpaired'
 Plug 'vim-airline/vim-airline'
 Plug 'ap/vim-buftabline'
-Plug 'airblade/vim-gitgutter'
 Plug 'moll/vim-bbye'
 Plug 'vim-scripts/BufOnly.vim'
+Plug 'airblade/vim-gitgutter'
 if has('nvim')
   Plug 'nvim-telescope/telescope.nvim', {'tag': '0.1.8'}
   Plug 'smartpde/telescope-recent-files'
@@ -74,10 +73,15 @@ if has('nvim') || has('patch-8.1.0994')
   Plug 'lambdalisue/vim-fern-hijack'
   Plug 'lambdalisue/vim-fern-git-status'
 endif
+
+" " commands
 Plug 'tpope/vim-fugitive'
 
 " " appearance
 Plug 'sainnhe/sonokai'
+if has('nvim')
+  Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+endif
 Plug 'ekalinin/Dockerfile.vim'
 Plug 'vim-scripts/nginx.vim'
 Plug 'johejo/gomod.vim'
@@ -194,22 +198,10 @@ EOF
   augroup END
 endif
 
-" " nvim-treesitter/nvim-treesitter
-if has('nvim')
-  lua << EOF
-    require("nvim-treesitter.configs").setup({
-      ensure_installed = { "c", "go", "python", "lua", "javascript", "typescript", "tsx", "html", "vim", "json", "yaml" },
-      sync_install = false,
-      auto_install = true,
-      highlight = { enable = true },
-  })
-EOF
-endif
-
 " " junegunn/vim-slash
 noremap <plug>(slash-after) zz
 
-" " Pocco81/auto-save.nvim
+" " okuuva/auto-save.nvim
 if has('nvim')
   lua require('auto-save').setup({})
 endif
@@ -241,7 +233,23 @@ autocmd VimEnter * noremap s <Plug>Sneak_s
 let g:sneak#use_ic_scs = 1
 
 " " vim-airline/vim-airline
+if !exists('g:airline_symbols')
+  let g:airline_symbols = {}
+endif
+let g:airline_symbols.branch = '⎇'
+let g:airline_symbols.paste = 'ρ'
+let g:airline_symbols.readonly = '∥'
+let g:airline_symbols.whitespace = 'Ξ'
+let g:airline_symbols.linenr = ''
+let g:airline_symbols.maxlinenr = ''
+let g:airline_symbols.colnr = ':'
+
+let g:airline_skip_empty_sections = 1
+autocmd User AirlineAfterInit :let g:airline_section_y = ''
+autocmd User AirlineAfterInit :let g:airline_section_z = airline#section#create(['%p%% ', 'linenr', 'colnr'])
+
 let g:airline#extensions#whitespace#enabled = 0
+
 
 " " nvim-telescope/telescope.nvim
 if has('nvim')
@@ -309,6 +317,18 @@ augroup fern-custom
   autocmd FileType fern call s:init_fern()
 augroup END
 
+" " nvim-treesitter/nvim-treesitter
+if has('nvim')
+  lua << EOF
+    require("nvim-treesitter.configs").setup({
+      ensure_installed = { "c", "go", "python", "lua", "javascript", "typescript", "tsx", "html", "vim", "json", "yaml", "bash", "markdown", "diff", "git_rebase" },
+      sync_install = false,
+      auto_install = true,
+      highlight = { enable = true },
+  })
+EOF
+endif
+
 
 " vim mappings
 nnoremap j gj
@@ -359,10 +379,10 @@ if has('termguicolors')
   set termguicolors
 endif
 
-let g:sonokai_enable_italic = 1
-
 colorscheme sonokai
 let g:airline_theme = 'sonokai'
+
+let g:sonokai_enable_italic = 1
 
 set colorcolumn=80,120
 
