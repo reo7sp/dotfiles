@@ -46,6 +46,7 @@ Plug 'ConradIrwin/vim-bracketed-paste'
 if has('nvim')
   Plug 'okuuva/auto-save.nvim'
 endif
+Plug 'pbrisbin/vim-mkdir'
 Plug 'tpope/vim-sleuth'
 Plug 'ntpeters/vim-better-whitespace'
 if has('nvim')
@@ -55,7 +56,10 @@ else
   Plug 'maxbrunsfeld/vim-yankstack'
 endif
 Plug 'scrooloose/nerdcommenter'
-Plug 'pbrisbin/vim-mkdir'
+if has('nvim')
+  Plug 'echasnovski/mini.align'
+  Plug 'echasnovski/mini.splitjoin'
+endif
 
 " " navigation
 Plug 'justinmk/vim-sneak'
@@ -227,6 +231,16 @@ endif
 " " scrooloose/nerdcommenter
 nnoremap <C-/> <Plug>NERDCommenterToggle
 nnoremap <C-_> <Plug>NERDCommenterToggle
+
+" " echasnovski/mini.align
+if has('nvim')
+  lua require('mini.align').setup()
+endif
+
+" " echasnovski/mini.splitjoin
+if has('nvim')
+  lua require('mini.splitjoin').setup()
+endif
 
 " " justinmk/vim-sneak
 autocmd VimEnter * noremap s <Plug>Sneak_s
@@ -412,6 +426,11 @@ nnoremap <C-J> <C-W><C-J>
 nnoremap <C-K> <C-W><C-K>
 nnoremap <C-L> <C-W><C-L>
 nnoremap <C-H> <C-W><C-H>
+
+nnoremap <C-Up> <cmd>resize +2<cr>
+nnoremap <C-Down> <cmd>resize -2<cr>
+nnoremap <C-Right> <cmd>vertical resize +2<cr>
+nnoremap <C-Left> <cmd>vertical resize -2<cr>
 
 nnoremap <C-S> :w<CR>
 inoremap <C-S> <Esc>:w<CR>l
