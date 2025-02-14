@@ -46,8 +46,8 @@ Plug 'ConradIrwin/vim-bracketed-paste'
 if has('nvim')
   Plug 'okuuva/auto-save.nvim'
 endif
-Plug 'ntpeters/vim-better-whitespace'
 Plug 'tpope/vim-sleuth'
+Plug 'ntpeters/vim-better-whitespace'
 if has('nvim')
   Plug 'gbprod/yanky.nvim'
   Plug 'debugloop/telescope-undo.nvim'
@@ -220,7 +220,6 @@ if has('nvim')
   lua vim.keymap.set("n", "]y", "<Plug>(YankyNextEntry)")
 else
   let g:yankstack_map_keys = 0
-
   nnoremap ]y <Plug>yankstack_substitute_older_paste
   nnoremap [y <Plug>yankstack_substitute_newer_paste
 endif
@@ -251,7 +250,6 @@ autocmd User AirlineAfterInit :let g:airline_section_y = ''
 autocmd User AirlineAfterInit :let g:airline_section_z = airline#section#create(['%p%% ', 'linenr', 'colnr'])
 
 let g:airline#extensions#whitespace#enabled = 0
-
 
 " " nvim-telescope/telescope.nvim
 if has('nvim')
