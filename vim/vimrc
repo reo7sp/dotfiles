@@ -64,11 +64,8 @@ endif
 " " navigation
 Plug 'justinmk/vim-sneak'
 Plug 'tpope/vim-unimpaired'
-Plug 'vim-airline/vim-airline'
-Plug 'ap/vim-buftabline'
 Plug 'moll/vim-bbye'
 Plug 'vim-scripts/BufOnly.vim'
-Plug 'airblade/vim-gitgutter'
 if has('nvim')
   Plug 'nvim-telescope/telescope.nvim', {'tag': '0.1.8'}
   Plug 'smartpde/telescope-recent-files'
@@ -79,18 +76,31 @@ if has('nvim')
   Plug 'nvim-tree/nvim-tree.lua'
 endif
 
-" " commands
-Plug 'tpope/vim-fugitive'
-
 " " appearance
 Plug 'sainnhe/sonokai'
+Plug 'vim-airline/vim-airline'
+Plug 'ap/vim-buftabline'
+Plug 'airblade/vim-gitgutter'
 if has('nvim')
   Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
   Plug 'nvim-treesitter/nvim-treesitter-textobjects'
 endif
+if has('nvim')
+  Plug 'j-hui/fidget.nvim'
+endif
 Plug 'ekalinin/Dockerfile.vim'
 Plug 'vim-scripts/nginx.vim'
 Plug 'johejo/gomod.vim'
+
+" " commands
+Plug 'liuchengxu/vim-which-key'
+if has('nvim')
+  Plug 'AckslD/nvim-whichkey-setup.lua'
+endif
+Plug 'tpope/vim-fugitive'
+if has('nvim')
+  Plug 'nvim-pack/nvim-spectre'
+endif
 
 call plug#end()
 
@@ -247,23 +257,12 @@ autocmd VimEnter * noremap s <Plug>Sneak_s
 
 let g:sneak#use_ic_scs = 1
 
-" " vim-airline/vim-airline
-if !exists('g:airline_symbols')
-  let g:airline_symbols = {}
-endif
-let g:airline_symbols.branch = '⎇'
-let g:airline_symbols.paste = 'ρ'
-let g:airline_symbols.readonly = '∥'
-let g:airline_symbols.whitespace = 'Ξ'
-let g:airline_symbols.linenr = ''
-let g:airline_symbols.maxlinenr = ''
-let g:airline_symbols.colnr = ':'
+" " moll/vim-bbye
+cnoreabbrev bq Bdelete
 
-let g:airline_skip_empty_sections = 1
-autocmd User AirlineAfterInit :let g:airline_section_y = ''
-autocmd User AirlineAfterInit :let g:airline_section_z = airline#section#create(['%p%% ', 'linenr', 'colnr'])
-
-let g:airline#extensions#whitespace#enabled = 0
+" " vim-scripts/BufOnly.vim
+cnoreabbrev bqo BufOnly
+cnoreabbrev bo BufOnly
 
 " " nvim-telescope/telescope.nvim
 if has('nvim')
@@ -281,11 +280,12 @@ if has('nvim')
   nnoremap <leader>fdg <cmd>lua require('telescope').extensions.dir.live_grep()<cr>
   nnoremap <leader>fb <cmd>lua require('telescope.builtin').buffers()<cr>
   nnoremap <leader>fj <cmd>lua require('telescope.builtin').jumplist()<cr>
+  nnoremap <leader>fp <cmd>lua require('telescope.builtin').diagnostics()<cr>
   nnoremap <leader>fy <cmd>lua require('telescope').extensions.yank_history.yank_history()<cr>
   nnoremap <leader>fu <cmd>lua require('telescope').extensions.undo.undo()<cr>
-  nnoremap <leader>fc <cmd>lua require('telescope.builtin').commands()<cr>
   nnoremap <leader>fs <cmd>lua require('telescope.builtin').lsp_document_symbols()<cr>
   nnoremap <leader>fa <cmd>lua require('telescope.builtin').lsp_dynamic_workspace_symbols()<cr>
+  nnoremap <leader>fc <cmd>lua require('telescope.builtin').commands()<cr>
 endif
 
 " " nvim-tree/nvim-tree.lua
@@ -317,6 +317,24 @@ if has('nvim')
     })
 EOF
 endif
+
+" " vim-airline/vim-airline
+if !exists('g:airline_symbols')
+  let g:airline_symbols = {}
+endif
+let g:airline_symbols.branch = '⎇'
+let g:airline_symbols.paste = 'ρ'
+let g:airline_symbols.readonly = '∥'
+let g:airline_symbols.whitespace = 'Ξ'
+let g:airline_symbols.linenr = ''
+let g:airline_symbols.maxlinenr = ''
+let g:airline_symbols.colnr = ':'
+
+let g:airline_skip_empty_sections = 1
+autocmd User AirlineAfterInit :let g:airline_section_y = ''
+autocmd User AirlineAfterInit :let g:airline_section_z = airline#section#create(['%p%% ', 'linenr', 'colnr'])
+
+let g:airline#extensions#whitespace#enabled = 0
 
 " " nvim-treesitter/nvim-treesitter
 if has('nvim')
@@ -412,6 +430,38 @@ if has('nvim')
 EOF
 endif
 
+" " j-hui/fidget.nvim
+if has('nvim')
+  lua << EOF
+    require("fidget").setup()
+EOF
+endif
+
+" " liuchengxu/vim-which-key
+nnoremap <leader>fk :WhichKey '
+
+if has('nvim')
+  lua << EOF
+  require("whichkey_setup").config({
+    hide_statusline = false,
+    default_keymap_settings = {
+      silent = true,
+      noremap = true,
+    },
+    default_mode = 'n',
+  })
+EOF
+endif
+
+" " nvim-pack/nvim-spectre
+if has('nvim')
+  lua << EOF
+  require('spectre').setup()
+
+  vim.keymap.set('n', '<leader>s', '<cmd>lua require("spectre").toggle()<CR>', { desc = "Toggle Spectre" })
+EOF
+endif
+
 
 " vim mappings
 nnoremap j gj
@@ -421,29 +471,6 @@ cnoreabbrev w!! w !sudo tee % >/dev/null
 cnoreabbrev Wqa wqa
 cnoreabbrev Qa qa
 cnoreabbrev Q q
-
-nnoremap <C-J> <C-W><C-J>
-nnoremap <C-K> <C-W><C-K>
-nnoremap <C-L> <C-W><C-L>
-nnoremap <C-H> <C-W><C-H>
-
-nnoremap <C-Up> <cmd>resize +2<cr>
-nnoremap <C-Down> <cmd>resize -2<cr>
-nnoremap <C-Right> <cmd>vertical resize +2<cr>
-nnoremap <C-Left> <cmd>vertical resize -2<cr>
-
-nnoremap <C-S> :w<CR>
-inoremap <C-S> <Esc>:w<CR>l
-vnoremap <C-S> <Esc>:w<CR>
-
-cnoreabbrev bq Bdelete
-cnoreabbrev bqo BufOnly
-cnoreabbrev bo BufOnly
-
-noremap <leader>y "+y
-noremap <leader>Y "+Y
-noremap <leader>p "+p
-noremap <leader>P "+P
 
 nnoremap <C-P> :bp<CR>
 nnoremap <C-N> :bn<CR>
@@ -457,6 +484,24 @@ nnoremap <leader>7 <Plug>BufTabLine.Go(7)
 nnoremap <leader>8 <Plug>BufTabLine.Go(8)
 nnoremap <leader>9 <Plug>BufTabLine.Go(9)
 nnoremap <leader>0 <Plug>BufTabLine.Go(-1)
+
+nnoremap <C-J> <C-W><C-J>
+nnoremap <C-K> <C-W><C-K>
+nnoremap <C-L> <C-W><C-L>
+nnoremap <C-H> <C-W><C-H>
+nnoremap <C-Up> <cmd>resize +2<cr>
+nnoremap <C-Down> <cmd>resize -2<cr>
+nnoremap <C-Right> <cmd>vertical resize +2<cr>
+nnoremap <C-Left> <cmd>vertical resize -2<cr>
+
+noremap <leader>y "+y
+noremap <leader>Y "+Y
+noremap <leader>p "+p
+noremap <leader>P "+P
+
+nnoremap <C-S> :w<CR>
+inoremap <C-S> <Esc>:w<CR>l
+vnoremap <C-S> <Esc>:w<CR>
 
 
 " colors
