@@ -282,6 +282,7 @@ if has('nvim')
   lua require('telescope').load_extension('live_grep_args')
   lua require('telescope').load_extension('yank_history')
   lua require('telescope').load_extension('undo')
+  lua require('telescope').load_extension('fidget')
 
   nnoremap <leader>ff <cmd>lua require('telescope.builtin').find_files()<cr>
   nnoremap <leader>fdf <cmd>lua require('telescope').extensions.dir.find_files()<cr>
