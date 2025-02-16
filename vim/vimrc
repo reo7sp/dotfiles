@@ -41,7 +41,7 @@ else
 endif
 Plug 'Raimondi/delimitMate'
 Plug 'wellle/targets.vim'
-Plug 'junegunn/vim-slash'
+Plug 'romainl/vim-cool'
 Plug 'ConradIrwin/vim-bracketed-paste'
 if has('nvim')
   Plug 'okuuva/auto-save.nvim'
@@ -80,7 +80,12 @@ endif
 Plug 'sainnhe/sonokai'
 Plug 'vim-airline/vim-airline'
 Plug 'ap/vim-buftabline'
-Plug 'airblade/vim-gitgutter'
+if has('nvim')
+  Plug 'lewis6991/gitsigns.nvim'
+  Plug 'sindrets/diffview.nvim'
+else
+  Plug 'airblade/vim-gitgutter'
+endif
 if has('nvim')
   Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
   Plug 'nvim-treesitter/nvim-treesitter-textobjects'
@@ -214,9 +219,6 @@ EOF
   augroup END
 endif
 
-" " junegunn/vim-slash
-noremap <plug>(slash-after) zz
-
 " " okuuva/auto-save.nvim
 if has('nvim')
   lua require('auto-save').setup({})
@@ -336,6 +338,38 @@ autocmd User AirlineAfterInit :let g:airline_section_z = airline#section#create(
 
 let g:airline#extensions#whitespace#enabled = 0
 
+" " lewis6991/gitsigns.nvim
+if has('nvim')
+  lua << EOF
+    require('gitsigns').setup({
+      on_attach = function(bufnr)
+        local gitsigns = require('gitsigns')
+
+        local function map(mode, l, r, opts)
+          opts = opts or {}
+          opts.buffer = bufnr
+          vim.keymap.set(mode, l, r, opts)
+        end
+
+        map('n', ']h', function()
+          if vim.wo.diff then
+            vim.cmd.normal({']h', bang = true})
+          else
+            gitsigns.nav_hunk('next')
+          end
+        end)
+        map('n', '[h', function()
+          if vim.wo.diff then
+            vim.cmd.normal({'[h', bang = true})
+          else
+            gitsigns.nav_hunk('prev')
+          end
+        end)
+      end
+    })
+EOF
+endif
+
 " " nvim-treesitter/nvim-treesitter
 if has('nvim')
   lua << EOF
@@ -346,9 +380,9 @@ if has('nvim')
       highlight = {
         enable = true,
       },
-      indent = {
-        enable = true,
-      },
+      --indent = {
+        --enable = true,
+      --},
       textobjects = {
         select = {
           enable = true,
