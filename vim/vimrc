@@ -2,13 +2,6 @@ set nocompatible
 let g:loaded_netrwPlugin = 1
 let g:loaded_netrw = 1
 
-language en_US
-language messages en_US
-language ctype en_US
-language time en_US
-set langmenu=en_US
-let $LANG = 'en_US'
-
 let mapleader = ","
 
 
@@ -681,6 +674,13 @@ set ttimeoutlen=10
 
 " neovide
 if exists('g:neovide')
+  language en_US
+  language messages en_US
+  language ctype en_US
+  language time en_US
+  set langmenu=en_US
+  let $LANG = 'en_US'
+
   set guifont=Jetbrains\ Mono:h14
   set linespace=1
 
