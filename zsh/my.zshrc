@@ -50,7 +50,7 @@ antibody bundle zsh-users/zsh-history-substring-search
 
 # history
 export HISTFILE="$HOME/.zsh_history"
-export HISTSIZE=2500
+export HISTSIZE=10000
 export SAVEHIST=$HISTSIZE
 ## add timestamps to history
 setopt EXTENDED_HISTORY
@@ -168,10 +168,6 @@ sshz() {
 }
 
 ## git
-if can-exec hub; then
-  alias git=hub
-fi
-
 g() {
   git "$@"
 }
@@ -185,6 +181,14 @@ alias gwD='git diff --word-diff'
 if [[ $(git config get pager.difftool) == true ]]; then
   alias gcs='git show --pretty=format:"${_git_log_medium_format}" --ext-diff'
   alias gpS='git show --pretty=short --show-signature --ext-diff'
+fi
+
+if can-exec gh; then
+  real_gh=$(which gh)
+  _gh() {
+    $real_gh "$@"
+  }
+  alias github="_gh"
 fi
 
 alias gh="tig"
