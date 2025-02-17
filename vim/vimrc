@@ -296,6 +296,7 @@ if has('nvim')
   nnoremap <leader>fu <cmd>lua require('telescope').extensions.undo.undo()<cr>
   nnoremap <leader>fs <cmd>lua require('telescope.builtin').lsp_document_symbols()<cr>
   nnoremap <leader>fa <cmd>lua require('telescope.builtin').lsp_dynamic_workspace_symbols()<cr>
+  nnoremap <leader>fv <cmd>lua require('telescope.builtin').treesitter()<cr>
   nnoremap <leader>fc <cmd>lua require('telescope.builtin').commands()<cr>
 endif
 
