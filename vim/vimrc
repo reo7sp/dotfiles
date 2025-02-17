@@ -59,6 +59,10 @@ if has('nvim')
   Plug 'echasnovski/mini.align'
   Plug 'echasnovski/mini.splitjoin'
 endif
+if has('nvim')
+  Plug 'nvimtools/hydra.nvim'
+  Plug 'smoka7/multicursors.nvim'
+endif
 
 " " navigation
 Plug 'justinmk/vim-sneak'
@@ -312,6 +316,14 @@ if has('nvim')
   lua require('mini.splitjoin').setup()
 endif
 
+" " smoka7/multicursors.nvim
+if has('nvim')
+  lua require('multicursors').setup({})
+
+  nnoremap <leader>n <cmd>MCstart<cr>
+  vnoremap <leader>n <cmd>MCstart<cr>
+endif
+
 " " justinmk/vim-sneak
 autocmd VimEnter * noremap s <Plug>Sneak_s
 
@@ -415,6 +427,19 @@ endif
 " " nvim-lualine/lualine.nvim or vim-airline/vim-airline
 if has('nvim')
   lua << EOF
+  local function multicursors_is_active()
+    local ok, hydra = pcall(require, 'hydra.statusline')
+    return ok and hydra.is_active()
+  end
+
+  local function multicursors_get_name()
+    local ok, hydra = pcall(require, 'hydra.statusline')
+    if ok then
+        return hydra.get_name()
+    end
+    return ''
+  end
+
   local function diff_source()
     local gitsigns = vim.b.gitsigns_status_dict
     if gitsigns then
@@ -441,7 +466,7 @@ if has('nvim')
       section_separators = { left = '', right = '' },
     },
     sections = {
-      lualine_a = { 'mode' },
+      lualine_a = { 'mode', { multicursors_get_name, cond = multicursors_is_active } },
       lualine_b = { 'b:gitsigns_head', {'diff', source = diff_source} },
       lualine_c = { {'filename', path = 1}, 'diagnostics' },
       lualine_x = { { symbols.get, cond = symbols.has, }, },
