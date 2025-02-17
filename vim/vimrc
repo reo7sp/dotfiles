@@ -321,7 +321,9 @@ endif
 " " folke/trouble.nvim
 if has('nvim')
   lua << EOF
-  require("trouble").setup()
+  require('trouble').setup({
+    auto_preview = false,
+  })
 EOF
 endif
 
@@ -742,7 +744,7 @@ if exists('g:neovide')
   set langmenu=en_US
   let $LANG = 'en_US'
 
-  set guifont=Jetbrains\ Mono:h14
+  set guifont=Jetbrains\ Mono:h14:#e-subpixelantialias:#h-none
   set linespace=2
 
   lua vim.g.neovide_hide_mouse_when_typing = true
