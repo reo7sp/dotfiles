@@ -95,6 +95,7 @@ if has('nvim')
   Plug 'nvim-treesitter/nvim-treesitter-textobjects'
 endif
 if has('nvim')
+  Plug 'dgagn/diagflow.nvim'
   Plug 'j-hui/fidget.nvim'
 endif
 Plug 'ekalinin/Dockerfile.vim'
@@ -520,10 +521,21 @@ if has('nvim')
 EOF
 endif
 
+" " dgagn/diagflow.nvim
+if has('nvim')
+  lua << EOF
+  require('diagflow').setup({
+    placement = 'inline',
+    inline_padding_left = 7,
+    show_sign = true,
+  })
+EOF
+endif
+
 " " j-hui/fidget.nvim
 if has('nvim')
   lua << EOF
-  require("fidget").setup()
+  require('fidget').setup()
 EOF
 endif
 
