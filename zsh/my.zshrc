@@ -176,7 +176,15 @@ g() {
   git "$@"
 }
 
-alias aliases-git="less $(antibody list | grep zimfw-git)/init.zsh"
+alias aliases-git="cat $(antibody list | grep zimfw-git)/init.zsh"
+
+alias gh="tig"
+alias gg="lazygit"
+
+alias gid='git diff --cached'
+alias giD='git diff --cached --word-diff'
+alias gwd='git diff'
+alias gwD='git diff --word-diff'
 
 gfcd() {
   local repo=$1
@@ -191,9 +199,6 @@ alias gcu="git add -A && git commit --amend --reuse-message HEAD"
 alias gcwip="git add -A && git commit -m 'wip'"
 alias gcfix="git add -A && git commit -m 'fix'"
 alias gckik="git add -A && git commit -m 'kik'"
-
-alias gh="tig"
-alias gg="lazygit"
 
 gbd() {
   for d in $@; do
