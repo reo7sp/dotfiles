@@ -130,7 +130,7 @@ function! LspAttached() abort
   nnoremap <buffer> gd <cmd>lua require('telescope.builtin').lsp_definitions()<cr>
   nnoremap <buffer> gD <cmd>lua require('telescope.builtin').lsp_implementations()<cr>
   nnoremap <buffer> gi <cmd>lua require('telescope.builtin').lsp_implementations()<cr>
-  nnoremap <buffer> gt <cmd>lua require('telescope.builtin').lsp_type_definitions()<cr>
+  nnoremap <buffer> gy <cmd>lua require('telescope.builtin').lsp_type_definitions()<cr>
   nnoremap <buffer> gr <cmd>lua require('telescope.builtin').lsp_references()<cr>
   nnoremap <buffer> gs <cmd>lua vim.lsp.buf.hover()<cr>
   nnoremap <buffer> gp <cmd>lua vim.diagnostic.open_float()<cr>
@@ -386,7 +386,7 @@ EOF
   nnoremap <leader>td <cmd>Trouble lsp_definitions toggle focus=false<CR>
   nnoremap <leader>tD <cmd>Trouble lsp_implementations toggle focus=false<CR>
   nnoremap <leader>ti <cmd>Trouble lsp_implementations toggle focus=false<CR>
-  nnoremap <leader>tt <cmd>Trouble lsp_type_definitions toggle focus=false<CR>
+  nnoremap <leader>ty <cmd>Trouble lsp_type_definitions toggle focus=false<CR>
   nnoremap <leader>tr <cmd>Trouble lsp_references toggle focus=false<CR>
   nnoremap <leader>tp <cmd>Trouble diagnostics toggle focus=false filter.buf=0<CR>
   nnoremap <leader>tq <cmd>Trouble quickfix toggle focus=false<CR>
@@ -396,7 +396,7 @@ endif
 
 " " nvim-tree/nvim-tree.lua
 if has('nvim')
-  nnoremap <leader>tf <cmd>NvimTreeToggle<CR><C-W><C-W>
+  nnoremap <leader>tt <cmd>NvimTreeToggle<CR><C-W><C-W>
 
   lua << EOF
   require("nvim-tree").setup({
@@ -410,14 +410,23 @@ if has('nvim')
           modified = false,
           hidden = false,
           diagnostics = false,
-          bookmarks = false,
-        }
-      }
+          bookmarks = true,
+        },
+        glyphs = {
+          bookmark = "M",
+        },
+      },
+      indent_markers = {
+        enable = true,
+      },
     },
     update_focused_file = {
       enable = true,
     },
     filters = {
+      enable = true,
+      git_ignored = true,
+      dotfiles = false,
       custom = { "^.git$" },
     }
   })
