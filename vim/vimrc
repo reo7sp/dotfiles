@@ -689,7 +689,7 @@ if exists('g:neovide')
   let $LANG = 'en_US'
 
   set guifont=Jetbrains\ Mono:h14
-  set linespace=1
+  set linespace=2
 
   lua vim.g.neovide_hide_mouse_when_typing = true
   lua vim.g.neovide_position_animation_length = 0
