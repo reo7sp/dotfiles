@@ -26,6 +26,8 @@ if has('nvim')
   Plug 'hrsh7th/cmp-nvim-lsp'
   Plug 'hrsh7th/cmp-buffer'
   Plug 'hrsh7th/cmp-path'
+  Plug 'hrsh7th/cmp-nvim-lsp-signature-help'
+  Plug 'hrsh7th/cmp-cmdline'
   Plug 'L3MON4D3/LuaSnip'
   Plug 'saadparwaiz1/cmp_luasnip'
   Plug 'rafamadriz/friendly-snippets'
@@ -109,6 +111,9 @@ if has('nvim')
 endif
 Plug 'tpope/vim-fugitive'
 if has('nvim')
+  Plug 'stevearc/oil.nvim'
+endif
+if has('nvim')
   Plug 'nvim-pack/nvim-spectre'
 endif
 
@@ -118,13 +123,14 @@ call plug#end()
 " plugin settings
 " " hrsh7th/nvim-cmp
 function! LspAttached() abort
-  nnoremap <buffer> K <cmd>lua vim.lsp.buf.hover()<cr>
   nnoremap <buffer> gd <cmd>lua require('telescope.builtin').lsp_definitions()<cr>
   nnoremap <buffer> gD <cmd>lua require('telescope.builtin').lsp_implementations()<cr>
   nnoremap <buffer> gi <cmd>lua require('telescope.builtin').lsp_implementations()<cr>
   nnoremap <buffer> gt <cmd>lua require('telescope.builtin').lsp_type_definitions()<cr>
   nnoremap <buffer> gr <cmd>lua require('telescope.builtin').lsp_references()<cr>
-  nnoremap <buffer> gs <cmd>lua vim.lsp.buf.signature_help()<cr>
+  nnoremap <buffer> gs <cmd>lua vim.lsp.buf.hover()<cr>
+  nnoremap <buffer> gp <cmd>lua vim.diagnostic.open_float()<cr>
+  nnoremap <buffer> gq <cmd>lua vim.lsp.buf.code_action()<cr>
   nnoremap <buffer> <leader>lr <cmd>lua vim.lsp.buf.rename()<cr>
   nnoremap <buffer> <leader>lf <cmd>lua vim.lsp.buf.format({async = true})<cr>
   xnoremap <buffer> <leader>lf <cmd>lua vim.lsp.buf.format({async = true})<cr>
@@ -133,6 +139,9 @@ endfunction
 
 if has('nvim')
   autocmd LspAttach * call LspAttached()
+
+  nnoremap [p <cmd>lua vim.diagnostic.goto_prev({float=false})<cr>
+  nnoremap ]p <cmd>lua vim.diagnostic.goto_next({float=false})<cr>
 
   lua << EOF
   local lspconfig_defaults = require('lspconfig').util.default_config
@@ -166,6 +175,7 @@ EOF
       {name = 'nvim_lsp'},
       {name = 'luasnip', keyword_length = 2},
       {name = 'buffer', keyword_length = 3},
+      {name = 'nvim_lsp_signature_help'},
     },
     preselect = 'none',
     completion = {
@@ -217,6 +227,28 @@ EOF
     }),
   })
 EOF
+  lua << EOF
+  local cmp = require('cmp')
+  cmp.setup.cmdline('/', {
+    mapping = cmp.mapping.preset.cmdline(),
+    sources = {
+      { name = 'buffer' }
+    }
+  })
+  cmp.setup.cmdline(':', {
+    mapping = cmp.mapping.preset.cmdline(),
+    sources = cmp.config.sources({
+      { name = 'path' }
+    }, {
+      {
+        name = 'cmdline',
+        option = {
+          ignore_cmds = { 'Man', '!' }
+        }
+      }
+    })
+  })
+EOF
 
   augroup NvimCmp
   au!
@@ -226,7 +258,17 @@ endif
 
 " " okuuva/auto-save.nvim
 if has('nvim')
-  lua require('auto-save').setup({})
+  lua << EOF
+  require('auto-save').setup({
+    condition = function(buf)
+      local filetype = vim.fn.getbufvar(buf, "&filetype")
+      if vim.list_contains({ "oil" }, filetype) then
+        return false
+      end
+      return true
+    end
+  })
+EOF
 endif
 
 " " gbprod/yanky.nvim or maxbrunsfeld/vim-yankstack
@@ -311,6 +353,7 @@ EOF
   nnoremap <leader>fb <cmd>lua require('telescope.builtin').buffers()<cr>
   nnoremap <leader>fj <cmd>lua require('telescope.builtin').jumplist()<cr>
   nnoremap <leader>fp <cmd>lua require('telescope.builtin').diagnostics()<cr>
+  nnoremap <leader>fq <cmd>lua require('telescope.builtin').quickfix()<cr>
   nnoremap <leader>fy <cmd>lua require('telescope').extensions.yank_history.yank_history()<cr>
   nnoremap <leader>fu <cmd>lua require('telescope').extensions.undo.undo()<cr>
   nnoremap <leader>fs <cmd>lua require('telescope.builtin').lsp_document_symbols()<cr>
@@ -324,13 +367,24 @@ if has('nvim')
   lua << EOF
   require('trouble').setup({
     auto_preview = false,
+    auto_jump = false,
   })
 EOF
+
+  nnoremap <leader>td <cmd>Trouble lsp_definitions toggle focus=false<CR>
+  nnoremap <leader>tD <cmd>Trouble lsp_implementations toggle focus=false<CR>
+  nnoremap <leader>ti <cmd>Trouble lsp_implementations toggle focus=false<CR>
+  nnoremap <leader>tt <cmd>Trouble lsp_type_definitions toggle focus=false<CR>
+  nnoremap <leader>tr <cmd>Trouble lsp_references toggle focus=false<CR>
+  nnoremap <leader>tp <cmd>Trouble diagnostics toggle focus=false filter.buf=0<CR>
+  nnoremap <leader>tq <cmd>Trouble quickfix toggle focus=false<CR>
+  nnoremap <leader>ts <cmd>Trouble lsp_document_symbols toggle focus=false<CR>
+  nnoremap <leader>tv <cmd>Trouble symbols toggle focus=false<CR>
 endif
 
 " " nvim-tree/nvim-tree.lua
 if has('nvim')
-  nnoremap <leader>t :NvimTreeToggle<CR><C-W><C-W>
+  nnoremap <leader>tf <cmd>NvimTreeToggle<CR><C-W><C-W>
 
   lua << EOF
   require("nvim-tree").setup({
@@ -361,13 +415,23 @@ endif
 " " nvim-lualine/lualine.nvim or vim-airline/vim-airline
 if has('nvim')
   lua << EOF
+  local function diff_source()
+    local gitsigns = vim.b.gitsigns_status_dict
+    if gitsigns then
+      return {
+        added = gitsigns.added,
+        modified = gitsigns.changed,
+        removed = gitsigns.removed
+      }
+    end
+  end
+
   local symbols = require('trouble').statusline({
     mode = "lsp_document_symbols",
     groups = {},
     title = false,
     filter = { range = true },
-    format = "{symbol.name:Normal}",
-    hl_group = "lualine_c_normal",
+    format = "{symbol.name}",
   })
 
   require('lualine').setup({
@@ -377,12 +441,12 @@ if has('nvim')
       section_separators = { left = '', right = '' },
     },
     sections = {
-      lualine_a = {'mode'},
-      lualine_b = {'branch', 'diff'},
-      lualine_c = { {'filename', path = 1}, 'diagnostics'},
+      lualine_a = { 'mode' },
+      lualine_b = { 'b:gitsigns_head', {'diff', source = diff_source} },
+      lualine_c = { {'filename', path = 1}, 'diagnostics' },
       lualine_x = { { symbols.get, cond = symbols.has, }, },
-      lualine_y = {'filetype'},
-      lualine_z = {'progress', 'location'}
+      lualine_y = { 'filetype' },
+      lualine_z = { 'location' }
     },
   })
 EOF
@@ -400,7 +464,7 @@ else
 
   let g:airline_skip_empty_sections = 1
   autocmd User AirlineAfterInit :let g:airline_section_y = ''
-  autocmd User AirlineAfterInit :let g:airline_section_z = airline#section#create(['%p%% ', 'linenr', 'colnr'])
+  autocmd User AirlineAfterInit :let g:airline_section_z = airline#section#create(['linenr', 'colnr'])
 
   let g:airline#extensions#whitespace#enabled = 0
 endif
@@ -528,6 +592,8 @@ if has('nvim')
     placement = 'inline',
     inline_padding_left = 7,
     show_sign = true,
+    scope = 'line',
+    toggle_event = { 'InsertEnter', 'InsertLeave' },
   })
 EOF
 endif
@@ -551,6 +617,15 @@ if has('nvim')
       noremap = true,
     },
     default_mode = 'n',
+  })
+EOF
+endif
+
+" " stevearc/oil.nvim
+if has('nvim')
+  lua << EOF
+  require("oil").setup({
+    default_file_explorer = false,
   })
 EOF
 endif
