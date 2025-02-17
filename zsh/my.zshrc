@@ -178,13 +178,17 @@ g() {
 
 alias aliases-git="cat $(antibody list | grep zimfw-git)/init.zsh"
 
-alias gh="tig"
-alias gg="lazygit"
-
-alias gid='git diff --cached'
+alias gid='git diff --cached' # remapping zimfw-git mappings to use ext-diff
 alias giD='git diff --cached --word-diff'
 alias gwd='git diff'
 alias gwD='git diff --word-diff'
+if [[ $(git config get pager.difftool) == true ]]; then
+  alias gcs='git show --pretty=format:"${_git_log_medium_format}" --ext-diff'
+  alias gpS='git show --pretty=short --show-signature --ext-diff'
+fi
+
+alias gh="tig"
+alias gg="lazygit"
 
 gfcd() {
   local repo=$1

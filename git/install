@@ -54,4 +54,8 @@ fi
 
 if confirm "Use difftastic?"; then
   git config --global diff.external difft
+  git config --global difftool.difftastic.cmd 'difft "$MERGED" "$LOCAL" "abcdef1" "100644" "$REMOTE" "abcdef2" "100644"'
+  git config --global difftool.prompt false
+  git config --global pager.difftool true
+  git config --global diff.tool difftastic
 fi
