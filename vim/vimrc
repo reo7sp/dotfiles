@@ -70,12 +70,19 @@ if has('nvim')
   Plug 'princejoogie/dir-telescope.nvim'
 endif
 if has('nvim')
+  Plug 'folke/trouble.nvim'
+endif
+if has('nvim')
   Plug 'nvim-tree/nvim-tree.lua'
 endif
 
 " " appearance
 Plug 'sainnhe/sonokai'
-Plug 'vim-airline/vim-airline'
+if has('nvim')
+  Plug 'nvim-lualine/lualine.nvim'
+else
+  Plug 'vim-airline/vim-airline'
+endif
 Plug 'ap/vim-buftabline'
 if has('nvim')
   Plug 'lewis6991/gitsigns.nvim'
@@ -212,7 +219,7 @@ EOF
 
   augroup NvimCmp
   au!
-  au FileType TelescopePrompt lua require('cmp').setup.buffer { enabled = false }
+  au FileType TelescopePrompt lua require('cmp').setup.buffer({ enabled = false })
   augroup END
 endif
 
@@ -284,6 +291,17 @@ if has('nvim')
   lua require('telescope').load_extension('undo')
   lua require('telescope').load_extension('fidget')
 
+  lua << EOF
+  require('telescope').setup({
+    defaults = {
+      mappings = {
+        i = { ["<c-t>"] = require("trouble.sources.telescope").open },
+        n = { ["<c-t>"] = require("trouble.sources.telescope").open },
+      },
+    },
+  })
+EOF
+
   nnoremap <leader>ff <cmd>lua require('telescope.builtin').find_files()<cr>
   nnoremap <leader>fdf <cmd>lua require('telescope').extensions.dir.find_files()<cr>
   nnoremap <leader>fe <cmd>lua require('telescope').extensions.recent_files.pick({only_cwd = true})<cr>
@@ -298,6 +316,13 @@ if has('nvim')
   nnoremap <leader>fa <cmd>lua require('telescope.builtin').lsp_dynamic_workspace_symbols()<cr>
   nnoremap <leader>fv <cmd>lua require('telescope.builtin').treesitter()<cr>
   nnoremap <leader>fc <cmd>lua require('telescope.builtin').commands()<cr>
+endif
+
+" " folke/trouble.nvim
+if has('nvim')
+  lua << EOF
+  require("trouble").setup()
+EOF
 endif
 
 " " nvim-tree/nvim-tree.lua
@@ -330,23 +355,52 @@ if has('nvim')
 EOF
 endif
 
-" " vim-airline/vim-airline
-if !exists('g:airline_symbols')
-  let g:airline_symbols = {}
+" " nvim-lualine/lualine.nvim or vim-airline/vim-airline
+if has('nvim')
+  lua << EOF
+  local symbols = require('trouble').statusline({
+    mode = "lsp_document_symbols",
+    groups = {},
+    title = false,
+    filter = { range = true },
+    format = "{symbol.name:Normal}",
+    hl_group = "lualine_c_normal",
+  })
+
+  require('lualine').setup({
+    options = {
+      icons_enabled = false,
+      component_separators = { left = '', right = '' },
+      section_separators = { left = '', right = '' },
+    },
+    sections = {
+      lualine_a = {'mode'},
+      lualine_b = {'branch', 'diff'},
+      lualine_c = { {'filename', path = 1}, 'diagnostics'},
+      lualine_x = { { symbols.get, cond = symbols.has, }, },
+      lualine_y = {'filetype'},
+      lualine_z = {'progress', 'location'}
+    },
+  })
+EOF
+else
+  if !exists('g:airline_symbols')
+    let g:airline_symbols = {}
+  endif
+  let g:airline_symbols.branch = '⎇'
+  let g:airline_symbols.paste = 'ρ'
+  let g:airline_symbols.readonly = '∥'
+  let g:airline_symbols.whitespace = 'Ξ'
+  let g:airline_symbols.linenr = ''
+  let g:airline_symbols.maxlinenr = ''
+  let g:airline_symbols.colnr = ':'
+
+  let g:airline_skip_empty_sections = 1
+  autocmd User AirlineAfterInit :let g:airline_section_y = ''
+  autocmd User AirlineAfterInit :let g:airline_section_z = airline#section#create(['%p%% ', 'linenr', 'colnr'])
+
+  let g:airline#extensions#whitespace#enabled = 0
 endif
-let g:airline_symbols.branch = '⎇'
-let g:airline_symbols.paste = 'ρ'
-let g:airline_symbols.readonly = '∥'
-let g:airline_symbols.whitespace = 'Ξ'
-let g:airline_symbols.linenr = ''
-let g:airline_symbols.maxlinenr = ''
-let g:airline_symbols.colnr = ':'
-
-let g:airline_skip_empty_sections = 1
-autocmd User AirlineAfterInit :let g:airline_section_y = ''
-autocmd User AirlineAfterInit :let g:airline_section_z = airline#section#create(['%p%% ', 'linenr', 'colnr'])
-
-let g:airline#extensions#whitespace#enabled = 0
 
 " " lewis6991/gitsigns.nvim
 if has('nvim')
