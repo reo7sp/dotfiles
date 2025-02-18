@@ -122,6 +122,15 @@ new-tmp() {
   mkcd "$HOME/m/oneoff-code/$(date '+%Y-%m-%d')"
 }
 
+random-string() {
+  local arg=$1
+  openssl rand -hex "$((arg / 2))"
+}
+
+timestamp() {
+  date +%s
+}
+
 alias grep="grep --color=auto"
 
 if can-exec colordiff; then
@@ -135,6 +144,15 @@ alias mv="mv -f"
 alias _="sudo"
 alias suz="su -m -c zsh"
 alias sudz="sudo ZDOTDIR=\$HOME PATH=\$PATH zsh"
+
+if [[ $IS_MACOS -eq 1 ]]; then
+  alias show-ports="lsof -iTCP -sTCP:LISTEN -n -P"
+else
+  alias show-ports="netstat -tulpn"
+fi
+
+alias edit-hosts="sudo vim /etc/hosts"
+alias show-hosts="cat /etc/hosts"
 
 ## vim
 if can-exec nvim; then
@@ -288,22 +306,25 @@ alias jn="jupyter notebook"
 ## k8s
 alias k="kubectl"
 
-## network
-if [[ $IS_MACOS -eq 1 ]]; then
-  alias show-ports="lsof -iTCP -sTCP:LISTEN -n -P"
-else
-  alias show-ports="netstat -tulpn"
-fi
-
-alias edit-hosts="sudo vim /etc/hosts"
-alias show-hosts="cat /etc/hosts"
-
-## util
-random-string() {
-  openssl rand -hex "$1"
+## markdown
+make-markdown() {
+  marked "$1" -o "${1%.*}".html --gfm && echo '<style>body { font: 16px sans-serif; width: 720px; margin: 1em auto; } img { width: 100%; }</style>' >> "${1%.*}".html
 }
 
-timestamp() {
-  date +%s
+## plantuml
+plantuml-server() {
+  docker run -d --name plantuml --restart always -p 18080:8080 plantuml/plantuml-server:jetty
 }
 
+make-plantuml-slow() {
+  plantuml -tpng "$1"
+}
+
+make-plantuml() {
+  curl -sS "http://localhost:18080/png/`cat "$1" | gzip -c | tail -c +11 | base64 | tr ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789/+ 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_- | tr -d '\n'`" > "${1%.*}".png
+}
+
+## mermaid
+make-mermaid() {
+  mmdc -i "$1" -o "${1%.*}".png
+}
