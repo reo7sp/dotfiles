@@ -120,6 +120,8 @@ Plug 'Glench/Vim-Jinja2-Syntax'
 Plug 'johejo/gomod.vim'
 Plug 'uarun/vim-protobuf'
 Plug 'jparise/vim-graphql'
+Plug 'aklt/plantuml-syntax'
+Plug 'craigmac/vim-mermaid'
 
 " " commands
 Plug 'liuchengxu/vim-which-key'
@@ -186,6 +188,7 @@ EOF
 EOF
   lua << EOF
   local cmp = require('cmp')
+  local luasnip = require('luasnip')
   cmp.setup({
     sources = {
       {name = 'path'},
@@ -226,8 +229,8 @@ EOF
             cmp.select_next_item({ behavior = cmp.SelectBehavior.Select })
           end
           cmp.confirm()
-        elseif require('luasnip').expand_or_jumpable() then
-          require('luasnip').expand_or_jump()
+        elseif luasnip.expand_or_jumpable() then
+          luasnip.expand_or_jump()
         else
           fallback()
         end
@@ -235,8 +238,8 @@ EOF
       ['<S-Tab>'] = cmp.mapping(function(fallback)
         if cmp.visible() then
           cmp.select_prev_item()
-        elseif require('luasnip').jumpable(-1) then
-          require('luasnip').jump(-1)
+        elseif luasnip.jumpable(-1) then
+          luasnip.jump(-1)
         else
           fallback()
         end
