@@ -1,3 +1,5 @@
+# vim: ft=zsh
+
 # env
 export PATH="$PATH:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 export LC_ALL=en_US.UTF-8
@@ -38,6 +40,7 @@ fi
 # plugins
 export PATH="$HOME/.antibody:$PATH"
 source <(antibody init)
+
 antibody bundle mafredri/zsh-async
 antibody bundle reo7sp/pure
 antibody bundle zsh-users/zsh-completions
@@ -150,17 +153,24 @@ else
 fi
 alias vim="_vim"
 
+v() {
+  lcd
+  if [[ -z $1 ]]; then
+    $EDITOR .
+  else
+    $EDITOR "$@"
+  fi
+}
+
 alias edit-vim="vim ~/.vimrc"
-alias time-vim="time vim -c ':e ~/.zshrc | :q!'"
 
 ## zsh
 alias edit-zsh="vim ~/.my.zshrc; source ~/.zshrc"
 alias edit-zshrc="vim ~/.zshrc; source ~/.zshrc"
-alias time-zsh="time zsh -i -c exit"
 
 ## ssh
-alias copy-ssh="cat ~/.ssh/id_rsa.pub | pbcopy"
 alias edit-ssh="vim ~/.ssh/config"
+alias copy-ssh="cat ~/.ssh/id_rsa.pub | pbcopy"
 alias show-ssh="cat ~/.ssh/config"
 
 sshz() {
@@ -236,16 +246,6 @@ cdf() {
 
 cdfm() {
   cd $(find .          -type d -not -path '*/\.*' -print 2> /dev/null | fzf-tmux)
-}
-
-## vim
-v() {
-  lcd
-  if [[ -z $1 ]]; then
-    $EDITOR .
-  else
-    $EDITOR "$@"
-  fi
 }
 
 ## sublime text
