@@ -1,6 +1,13 @@
 # dotfiles
 
-My config files.
+My config files:
+
+- zsh: [zsh/my.zshrc](./zsh/my.zshrc).
+- vim: [vim/vimrc](./vim/vimrc).
+- sublime text: [sublime-dotfiles repo](https://github.com/reo7sp/sublime-dotfiles?tab=readme-ov-file#sublime-dotfiles).
+- git: [git/install](./git/install).
+
+<br>
 
 _How zsh looks:_
 
@@ -9,8 +16,6 @@ _How zsh looks:_
 _How vim looks:_
 
 ![vim screenshot](https://i.imgur.com/QfgfpMP.png)
-
-For Sublime Text configs go to [sublime-dotfiles repo](https://github.com/reo7sp/sublime-dotfiles?tab=readme-ov-file#sublime-dotfiles).
 
 ## How to install
 
