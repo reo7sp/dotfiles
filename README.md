@@ -15,7 +15,7 @@ _How zsh looks:_
 
 _How vim looks:_
 
-![vim screenshot](https://i.imgur.com/QfgfpMP.png)
+![vim screenshot](https://i.imgur.com/er9ZtvJ.png)
 
 ## How to install
 
