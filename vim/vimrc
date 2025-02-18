@@ -771,16 +771,17 @@ endif
 if has('nvim')
   lua << EOF
   require('notify').setup({
+    render = 'simple',
     stages = 'static',
     time_formats = {
       notification = "",
     },
     icons = {
-      ERROR = "E",
-      WARN = "W",
-      INFO = "I",
-      DEBUG = "D",
-      TRACE = "T",
+      ERROR = "",
+      WARN = "",
+      INFO = "",
+      DEBUG = "",
+      TRACE = "",
     },
   })
 
