@@ -56,6 +56,7 @@ else
   Plug 'scrooloose/nerdcommenter'
 endif
 if has('nvim')
+  Plug 'johmsalas/text-case.nvim'
   Plug 'echasnovski/mini.align'
   Plug 'echasnovski/mini.splitjoin'
 endif
@@ -305,6 +306,18 @@ else
   vnoremap <C-/> <Plug>NERDCommenterToggle<CR>gv
   vnoremap <C-_> <Plug>NERDCommenterToggle<CR>gv
 end
+
+" " johmsalas/text-case.nvim
+if has('nvim')
+  lua << EOF
+  require('textcase').setup({
+    prefix = 'gt',
+  })
+  require('telescope').load_extension('textcase')
+  vim.api.nvim_set_keymap('n', 'gt.', '<cmd>TextCaseOpenTelescope<CR>', { desc = "Telescope" })
+  vim.api.nvim_set_keymap('v', 'gt.', '<cmd>TextCaseOpenTelescope<CR>', { desc = "Telescope" })
+EOF
+endif
 
 " " echasnovski/mini.align
 if has('nvim')
