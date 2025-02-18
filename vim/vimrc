@@ -690,6 +690,49 @@ EOF
 endif
 
 
+" own commands
+" " sublime text & sublime merge integration
+if has('nvim')
+  lua << EOF
+  vim.api.nvim_create_user_command('Subl',
+    function (opts)
+      if opts.fargs[1] == 'dir' then
+        vim.cmd('!subl ' .. vim.fn.getcwd())
+      else
+        vim.cmd('!subl %')
+      end
+    end,
+    {
+      desc = 'Open in Sublime Text',
+      nargs = '?',
+      complete = function ()
+        return {'dir'}
+      end,
+    }
+  )
+
+  vim.api.nvim_create_user_command('Smerge',
+    function (opts)
+      if opts.fargs[1] == 'blame' then
+        vim.cmd('!smerge blame %')
+      elseif opts.fargs[1] == 'log' then
+        vim.cmd('!smerge log %')
+      else
+        vim.cmd('!smerge ' .. vim.fn.getcwd())
+      end
+    end,
+    {
+      desc = 'Open in Sublime Merge',
+      nargs = '?',
+      complete = function ()
+        return {'dir', 'blame', 'log'}
+      end,
+    }
+  )
+EOF
+endif
+
+
 " vim mappings
 nnoremap j gj
 nnoremap k gk
