@@ -119,10 +119,10 @@ if has('nvim')
 endif
 Plug 'tpope/vim-fugitive'
 if has('nvim')
-  Plug 'stevearc/oil.nvim'
+  Plug 'nvim-pack/nvim-spectre'
 endif
 if has('nvim')
-  Plug 'nvim-pack/nvim-spectre'
+  Plug 'stevearc/oil.nvim'
 endif
 
 call plug#end()
@@ -671,21 +671,21 @@ if has('nvim')
 EOF
 endif
 
-" " stevearc/oil.nvim
-if has('nvim')
-  lua << EOF
-  require("oil").setup({
-    default_file_explorer = false,
-  })
-EOF
-endif
-
 " " nvim-pack/nvim-spectre
 if has('nvim')
   lua << EOF
   require('spectre').setup()
 
   vim.keymap.set('n', '<leader>s', '<cmd>lua require("spectre").toggle()<CR>', { desc = "Toggle Spectre" })
+EOF
+endif
+
+" " stevearc/oil.nvim
+if has('nvim')
+  lua << EOF
+  require("oil").setup({
+    default_file_explorer = false,
+  })
 EOF
 endif
 
