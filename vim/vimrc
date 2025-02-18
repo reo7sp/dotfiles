@@ -104,12 +104,15 @@ else
   Plug 'airblade/vim-gitgutter'
 endif
 if has('nvim')
-  Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
-  Plug 'nvim-treesitter/nvim-treesitter-textobjects'
+  Plug 'rcarriga/nvim-notify'
+  Plug 'mrded/nvim-lsp-notify'
 endif
 if has('nvim')
   Plug 'dgagn/diagflow.nvim'
-  Plug 'j-hui/fidget.nvim'
+endif
+if has('nvim')
+  Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+  Plug 'nvim-treesitter/nvim-treesitter-textobjects'
 endif
 Plug 'ekalinin/Dockerfile.vim'
 Plug 'vim-scripts/nginx.vim'
@@ -369,7 +372,7 @@ if has('nvim')
   lua require('telescope-tabs').setup({})
   lua require('telescope').load_extension('yank_history')
   lua require('telescope').load_extension('undo')
-  lua require('telescope').load_extension('fidget')
+  lua require('telescope').load_extension('notify')
 
   lua << EOF
   require('telescope').setup({
@@ -761,6 +764,32 @@ if has('nvim')
 EOF
 endif
 
+" " rcarriga/nvim-notify
+if has('nvim')
+  lua << EOF
+  require('notify').setup({
+    stages = 'static',
+    time_formats = {
+      notification = "",
+    },
+    icons = {
+      ERROR = "E",
+      WARN = "W",
+      INFO = "I",
+      DEBUG = "D",
+      TRACE = "T",
+    },
+  })
+
+  vim.notify = require('notify')
+EOF
+endif
+
+" " mrded/nvim-lsp-notify
+if has('nvim')
+  lua require('lsp-notify').setup({})
+endif
+
 " " dgagn/diagflow.nvim
 if has('nvim')
   lua << EOF
@@ -771,13 +800,6 @@ if has('nvim')
     scope = 'line',
     toggle_event = { 'InsertEnter', 'InsertLeave' },
   })
-EOF
-endif
-
-" " j-hui/fidget.nvim
-if has('nvim')
-  lua << EOF
-  require('fidget').setup()
 EOF
 endif
 
@@ -1019,7 +1041,11 @@ if &shell =~# 'fish$'
   set shell=/bin/bash
 endif
 
-set mouse=a
+if has('nvim')
+  set mouse=a
+else
+  set mouse=i
+endif
 set hidden
 set lazyredraw
 set noerrorbells
