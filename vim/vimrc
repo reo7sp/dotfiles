@@ -1014,7 +1014,7 @@ if &shell =~# 'fish$'
   set shell=/bin/bash
 endif
 
-set mouse=i
+set mouse=a
 set hidden
 set lazyredraw
 set noerrorbells
@@ -1047,7 +1047,8 @@ if exists('g:neovide')
   lua vim.g.neovide_cursor_animate_command_line = false
   lua vim.g.neovide_scroll_animation_far_lines = 0
   lua vim.g.neovide_scroll_animation_length = 0.00
-
+endif
+if has('nvim')
   lua vim.keymap.set('n', '<D-s>', ':w<CR>')
   lua vim.keymap.set('v', '<D-c>', '"+y')
   lua vim.keymap.set('n', '<D-v>', '"+P')
