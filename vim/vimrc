@@ -90,7 +90,13 @@ if has('nvim')
 else
   Plug 'vim-airline/vim-airline'
 endif
-Plug 'ap/vim-buftabline'
+if has('nvim')
+  Plug 'akinsho/bufferline.nvim'
+  Plug 'tiagovla/scope.nvim'
+  Plug 'LukasPietzschmann/telescope-tabs'
+else
+  Plug 'ap/vim-buftabline'
+endif
 if has('nvim')
   Plug 'lewis6991/gitsigns.nvim'
   Plug 'sindrets/diffview.nvim'
@@ -358,6 +364,9 @@ if has('nvim')
   lua require('telescope').load_extension('recent_files')
   lua require('telescope').load_extension('dir')
   lua require('telescope').load_extension('live_grep_args')
+  lua require('telescope').load_extension('scope')
+  lua require('telescope').load_extension('telescope-tabs')
+  lua require('telescope-tabs').setup({})
   lua require('telescope').load_extension('yank_history')
   lua require('telescope').load_extension('undo')
   lua require('telescope').load_extension('fidget')
@@ -378,7 +387,8 @@ EOF
   nnoremap <leader>fe <cmd>lua require('telescope').extensions.recent_files.pick({only_cwd = true})<cr>
   nnoremap <leader>fg <cmd>lua require('telescope').extensions.live_grep_args.live_grep_args()<cr>
   nnoremap <leader>fdg <cmd>lua require('telescope').extensions.dir.live_grep()<cr>
-  nnoremap <leader>fb <cmd>lua require('telescope.builtin').buffers()<cr>
+  nnoremap <leader>fb <cmd>Telescope scope buffers<cr>
+  nnoremap <leader>ft <cmd>Telescope telescope-tabs list_tabs<cr>
   nnoremap <leader>fj <cmd>lua require('telescope.builtin').jumplist()<cr>
   nnoremap <leader>fp <cmd>lua require('telescope.builtin').diagnostics()<cr>
   nnoremap <leader>fq <cmd>lua require('telescope.builtin').quickfix()<cr>
@@ -517,6 +527,63 @@ else
   autocmd User AirlineAfterInit :let g:airline_section_z = airline#section#create(['linenr', 'colnr'])
 
   let g:airline#extensions#whitespace#enabled = 0
+endif
+
+" " akinsho/bufferline.nvim or ap/vim-buftabline
+if has('nvim')
+  lua << EOF
+  require('bufferline').setup({
+    options = {
+      style_preset = {
+        require('bufferline').style_preset.no_italic,
+        require('bufferline').style_preset.no_bold,
+      },
+      show_buffer_icons = false,
+      show_buffer_close_icons = false,
+      show_close_icon = false,
+      close_command = "Bdelete %d",
+      right_mouse_command = "Bdelete %d",
+    }
+  })
+EOF
+
+  nnoremap <C-P> <cmd>BufferLineCyclePrev<CR>
+  nnoremap <C-N> <cmd>BufferLineCycleNext<CR>
+
+  nnoremap <silent>[b <cmd>BufferLineCyclePrev<CR>
+  nnoremap <silent>]b <cmd>BufferLineCycleNext<CR>
+
+  nnoremap <leader>1 <cmd>BufferLineGoToBuffer 1<CR>
+  nnoremap <leader>2 <cmd>BufferLineGoToBuffer 2<CR>
+  nnoremap <leader>3 <cmd>BufferLineGoToBuffer 3<CR>
+  nnoremap <leader>4 <cmd>BufferLineGoToBuffer 4<CR>
+  nnoremap <leader>5 <cmd>BufferLineGoToBuffer 5<CR>
+  nnoremap <leader>6 <cmd>BufferLineGoToBuffer 6<CR>
+  nnoremap <leader>7 <cmd>BufferLineGoToBuffer 7<CR>
+  nnoremap <leader>8 <cmd>BufferLineGoToBuffer 8<CR>
+  nnoremap <leader>9 <cmd>BufferLineGoToBuffer 9<CR>
+  nnoremap <leader>0 <cmd>BufferLineGoToBuffer -1<CR>
+
+  cnoreabbrev bqr BufferLineCloseRight
+else
+  nnoremap <C-P> :bp<CR>
+  nnoremap <C-N> :bn<CR>
+
+  nnoremap <leader>1 <Plug>BufTabLine.Go(1)
+  nnoremap <leader>2 <Plug>BufTabLine.Go(2)
+  nnoremap <leader>3 <Plug>BufTabLine.Go(3)
+  nnoremap <leader>4 <Plug>BufTabLine.Go(4)
+  nnoremap <leader>5 <Plug>BufTabLine.Go(5)
+  nnoremap <leader>6 <Plug>BufTabLine.Go(6)
+  nnoremap <leader>7 <Plug>BufTabLine.Go(7)
+  nnoremap <leader>8 <Plug>BufTabLine.Go(8)
+  nnoremap <leader>9 <Plug>BufTabLine.Go(9)
+  nnoremap <leader>0 <Plug>BufTabLine.Go(-1)
+endif
+
+" " tiagovla/scope.nvim
+if has('nvim')
+  lua require('scope').setup({})
 endif
 
 " " lewis6991/gitsigns.nvim
@@ -741,19 +808,6 @@ cnoreabbrev w!! w !sudo tee % >/dev/null
 cnoreabbrev Wqa wqa
 cnoreabbrev Qa qa
 cnoreabbrev Q q
-
-nnoremap <C-P> :bp<CR>
-nnoremap <C-N> :bn<CR>
-nnoremap <leader>1 <Plug>BufTabLine.Go(1)
-nnoremap <leader>2 <Plug>BufTabLine.Go(2)
-nnoremap <leader>3 <Plug>BufTabLine.Go(3)
-nnoremap <leader>4 <Plug>BufTabLine.Go(4)
-nnoremap <leader>5 <Plug>BufTabLine.Go(5)
-nnoremap <leader>6 <Plug>BufTabLine.Go(6)
-nnoremap <leader>7 <Plug>BufTabLine.Go(7)
-nnoremap <leader>8 <Plug>BufTabLine.Go(8)
-nnoremap <leader>9 <Plug>BufTabLine.Go(9)
-nnoremap <leader>0 <Plug>BufTabLine.Go(-1)
 
 nnoremap <C-J> <C-W><C-J>
 nnoremap <C-K> <C-W><C-K>
