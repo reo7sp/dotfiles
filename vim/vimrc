@@ -599,6 +599,7 @@ if has('nvim')
       show_buffer_icons = false,
       show_buffer_close_icons = false,
       show_close_icon = false,
+      modified_icon = '',
       close_command = "Bdelete %d",
       right_mouse_command = "Bdelete %d",
     }
@@ -876,10 +877,14 @@ nnoremap <C-Down> <cmd>resize -2<cr>
 nnoremap <C-Right> <cmd>vertical resize +2<cr>
 nnoremap <C-Left> <cmd>vertical resize -2<cr>
 
-noremap <leader>y "+y
-noremap <leader>Y "+Y
-noremap <leader>p "+p
-noremap <leader>P "+P
+nnoremap <leader>y "+y
+nnoremap <leader>Y "+Y
+nnoremap <leader>p "+p
+nnoremap <leader>P "+P
+vnoremap <leader>y "+y
+vnoremap <leader>Y "+Y
+vnoremap <leader>p "+p
+vnoremap <leader>P "+P
 
 nnoremap <C-S> :w<CR>
 inoremap <C-S> <Esc>:w<CR>l
