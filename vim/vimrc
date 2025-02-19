@@ -145,11 +145,11 @@ call plug#end()
 " plugin settings
 " " hrsh7th/nvim-cmp
 function! LspAttached() abort
-  nnoremap <buffer> gd <cmd>lua require('telescope.builtin').lsp_definitions()<cr>
-  nnoremap <buffer> gD <cmd>lua require('telescope.builtin').lsp_implementations()<cr>
-  nnoremap <buffer> gi <cmd>lua require('telescope.builtin').lsp_implementations()<cr>
-  nnoremap <buffer> gy <cmd>lua require('telescope.builtin').lsp_type_definitions()<cr>
-  nnoremap <buffer> gr <cmd>lua require('telescope.builtin').lsp_references()<cr>
+  nnoremap <buffer> gd <cmd>lua require('telescope.builtin').lsp_definitions({fname_width = 60})<cr>
+  nnoremap <buffer> gD <cmd>lua require('telescope.builtin').lsp_implementations({fname_width = 60})<cr>
+  nnoremap <buffer> gi <cmd>lua require('telescope.builtin').lsp_implementations({fname_width = 60})<cr>
+  nnoremap <buffer> gy <cmd>lua require('telescope.builtin').lsp_type_definitions({fname_width = 60})<cr>
+  nnoremap <buffer> gr <cmd>lua require('telescope.builtin').lsp_references({fname_width = 60})<cr>
   nnoremap <buffer> gh <cmd>Telescope hierarchy theme=ivy disable_devicons=true<cr>
   nnoremap <buffer> gs <cmd>lua vim.lsp.buf.hover()<cr>
   nnoremap <buffer> gp <cmd>lua vim.diagnostic.open_float()<cr>
@@ -253,7 +253,7 @@ EOF
 EOF
   lua << EOF
   local cmp = require('cmp')
-  cmp.setup.cmdline('/', {
+  cmp.setup.cmdline({ '/', '?' }, {
     mapping = cmp.mapping.preset.cmdline(),
     sources = {
       { name = 'buffer' }
@@ -270,7 +270,8 @@ EOF
           ignore_cmds = { 'Man', '!' }
         }
       }
-    })
+    }),
+    matching = { disallow_symbol_nonprefix_matching = false }
   })
 EOF
 
@@ -387,8 +388,14 @@ if has('nvim')
   require('telescope').setup({
     defaults = {
       mappings = {
-        i = { ["<c-t>"] = require("trouble.sources.telescope").open },
-        n = { ["<c-t>"] = require("trouble.sources.telescope").open },
+        i = {
+          ["<c-t>"] = require("trouble.sources.telescope").open,
+          ['<c-p>'] = require('telescope.actions.layout').toggle_preview
+        },
+        n = {
+          ["<c-t>"] = require("trouble.sources.telescope").open,
+          ['<c-p>'] = require('telescope.actions.layout').toggle_preview
+        },
       },
     },
   })
@@ -407,8 +414,8 @@ EOF
   nnoremap <leader>fq <cmd>lua require('telescope.builtin').quickfix()<cr>
   nnoremap <leader>fy <cmd>lua require('telescope').extensions.yank_history.yank_history()<cr>
   nnoremap <leader>fu <cmd>lua require('telescope').extensions.undo.undo()<cr>
-  nnoremap <leader>fs <cmd>lua require('telescope.builtin').lsp_document_symbols({ignore_symbols={'variable', 'field'}})<cr>
-  nnoremap <leader>fa <cmd>lua require('telescope.builtin').lsp_dynamic_workspace_symbols({ignore_symbols={'variable', 'field'}})<cr>
+  nnoremap <leader>fs <cmd>lua require('telescope.builtin').lsp_document_symbols({ignore_symbols={'variable', 'field'}, fname_width = 60})<cr>
+  nnoremap <leader>fa <cmd>lua require('telescope.builtin').lsp_dynamic_workspace_symbols({ignore_symbols={'variable', 'field'}, fname_width = 60})<cr>
   nnoremap <leader>fv <cmd>lua require('telescope.builtin').treesitter()<cr>
   nnoremap <leader>fc <cmd>lua require('telescope.builtin').commands()<cr>
 endif
@@ -625,6 +632,16 @@ EOF
   nnoremap <silent>[b <cmd>BufferLineCyclePrev<CR>
   nnoremap <silent>]b <cmd>BufferLineCycleNext<CR>
 
+  nnoremap <C-1> <cmd>BufferLineGoToBuffer 1<CR>
+  nnoremap <C-2> <cmd>BufferLineGoToBuffer 2<CR>
+  nnoremap <C-3> <cmd>BufferLineGoToBuffer 3<CR>
+  nnoremap <C-4> <cmd>BufferLineGoToBuffer 4<CR>
+  nnoremap <C-5> <cmd>BufferLineGoToBuffer 5<CR>
+  nnoremap <C-6> <cmd>BufferLineGoToBuffer 6<CR>
+  nnoremap <C-7> <cmd>BufferLineGoToBuffer 7<CR>
+  nnoremap <C-8> <cmd>BufferLineGoToBuffer 8<CR>
+  nnoremap <C-9> <cmd>BufferLineGoToBuffer 9<CR>
+  nnoremap <C-0> <cmd>BufferLineGoToBuffer -1<CR>
   nnoremap <leader>1 <cmd>BufferLineGoToBuffer 1<CR>
   nnoremap <leader>2 <cmd>BufferLineGoToBuffer 2<CR>
   nnoremap <leader>3 <cmd>BufferLineGoToBuffer 3<CR>
@@ -641,6 +658,16 @@ else
   nnoremap <C-P> :bp<CR>
   nnoremap <C-N> :bn<CR>
 
+  nnoremap <C-1> <Plug>BufTabLine.Go(1)
+  nnoremap <C-2> <Plug>BufTabLine.Go(2)
+  nnoremap <C-3> <Plug>BufTabLine.Go(3)
+  nnoremap <C-4> <Plug>BufTabLine.Go(4)
+  nnoremap <C-5> <Plug>BufTabLine.Go(5)
+  nnoremap <C-6> <Plug>BufTabLine.Go(6)
+  nnoremap <C-7> <Plug>BufTabLine.Go(7)
+  nnoremap <C-8> <Plug>BufTabLine.Go(8)
+  nnoremap <C-9> <Plug>BufTabLine.Go(9)
+  nnoremap <C-0> <Plug>BufTabLine.Go(-1)
   nnoremap <leader>1 <Plug>BufTabLine.Go(1)
   nnoremap <leader>2 <Plug>BufTabLine.Go(2)
   nnoremap <leader>3 <Plug>BufTabLine.Go(3)
