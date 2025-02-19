@@ -311,6 +311,10 @@ make-markdown() {
   marked "$1" -o "${1%.*}".html --gfm && echo '<style>body { font: 16px sans-serif; width: 720px; margin: 1em auto; } img { width: 100%; }</style>' >> "${1%.*}".html
 }
 
+watch-markdown() {
+  fswatch "$1" | while read; do make-markdown "$1" ; done
+}
+
 ## plantuml
 plantuml-server() {
   docker run -d --name plantuml --restart always -p 18080:8080 plantuml/plantuml-server:jetty
@@ -324,7 +328,19 @@ make-plantuml() {
   curl -sS "http://localhost:18080/png/`cat "$1" | gzip -c | tail -c +11 | base64 | tr ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789/+ 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_- | tr -d '\n'`" > "${1%.*}".png
 }
 
+watch-plantuml-slow() {
+  fswatch "$1" | while read; do make-plantuml-slow "$1" ; done
+}
+
+watch-plantuml() {
+  fswatch "$1" | while read; do make-plantuml "$1" ; done
+}
+
 ## mermaid
 make-mermaid() {
   mmdc -i "$1" -o "${1%.*}".png
+}
+
+watch-mermaid() {
+  fswatch "$1" | while read; do make-mermaid "$1" ; done
 }
