@@ -653,7 +653,34 @@ EOF
   nnoremap <leader>9 <cmd>BufferLineGoToBuffer 9<CR>
   nnoremap <leader>0 <cmd>BufferLineGoToBuffer -1<CR>
 
+  cnoreabbrev bql BufferLineCloseLeft
   cnoreabbrev bqr BufferLineCloseRight
+
+  lua << EOF
+  vim.api.nvim_create_user_command('BufferLineCloseIdx',
+    function (opts)
+      local num = tonumber(opts.fargs[1])
+      require('bufferline').exec(num, function(buf, visible_buffers)
+        vim.cmd('Bdelete ' .. buf.id)
+      end)
+    end,
+    {
+      nargs = 1,
+    }
+  )
+EOF
+  cnoreabbrev bq1 BufferLineCloseIdx 1
+  cnoreabbrev bq2 BufferLineCloseIdx 2
+  cnoreabbrev bq3 BufferLineCloseIdx 3
+  cnoreabbrev bq4 BufferLineCloseIdx 4
+  cnoreabbrev bq5 BufferLineCloseIdx 5
+  cnoreabbrev bq6 BufferLineCloseIdx 6
+  cnoreabbrev bq7 BufferLineCloseIdx 7
+  cnoreabbrev bq8 BufferLineCloseIdx 8
+  cnoreabbrev bq9 BufferLineCloseIdx 9
+
+  nnoremap <C--> <cmd>BufferLineMovePrev<CR>
+  nnoremap <C-=> <cmd>BufferLineMoveNext<CR>
 else
   nnoremap <C-P> :bp<CR>
   nnoremap <C-N> :bn<CR>
