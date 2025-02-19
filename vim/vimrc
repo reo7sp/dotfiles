@@ -36,6 +36,7 @@ else
 endif
 Plug 'Raimondi/delimitMate'
 Plug 'wellle/targets.vim'
+Plug 'tpope/vim-surround'
 Plug 'romainl/vim-cool'
 Plug 'ConradIrwin/vim-bracketed-paste'
 if has('nvim')

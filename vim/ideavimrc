@@ -1,10 +1,12 @@
 let mapleader=","
 
-set relativenumber
 set ignorecase
 set smartcase
+set relativenumber
 set ideajoin
+
 set sneak
+set surround
 
 nnoremap <C-J> <C-W><C-J>
 nnoremap <C-K> <C-W><C-K>
