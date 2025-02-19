@@ -398,6 +398,7 @@ EOF
   nnoremap <leader>fdf <cmd>lua require('telescope').extensions.dir.find_files()<cr>
   nnoremap <leader>fe <cmd>lua require('telescope').extensions.recent_files.pick({only_cwd = true})<cr>
   nnoremap <leader>fg <cmd>lua require('telescope').extensions.live_grep_args.live_grep_args()<cr>
+  vnoremap <leader>fg <cmd>lua require('telescope-live-grep-args.shortcuts').grep_visual_selection()<cr>
   nnoremap <leader>fdg <cmd>lua require('telescope').extensions.dir.live_grep()<cr>
   nnoremap <leader>fb <cmd>Telescope scope buffers<cr>
   nnoremap <leader>ft <cmd>Telescope telescope-tabs list_tabs<cr>
