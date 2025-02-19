@@ -195,6 +195,10 @@ sshz() {
   ssh -t "$1" zsh
 }
 
+## difft
+export DFT_CONTEXT=10
+export DFT_DISPLAY=side-by-side-show-both
+
 ## git
 g() {
   git "$@"
