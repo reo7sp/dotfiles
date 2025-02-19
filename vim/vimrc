@@ -915,6 +915,9 @@ endif
 
 
 " own commands
+" " yank file line reference
+command YankReference redir @+ | echo join([expand('%'), line('.')], ':') | redir END
+
 " " sublime text & sublime merge integration
 if has('nvim')
   lua << EOF
