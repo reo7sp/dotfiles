@@ -41,7 +41,10 @@ Plug 'romainl/vim-cool'
 Plug 'ConradIrwin/vim-bracketed-paste'
 if has('nvim')
   Plug 'okuuva/auto-save.nvim'
+else
+  Plug '907th/vim-auto-save'
 endif
+Plug 'farmergreg/vim-lastplace'
 Plug 'pbrisbin/vim-mkdir'
 Plug 'tpope/vim-sleuth'
 Plug 'ntpeters/vim-better-whitespace'
@@ -281,7 +284,7 @@ EOF
   augroup END
 endif
 
-" " okuuva/auto-save.nvim
+" " okuuva/auto-save.nvim or 907th/vim-auto-save
 if has('nvim')
   lua << EOF
   require('auto-save').setup({
@@ -294,6 +297,9 @@ if has('nvim')
     end
   })
 EOF
+else
+  let g:auto_save = 1
+  let g:auto_save_silent = 1
 endif
 
 " " gbprod/yanky.nvim or maxbrunsfeld/vim-yankstack
