@@ -937,18 +937,23 @@ let g:airline_theme = 'sonokai'
 
 let g:sonokai_enable_italic = 1
 
-set colorcolumn=80,120
-
 let g:vimsyn_embed = 'l'
 
 " vim settings
 " " editor appearance
 set number
 set relativenumber
-set cul
 set showmatch
 set scrolloff=5
 set sidescrolloff=5
+set cul
+set colorcolumn=80,120
+
+augroup BgHighlight
+    autocmd!
+    autocmd WinEnter * set cul | set colorcolumn=80,120
+    autocmd WinLeave * set nocul | set colorcolumn=0
+augroup END
 
 set shiftwidth=4
 set tabstop=4
