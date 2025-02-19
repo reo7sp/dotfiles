@@ -215,16 +215,8 @@ if [[ $(git config get pager.difftool) == true ]]; then
   alias gpS='git show --pretty=short --show-signature --ext-diff'
 fi
 
-if can-exec gh; then
-  real_gh=$(which gh)
-  _gh() {
-    $real_gh "$@"
-  }
-  alias github="_gh"
-fi
-
-alias gh="tig"
 alias gg="lazygit"
+alias gll="tig"
 
 gfcd() {
   local repo=$1
