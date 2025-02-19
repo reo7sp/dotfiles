@@ -518,6 +518,11 @@ if has('nvim')
       dotfiles = false,
       custom = { "^.git$" },
     },
+    actions = {
+      open_file = {
+        quit_on_open = true,
+      },
+    },
     on_attach = function (bufnr)
       local api = require('nvim-tree.api')
 
@@ -533,8 +538,8 @@ if has('nvim')
   })
 EOF
 
-  nnoremap <leader>tt <cmd>NvimTreeToggle<CR><C-W><C-W>
-  nnoremap <leader>tf <cmd>NvimTreeToggle<CR><C-W><C-W>
+  nnoremap <leader>tt <cmd>NvimTreeToggle<CR>
+  nnoremap <leader>tf <cmd>NvimTreeToggle<CR>
 endif
 
 " " nvim-lualine/lualine.nvim or vim-airline/vim-airline
