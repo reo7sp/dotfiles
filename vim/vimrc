@@ -122,7 +122,7 @@ if has('nvim')
 endif
 Plug 'ekalinin/Dockerfile.vim'
 Plug 'vim-scripts/nginx.vim'
-Plug 'Glench/Vim-Jinja2-Syntax'
+Plug 'HiPhish/jinja.vim'
 Plug 'johejo/gomod.vim'
 Plug 'uarun/vim-protobuf'
 Plug 'jparise/vim-graphql'
@@ -753,6 +753,46 @@ if has('nvim')
 EOF
 endif
 
+" " rcarriga/nvim-notify
+if has('nvim')
+  lua << EOF
+  require('notify').setup({
+    render = 'simple',
+    stages = 'static',
+    time_formats = {
+      notification = "",
+    },
+    icons = {
+      ERROR = "",
+      WARN = "",
+      INFO = "",
+      DEBUG = "",
+      TRACE = "",
+    },
+  })
+
+  vim.notify = require('notify')
+EOF
+endif
+
+" " mrded/nvim-lsp-notify
+if has('nvim')
+  lua require('lsp-notify').setup({})
+endif
+
+" " dgagn/diagflow.nvim
+if has('nvim')
+  lua << EOF
+  require('diagflow').setup({
+    placement = 'inline',
+    inline_padding_left = 7,
+    show_sign = true,
+    scope = 'line',
+    toggle_event = { 'InsertEnter', 'InsertLeave' },
+  })
+EOF
+endif
+
 " " nvim-treesitter/nvim-treesitter
 if has('nvim')
   lua << EOF
@@ -835,46 +875,6 @@ if has('nvim')
         },
       },
     },
-  })
-EOF
-endif
-
-" " rcarriga/nvim-notify
-if has('nvim')
-  lua << EOF
-  require('notify').setup({
-    render = 'simple',
-    stages = 'static',
-    time_formats = {
-      notification = "",
-    },
-    icons = {
-      ERROR = "",
-      WARN = "",
-      INFO = "",
-      DEBUG = "",
-      TRACE = "",
-    },
-  })
-
-  vim.notify = require('notify')
-EOF
-endif
-
-" " mrded/nvim-lsp-notify
-if has('nvim')
-  lua require('lsp-notify').setup({})
-endif
-
-" " dgagn/diagflow.nvim
-if has('nvim')
-  lua << EOF
-  require('diagflow').setup({
-    placement = 'inline',
-    inline_padding_left = 7,
-    show_sign = true,
-    scope = 'line',
-    toggle_event = { 'InsertEnter', 'InsertLeave' },
   })
 EOF
 endif
