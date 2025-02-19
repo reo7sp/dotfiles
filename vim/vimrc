@@ -73,9 +73,11 @@ Plug 'moll/vim-bbye'
 Plug 'vim-scripts/BufOnly.vim'
 if has('nvim')
   Plug 'nvim-telescope/telescope.nvim', {'tag': '0.1.8'}
+  Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'make' }
   Plug 'smartpde/telescope-recent-files'
   Plug 'nvim-telescope/telescope-live-grep-args.nvim'
   Plug 'princejoogie/dir-telescope.nvim'
+  Plug 'jmacadie/telescope-hierarchy.nvim'
 endif
 if has('nvim')
   Plug 'folke/trouble.nvim'
@@ -148,6 +150,7 @@ function! LspAttached() abort
   nnoremap <buffer> gi <cmd>lua require('telescope.builtin').lsp_implementations()<cr>
   nnoremap <buffer> gy <cmd>lua require('telescope.builtin').lsp_type_definitions()<cr>
   nnoremap <buffer> gr <cmd>lua require('telescope.builtin').lsp_references()<cr>
+  nnoremap <buffer> gh <cmd>Telescope hierarchy theme=ivy disable_devicons=true<cr>
   nnoremap <buffer> gs <cmd>lua vim.lsp.buf.hover()<cr>
   nnoremap <buffer> gp <cmd>lua vim.diagnostic.open_float()<cr>
   nnoremap <buffer> gq <cmd>lua vim.lsp.buf.code_action()<cr>
@@ -368,6 +371,7 @@ cnoreabbrev bo BufOnly
 " " nvim-telescope/telescope.nvim
 if has('nvim')
   lua require('telescope').setup({ defaults = require('telescope.themes').get_ivy() })
+  lua require('telescope').load_extension('fzf')
   lua require('telescope').load_extension('recent_files')
   lua require('telescope').load_extension('dir')
   lua require('telescope').load_extension('live_grep_args')
@@ -377,6 +381,7 @@ if has('nvim')
   lua require('telescope').load_extension('yank_history')
   lua require('telescope').load_extension('undo')
   lua require('telescope').load_extension('notify')
+  lua require('telescope').load_extension('hierarchy')
 
   lua << EOF
   require('telescope').setup({
@@ -401,8 +406,8 @@ EOF
   nnoremap <leader>fq <cmd>lua require('telescope.builtin').quickfix()<cr>
   nnoremap <leader>fy <cmd>lua require('telescope').extensions.yank_history.yank_history()<cr>
   nnoremap <leader>fu <cmd>lua require('telescope').extensions.undo.undo()<cr>
-  nnoremap <leader>fs <cmd>lua require('telescope.builtin').lsp_document_symbols()<cr>
-  nnoremap <leader>fa <cmd>lua require('telescope.builtin').lsp_dynamic_workspace_symbols()<cr>
+  nnoremap <leader>fs <cmd>lua require('telescope.builtin').lsp_document_symbols({ignore_symbols={'variable', 'field'}})<cr>
+  nnoremap <leader>fa <cmd>lua require('telescope.builtin').lsp_dynamic_workspace_symbols({ignore_symbols={'variable', 'field'}})<cr>
   nnoremap <leader>fv <cmd>lua require('telescope.builtin').treesitter()<cr>
   nnoremap <leader>fc <cmd>lua require('telescope.builtin').commands()<cr>
 endif
