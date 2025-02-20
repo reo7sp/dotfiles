@@ -1108,14 +1108,6 @@ set fileencoding=utf-8
 set fileencodings=utf-8,cp1251,latin1
 set fileformats=unix,dos,mac
 
-" " russian support
-set keymap=russian-jcukenwin
-set spelllang=ru_yo,en_us
-set iskeyword=@,48-57,_,192-255
-set langmap=ёйцукенгшщзхъфывапролджэячсмитьбюЙЦУКЕHГШЩЗХЪФЫВАПРОЛДЖЭЯЧСМИТЬБЮ;`qwertyuiop[]asdfghjkl\\;'zxcvbnm\\,.QWERTYUIOP{}ASDFGHJKL:\\"ZXCVBNM<>
-set iminsert=0
-set imsearch=0
-
 " " other
 set backupdir=~/.vim/backup
 set directory=~/.vim/tmp
