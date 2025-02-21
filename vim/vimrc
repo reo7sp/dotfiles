@@ -215,8 +215,8 @@ EOF
       end,
     },
     mapping = cmp.mapping.preset.insert({
-      ['<C-b>'] = cmp.mapping.scroll_docs(-4),
-      ['<C-f>'] = cmp.mapping.scroll_docs(4),
+      ['<C-d>'] = cmp.mapping(cmp.mapping.scroll_docs(4), {'i', 'c'}),
+      ['<C-u>'] = cmp.mapping(cmp.mapping.scroll_docs(-4), {'i', 'c'}),
       ['<C-Space>'] = cmp.mapping.complete(),
       ["<C-e>"] = cmp.mapping.close(),
       ["<CR>"] = cmp.mapping(function(fallback)
@@ -243,15 +243,6 @@ EOF
           fallback()
         end
       end, { "i", "s" }),
-      ['<S-Tab>'] = cmp.mapping(function(fallback)
-        if cmp.visible() then
-          cmp.select_prev_item()
-        elseif luasnip.jumpable(-1) then
-          luasnip.jump(-1)
-        else
-          fallback()
-        end
-      end, { 'i', 's' }),
     }),
   })
 EOF
@@ -818,10 +809,6 @@ if has('nvim')
         enable = true,
         lookahead = true,
         keymaps = {
-          ["a="] = { query = "@assignment.outer", desc = "Select outer part of an assignment" },
-          ["i="] = { query = "@assignment.inner", desc = "Select inner part of an assignment" },
-          ["l="] = { query = "@assignment.lhs", desc = "Select left hand side of an assignment" },
-          ["r="] = { query = "@assignment.rhs", desc = "Select right hand side of an assignment" },
           ["aa"] = { query = "@parameter.outer", desc = "Select outer part of a parameter/argument" },
           ["ia"] = { query = "@parameter.inner", desc = "Select inner part of a parameter/argument" },
           ["ai"] = { query = "@conditional.outer", desc = "Select outer part of a conditional" },
