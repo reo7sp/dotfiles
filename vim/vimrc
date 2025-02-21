@@ -161,6 +161,7 @@ function! LspAttached() abort
   nnoremap <buffer> <leader>lf <cmd>lua vim.lsp.buf.format({async = true})<cr>
   xnoremap <buffer> <leader>lf <cmd>lua vim.lsp.buf.format({async = true})<cr>
   nnoremap <buffer> <leader>lc <cmd>lua vim.lsp.buf.code_action()<cr>
+  nnoremap <buffer> <leader>lq <cmd>lua vim.lsp.buf.code_action()<cr>
 endfunction
 
 if has('nvim')
@@ -514,6 +515,12 @@ if has('nvim')
       indent_markers = {
         enable = true,
       },
+    },
+    view = {
+      width = 40,
+    },
+    git = {
+      enable = false,
     },
     update_focused_file = {
       enable = true,
