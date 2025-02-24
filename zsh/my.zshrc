@@ -266,6 +266,11 @@ cdfm() {
   cd $(find .          -type d -not -path '*/\.*' -print 2> /dev/null | fzf-tmux)
 }
 
+## fd
+if can-exec fdfind; then
+  alias fd="fdfind"
+fi
+
 ## sublime text
 t() {
   lcd
