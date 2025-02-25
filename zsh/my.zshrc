@@ -243,6 +243,8 @@ gbd() {
   done
 }
 
+alias gfmall="find . -maxdepth 1 -type d | xargs -n1 -t -I{} git -C '{}' pull"
+
 ## fzf
 alias f="fzf"
 
