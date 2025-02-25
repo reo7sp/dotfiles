@@ -414,7 +414,7 @@ EOF
   nnoremap <leader>fu <cmd>lua require('telescope').extensions.undo.undo()<cr>
   nnoremap <leader>fs <cmd>lua require('telescope.builtin').lsp_document_symbols({ignore_symbols={'variable', 'field'}, fname_width = 60})<cr>
   nnoremap <leader>fa <cmd>lua require('telescope.builtin').lsp_dynamic_workspace_symbols({ignore_symbols={'variable', 'field'}, fname_width = 60})<cr>
-  nnoremap <leader>fv <cmd>lua require('telescope.builtin').treesitter()<cr>
+  nnoremap <leader>fx <cmd>lua require('telescope.builtin').treesitter()<cr>
   nnoremap <leader>fc <cmd>lua require('telescope.builtin').commands()<cr>
 endif
 
@@ -892,7 +892,11 @@ endif
 " " nvim-pack/nvim-spectre
 if has('nvim')
   lua << EOF
-  require('spectre').setup()
+  require('spectre').setup({
+    use_trouble_qf = true,
+    is_insert_mode = true,
+    is_block_ui_break = true,
+  })
 
   vim.keymap.set('n', '<leader>s', '<cmd>lua require("spectre").toggle()<CR>', { desc = "Toggle Spectre" })
 EOF
