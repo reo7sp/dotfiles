@@ -118,8 +118,7 @@ else
   Plug 'airblade/vim-gitgutter'
 endif
 if has('nvim')
-  Plug 'rcarriga/nvim-notify'
-  Plug 'mrded/nvim-lsp-notify'
+  Plug 'j-hui/fidget.nvim'
 endif
 if has('nvim')
   Plug 'dgagn/diagflow.nvim'
@@ -397,7 +396,7 @@ if has('nvim')
   lua require('telescope-tabs').setup({})
   lua require('telescope').load_extension('yank_history')
   lua require('telescope').load_extension('undo')
-  lua require('telescope').load_extension('notify')
+  lua require('telescope').load_extension('fidget')
   lua require('telescope').load_extension('hierarchy')
   lua require('telescope').load_extension('projects')
 
@@ -435,6 +434,7 @@ EOF
   nnoremap <leader>fs <cmd>lua require('telescope.builtin').lsp_document_symbols({ignore_symbols={'variable', 'field'}, fname_width = 60})<cr>
   nnoremap <leader>fa <cmd>lua require('telescope.builtin').lsp_dynamic_workspace_symbols({ignore_symbols={'variable', 'field'}, fname_width = 60})<cr>
   nnoremap <leader>fx <cmd>lua require('telescope.builtin').treesitter()<cr>
+  nnoremap <leader>fn <cmd>lua require('telescope').extensions.fidget.fidget()<cr>
   nnoremap <leader>fc <cmd>lua require('telescope.builtin').commands()<cr>
 endif
 
@@ -784,31 +784,13 @@ if has('nvim')
 EOF
 endif
 
-" " rcarriga/nvim-notify
+" " j-hui/fidget.nvim
 if has('nvim')
   lua << EOF
-  require('notify').setup({
-    render = 'simple',
-    stages = 'static',
-    time_formats = {
-      notification = "",
-    },
-    icons = {
-      ERROR = "",
-      WARN = "",
-      INFO = "",
-      DEBUG = "",
-      TRACE = "",
-    },
-  })
+  require('fidget').setup({})
 
-  vim.notify = require('notify')
+  vim.notify = require('fidget').notify
 EOF
-endif
-
-" " mrded/nvim-lsp-notify
-if has('nvim')
-  lua require('lsp-notify').setup({})
 endif
 
 " " dgagn/diagflow.nvim
