@@ -444,18 +444,54 @@ if has('nvim')
   require('trouble').setup({
     auto_preview = false,
     auto_jump = false,
+    icons = {
+      indent = {
+        fold_open     = "",
+        fold_closed   = "",
+      },
+      folder_closed   = "",
+      folder_open     = "",
+      kinds = {
+        Array         = "",
+        Boolean       = "",
+        Class         = "",
+        Constant      = "",
+        Constructor   = "",
+        Enum          = "",
+        EnumMember    = "",
+        Event         = "",
+        Field         = "",
+        File          = "",
+        Function      = "",
+        Interface     = "",
+        Key           = "",
+        Method        = "",
+        Module        = "",
+        Namespace     = "",
+        Null          = "",
+        Number        = "",
+        Object        = "",
+        Operator      = "",
+        Package       = "",
+        Property      = "",
+        String        = "",
+        Struct        = "",
+        TypeParameter = "",
+        Variable      = "",
+      },
+    },
   })
 EOF
 
-  nnoremap <leader>td <cmd>Trouble lsp_definitions toggle focus=false<CR>
-  nnoremap <leader>tD <cmd>Trouble lsp_implementations toggle focus=false<CR>
-  nnoremap <leader>ti <cmd>Trouble lsp_implementations toggle focus=false<CR>
-  nnoremap <leader>ty <cmd>Trouble lsp_type_definitions toggle focus=false<CR>
-  nnoremap <leader>tr <cmd>Trouble lsp_references toggle focus=false<CR>
-  nnoremap <leader>tp <cmd>Trouble diagnostics toggle focus=false filter.buf=0<CR>
-  nnoremap <leader>tq <cmd>Trouble quickfix toggle focus=false<CR>
-  nnoremap <leader>ts <cmd>Trouble lsp_document_symbols toggle focus=false<CR>
-  nnoremap <leader>tv <cmd>Trouble symbols toggle focus=false<CR>
+  nnoremap <leader>td <cmd>Trouble lsp_definitions toggle<CR>
+  nnoremap <leader>tD <cmd>Trouble lsp_implementations toggle<CR>
+  nnoremap <leader>ti <cmd>Trouble lsp_implementations toggle<CR>
+  nnoremap <leader>ty <cmd>Trouble lsp_type_definitions toggle<CR>
+  nnoremap <leader>tr <cmd>Trouble lsp_references toggle<CR>
+  nnoremap <leader>tp <cmd>Trouble diagnostics toggle filter.buf=0<CR>
+  nnoremap <leader>tq <cmd>Trouble quickfix toggle<CR>
+  nnoremap <leader>ts <cmd>Trouble lsp_document_symbols toggle<CR>
+  nnoremap <leader>tv <cmd>Trouble symbols toggle<CR>
 endif
 
 " " nvim-tree/nvim-tree.lua
