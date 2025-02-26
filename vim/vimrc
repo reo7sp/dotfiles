@@ -1003,8 +1003,6 @@ endif
 if has('nvim')
   lua << EOF
   require('oil').setup()
-
-  vim.keymap.set('n', '<leader>o', '<cmd>:Oil<CR>', { desc = "Toggle Oil" })
 EOF
 endif
 
