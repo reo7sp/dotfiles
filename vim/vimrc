@@ -112,13 +112,12 @@ else
   Plug 'ap/vim-buftabline'
 endif
 if has('nvim')
-  Plug 'lewis6991/gitsigns.nvim'
-  Plug 'sindrets/diffview.nvim'
-else
-  Plug 'airblade/vim-gitgutter'
+  Plug 'j-hui/fidget.nvim'
 endif
 if has('nvim')
-  Plug 'j-hui/fidget.nvim'
+  Plug 'lewis6991/gitsigns.nvim'
+else
+  Plug 'airblade/vim-gitgutter'
 endif
 if has('nvim')
   Plug 'dgagn/diagflow.nvim'
@@ -127,10 +126,11 @@ if has('nvim')
   Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
   Plug 'nvim-treesitter/nvim-treesitter-textobjects'
 endif
+Plug 'Vimjas/vim-python-pep8-indent'
+Plug 'johejo/gomod.vim'
+Plug 'HiPhish/jinja.vim'
 Plug 'ekalinin/Dockerfile.vim'
 Plug 'vim-scripts/nginx.vim'
-Plug 'HiPhish/jinja.vim'
-Plug 'johejo/gomod.vim'
 Plug 'uarun/vim-protobuf'
 Plug 'jparise/vim-graphql'
 Plug 'aklt/plantuml-syntax'
@@ -142,6 +142,9 @@ if has('nvim')
   Plug 'AckslD/nvim-whichkey-setup.lua'
 endif
 Plug 'tpope/vim-fugitive'
+if has('nvim')
+  Plug 'sindrets/diffview.nvim'
+endif
 if has('nvim')
   Plug 'nvim-pack/nvim-spectre'
 endif
@@ -190,7 +193,23 @@ EOF
 EOF
   lua << EOF
   require('mason-lspconfig').setup({
-    ensure_installed = { 'cmake', 'bashls', 'cssls', 'dockerls', 'gopls', 'html', 'ts_ls', 'jsonls', 'lua_ls', 'nginx_language_server', 'vacuum', 'perlnavigator', 'puppet', 'pyright', 'yamlls' },
+    ensure_installed = {
+      'cmake',
+      'bashls',
+      'cssls',
+      'dockerls',
+      'gopls',
+      'html',
+      'ts_ls',
+      'jsonls',
+      'lua_ls',
+      'nginx_language_server',
+      'vacuum',
+      'perlnavigator',
+      'puppet',
+      'pyright',
+      'yamlls',
+    },
     handlers = {
       function(server_name)
         require('lspconfig')[server_name].setup({})
@@ -214,7 +233,7 @@ EOF
     },
     preselect = 'none',
     completion = {
-        completeopt = 'menu,menuone,noinsert,noselect'
+      completeopt = 'menu,menuone,noinsert,noselect'
     },
     snippet = {
       expand = function(args)
@@ -225,8 +244,8 @@ EOF
       ['<C-d>'] = cmp.mapping(cmp.mapping.scroll_docs(4), {'i', 'c'}),
       ['<C-u>'] = cmp.mapping(cmp.mapping.scroll_docs(-4), {'i', 'c'}),
       ['<C-Space>'] = cmp.mapping.complete(),
-      ["<C-e>"] = cmp.mapping.close(),
-      ["<CR>"] = cmp.mapping(function(fallback)
+      ['<C-e>'] = cmp.mapping.close(),
+      ['<CR>'] = cmp.mapping(function(fallback)
         if cmp.visible() then
           if luasnip.expandable() then
             luasnip.expand()
@@ -249,7 +268,7 @@ EOF
         else
           fallback()
         end
-      end, { "i", "s" }),
+      end, { 'i', 's' }),
     }),
   })
 EOF
@@ -349,8 +368,8 @@ if has('nvim')
     prefix = 'gt',
   })
   require('telescope').load_extension('textcase')
-  vim.api.nvim_set_keymap('n', 'gt.', '<cmd>TextCaseOpenTelescope<CR>', { desc = "Telescope" })
-  vim.api.nvim_set_keymap('v', 'gt.', '<cmd>TextCaseOpenTelescope<CR>', { desc = "Telescope" })
+  vim.api.nvim_set_keymap('n', 'gt/', '<cmd>TextCaseOpenTelescope<CR>', { desc = "Telescope" })
+  vim.api.nvim_set_keymap('v', 'gt/', '<cmd>TextCaseOpenTelescope<CR>', { desc = "Telescope" })
 EOF
 endif
 
@@ -436,6 +455,7 @@ EOF
   nnoremap <leader>fx <cmd>lua require('telescope.builtin').treesitter()<cr>
   nnoremap <leader>fn <cmd>lua require('telescope').extensions.fidget.fidget()<cr>
   nnoremap <leader>fc <cmd>lua require('telescope.builtin').commands()<cr>
+  nnoremap <leader>f/ <cmd>Telescope<cr>
 endif
 
 " " folke/trouble.nvim
@@ -492,6 +512,7 @@ EOF
   nnoremap <leader>tq <cmd>Trouble quickfix toggle<CR>
   nnoremap <leader>ts <cmd>Trouble lsp_document_symbols toggle<CR>
   nnoremap <leader>tv <cmd>Trouble symbols toggle<CR>
+  nnoremap <leader>t/ <cmd>Trouble<cr>
 endif
 
 " " nvim-tree/nvim-tree.lua
@@ -605,7 +626,7 @@ EOF
   nnoremap <leader>tf <cmd>NvimTreeToggle<CR>
 endif
 
-" " nvim-tree/nvim-tree.lua
+" " ahmedkhalf/project.nvim
 if has('nvim')
   lua << EOF
   require('project_nvim').setup({
@@ -790,6 +811,15 @@ if has('nvim')
   lua require('scope').setup({})
 endif
 
+" " j-hui/fidget.nvim
+if has('nvim')
+  lua << EOF
+  require('fidget').setup({})
+
+  vim.notify = require('fidget').notify
+EOF
+endif
+
 " " lewis6991/gitsigns.nvim
 if has('nvim')
   lua << EOF
@@ -820,15 +850,6 @@ if has('nvim')
 EOF
 endif
 
-" " j-hui/fidget.nvim
-if has('nvim')
-  lua << EOF
-  require('fidget').setup({})
-
-  vim.notify = require('fidget').notify
-EOF
-endif
-
 " " dgagn/diagflow.nvim
 if has('nvim')
   lua << EOF
@@ -845,8 +866,24 @@ endif
 " " nvim-treesitter/nvim-treesitter
 if has('nvim')
   lua << EOF
-  require("nvim-treesitter.configs").setup({
-    ensure_installed = { "c", "go", "python", "lua", "javascript", "typescript", "tsx", "html", "vim", "json", "yaml", "bash", "markdown", "diff", "git_rebase" },
+  require('nvim-treesitter.configs').setup({
+    ensure_installed = {
+      'c',
+      'go',
+      'python',
+      'lua',
+      'javascript',
+      'typescript',
+      'tsx',
+      'html',
+      'vim',
+      'json',
+      'yaml',
+      'bash',
+      'markdown',
+      'diff',
+      'git_rebase',
+    },
     sync_install = false,
     auto_install = true,
     highlight = {
@@ -929,7 +966,7 @@ nnoremap <leader>fk :WhichKey '
 
 if has('nvim')
   lua << EOF
-  require("whichkey_setup").config({
+  require('whichkey_setup').config({
     hide_statusline = false,
     default_keymap_settings = {
       silent = true,
@@ -956,9 +993,9 @@ endif
 " " stevearc/oil.nvim
 if has('nvim')
   lua << EOF
-  require("oil").setup({
-    default_file_explorer = false,
-  })
+  require('oil').setup()
+
+  vim.keymap.set('n', '<leader>o', '<cmd>:Oil<CR>', { desc = "Toggle Oil" })
 EOF
 endif
 
@@ -1050,106 +1087,92 @@ if has('termguicolors')
 endif
 
 colorscheme sonokai
-let g:airline_theme = 'sonokai'
-
 let g:sonokai_enable_italic = 1
+
+let g:airline_theme = 'sonokai'
 
 let g:vimsyn_embed = 'l'
 
+
 " vim settings
-" " editor appearance
+" " appearance
 set number
 set relativenumber
-set showmatch
+set cursorline
+set colorcolumn=80,120
 set scrolloff=5
 set sidescrolloff=5
-set cul
-set colorcolumn=80,120
 
 augroup BgHighlight
     autocmd!
-    autocmd WinEnter * set cul | set colorcolumn=80,120
-    autocmd WinLeave * set nocul | set colorcolumn=0
+    autocmd WinEnter * set cursorline | set colorcolumn=80,120
+    autocmd WinLeave * set nocursorline | set colorcolumn=0
 augroup END
 
+set nowrap
+
+set shortmess+=aIT
+if has('patch-7.4.314')
+  set shortmess+=c
+endif
+set title
+set confirm
+if exists('+signcolumn')
+  set signcolumn=yes
+endif
+
+if has('nvim')
+  set mouse=a
+else
+  set mouse=i
+endif
+
+" " editing
 set shiftwidth=4
 set tabstop=4
 set softtabstop=4
 set expandtab
 
-set mat=2
-
-set shortmess+=aIT
-if has("patch-7.4.314")
-  set shortmess+=c
-endif
-set title
-set confirm
-set more
-set ruler
-set showmode
-set showcmd
-
-set foldenable
-set foldmethod=syntax
-set foldlevelstart=99
-
-set nowrap
-set linebreak
-if exists('+breakindent')
-  set breakindent
-endif
-set showbreak=+++\ 
-
-" " gvim
-set guioptions=gi
-
-" " navigation
-set incsearch
-set hlsearch
-set ignorecase
-set smartcase
-
-set magic
-
-set wildmenu
-set wildmode=longest:full,full
-set wildignore+=*.o,*~,*.pyc,.git/*,*.meta,.sync/*
-
-set nostartofline
-
-" " editing
 set autoindent
 set copyindent
 set smartindent
-set smarttab
-
-set nrformats-=octal
-
-set viewoptions=folds,cursor,unix,slash
-
-set backspace=eol,start,indent
-set whichwrap+=<,>,h,l
-
-set completeopt=longest,menuone,preview
-set splitright
-set splitbelow
-if exists('+signcolumn')
-  set signcolumn=yes
-endif
-
-set modeline
-set modelines=5
-
-set undofile
-set autoread
-set autowriteall
-set nobackup
-set nowritebackup
 
 set nospell
 
+set completeopt=menu,menuone,preview
+set foldlevelstart=99
+set foldmethod=syntax
+if has('nvim')
+  lua << EOF
+  vim.api.nvim_create_autocmd({ "FileType" }, {
+    callback = function()
+      if require("nvim-treesitter.parsers").has_parser() then
+        vim.opt.foldmethod = "expr"
+        vim.opt.foldexpr = "nvim_treesitter#foldexpr()"
+      else
+        vim.opt.foldmethod = "syntax"
+        end
+    end,
+  })
+EOF
+endif
+set whichwrap+=b,s,h,l,<,>
 set updatetime=300
+
+set splitright
+set splitbelow
+
+set hidden
+set autoread
+set autowriteall
+set undofile
+set nobackup
+set nowritebackup
+
+" " navigation
+set ignorecase
+set smartcase
+set hlsearch
 
 " " encoding
 set encoding=utf-8
@@ -1165,22 +1188,6 @@ set viewdir=~/.vim/view
 if &shell =~# 'fish$'
   set shell=/bin/bash
 endif
-
-if has('nvim')
-  set mouse=a
-else
-  set mouse=i
-endif
-set hidden
-set lazyredraw
-set noerrorbells
-set novisualbell
-set history=700
-set ttyfast
-set timeout
-set timeoutlen=1000
-set ttimeout
-set ttimeoutlen=10
 
 
 " neovide
