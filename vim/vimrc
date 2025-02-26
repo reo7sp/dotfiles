@@ -9,12 +9,14 @@ let mapleader = ","
 call plug#begin('~/.vim/bundle')
 
 " " generic
+if ! has('nvim')
+  Plug 'tpope/vim-sensible'
+endif
 Plug 'Shougo/vimproc.vim', {'do': 'make'}
 if has('nvim')
   Plug 'nvim-lua/plenary.nvim'
   Plug 'kkharji/sqlite.lua'
 endif
-Plug 'tpope/vim-sensible'
 Plug 'tpope/vim-repeat'
 
 " " editing
@@ -105,8 +107,8 @@ else
   Plug 'vim-airline/vim-airline'
 endif
 if has('nvim')
-  Plug 'akinsho/bufferline.nvim'
   Plug 'tiagovla/scope.nvim'
+  Plug 'akinsho/bufferline.nvim'
   Plug 'LukasPietzschmann/telescope-tabs'
 else
   Plug 'ap/vim-buftabline'
@@ -709,6 +711,8 @@ endif
 " " akinsho/bufferline.nvim or ap/vim-buftabline
 if has('nvim')
   lua << EOF
+  require('scope').setup({})
+
   require('bufferline').setup({
     options = {
       style_preset = {
@@ -718,9 +722,10 @@ if has('nvim')
       show_buffer_icons = false,
       show_buffer_close_icons = false,
       show_close_icon = false,
+      show_tab_indicators = true,
       modified_icon = '',
-      close_command = "Bdelete %d",
-      right_mouse_command = "Bdelete %d",
+      close_command = 'Bdelete %d',
+      right_mouse_command = 'Bdelete %d',
     }
   })
 EOF
@@ -804,11 +809,6 @@ else
   nnoremap <leader>8 <Plug>BufTabLine.Go(8)
   nnoremap <leader>9 <Plug>BufTabLine.Go(9)
   nnoremap <leader>0 <Plug>BufTabLine.Go(-1)
-endif
-
-" " tiagovla/scope.nvim
-if has('nvim')
-  lua require('scope').setup({})
 endif
 
 " " j-hui/fidget.nvim
@@ -977,6 +977,15 @@ if has('nvim')
 EOF
 endif
 
+" " sindrets/diffview.nvim
+if has('nvim')
+  lua << EOF
+  require('diffview').setup({
+    use_icons = false,
+  })
+EOF
+endif
+
 " " nvim-pack/nvim-spectre
 if has('nvim')
   lua << EOF
@@ -1055,6 +1064,11 @@ cnoreabbrev Wqa wqa
 cnoreabbrev Qa qa
 cnoreabbrev Q q
 
+cnoreabbrev tnew tabnew
+cnoreabbrev tq tabclose
+nnoremap <C-S-P> <cmd>tabprev<CR>
+nnoremap <C-S-N> <cmd>tabnext<CR>
+
 nnoremap <C-J> <C-W><C-J>
 nnoremap <C-K> <C-W><C-K>
 nnoremap <C-L> <C-W><C-L>
@@ -1101,7 +1115,7 @@ set relativenumber
 set cursorline
 set colorcolumn=80,120
 set scrolloff=5
-set sidescrolloff=5
+set sidescroll=1
 
 augroup BgHighlight
     autocmd!
@@ -1120,6 +1134,9 @@ set confirm
 if exists('+signcolumn')
   set signcolumn=yes
 endif
+set breakindent
+set breakindentopt=sbr
+set showbreak=↪
 
 if has('nvim')
   set mouse=a
@@ -1168,6 +1185,7 @@ set autowriteall
 set undofile
 set nobackup
 set nowritebackup
+set noswapfile
 
 " " navigation
 set ignorecase
