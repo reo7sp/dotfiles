@@ -88,6 +88,9 @@ endif
 if has('nvim')
   Plug 'nvim-tree/nvim-tree.lua'
 endif
+if has('nvim')
+  Plug 'ahmedkhalf/project.nvim'
+endif
 
 " " appearance
 Plug 'sainnhe/sonokai'
@@ -381,6 +384,7 @@ if has('nvim')
   lua require('telescope').load_extension('undo')
   lua require('telescope').load_extension('notify')
   lua require('telescope').load_extension('hierarchy')
+  lua require('telescope').load_extension('projects')
 
   lua << EOF
   require('telescope').setup({
@@ -407,6 +411,7 @@ EOF
   nnoremap <leader>fdg <cmd>lua require('telescope').extensions.dir.live_grep()<cr>
   nnoremap <leader>fb <cmd>Telescope scope buffers<cr>
   nnoremap <leader>ft <cmd>Telescope telescope-tabs list_tabs<cr>
+  nnoremap <leader>fh <cmd>lua require('telescope').extensions.projects.projects({})<cr>
   nnoremap <leader>fj <cmd>lua require('telescope.builtin').jumplist()<cr>
   nnoremap <leader>fp <cmd>lua require('telescope.builtin').diagnostics()<cr>
   nnoremap <leader>fq <cmd>lua require('telescope.builtin').quickfix()<cr>
@@ -513,8 +518,11 @@ if has('nvim')
     git = {
       enable = false,
     },
+    sync_root_with_cwd = true,
+    respect_buf_cwd = true,
     update_focused_file = {
       enable = true,
+      update_root = true,
     },
     filters = {
       enable = true,
@@ -544,6 +552,16 @@ EOF
 
   nnoremap <leader>tt <cmd>NvimTreeToggle<CR>
   nnoremap <leader>tf <cmd>NvimTreeToggle<CR>
+endif
+
+" " nvim-tree/nvim-tree.lua
+if has('nvim')
+  lua << EOF
+  require('project_nvim').setup({
+    scope_chdir = 'tab',
+    silent_chdir = false,
+  })
+EOF
 endif
 
 " " nvim-lualine/lualine.nvim or vim-airline/vim-airline
