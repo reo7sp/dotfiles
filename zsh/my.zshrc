@@ -236,7 +236,9 @@ alias gcwip="git add -A && git commit -m 'wip'"
 alias gcfix="git add -A && git commit -m 'fix'"
 alias gckik="git add -A && git commit -m 'kik'"
 
-gbd() {
+alias gbd="gb -D"
+
+gbdr() {
   for d in $@; do
     git branch -D $d
     git push origin --delete $d
