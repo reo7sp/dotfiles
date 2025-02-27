@@ -447,6 +447,7 @@ EOF
   nnoremap <leader>fb <cmd>Telescope scope buffers<cr>
   nnoremap <leader>ft <cmd>Telescope telescope-tabs list_tabs<cr>
   nnoremap <leader>fh <cmd>lua require('telescope').extensions.projects.projects({})<cr>
+  nnoremap <leader>fr <cmd>lua require('telescope.builtin').registers()<cr>
   nnoremap <leader>fj <cmd>lua require('telescope.builtin').jumplist()<cr>
   nnoremap <leader>fp <cmd>lua require('telescope.builtin').diagnostics()<cr>
   nnoremap <leader>fq <cmd>lua require('telescope.builtin').quickfix()<cr>
@@ -1056,6 +1057,7 @@ endif
 " vim mappings
 nnoremap j gj
 nnoremap k gk
+nnoremap 0 ^
 
 cnoreabbrev w!! w !sudo tee % >/dev/null
 cnoreabbrev Wqa wqa
