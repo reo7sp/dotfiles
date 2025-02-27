@@ -250,6 +250,14 @@ alias gfmall="find . -maxdepth 1 -type d | xargs -n1 -t -I{} git -C '{}' pull"
 ## fzf
 alias f="fzf"
 
+catf() {
+  cat $(f)
+}
+
+lessf() {
+  less $(f)
+}
+
 vimf() {
   vim $(f)
 }
