@@ -139,19 +139,20 @@ Plug 'aklt/plantuml-syntax'
 Plug 'craigmac/vim-mermaid'
 
 " " commands
-Plug 'liuchengxu/vim-which-key'
 if has('nvim')
-  Plug 'AckslD/nvim-whichkey-setup.lua'
+  Plug 'folke/which-key.nvim', {'on': 'WhichKey'}
+else
+  Plug 'liuchengxu/vim-which-key', {'on': 'WhichKey'}
 endif
-Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-fugitive', {'on': 'Git'}
 if has('nvim')
-  Plug 'sindrets/diffview.nvim'
-endif
-if has('nvim')
-  Plug 'nvim-pack/nvim-spectre'
+  Plug 'sindrets/diffview.nvim', {'on': ['DiffviewOpen', 'DiffviewFileHistory']}
 endif
 if has('nvim')
-  Plug 'stevearc/oil.nvim'
+  Plug 'nvim-pack/nvim-spectre', {'on': 'Spectre'}
+endif
+if has('nvim')
+  Plug 'stevearc/oil.nvim', {'on': 'Oil'}
 endif
 
 call plug#end()
@@ -962,49 +963,62 @@ if has('nvim')
 EOF
 endif
 
-" " liuchengxu/vim-which-key
-nnoremap <leader>fk :WhichKey '
-
-if has('nvim')
+" " folke/which-key.nvim or liuchengxu/vim-which-key
+function InitWhichKey()
   lua << EOF
-  require('whichkey_setup').config({
-    hide_statusline = false,
-    default_keymap_settings = {
-      silent = true,
-      noremap = true,
-    },
-    default_mode = 'n',
+  require('which-key').setup({
+    icons.mappings = false,
   })
 EOF
+endfunction
+
+if has('nvim')
+  autocmd! User folke/which-key.nvim call InitWhichKey()
+
+  nnoremap <leader>fk :WhichKey 
+else
+  nnoremap <leader>fk :WhichKey '
 endif
 
 " " sindrets/diffview.nvim
-if has('nvim')
+function InitDiffview()
   lua << EOF
   require('diffview').setup({
     use_icons = false,
   })
 EOF
+endfunction
+
+if has('nvim')
+  autocmd! User sindrets/diffview.nvim call InitDiffview()
 endif
 
 " " nvim-pack/nvim-spectre
-if has('nvim')
+function InitSpectre()
   lua << EOF
   require('spectre').setup({
     use_trouble_qf = true,
     is_insert_mode = true,
     is_block_ui_break = true,
   })
-
-  vim.keymap.set('n', '<leader>s', '<cmd>lua require("spectre").toggle()<CR>', { desc = "Toggle Spectre" })
 EOF
+endfunction
+
+if has('nvim')
+  autocmd! User nvim-pack/nvim-spectre call InitSpectre()
+
+  nnoremap <leader>s <cmd>Spectre<cr>
 endif
 
 " " stevearc/oil.nvim
-if has('nvim')
+function InitOil()
   lua << EOF
   require('oil').setup()
 EOF
+endfunction
+
+if has('nvim')
+  autocmd! User stevearc/oil.nvim call InitOil()
 endif
 
 
