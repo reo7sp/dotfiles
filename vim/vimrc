@@ -12,7 +12,9 @@ call plug#begin('~/.vim/bundle')
 if ! has('nvim')
   Plug 'tpope/vim-sensible'
 endif
-Plug 'Shougo/vimproc.vim', {'do': 'make'}
+if ! has('nvim')
+  Plug 'Shougo/vimproc.vim', {'do': 'make'}
+endif
 if has('nvim')
   Plug 'nvim-lua/plenary.nvim'
   Plug 'kkharji/sqlite.lua'
@@ -83,7 +85,7 @@ Plug 'moll/vim-bbye'
 Plug 'vim-scripts/BufOnly.vim'
 if has('nvim')
   Plug 'nvim-telescope/telescope.nvim', {'tag': '0.1.8'}
-  Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'make' }
+  Plug 'nvim-telescope/telescope-fzf-native.nvim', {'do': 'make'}
   Plug 'smartpde/telescope-recent-files'
   Plug 'nvim-telescope/telescope-live-grep-args.nvim'
   Plug 'princejoogie/dir-telescope.nvim'
@@ -107,8 +109,8 @@ else
   Plug 'vim-airline/vim-airline'
 endif
 if has('nvim')
-  Plug 'tiagovla/scope.nvim'
   Plug 'akinsho/bufferline.nvim'
+  Plug 'tiagovla/scope.nvim'
   Plug 'LukasPietzschmann/telescope-tabs'
 else
   Plug 'ap/vim-buftabline'
@@ -128,7 +130,7 @@ if has('nvim')
   Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
   Plug 'nvim-treesitter/nvim-treesitter-textobjects'
 endif
-Plug 'Vimjas/vim-python-pep8-indent'
+Plug 'Vimjas/vim-python-pep8-indent', {'for': 'python'}
 Plug 'johejo/gomod.vim'
 Plug 'HiPhish/jinja.vim'
 Plug 'ekalinin/Dockerfile.vim'
@@ -139,16 +141,17 @@ Plug 'aklt/plantuml-syntax'
 Plug 'craigmac/vim-mermaid'
 
 " " commands
-Plug 'liuchengxu/vim-which-key'
 if has('nvim')
-  Plug 'AckslD/nvim-whichkey-setup.lua'
+  Plug 'folke/which-key.nvim'
+else
+  Plug 'liuchengxu/vim-which-key'
 endif
-Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-fugitive', {'on': 'Git'}
 if has('nvim')
-  Plug 'sindrets/diffview.nvim'
+  Plug 'sindrets/diffview.nvim', {'on': ['DiffviewOpen', 'DiffviewFileHistory']}
 endif
 if has('nvim')
-  Plug 'nvim-pack/nvim-spectre'
+  Plug 'nvim-pack/nvim-spectre', {'on': 'Spectre'}
 endif
 if has('nvim')
   Plug 'stevearc/oil.nvim'
@@ -159,29 +162,7 @@ call plug#end()
 
 " plugin settings
 " " hrsh7th/nvim-cmp
-function! LspAttached() abort
-  nnoremap <buffer> gd <cmd>lua require('telescope.builtin').lsp_definitions({fname_width = 60})<cr>
-  nnoremap <buffer> gD <cmd>lua require('telescope.builtin').lsp_implementations({fname_width = 60})<cr>
-  nnoremap <buffer> gi <cmd>lua require('telescope.builtin').lsp_implementations({fname_width = 60})<cr>
-  nnoremap <buffer> gy <cmd>lua require('telescope.builtin').lsp_type_definitions({fname_width = 60})<cr>
-  nnoremap <buffer> gr <cmd>lua require('telescope.builtin').lsp_references({fname_width = 60})<cr>
-  nnoremap <buffer> gh <cmd>Telescope hierarchy theme=ivy disable_devicons=true<cr>
-  nnoremap <buffer> gs <cmd>lua vim.lsp.buf.hover()<cr>
-  nnoremap <buffer> gp <cmd>lua vim.diagnostic.open_float()<cr>
-  nnoremap <buffer> gq <cmd>lua vim.lsp.buf.code_action()<cr>
-  nnoremap <buffer> <leader>lr <cmd>lua vim.lsp.buf.rename()<cr>
-  nnoremap <buffer> <leader>lf <cmd>lua vim.lsp.buf.format({async = true})<cr>
-  xnoremap <buffer> <leader>lf <cmd>lua vim.lsp.buf.format({async = true})<cr>
-  nnoremap <buffer> <leader>lc <cmd>lua vim.lsp.buf.code_action()<cr>
-  nnoremap <buffer> <leader>lq <cmd>lua vim.lsp.buf.code_action()<cr>
-endfunction
-
-if has('nvim')
-  autocmd LspAttach * call LspAttached()
-
-  nnoremap [p <cmd>lua vim.diagnostic.goto_prev({float=false})<cr>
-  nnoremap ]p <cmd>lua vim.diagnostic.goto_next({float=false})<cr>
-
+function! InitNvimCmp() abort
   lua << EOF
   local lspconfig_defaults = require('lspconfig').util.default_config
   lspconfig_defaults.capabilities = vim.tbl_deep_extend(
@@ -189,11 +170,9 @@ if has('nvim')
     lspconfig_defaults.capabilities,
     require('cmp_nvim_lsp').default_capabilities()
   )
-EOF
-  lua << EOF
+
   require('mason').setup({})
-EOF
-  lua << EOF
+
   require('mason-lspconfig').setup({
     ensure_installed = {
       'cmake',
@@ -218,11 +197,9 @@ EOF
       end,
     }
   })
-EOF
-  lua << EOF
+
   require('luasnip.loaders.from_vscode').lazy_load()
-EOF
-  lua << EOF
+
   local cmp = require('cmp')
   local luasnip = require('luasnip')
   cmp.setup({
@@ -273,9 +250,6 @@ EOF
       end, { 'i', 's' }),
     }),
   })
-EOF
-  lua << EOF
-  local cmp = require('cmp')
   cmp.setup.cmdline({ '/', '?' }, {
     mapping = cmp.mapping.preset.cmdline(),
     sources = {
@@ -299,23 +273,57 @@ EOF
 EOF
 
   augroup NvimCmp
-  au!
-  au FileType TelescopePrompt lua require('cmp').setup.buffer({ enabled = false })
+  autocmd!
+  autocmd FileType TelescopePrompt lua require('cmp').setup.buffer({ enabled = false })
   augroup END
+
+  autocmd LspAttach * call LspAttached()
+
+  nnoremap [p <cmd>lua vim.diagnostic.goto_prev({float=false})<cr>
+  nnoremap ]p <cmd>lua vim.diagnostic.goto_next({float=false})<cr>
+endfunction
+
+function! LspAttached() abort
+  nnoremap <buffer> gd <cmd>lua require('telescope.builtin').lsp_definitions({fname_width = 60})<cr>
+  nnoremap <buffer> gD <cmd>lua require('telescope.builtin').lsp_implementations({fname_width = 60})<cr>
+  nnoremap <buffer> gi <cmd>lua require('telescope.builtin').lsp_implementations({fname_width = 60})<cr>
+  nnoremap <buffer> gy <cmd>lua require('telescope.builtin').lsp_type_definitions({fname_width = 60})<cr>
+  nnoremap <buffer> gr <cmd>lua require('telescope.builtin').lsp_references({fname_width = 60})<cr>
+  nnoremap <buffer> gh <cmd>Telescope hierarchy theme=ivy disable_devicons=true<cr>
+  nnoremap <buffer> gs <cmd>lua vim.lsp.buf.hover()<cr>
+  nnoremap <buffer> gp <cmd>lua vim.diagnostic.open_float()<cr>
+  nnoremap <buffer> gq <cmd>lua vim.lsp.buf.code_action()<cr>
+  nnoremap <buffer> <leader>lr <cmd>lua vim.lsp.buf.rename()<cr>
+  nnoremap <buffer> <leader>lf <cmd>lua vim.lsp.buf.format({async = true})<cr>
+  xnoremap <buffer> <leader>lf <cmd>lua vim.lsp.buf.format({async = true})<cr>
+  nnoremap <buffer> <leader>lc <cmd>lua vim.lsp.buf.code_action()<cr>
+  nnoremap <buffer> <leader>lq <cmd>lua vim.lsp.buf.code_action()<cr>
+endfunction
+
+if has('nvim')
+  call InitNvimCmp()
 endif
 
 " " windwp/nvim-autopairs
-if has('nvim')
+function! InitNvimAutopairs() abort
   lua require('nvim-autopairs').setup({})
+endfunction
+
+if has('nvim')
+  call InitNvimAutopairs()
 endif
 
 " " windwp/nvim-ts-autotag
-if has('nvim')
+function! InitNvimTsAutotag() abort
   lua require('nvim-ts-autotag').setup({})
+endfunction
+
+if has('nvim')
+  call InitNvimTsAutotag()
 endif
 
 " " okuuva/auto-save.nvim or 907th/vim-auto-save
-if has('nvim')
+function! InitAutosaveNvim() abort
   lua << EOF
   require('auto-save').setup({
     condition = function(buf)
@@ -327,13 +335,21 @@ if has('nvim')
     end
   })
 EOF
-else
+endfunction
+
+function! InitAutosaveVim() abort
   let g:auto_save = 1
   let g:auto_save_silent = 1
+endfunction
+
+if has('nvim')
+  call InitAutosaveNvim()
+else
+  call InitAutosaveVim()
 endif
 
 " " gbprod/yanky.nvim or maxbrunsfeld/vim-yankstack
-if has('nvim')
+function! InitYanky() abort
   lua require('yanky').setup({})
 
   lua vim.keymap.set({"n","x"}, "p", "<Plug>(YankyPutAfter)")
@@ -342,71 +358,117 @@ if has('nvim')
   lua vim.keymap.set({"n","x"}, "gP", "<Plug>(YankyGPutBefore)")
   lua vim.keymap.set("n", "[y", "<Plug>(YankyPreviousEntry)")
   lua vim.keymap.set("n", "]y", "<Plug>(YankyNextEntry)")
-else
+endfunction
+
+function! InitYankStack() abort
   let g:yankstack_map_keys = 0
+
   nnoremap ]y <Plug>yankstack_substitute_older_paste
   nnoremap [y <Plug>yankstack_substitute_newer_paste
+endfunction
+
+if has('nvim')
+  call InitYanky()
+else
+  call InitYankStack()
 endif
 
 " " numToStr/Comment.nvim or scrooloose/nerdcommenter
-if has('nvim')
+function! InitComment() abort
   lua require('Comment').setup()
 
   nnoremap <C-/> <Plug>(comment_toggle_linewise_current)
   nnoremap <C-_> <Plug>(comment_toggle_linewise_current)
   xnoremap <C-/> <Plug>(comment_toggle_linewise_visual)
   xnoremap <C-_> <Plug>(comment_toggle_linewise_visual)
-else
+endfunction
+
+function! InitNerdCommenter() abort
   nnoremap <C-/> <Plug>NERDCommenterToggle
   nnoremap <C-_> <Plug>NERDCommenterToggle
   vnoremap <C-/> <Plug>NERDCommenterToggle<CR>gv
   vnoremap <C-_> <Plug>NERDCommenterToggle<CR>gv
+endfunction
+
+if has('nvim')
+  call InitComment()
+else
+  call InitNerdCommenter()
 end
 
 " " johmsalas/text-case.nvim
-if has('nvim')
+function! InitTextCase() abort
   lua << EOF
   require('textcase').setup({
     prefix = 'gt',
   })
   require('telescope').load_extension('textcase')
-  vim.api.nvim_set_keymap('n', 'gt/', '<cmd>TextCaseOpenTelescope<CR>', { desc = "Telescope" })
-  vim.api.nvim_set_keymap('v', 'gt/', '<cmd>TextCaseOpenTelescope<CR>', { desc = "Telescope" })
 EOF
+
+  lua vim.api.nvim_set_keymap('n', 'gt/', '<cmd>TextCaseOpenTelescope<CR>', { desc = 'Change text case menu' })
+  lua vim.api.nvim_set_keymap('v', 'gt/', '<cmd>TextCaseOpenTelescope<CR>', { desc = 'Change text case menu' })
+endfunction
+
+if has('nvim')
+  call InitTextCase()
 endif
 
 " " echasnovski/mini.align
-if has('nvim')
+function! InitMiniAlign() abort
   lua require('mini.align').setup()
+endfunction
+
+if has('nvim')
+  call InitMiniAlign()
 endif
 
 " " echasnovski/mini.splitjoin
-if has('nvim')
+function! InitMiniSplitjoin() abort
   lua require('mini.splitjoin').setup()
+endfunction
+
+if has('nvim')
+  call InitMiniSplitjoin()
 endif
 
 " " smoka7/multicursors.nvim
-if has('nvim')
+function! InitMulticursors() abort
   lua require('multicursors').setup({})
 
   nnoremap <leader>n <cmd>MCstart<cr>
   vnoremap <leader>n <cmd>MCstart<cr>
+endfunction
+
+if has('nvim')
+  call InitMulticursors()
 endif
 
 " " justinmk/vim-sneak
-autocmd VimEnter * noremap s <Plug>Sneak_s
+function! InitSneak() abort
+  let g:sneak#use_ic_scs = 1
 
-let g:sneak#use_ic_scs = 1
+  autocmd VimEnter * noremap s <Plug>Sneak_s
+endfunction
+
+call InitSneak()
 
 " " moll/vim-bbye
-cnoreabbrev bq Bdelete
+function! InitBbye() abort
+  cnoreabbrev bq Bdelete
+endfunction
+
+call InitBbye()
 
 " " vim-scripts/BufOnly.vim
-cnoreabbrev bqo BufOnly
-cnoreabbrev bo BufOnly
+function! InitBufOnly() abort
+  cnoreabbrev bqo BufOnly
+  cnoreabbrev bo BufOnly
+endfunction
+
+call InitBufOnly()
 
 " " nvim-telescope/telescope.nvim
-if has('nvim')
+function! InitTelescope() abort
   lua require('telescope').setup({ defaults = require('telescope.themes').get_ivy() })
   lua require('telescope').load_extension('fzf')
   lua require('telescope').load_extension('recent_files')
@@ -459,10 +521,14 @@ EOF
   nnoremap <leader>fn <cmd>lua require('telescope').extensions.fidget.fidget()<cr>
   nnoremap <leader>fc <cmd>lua require('telescope.builtin').commands()<cr>
   nnoremap <leader>f/ <cmd>Telescope<cr>
+endfunction
+
+if has('nvim')
+  call InitTelescope()
 endif
 
 " " folke/trouble.nvim
-if has('nvim')
+function! InitTrouble() abort
   lua << EOF
   require('trouble').setup({
     auto_preview = false,
@@ -516,10 +582,14 @@ EOF
   nnoremap <leader>ts <cmd>Trouble lsp_document_symbols toggle<CR>
   nnoremap <leader>tv <cmd>Trouble symbols toggle<CR>
   nnoremap <leader>t/ <cmd>Trouble<cr>
+endfunction
+
+if has('nvim')
+  call InitTrouble()
 endif
 
 " " nvim-tree/nvim-tree.lua
-if has('nvim')
+function! InitNvimTree() abort
   lua << EOF
   local api = require("nvim-tree.api")
   local openfile = require'nvim-tree.actions.node.open-file'
@@ -627,20 +697,28 @@ EOF
 
   nnoremap <leader>tt <cmd>NvimTreeToggle<CR>
   nnoremap <leader>tf <cmd>NvimTreeToggle<CR>
+endfunction
+
+if has('nvim')
+  call InitNvimTree()
 endif
 
 " " ahmedkhalf/project.nvim
-if has('nvim')
+function! InitProjectNvim() abort
   lua << EOF
   require('project_nvim').setup({
     scope_chdir = 'tab',
     silent_chdir = false,
   })
 EOF
+endfunction
+
+if has('nvim')
+  call InitProjectNvim()
 endif
 
 " " nvim-lualine/lualine.nvim or vim-airline/vim-airline
-if has('nvim')
+function! InitLualine() abort
   lua << EOF
   local function multicursors_is_active()
     local ok, hydra = pcall(require, 'hydra.statusline')
@@ -690,7 +768,9 @@ if has('nvim')
     },
   })
 EOF
-else
+endfunction
+
+function! InitAirline() abort
   if !exists('g:airline_symbols')
     let g:airline_symbols = {}
   endif
@@ -707,13 +787,17 @@ else
   autocmd User AirlineAfterInit :let g:airline_section_z = airline#section#create(['linenr', 'colnr'])
 
   let g:airline#extensions#whitespace#enabled = 0
+endfunction
+
+if has('nvim')
+  call InitLualine()
+else
+  call InitAirline()
 endif
 
 " " akinsho/bufferline.nvim or ap/vim-buftabline
-if has('nvim')
+function! InitBufferlineNvim() abort
   lua << EOF
-  require('scope').setup({})
-
   require('bufferline').setup({
     options = {
       style_preset = {
@@ -729,6 +813,8 @@ if has('nvim')
       right_mouse_command = 'Bdelete %d',
     }
   })
+
+  require('scope').setup({})
 EOF
 
   nnoremap <C-P> <cmd>BufferLineCyclePrev<CR>
@@ -786,7 +872,9 @@ EOF
 
   nnoremap <C--> <cmd>BufferLineMovePrev<CR>
   nnoremap <C-=> <cmd>BufferLineMoveNext<CR>
-else
+endfunction
+
+function! InitBuftablineVim() abort
   nnoremap <C-P> :bp<CR>
   nnoremap <C-N> :bn<CR>
 
@@ -810,19 +898,29 @@ else
   nnoremap <leader>8 <Plug>BufTabLine.Go(8)
   nnoremap <leader>9 <Plug>BufTabLine.Go(9)
   nnoremap <leader>0 <Plug>BufTabLine.Go(-1)
+endfunction
+
+if has('nvim')
+  call InitBufferlineNvim()
+else
+  call InitBuftablineVim()
 endif
 
 " " j-hui/fidget.nvim
-if has('nvim')
+function! InitFidget() abort
   lua << EOF
   require('fidget').setup({})
 
   vim.notify = require('fidget').notify
 EOF
+endfunction
+
+if has('nvim')
+  call InitFidget()
 endif
 
 " " lewis6991/gitsigns.nvim
-if has('nvim')
+function! InitGitsigns() abort
   lua << EOF
   require('gitsigns').setup({
     on_attach = function(bufnr)
@@ -849,10 +947,14 @@ if has('nvim')
     end
   })
 EOF
+endfunction
+
+if has('nvim')
+  call InitGitsigns()
 endif
 
 " " dgagn/diagflow.nvim
-if has('nvim')
+function! InitDiagflow() abort
   lua << EOF
   require('diagflow').setup({
     placement = 'inline',
@@ -862,10 +964,14 @@ if has('nvim')
     toggle_event = { 'InsertEnter', 'InsertLeave' },
   })
 EOF
+endfunction
+
+if has('nvim')
+  call InitDiagflow()
 endif
 
 " " nvim-treesitter/nvim-treesitter
-if has('nvim')
+function! InitTreesitter() abort
   lua << EOF
   require('nvim-treesitter.configs').setup({
     ensure_installed = {
@@ -960,51 +1066,105 @@ if has('nvim')
     },
   })
 EOF
-endif
-
-" " liuchengxu/vim-which-key
-nnoremap <leader>fk :WhichKey '
+endfunction
 
 if has('nvim')
+  call InitTreesitter()
+endif
+
+" " folke/which-key.nvim or liuchengxu/vim-which-key
+function! InitWhichKeyNvim() abort
   lua << EOF
-  require('whichkey_setup').config({
-    hide_statusline = false,
-    default_keymap_settings = {
-      silent = true,
-      noremap = true,
+  require('which-key').setup({
+    icons = {
+      mappings = false,
+      keys = {
+        Up = "<Up>",
+        Down = "<Down>",
+        Left = "<Left>",
+        Right = "<Right>",
+        C = "<C>",
+        M = "<M>",
+        D = "<D>",
+        S = "<S>",
+        CR = "<CR>",
+        Esc = "<Esc>",
+        ScrollWheelDown = "<ScrollWheelDown>",
+        ScrollWheelUp = "<ScrollWheelUp>",
+        NL = "<NL>",
+        BS = "<BS>",
+        Space = "<Space>",
+        Tab = "<Tab>",
+        F1 = "<F1>",
+        F2 = "<F2>",
+        F3 = "<F3>",
+        F4 = "<F4>",
+        F5 = "<F5>",
+        F6 = "<F6>",
+        F7 = "<F7>",
+        F8 = "<F8>",
+        F9 = "<F9>",
+        F10 = "<F10>",
+        F11 = "<F11>",
+        F12 = "<F12>",
+      },
     },
-    default_mode = 'n',
   })
 EOF
+
+  nnoremap <leader>fk <cmd>WhichKey<cr>
+endfunction
+
+function! InitWhichKeyVim() abort
+  nnoremap <leader>fk :WhichKey
+endfunction
+
+if has('nvim')
+  call InitWhichKeyNvim()
+else
+  call InitWhichKeyVim()
 endif
 
 " " sindrets/diffview.nvim
-if has('nvim')
+function! InitLazyDiffview() abort
   lua << EOF
   require('diffview').setup({
     use_icons = false,
   })
 EOF
+endfunction
+
+if has('nvim')
+  autocmd User diffview.nvim call InitLazyDiffview()
 endif
 
 " " nvim-pack/nvim-spectre
-if has('nvim')
+function! InitLazySpectre() abort
   lua << EOF
   require('spectre').setup({
     use_trouble_qf = true,
     is_insert_mode = true,
     is_block_ui_break = true,
   })
-
-  vim.keymap.set('n', '<leader>s', '<cmd>lua require("spectre").toggle()<CR>', { desc = "Toggle Spectre" })
 EOF
+endfunction
+
+function! InitSpectre() abort
+  nnoremap <leader>s <cmd>Spectre<cr>
+endfunction
+
+if has('nvim')
+  autocmd User nvim-spectre call InitLazySpectre()
+  call InitSpectre()
 endif
 
 " " stevearc/oil.nvim
+function! InitOil() abort
+  lua require('oil').setup()
+endfunction
+
 if has('nvim')
-  lua << EOF
-  require('oil').setup()
-EOF
+  call InitOil()
 endif
 
 
@@ -1118,9 +1278,9 @@ set scrolloff=5
 set sidescroll=1
 
 augroup BgHighlight
-    autocmd!
-    autocmd WinEnter * set cursorline | set colorcolumn=80,120
-    autocmd WinLeave * set nocursorline | set colorcolumn=0
+  autocmd!
+  autocmd WinEnter * set cursorline | set colorcolumn=80,120
+  autocmd WinLeave * set nocursorline | set colorcolumn=0
 augroup END
 
 set nowrap
