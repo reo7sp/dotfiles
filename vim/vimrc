@@ -17,6 +17,7 @@ if ! has('nvim')
 endif
 if has('nvim')
   Plug 'nvim-lua/plenary.nvim'
+  Plug 'nvimtools/hydra.nvim'
   Plug 'kkharji/sqlite.lua'
 endif
 Plug 'tpope/vim-repeat'
@@ -74,7 +75,6 @@ if has('nvim')
   Plug 'echasnovski/mini.splitjoin'
 endif
 if has('nvim')
-  Plug 'nvimtools/hydra.nvim'
   Plug 'smoka7/multicursors.nvim'
 endif
 
@@ -402,11 +402,10 @@ function! InitTextCase() abort
   require('textcase').setup({
     prefix = 'gt',
   })
-  require('telescope').load_extension('textcase')
 EOF
 
-  lua vim.api.nvim_set_keymap('n', 'gt/', '<cmd>TextCaseOpenTelescope<CR>', { desc = 'Change text case menu' })
-  lua vim.api.nvim_set_keymap('v', 'gt/', '<cmd>TextCaseOpenTelescope<CR>', { desc = 'Change text case menu' })
+  nnoremap gt/ <cmd>TextCaseOpenTelescope<CR>
+  vnoremap gt/ <cmd>TextCaseOpenTelescope<CR>
 endfunction
 
 if has('nvim')
@@ -469,35 +468,36 @@ call InitBufOnly()
 
 " " nvim-telescope/telescope.nvim
 function! InitTelescope() abort
-  lua require('telescope').setup({ defaults = require('telescope.themes').get_ivy() })
-  lua require('telescope').load_extension('fzf')
-  lua require('telescope').load_extension('recent_files')
-  lua require('telescope').load_extension('dir')
-  lua require('telescope').load_extension('live_grep_args')
-  lua require('telescope').load_extension('scope')
-  lua require('telescope').load_extension('telescope-tabs')
-  lua require('telescope-tabs').setup({})
-  lua require('telescope').load_extension('yank_history')
-  lua require('telescope').load_extension('undo')
-  lua require('telescope').load_extension('fidget')
-  lua require('telescope').load_extension('hierarchy')
-  lua require('telescope').load_extension('projects')
-
   lua << EOF
   require('telescope').setup({
-    defaults = {
-      mappings = {
-        i = {
-          ["<c-t>"] = require("trouble.sources.telescope").open,
-          ['<c-p>'] = require('telescope.actions.layout').toggle_preview
+    defaults = vim.tbl_extend(
+      'force',
+      require('telescope.themes').get_ivy(),
+      {
+        mappings = {
+          i = {
+            ['<c-t>'] = require('trouble.sources.telescope').open,
+            ['<c-p>'] = require('telescope.actions.layout').toggle_preview,
+          },
+          n = {
+            ['<c-t>'] = require('trouble.sources.telescope').open,
+            ['<c-p>'] = require('telescope.actions.layout').toggle_preview,
+          },
         },
-        n = {
-          ["<c-t>"] = require("trouble.sources.telescope").open,
-          ['<c-p>'] = require('telescope.actions.layout').toggle_preview
-        },
-      },
-    },
+      }
+    ),
   })
+  require('telescope').load_extension('fzf')
+  require('telescope').load_extension('recent_files')
+  require('telescope').load_extension('dir')
+  require('telescope').load_extension('live_grep_args')
+  require('telescope').load_extension('telescope-tabs')
+  require('telescope-tabs').setup({})
+  require('telescope').load_extension('yank_history')
+  require('telescope').load_extension('undo')
+  require('telescope').load_extension('fidget')
+  require('telescope').load_extension('hierarchy')
+  require('telescope').load_extension('textcase')
 EOF
 
   nnoremap <leader>ff <cmd>lua require('telescope.builtin').find_files()<cr>
@@ -506,9 +506,8 @@ EOF
   nnoremap <leader>fg <cmd>lua require('telescope').extensions.live_grep_args.live_grep_args()<cr>
   vnoremap <leader>fg <cmd>lua require('telescope-live-grep-args.shortcuts').grep_visual_selection()<cr>
   nnoremap <leader>fdg <cmd>lua require('telescope').extensions.dir.live_grep()<cr>
-  nnoremap <leader>fb <cmd>Telescope scope buffers<cr>
+  nnoremap <leader>fb <cmd>lua require('telescope.builtin').buffers()<cr>
   nnoremap <leader>ft <cmd>Telescope telescope-tabs list_tabs<cr>
-  nnoremap <leader>fh <cmd>lua require('telescope').extensions.projects.projects({})<cr>
   nnoremap <leader>fr <cmd>lua require('telescope.builtin').registers()<cr>
   nnoremap <leader>fj <cmd>lua require('telescope.builtin').jumplist()<cr>
   nnoremap <leader>fp <cmd>lua require('telescope.builtin').diagnostics()<cr>
@@ -531,6 +530,7 @@ endif
 function! InitTrouble() abort
   lua << EOF
   require('trouble').setup({
+    focus = true,
     auto_preview = false,
     auto_jump = false,
     icons = {
@@ -589,7 +589,7 @@ if has('nvim')
 endif
 
 " " nvim-tree/nvim-tree.lua
-function! InitNvimTree() abort
+function! InitLazyNvimTree() abort
   lua << EOF
   local api = require("nvim-tree.api")
   local openfile = require'nvim-tree.actions.node.open-file'
@@ -694,9 +694,20 @@ function! InitNvimTree() abort
     end,
   })
 EOF
+endfunction
 
-  nnoremap <leader>tt <cmd>NvimTreeToggle<CR>
-  nnoremap <leader>tf <cmd>NvimTreeToggle<CR>
+function! LazyNvimTreeToggle() abort
+  if ! exists('g:inited_nvim_tree')
+    call InitLazyNvimTree()
+    let g:inited_nvim_tree = 1
+  endif
+
+  NvimTreeToggle
+endfunction
+
+function! InitNvimTree() abort
+  nnoremap <leader>tt <cmd>call LazyNvimTreeToggle()<CR>
+  nnoremap <leader>tf <cmd>call LazyNvimTreeToggle()<CR>
 endfunction
 
 if has('nvim')
