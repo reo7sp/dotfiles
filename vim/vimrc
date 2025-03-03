@@ -146,6 +146,7 @@ if has('nvim')
 else
   Plug 'liuchengxu/vim-which-key'
 endif
+Plug 'tpope/vim-eunuch'
 Plug 'tpope/vim-fugitive', {'on': 'Git'}
 if has('nvim')
   Plug 'sindrets/diffview.nvim', {'on': ['DiffviewOpen', 'DiffviewFileHistory']}
