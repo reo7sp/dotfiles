@@ -219,6 +219,10 @@ if [[ $(git config get pager.difftool 2>/dev/null) == true ]]; then
   alias gpS='git show --pretty=short --show-signature --ext-diff'
 fi
 
+gwdn() {
+  gwd --name-only "$@"
+}
+
 alias gg="lazygit"
 alias gll="tig"
 
