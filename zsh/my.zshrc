@@ -80,7 +80,10 @@ export CLICOLOR=true
 
 
 # keybinds
-WORDCHARS='*[]~;!#$%^(){}<>'
+WORDCHARS=${WORDCHARS/\/}
+WORDCHARS=${WORDCHARS/_}
+autoload -U select-word-style
+select-word-style shell
 ## shift-tab
 bindkey '^[[Z' reverse-menu-complete
 ## ctrl-w
@@ -204,6 +207,7 @@ sshz() {
 ## difft
 export DFT_CONTEXT=10
 export DFT_DISPLAY=side-by-side-show-both
+export DFT_PARSE_ERROR_LIMIT=9999
 
 ## git
 g() {
