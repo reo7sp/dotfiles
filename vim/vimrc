@@ -513,6 +513,7 @@ EOF
   nnoremap <leader>fj <cmd>lua require('telescope.builtin').jumplist()<cr>
   nnoremap <leader>fp <cmd>lua require('telescope.builtin').diagnostics()<cr>
   nnoremap <leader>fq <cmd>lua require('telescope.builtin').quickfix()<cr>
+  nnoremap <leader>fl <cmd>lua require('telescope.builtin').loclist()<cr>
   nnoremap <leader>fy <cmd>lua require('telescope').extensions.yank_history.yank_history()<cr>
   nnoremap <leader>fu <cmd>lua require('telescope').extensions.undo.undo()<cr>
   nnoremap <leader>fs <cmd>lua require('telescope.builtin').lsp_document_symbols({ignore_symbols={'variable', 'field'}, fname_width = 60})<cr>
@@ -534,6 +535,7 @@ function! InitTrouble() abort
     focus = true,
     auto_preview = false,
     auto_jump = false,
+    indent_guides = false,
     icons = {
       indent = {
         fold_open     = "",
@@ -571,6 +573,12 @@ function! InitTrouble() abort
       },
     },
   })
+
+  vim.api.nvim_create_autocmd("QuickFixCmdPost", {
+    callback = function()
+      vim.cmd([[Trouble qflist open]])
+    end,
+  })
 EOF
 
   nnoremap <leader>td <cmd>Trouble lsp_definitions toggle<CR>
@@ -579,7 +587,8 @@ EOF
   nnoremap <leader>ty <cmd>Trouble lsp_type_definitions toggle<CR>
   nnoremap <leader>tr <cmd>Trouble lsp_references toggle<CR>
   nnoremap <leader>tp <cmd>Trouble diagnostics toggle filter.buf=0<CR>
-  nnoremap <leader>tq <cmd>Trouble quickfix toggle<CR>
+  nnoremap <leader>tq <cmd>Trouble qflist toggle<CR>
+  nnoremap <leader>tl <cmd>Trouble loclist toggle<CR>
   nnoremap <leader>ts <cmd>Trouble lsp_document_symbols toggle<CR>
   nnoremap <leader>tv <cmd>Trouble symbols toggle<CR>
   nnoremap <leader>t/ <cmd>Trouble<cr>
@@ -721,6 +730,15 @@ function! InitProjectNvim() abort
   require('project_nvim').setup({
     scope_chdir = 'tab',
     silent_chdir = false,
+    patterns = {
+      ".git",
+      "_darcs",
+      ".hg",
+      ".bzr",
+      ".svn",
+      --"Makefile",
+      "package.json"
+    },
   })
 EOF
 endfunction
@@ -990,15 +1008,18 @@ function! InitTreesitter() abort
       'c',
       'go',
       'python',
+      'perl',
       'lua',
       'javascript',
       'typescript',
       'tsx',
       'html',
       'vim',
+      'jinja',
       'json',
       'yaml',
       'bash',
+      'sql',
       'markdown',
       'diff',
       'git_rebase',
@@ -1088,6 +1109,9 @@ endif
 function! InitWhichKeyNvim() abort
   lua << EOF
   require('which-key').setup({
+    delay = function(ctx)
+      return ctx.plugin and 0 or 300
+    end,
     icons = {
       mappings = false,
       keys = {
@@ -1291,7 +1315,7 @@ set sidescroll=1
 
 augroup BgHighlight
   autocmd!
-  autocmd WinEnter * set cursorline | set colorcolumn=80,120
+  autocmd WinEnter * set cursorline | set colorcolumn=80,120 | if (&ft ==? "trouble") | setlocal colorcolumn=0 | endif
   autocmd WinLeave * set nocursorline | set colorcolumn=0
 augroup END
 
