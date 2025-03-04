@@ -126,6 +126,9 @@ endif
 if has('nvim')
   Plug 'dgagn/diagflow.nvim'
 endif
+if has('nvim')
+  Plug 'RRethy/vim-illuminate'
+endif
 let g:polyglot_disabled = ['sensible', 'autoindent']
 Plug 'sheerun/vim-polyglot'
 if has('nvim')
@@ -1007,6 +1010,19 @@ endfunction
 
 if has('nvim')
   call InitDiagflow()
+endif
+
+" " RRethy/vim-illuminate
+function! InitIlluminate() abort
+  lua << EOF
+  require('illuminate').configure({
+    disable_keymaps = true,
+  })
+EOF
+endfunction
+
+if has('nvim')
+  call InitIlluminate()
 endif
 
 " " nvim-treesitter/nvim-treesitter
