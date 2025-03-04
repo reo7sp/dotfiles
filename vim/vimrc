@@ -72,7 +72,7 @@ endif
 if has('nvim')
   Plug 'johmsalas/text-case.nvim'
   Plug 'echasnovski/mini.align'
-  Plug 'echasnovski/mini.splitjoin'
+  Plug 'Wansmer/treesj'
 endif
 if has('nvim')
   Plug 'smoka7/multicursors.nvim'
@@ -418,13 +418,21 @@ if has('nvim')
   call InitMiniAlign()
 endif
 
-" " echasnovski/mini.splitjoin
-function! InitMiniSplitjoin() abort
-  lua require('mini.splitjoin').setup()
+" " Wansmer/treesj
+function! InitTreeSJ() abort
+  lua << EOF
+  require('treesj').setup({
+    use_default_keymaps = false,
+    max_join_length = 9999,
+  })
+
+  vim.keymap.set('n', 'gs', require('treesj').toggle)
+  vim.keymap.set('n', 'gS', function() require('treesj').toggle({ split = { recursive = true } }) end)
+EOF
 endfunction
 
 if has('nvim')
-  call InitMiniSplitjoin()
+  call InitTreeSJ()
 endif
 
 " " smoka7/multicursors.nvim
@@ -1260,6 +1268,7 @@ cnoreabbrev w!! w !sudo tee % >/dev/null
 cnoreabbrev Wqa wqa
 cnoreabbrev Qa qa
 cnoreabbrev Q q
+cnoreabbrev E e
 
 cnoreabbrev tnew tabnew
 cnoreabbrev tq tabclose
