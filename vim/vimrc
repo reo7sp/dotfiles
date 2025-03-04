@@ -56,6 +56,7 @@ else
 endif
 Plug 'farmergreg/vim-lastplace'
 Plug 'pbrisbin/vim-mkdir'
+Plug 'vim-scripts/file-line'
 Plug 'tpope/vim-sleuth'
 Plug 'ntpeters/vim-better-whitespace'
 if has('nvim')
