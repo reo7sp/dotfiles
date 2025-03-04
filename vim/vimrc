@@ -126,6 +126,8 @@ endif
 if has('nvim')
   Plug 'dgagn/diagflow.nvim'
 endif
+let g:polyglot_disabled = ['sensible', 'autoindent']
+Plug 'sheerun/vim-polyglot'
 if has('nvim')
   Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
   Plug 'nvim-treesitter/nvim-treesitter-textobjects'
@@ -133,12 +135,6 @@ endif
 Plug 'Vimjas/vim-python-pep8-indent', {'for': 'python'}
 Plug 'johejo/gomod.vim'
 Plug 'HiPhish/jinja.vim'
-Plug 'ekalinin/Dockerfile.vim'
-Plug 'vim-scripts/nginx.vim'
-Plug 'uarun/vim-protobuf'
-Plug 'jparise/vim-graphql'
-Plug 'aklt/plantuml-syntax'
-Plug 'craigmac/vim-mermaid'
 
 " " commands
 if has('nvim')
@@ -487,6 +483,11 @@ function! InitTelescope() abort
         },
       }
     ),
+    extensions = {
+      hierarchy = {
+        disable_devicons = true,
+      },
+    },
   })
   require('telescope').load_extension('fzf')
   require('telescope').load_extension('recent_files')
@@ -535,11 +536,10 @@ function! InitTrouble() abort
     focus = true,
     auto_preview = false,
     auto_jump = false,
-    indent_guides = false,
     icons = {
       indent = {
-        fold_open     = "",
-        fold_closed   = "",
+        fold_open     = "  ",
+        fold_closed   = "│ ",
       },
       folder_closed   = "",
       folder_open     = "",
@@ -784,6 +784,7 @@ function! InitLualine() abort
 
   require('lualine').setup({
     options = {
+      theme = 'sonokai',
       icons_enabled = false,
       component_separators = { left = '', right = '' },
       section_separators = { left = '', right = '' },
@@ -1296,8 +1297,9 @@ if has('termguicolors')
   set termguicolors
 endif
 
-colorscheme sonokai
 let g:sonokai_enable_italic = 1
+let g:sonokai_float_style = 'dim'
+colorscheme sonokai
 
 let g:airline_theme = 'sonokai'
 
