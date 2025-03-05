@@ -296,7 +296,7 @@ function! LspAttached() abort
   nnoremap <buffer> gy <cmd>lua require('telescope.builtin').lsp_type_definitions({fname_width = 60})<cr>
   nnoremap <buffer> gr <cmd>lua require('telescope.builtin').lsp_references({fname_width = 60})<cr>
   nnoremap <buffer> gh <cmd>Telescope hierarchy theme=ivy disable_devicons=true<cr>
-  nnoremap <buffer> gs <cmd>lua vim.lsp.buf.hover()<cr>
+  nnoremap <buffer> go <cmd>lua vim.lsp.buf.hover()<cr>
   nnoremap <buffer> gp <cmd>lua vim.diagnostic.open_float()<cr>
   nnoremap <buffer> gq <cmd>lua vim.lsp.buf.code_action()<cr>
   nnoremap <buffer> <leader>lr <cmd>lua vim.lsp.buf.rename()<cr>
@@ -356,14 +356,30 @@ endif
 
 " " gbprod/yanky.nvim or maxbrunsfeld/vim-yankstack
 function! InitYanky() abort
-  lua require('yanky').setup({})
+  lua << EOF
+  require('yanky').setup({
+    ring = {
+      storage = 'memory',
+    }
+  })
 
-  lua vim.keymap.set({"n","x"}, "p", "<Plug>(YankyPutAfter)")
-  lua vim.keymap.set({"n","x"}, "P", "<Plug>(YankyPutBefore)")
-  lua vim.keymap.set({"n","x"}, "gp", "<Plug>(YankyGPutAfter)")
-  lua vim.keymap.set({"n","x"}, "gP", "<Plug>(YankyGPutBefore)")
-  lua vim.keymap.set("n", "[y", "<Plug>(YankyPreviousEntry)")
-  lua vim.keymap.set("n", "]y", "<Plug>(YankyNextEntry)")
+  vim.keymap.set({"n","x"}, "p", "<Plug>(YankyPutAfter)")
+  vim.keymap.set({"n","x"}, "P", "<Plug>(YankyPutBefore)")
+  --vim.keymap.set({"n","x"}, "gp", "<Plug>(YankyGPutAfter)")
+  --vim.keymap.set({"n","x"}, "gP", "<Plug>(YankyGPutBefore)")
+  vim.keymap.set("n", "[y", "<Plug>(YankyPreviousEntry)")
+  vim.keymap.set("n", "]y", "<Plug>(YankyNextEntry)")
+  vim.keymap.set("n", "]p", "<Plug>(YankyPutIndentAfterLinewise)")
+  vim.keymap.set("n", "[p", "<Plug>(YankyPutIndentBeforeLinewise)")
+  vim.keymap.set("n", "]P", "<Plug>(YankyPutIndentAfterLinewise)")
+  vim.keymap.set("n", "[P", "<Plug>(YankyPutIndentBeforeLinewise)")
+  vim.keymap.set("n", ">p", "<Plug>(YankyPutIndentAfterShiftRight)")
+  vim.keymap.set("n", "<p", "<Plug>(YankyPutIndentAfterShiftLeft)")
+  vim.keymap.set("n", ">P", "<Plug>(YankyPutIndentBeforeShiftRight)")
+  vim.keymap.set("n", "<P", "<Plug>(YankyPutIndentBeforeShiftLeft)")
+  vim.keymap.set("n", "=p", "<Plug>(YankyPutAfterFilter)")
+  vim.keymap.set("n", "=P", "<Plug>(YankyPutBeforeFilter)")
+EOF
 endfunction
 
 function! InitYankStack() abort
@@ -1304,11 +1320,14 @@ nnoremap j gj
 nnoremap k gk
 nnoremap 0 ^
 
-cnoreabbrev w!! w !sudo tee % >/dev/null
-cnoreabbrev Wqa wqa
-cnoreabbrev Qa qa
-cnoreabbrev Q q
+nnoremap <silent> } :<C-u>execute "keepjumps norm! " . v:count1 . "}"<CR> " https://superuser.com/a/836924/2151180
+nnoremap <silent> { :<C-u>execute "keepjumps norm! " . v:count1 . "{"<CR>
+
 cnoreabbrev E e
+cnoreabbrev Q q
+cnoreabbrev Qa qa
+cnoreabbrev Wqa wqa
+cnoreabbrev w!! w !sudo tee % >/dev/null
 
 cnoreabbrev tnew tabnew
 cnoreabbrev tq tabclose
