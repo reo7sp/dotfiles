@@ -59,3 +59,7 @@ if confirm "Use difftastic?"; then
   git config --global pager.difftool true
   git config --global diff.tool difftastic
 fi
+
+if confirm "Use sublime merge?"; then
+  git config --global merge.tool smerge
+fi
