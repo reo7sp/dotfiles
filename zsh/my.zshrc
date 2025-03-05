@@ -229,6 +229,10 @@ gwdn() {
   gwd --name-only "$@"
 }
 
+gcsn() {
+  gcs --name-only "$@"
+}
+
 alias gg="lazygit"
 alias gll="tig"
 
@@ -249,10 +253,8 @@ alias gckik="git add -A && git commit -m 'kik'"
 alias gbd="gb -D"
 
 gbdr() {
-  for d in $@; do
-    git branch -D $d
-    git push origin --delete $d
-  done
+  echo "$@" | xargs -n1 git branch -D
+  echo "$@" | xargs -n1 -P0 git push origin --delete
 }
 
 alias gfmall="find . -maxdepth 1 -type d | xargs -n1 -t -I{} git -C '{}' pull"
