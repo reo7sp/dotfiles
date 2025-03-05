@@ -120,7 +120,11 @@ if has('nvim')
   Plug 'j-hui/fidget.nvim'
 endif
 if has('nvim')
+  Plug 'yorickpeterse/nvim-pqf'
+endif
+if has('nvim')
   Plug 'lewis6991/gitsigns.nvim'
+  Plug 'akinsho/git-conflict.nvim'
 else
   Plug 'airblade/vim-gitgutter'
 endif
@@ -147,7 +151,8 @@ else
   Plug 'liuchengxu/vim-which-key'
 endif
 Plug 'tpope/vim-eunuch'
-Plug 'tpope/vim-fugitive', {'on': 'Git'}
+Plug 'tpope/vim-fugitive', {'on': ['Git', 'Flog', 'Flogsplit']}
+Plug 'rbong/vim-flog', {'on': ['Git', 'Flog', 'Flogsplit']}
 if has('nvim')
   Plug 'sindrets/diffview.nvim', {'on': ['DiffviewOpen', 'DiffviewFileHistory']}
 endif
@@ -949,6 +954,15 @@ else
   call InitBuftablineVim()
 endif
 
+" " yorickpeterse/nvim-pqf
+function! InitPqf() abort
+  lua require('pqf').setup()
+endfunction
+
+if has('nvim')
+  call InitPqf()
+endif
+
 " " j-hui/fidget.nvim
 function! InitFidget() abort
   lua << EOF
@@ -963,7 +977,7 @@ if has('nvim')
 endif
 
 " " lewis6991/gitsigns.nvim
-function! InitGitsigns() abort
+function! InitGitSigns() abort
   lua << EOF
   require('gitsigns').setup({
     on_attach = function(bufnr)
@@ -993,7 +1007,16 @@ EOF
 endfunction
 
 if has('nvim')
-  call InitGitsigns()
+  call InitGitSigns()
+endif
+
+" " kinsho/git-conflict.nvim
+function! InitGitConflict() abort
+  lua require('git-conflict').setup()
+endfunction
+
+if has('nvim')
+  call InitGitConflict()
 endif
 
 " " dgagn/diagflow.nvim
