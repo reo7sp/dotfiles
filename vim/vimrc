@@ -39,12 +39,12 @@ if has('nvim')
 else
   Plug 'vim-scripts/AutoComplPop'
 endif
-if has('nvim')
-  Plug 'windwp/nvim-autopairs'
-  Plug 'windwp/nvim-ts-autotag'
+if v:version >= 801
+  Plug 'cohama/lexima.vim'
 else
   Plug 'Raimondi/delimitMate'
-endif
+end
+Plug 'alvan/vim-closetag'
 Plug 'wellle/targets.vim'
 Plug 'tpope/vim-surround'
 Plug 'romainl/vim-cool'
@@ -310,24 +310,6 @@ if has('nvim')
   call InitNvimCmp()
 endif
 
-" " windwp/nvim-autopairs
-function! InitNvimAutopairs() abort
-  lua require('nvim-autopairs').setup({})
-endfunction
-
-if has('nvim')
-  call InitNvimAutopairs()
-endif
-
-" " windwp/nvim-ts-autotag
-function! InitNvimTsAutotag() abort
-  lua require('nvim-ts-autotag').setup({})
-endfunction
-
-if has('nvim')
-  call InitNvimTsAutotag()
-endif
-
 " " okuuva/auto-save.nvim or 907th/vim-auto-save
 function! InitAutosaveNvim() abort
   lua << EOF
@@ -365,8 +347,6 @@ function! InitYanky() abort
 
   vim.keymap.set({"n","x"}, "p", "<Plug>(YankyPutAfter)")
   vim.keymap.set({"n","x"}, "P", "<Plug>(YankyPutBefore)")
-  --vim.keymap.set({"n","x"}, "gp", "<Plug>(YankyGPutAfter)")
-  --vim.keymap.set({"n","x"}, "gP", "<Plug>(YankyGPutBefore)")
   vim.keymap.set("n", "[y", "<Plug>(YankyPreviousEntry)")
   vim.keymap.set("n", "]y", "<Plug>(YankyNextEntry)")
   vim.keymap.set("n", "]p", "<Plug>(YankyPutIndentAfterLinewise)")
@@ -476,7 +456,10 @@ endif
 function! InitSneak() abort
   let g:sneak#use_ic_scs = 1
 
-  autocmd VimEnter * noremap s <Plug>Sneak_s
+  map f <Plug>Sneak_f
+  map F <Plug>Sneak_F
+  map t <Plug>Sneak_t
+  map T <Plug>Sneak_T
 endfunction
 
 call InitSneak()
@@ -1419,6 +1402,8 @@ set expandtab
 set autoindent
 set copyindent
 set smartindent
+
+set nrformats+=unsigned
 
 set nospell
 
