@@ -117,10 +117,10 @@ else
   Plug 'ap/vim-buftabline'
 endif
 if has('nvim')
-  Plug 'j-hui/fidget.nvim'
+  Plug 'yorickpeterse/nvim-pqf'
 endif
 if has('nvim')
-  Plug 'yorickpeterse/nvim-pqf'
+  Plug 'j-hui/fidget.nvim'
 endif
 if has('nvim')
   Plug 'lewis6991/gitsigns.nvim'
@@ -283,27 +283,23 @@ EOF
   autocmd FileType TelescopePrompt lua require('cmp').setup.buffer({ enabled = false })
   augroup END
 
-  autocmd LspAttach * call LspAttached()
-
+  nnoremap gd <cmd>lua require('telescope.builtin').lsp_definitions({fname_width = 60})<cr>
+  nnoremap gD <cmd>lua require('telescope.builtin').lsp_implementations({fname_width = 60})<cr>
+  nnoremap gi <cmd>lua require('telescope.builtin').lsp_implementations({fname_width = 60})<cr>
+  nnoremap gy <cmd>lua require('telescope.builtin').lsp_type_definitions({fname_width = 60})<cr>
+  nnoremap gr <cmd>lua require('telescope.builtin').lsp_references({fname_width = 60})<cr>
+  nnoremap gh <cmd>Telescope hierarchy theme=ivy disable_devicons=true<cr>
+  nnoremap go <cmd>lua vim.lsp.buf.hover()<cr>
+  nnoremap K <cmd>lua vim.lsp.buf.hover()<cr>
+  nnoremap gp <cmd>lua vim.diagnostic.open_float()<cr>
+  nnoremap gq <cmd>lua vim.lsp.buf.code_action()<cr>
+  nnoremap <leader>lr <cmd>lua vim.lsp.buf.rename()<cr>
+  nnoremap <leader>lf <cmd>lua vim.lsp.buf.format({async = true})<cr>
+  xnoremap <leader>lf <cmd>lua vim.lsp.buf.format({async = true})<cr>
+  nnoremap <leader>lc <cmd>lua vim.lsp.buf.code_action()<cr>
+  nnoremap <leader>lq <cmd>lua vim.lsp.buf.code_action()<cr>
   nnoremap [p <cmd>lua vim.diagnostic.goto_prev({float=false})<cr>
   nnoremap ]p <cmd>lua vim.diagnostic.goto_next({float=false})<cr>
-endfunction
-
-function! LspAttached() abort
-  nnoremap <buffer> gd <cmd>lua require('telescope.builtin').lsp_definitions({fname_width = 60})<cr>
-  nnoremap <buffer> gD <cmd>lua require('telescope.builtin').lsp_implementations({fname_width = 60})<cr>
-  nnoremap <buffer> gi <cmd>lua require('telescope.builtin').lsp_implementations({fname_width = 60})<cr>
-  nnoremap <buffer> gy <cmd>lua require('telescope.builtin').lsp_type_definitions({fname_width = 60})<cr>
-  nnoremap <buffer> gr <cmd>lua require('telescope.builtin').lsp_references({fname_width = 60})<cr>
-  nnoremap <buffer> gh <cmd>Telescope hierarchy theme=ivy disable_devicons=true<cr>
-  nnoremap <buffer> go <cmd>lua vim.lsp.buf.hover()<cr>
-  nnoremap <buffer> gp <cmd>lua vim.diagnostic.open_float()<cr>
-  nnoremap <buffer> gq <cmd>lua vim.lsp.buf.code_action()<cr>
-  nnoremap <buffer> <leader>lr <cmd>lua vim.lsp.buf.rename()<cr>
-  nnoremap <buffer> <leader>lf <cmd>lua vim.lsp.buf.format({async = true})<cr>
-  xnoremap <buffer> <leader>lf <cmd>lua vim.lsp.buf.format({async = true})<cr>
-  nnoremap <buffer> <leader>lc <cmd>lua vim.lsp.buf.code_action()<cr>
-  nnoremap <buffer> <leader>lq <cmd>lua vim.lsp.buf.code_action()<cr>
 endfunction
 
 if has('nvim')
@@ -338,10 +334,10 @@ endif
 
 " " ntpeters/vim-better-whitespace
 function! InitBetterWhitespace() abort
-  let g:better_whitespace_enabled = 1
   let g:strip_whitespace_on_save = 1
   let g:strip_only_modified_lines = 1
   let g:strip_whitespace_confirm = 0
+  let g:strip_max_file_size = 99999
 
   nnoremap ]w :NextTrailingWhitespace<CR>
   nnoremap [w :PrevTrailingWhitespace<CR>
@@ -443,10 +439,10 @@ function! InitTreeSJ() abort
     use_default_keymaps = false,
     max_join_length = 9999,
   })
-
-  vim.keymap.set('n', 'gs', require('treesj').toggle)
-  vim.keymap.set('n', 'gS', function() require('treesj').toggle({ split = { recursive = true } }) end)
 EOF
+
+  nnoremap gs <cmd>lua require('treesj').toggle()<cr>
+  nnoremap gS <cmd>lua require('treesj').toggle({ split = { recursive = true } })<cr>
 endfunction
 
 if has('nvim')
@@ -1115,12 +1111,7 @@ function! InitTreesitter() abort
       swap = {
         enable = true,
         swap_next = {
-          ["<leader>na"] = "@parameter.inner",
-          ["<leader>nm"] = "@function.outer",
-        },
-        swap_previous = {
-          ["<leader>pa"] = "@parameter.inner",
-          ["<leader>pm"] = "@function.outer",
+          ["cm"] = "@parameter.inner",
         },
       },
       move = {
@@ -1132,8 +1123,6 @@ function! InitTreesitter() abort
           ["]c"] = { query = "@class.outer", desc = "Next class start" },
           ["]i"] = { query = "@conditional.outer", desc = "Next conditional start" },
           ["]l"] = { query = "@loop.outer", desc = "Next loop start" },
-          ["]s"] = { query = "@scope", query_group = "locals", desc = "Next scope" },
-          ["]z"] = { query = "@fold", query_group = "folds", desc = "Next fold" },
         },
         goto_next_end = {
           ["]F"] = { query = "@call.outer", desc = "Next function call end" },
@@ -1171,7 +1160,7 @@ function! InitWhichKeyNvim() abort
   lua << EOF
   require('which-key').setup({
     delay = function(ctx)
-      return ctx.plugin and 0 or 300
+      return ctx.plugin and 0 or 500
     end,
     icons = {
       mappings = false,
@@ -1227,6 +1216,14 @@ function! InitLazyDiffview() abort
   lua << EOF
   require('diffview').setup({
     use_icons = false,
+    icons = {
+      folder_closed = "",
+      folder_open = "",
+    },
+    signs = {
+      fold_closed = "",
+      fold_open = "",
+    },
   })
 EOF
 endfunction
@@ -1319,12 +1316,15 @@ nnoremap 0 ^
 nnoremap <silent> } :<C-u>execute "keepjumps norm! " . v:count1 . "}"<CR> " https://superuser.com/a/836924/2151180
 nnoremap <silent> { :<C-u>execute "keepjumps norm! " . v:count1 . "{"<CR>
 
+nnoremap <expr> gV '`[' . getregtype()[0] . '`]'
+
 cnoreabbrev E e
 cnoreabbrev Q q
 cnoreabbrev Qa qa
 cnoreabbrev Wqa wqa
 cnoreabbrev w!! w !sudo tee % >/dev/null
 
+cnoreabbrev tabq tabclose
 cnoreabbrev tnew tabnew
 cnoreabbrev tq tabclose
 nnoremap <C-S-P> <cmd>tabprev<CR>
@@ -1381,13 +1381,22 @@ set sidescroll=1
 
 augroup BgHighlight
   autocmd!
-  autocmd WinEnter * set cursorline | set colorcolumn=80,120 | if (&ft ==? "trouble") | setlocal colorcolumn=0 | endif
+  autocmd WinEnter * set cursorline | set colorcolumn=80,120 | if (&ft ==? "trouble" || &ft ==? "DiffviewFileHistory" || &ft ==? "oil") | setlocal colorcolumn=0 | endif
   autocmd WinLeave * set nocursorline | set colorcolumn=0
 augroup END
 
 set nowrap
 
-set shortmess+=aIT
+set cmdheight=0
+set noshowmode
+
+if has('nvim')
+  set mouse=a
+else
+  set mouse=i
+endif
+
+set shortmess+=aITF
 if has('patch-7.4.314')
   set shortmess+=c
 endif
@@ -1399,12 +1408,6 @@ endif
 set breakindent
 set breakindentopt=sbr
 set showbreak=↪
-
-if has('nvim')
-  set mouse=a
-else
-  set mouse=i
-endif
 
 " " editing
 set shiftwidth=4
@@ -1432,7 +1435,7 @@ if has('nvim')
         vim.opt.foldexpr = "nvim_treesitter#foldexpr()"
       else
         vim.opt.foldmethod = "syntax"
-        end
+      end
     end,
   })
 EOF
