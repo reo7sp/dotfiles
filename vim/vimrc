@@ -336,6 +336,19 @@ else
   call InitAutosaveVim()
 endif
 
+" " ntpeters/vim-better-whitespace
+function! InitBetterWhitespace() abort
+  let g:better_whitespace_enabled = 1
+  let g:strip_whitespace_on_save = 1
+  let g:strip_only_modified_lines = 1
+  let g:strip_whitespace_confirm = 0
+
+  nnoremap ]w :NextTrailingWhitespace<CR>
+  nnoremap [w :PrevTrailingWhitespace<CR>
+endfunction
+
+call InitBetterWhitespace()
+
 " " gbprod/yanky.nvim or maxbrunsfeld/vim-yankstack
 function! InitYanky() abort
   lua << EOF
