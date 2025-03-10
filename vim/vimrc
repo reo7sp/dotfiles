@@ -49,14 +49,17 @@ Plug 'wellle/targets.vim'
 Plug 'tpope/vim-surround'
 Plug 'romainl/vim-cool'
 Plug 'ConradIrwin/vim-bracketed-paste'
+Plug 'vim-scripts/file-line'
+Plug 'pbrisbin/vim-mkdir'
+Plug 'farmergreg/vim-lastplace'
 if has('nvim')
   Plug 'okuuva/auto-save.nvim'
 else
   Plug '907th/vim-auto-save'
 endif
-Plug 'farmergreg/vim-lastplace'
-Plug 'pbrisbin/vim-mkdir'
-Plug 'vim-scripts/file-line'
+if has('nvim')
+  Plug 'yutkat/confirm-quit.nvim'
+endif
 Plug 'tpope/vim-sleuth'
 Plug 'ntpeters/vim-better-whitespace'
 if has('nvim')
@@ -330,6 +333,15 @@ if has('nvim')
   call InitAutosaveNvim()
 else
   call InitAutosaveVim()
+endif
+
+" " yutkat/confirm-quit.nvim
+function! InitConfirmQuit() abort
+  lua require('confirm-quit').setup()
+endfunction
+
+if has('nvim')
+  call InitConfirmQuit()
 endif
 
 " " ntpeters/vim-better-whitespace
