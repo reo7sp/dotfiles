@@ -103,7 +103,11 @@ if has('nvim')
 endif
 
 " " appearance
-Plug 'sainnhe/sonokai'
+if has('nvim')
+  Plug 'catppuccin/nvim'
+else
+  Plug 'catppuccin/vim'
+end
 if has('nvim')
   Plug 'nvim-lualine/lualine.nvim'
 else
@@ -164,6 +168,18 @@ if has('nvim')
 endif
 
 call plug#end()
+
+
+" colors
+if has('termguicolors')
+  set termguicolors
+endif
+
+if has('nvim')
+  colorscheme catppuccin
+else
+  colorscheme catppuccin_mocha
+endif
 
 
 " plugin settings
@@ -615,7 +631,7 @@ EOF
   nnoremap <leader>tq <cmd>Trouble qflist toggle<CR>
   nnoremap <leader>tl <cmd>Trouble loclist toggle<CR>
   nnoremap <leader>ts <cmd>Trouble lsp_document_symbols toggle<CR>
-  nnoremap <leader>tv <cmd>Trouble symbols toggle<CR>
+  nnoremap <leader>tv <cmd>Trouble symbols toggle win.position=bottom<CR>
   nnoremap <leader>t/ <cmd>Trouble<cr>
 endfunction
 
@@ -809,7 +825,6 @@ function! InitLualine() abort
 
   require('lualine').setup({
     options = {
-      theme = 'sonokai',
       icons_enabled = false,
       component_separators = { left = '', right = '' },
       section_separators = { left = '', right = '' },
@@ -860,6 +875,7 @@ function! InitBufferlineNvim() abort
         require('bufferline').style_preset.no_italic,
         require('bufferline').style_preset.no_bold,
       },
+      highlights = require("catppuccin.groups.integrations.bufferline").get(),
       show_buffer_icons = false,
       show_buffer_close_icons = false,
       show_close_icon = false,
@@ -1353,23 +1369,6 @@ inoremap <C-S> <Esc>:w<CR>l
 vnoremap <C-S> <Esc>:w<CR>
 
 
-" colors
-syntax enable
-set background=dark
-set t_Co=256
-if has('termguicolors')
-  set termguicolors
-endif
-
-let g:sonokai_enable_italic = 1
-let g:sonokai_float_style = 'dim'
-colorscheme sonokai
-
-let g:airline_theme = 'sonokai'
-
-let g:vimsyn_embed = 'l'
-
-
 " vim settings
 " " appearance
 set number
@@ -1381,13 +1380,16 @@ set sidescroll=1
 
 augroup BgHighlight
   autocmd!
-  autocmd WinEnter * set cursorline | set colorcolumn=80,120 | if (&ft ==? "trouble" || &ft ==? "DiffviewFileHistory" || &ft ==? "oil") | setlocal colorcolumn=0 | endif
+  autocmd InsertEnter * set cursorline | set colorcolumn=80,120 | if (&ft ==? "TelescopePrompt" || &ft ==? "trouble" || &ft ==? "fugitive" || &ft ==? "DiffviewFileHistory" || &ft ==? "spectre_panel" || &ft ==? "oil") | setlocal colorcolumn=0 | endif
+  autocmd WinEnter * set cursorline | set colorcolumn=80,120 | if (&ft ==? "TelescopePrompt" || &ft ==? "trouble" || &ft ==? "fugitive" || &ft ==? "DiffviewFileHistory" || &ft ==? "spectre_panel" || &ft ==? "oil") | setlocal colorcolumn=0 | endif
   autocmd WinLeave * set nocursorline | set colorcolumn=0
 augroup END
 
 set nowrap
 
-set cmdheight=0
+if has('nvim')
+  set cmdheight=0
+endif
 set noshowmode
 
 if has('nvim')
@@ -1408,6 +1410,7 @@ endif
 set breakindent
 set breakindentopt=sbr
 set showbreak=↪
+let g:vimsyn_embed = 'l'
 
 " " editing
 set shiftwidth=4
