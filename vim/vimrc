@@ -547,7 +547,7 @@ function! InitTelescope() abort
     ),
     extensions = {
       recent_files = {
-        stat_files = true,
+        stat_files = false,
         only_cwd = true,
       },
       hierarchy = {
