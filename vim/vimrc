@@ -141,7 +141,7 @@ else
   Plug 'airblade/vim-gitgutter'
 endif
 if has('nvim')
-  Plug 'dgagn/diagflow.nvim'
+  Plug 'Maan2003/lsp_lines.nvim'
 endif
 if has('nvim')
   Plug 'RRethy/vim-illuminate'
@@ -396,10 +396,6 @@ function! InitYanky() abort
   vim.keymap.set({"n","x"}, "P", "<Plug>(YankyPutBefore)")
   vim.keymap.set("n", "[y", "<Plug>(YankyPreviousEntry)")
   vim.keymap.set("n", "]y", "<Plug>(YankyNextEntry)")
-  vim.keymap.set("n", "]p", "<Plug>(YankyPutIndentAfterLinewise)")
-  vim.keymap.set("n", "[p", "<Plug>(YankyPutIndentBeforeLinewise)")
-  vim.keymap.set("n", "]P", "<Plug>(YankyPutIndentAfterLinewise)")
-  vim.keymap.set("n", "[P", "<Plug>(YankyPutIndentBeforeLinewise)")
   vim.keymap.set("n", ">p", "<Plug>(YankyPutIndentAfterShiftRight)")
   vim.keymap.set("n", "<p", "<Plug>(YankyPutIndentAfterShiftLeft)")
   vim.keymap.set("n", ">P", "<Plug>(YankyPutIndentBeforeShiftRight)")
@@ -796,6 +792,7 @@ function! InitAerial() abort
       default_direction = 'left',
     },
     close_on_select = true,
+    autojump = true,
     show_guides = true,
   })
 EOF
@@ -871,6 +868,7 @@ function! InitLualine() abort
       component_separators = { left = '', right = '' },
       section_separators = { left = '', right = '' },
     },
+    extensions = {'aerial', 'nvim-tree', 'fugitive', 'oil', 'trouble', 'quickfix'},
     sections = {
       lualine_a = { 'mode', { multicursors_get_name, cond = multicursors_is_active } },
       lualine_b = { 'b:gitsigns_head', {'diff', source = diff_source} },
@@ -1084,21 +1082,21 @@ if has('nvim')
   call InitGitConflict()
 endif
 
-" " dgagn/diagflow.nvim
-function! InitDiagflow() abort
+" " Maan2003/lsp_lines.nvim
+function! InitLspLines() abort
   lua << EOF
-  require('diagflow').setup({
-    placement = 'inline',
-    inline_padding_left = 7,
-    show_sign = true,
-    scope = 'line',
-    toggle_event = { 'InsertEnter', 'InsertLeave' },
+  require('lsp_lines').setup()
+  vim.diagnostic.config({
+    virtual_text = false,
+    virtual_lines = {
+      only_current_line = true,
+    },
   })
 EOF
 endfunction
 
 if has('nvim')
-  call InitDiagflow()
+  call InitLspLines()
 endif
 
 " " RRethy/vim-illuminate
@@ -1106,6 +1104,11 @@ function! InitIlluminate() abort
   lua << EOF
   require('illuminate').configure({
     disable_keymaps = true,
+    filetypes_denylist = {
+      'NvimTree',
+      'trouble',
+      'oil',
+    },
   })
 EOF
 endfunction
@@ -1368,7 +1371,6 @@ endif
 " vim mappings
 nnoremap j gj
 nnoremap k gk
-nnoremap 0 ^
 
 nnoremap <silent> } :<C-u>execute "keepjumps norm! " . v:count1 . "}"<CR> " https://superuser.com/a/836924/2151180
 nnoremap <silent> { :<C-u>execute "keepjumps norm! " . v:count1 . "{"<CR>
@@ -1421,9 +1423,9 @@ set sidescroll=1
 
 augroup BgHighlight
   autocmd!
-  autocmd InsertEnter * set cursorline | set colorcolumn=80,120 | if (&ft ==? "TelescopePrompt" || &ft ==? "trouble" || &ft ==? "fugitive" || &ft ==? "DiffviewFileHistory" || &ft ==? "spectre_panel" || &ft ==? "oil") | setlocal colorcolumn=0 | endif
-  autocmd WinEnter * set cursorline | set colorcolumn=80,120 | if (&ft ==? "TelescopePrompt" || &ft ==? "trouble" || &ft ==? "fugitive" || &ft ==? "DiffviewFileHistory" || &ft ==? "spectre_panel" || &ft ==? "oil") | setlocal colorcolumn=0 | endif
-  autocmd WinLeave * set nocursorline | set colorcolumn=0
+  autocmd InsertEnter * set cursorline | set colorcolumn=80,120 | if (&ft ==? "TelescopePrompt") | set nocursorline | endif | if (&ft ==? "TelescopePrompt" || &ft ==? "trouble" || &ft ==? "fugitive" || &ft ==? "DiffviewFileHistory" || &ft ==? "spectre_panel" || &ft ==? "oil") | set colorcolumn=0 | endif
+  autocmd WinEnter *    set cursorline | set colorcolumn=80,120 | if (&ft ==? "TelescopePrompt") | set nocursorline | endif | if (&ft ==? "TelescopePrompt" || &ft ==? "trouble" || &ft ==? "fugitive" || &ft ==? "DiffviewFileHistory" || &ft ==? "spectre_panel" || &ft ==? "oil") | set colorcolumn=0 | endif
+  autocmd WinLeave *    set nocursorline | set colorcolumn=0 | if (&ft ==? "NvimTree") | set cursorline | endif
 augroup END
 
 set nowrap
