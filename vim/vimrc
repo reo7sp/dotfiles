@@ -144,6 +144,8 @@ if has('nvim')
 endif
 if has('nvim')
   Plug 'RRethy/vim-illuminate'
+  Plug 'lukas-reineke/indent-blankline.nvim'
+  Plug 'lukas-reineke/virt-column.nvim'
 endif
 let g:polyglot_disabled = ['sensible', 'autoindent']
 Plug 'sheerun/vim-polyglot'
@@ -517,8 +519,8 @@ call InitBbye()
 
 " " vim-scripts/BufOnly.vim
 function! InitBufOnly() abort
-  cnoreabbrev bqo BufOnly
-  cnoreabbrev bo BufOnly
+  cnoreabbrev bqo silent BufOnly
+  cnoreabbrev bo silent BufOnly
 endfunction
 
 call InitBufOnly()
@@ -1126,6 +1128,37 @@ endfunction
 
 if has('nvim')
   call InitIlluminate()
+endif
+
+" " lukas-reineke/indent-blankline.nvim
+function! InitIBL() abort
+  lua << EOF
+  require('ibl').setup({
+    indent = {
+      char = '▏',
+    },
+    scope = {
+      enabled = false,
+    },
+  })
+EOF
+endfunction
+
+if has('nvim')
+  call InitIBL()
+endif
+
+" " lukas-reineke/virt-column.nvim
+function! InitVirtColumn() abort
+  lua << EOF
+  require('virt-column').setup({
+    char = '║',
+  })
+EOF
+endfunction
+
+if has('nvim')
+  call InitVirtColumn()
 endif
 
 " " nvim-treesitter/nvim-treesitter
