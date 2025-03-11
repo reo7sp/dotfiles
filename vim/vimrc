@@ -57,9 +57,6 @@ if has('nvim')
 else
   Plug '907th/vim-auto-save'
 endif
-if has('nvim')
-  Plug 'yutkat/confirm-quit.nvim'
-endif
 Plug 'tpope/vim-sleuth'
 Plug 'ntpeters/vim-better-whitespace'
 if has('nvim')
@@ -333,15 +330,6 @@ if has('nvim')
   call InitAutosaveNvim()
 else
   call InitAutosaveVim()
-endif
-
-" " yutkat/confirm-quit.nvim
-function! InitConfirmQuit() abort
-  lua require('confirm-quit').setup()
-endfunction
-
-if has('nvim')
-  call InitConfirmQuit()
 endif
 
 " " ntpeters/vim-better-whitespace
