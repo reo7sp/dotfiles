@@ -111,9 +111,10 @@ endif
 
 " " appearance
 if has('nvim')
-  Plug 'catppuccin/nvim'
+  Plug 'rebelot/kanagawa.nvim'
+  Plug 'sainnhe/sonokai'
 else
-  Plug 'catppuccin/vim'
+  Plug 'sainnhe/sonokai'
 end
 if has('nvim')
   Plug 'nvim-lualine/lualine.nvim'
@@ -183,9 +184,14 @@ if has('termguicolors')
 endif
 
 if has('nvim')
-  colorscheme catppuccin
+  set cmdheight=0
+  lua require('kanagawa').setup({compile = true, theme = 'dragon'})
+  colorscheme kanagawa-dragon
 else
-  colorscheme catppuccin_mocha
+  let g:sonokai_enable_italic = 1
+  let g:sonokai_float_style = 'dim'
+  let g:airline_theme = 'sonokai'
+  colorscheme sonokai
 endif
 
 
@@ -911,7 +917,6 @@ function! InitBufferlineNvim() abort
         require('bufferline').style_preset.no_italic,
         require('bufferline').style_preset.no_bold,
       },
-      highlights = require("catppuccin.groups.integrations.bufferline").get(),
       show_buffer_icons = false,
       show_buffer_close_icons = false,
       show_close_icon = false,
