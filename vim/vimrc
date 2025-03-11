@@ -103,6 +103,9 @@ if has('nvim')
   Plug 'nvim-tree/nvim-tree.lua'
 endif
 if has('nvim')
+  Plug 'stevearc/aerial.nvim'
+endif
+if has('nvim')
   Plug 'ahmedkhalf/project.nvim'
 endif
 
@@ -556,6 +559,7 @@ function! InitTelescope() abort
   require('telescope').load_extension('yank_history')
   require('telescope').load_extension('undo')
   require('telescope').load_extension('fidget')
+  require('telescope').load_extension('aerial')
   require('telescope').load_extension('hierarchy')
   require('telescope').load_extension('textcase')
 EOF
@@ -568,16 +572,14 @@ EOF
   nnoremap <leader>fdg <cmd>lua require('telescope').extensions.dir.live_grep()<cr>
   nnoremap <leader>fb <cmd>lua require('telescope.builtin').buffers()<cr>
   nnoremap <leader>ft <cmd>Telescope telescope-tabs list_tabs<cr>
-  nnoremap <leader>fr <cmd>lua require('telescope.builtin').registers()<cr>
-  nnoremap <leader>fj <cmd>lua require('telescope.builtin').jumplist()<cr>
   nnoremap <leader>fp <cmd>lua require('telescope.builtin').diagnostics()<cr>
-  nnoremap <leader>fq <cmd>lua require('telescope.builtin').quickfix()<cr>
+  nnoremap <leader>fj <cmd>lua require('telescope.builtin').jumplist()<cr>
   nnoremap <leader>fl <cmd>lua require('telescope.builtin').loclist()<cr>
+  nnoremap <leader>fq <cmd>lua require('telescope.builtin').quickfix()<cr>
   nnoremap <leader>fy <cmd>lua require('telescope').extensions.yank_history.yank_history()<cr>
   nnoremap <leader>fu <cmd>lua require('telescope').extensions.undo.undo()<cr>
-  nnoremap <leader>fs <cmd>lua require('telescope.builtin').lsp_document_symbols({ignore_symbols={'variable', 'field'}, fname_width = 60})<cr>
-  nnoremap <leader>fa <cmd>lua require('telescope.builtin').lsp_dynamic_workspace_symbols({ignore_symbols={'variable', 'field'}, fname_width = 60})<cr>
-  nnoremap <leader>fx <cmd>lua require('telescope.builtin').treesitter()<cr>
+  nnoremap <leader>fo <cmd>lua require("telescope").extensions.aerial.aerial()<cr>
+  nnoremap <leader>fO <cmd>lua require('telescope.builtin').lsp_dynamic_workspace_symbols({ignore_symbols={'variable', 'field'}, fname_width = 60})<cr>
   nnoremap <leader>fn <cmd>lua require('telescope').extensions.fidget.fidget()<cr>
   nnoremap <leader>fc <cmd>lua require('telescope.builtin').commands()<cr>
   nnoremap <leader>f/ <cmd>Telescope<cr>
@@ -645,10 +647,8 @@ EOF
   nnoremap <leader>ty <cmd>Trouble lsp_type_definitions toggle<CR>
   nnoremap <leader>tr <cmd>Trouble lsp_references toggle<CR>
   nnoremap <leader>tp <cmd>Trouble diagnostics toggle filter.buf=0<CR>
-  nnoremap <leader>tq <cmd>Trouble qflist toggle<CR>
   nnoremap <leader>tl <cmd>Trouble loclist toggle<CR>
-  nnoremap <leader>ts <cmd>Trouble lsp_document_symbols toggle<CR>
-  nnoremap <leader>tv <cmd>Trouble symbols toggle win.position=bottom<CR>
+  nnoremap <leader>tq <cmd>Trouble qflist toggle<CR>
   nnoremap <leader>t/ <cmd>Trouble<cr>
 endfunction
 
@@ -780,6 +780,25 @@ endfunction
 
 if has('nvim')
   call InitNvimTree()
+endif
+
+" " stevearc/aerial.nvim
+function! InitAerial() abort
+  lua << EOF
+  require('aerial').setup({
+    layout = {
+      default_direction = 'left',
+    },
+    close_on_select = true,
+    show_guides = true,
+  })
+EOF
+
+  nnoremap <leader>to <cmd>AerialToggle<cr>
+endfunction
+
+if has('nvim')
+  call InitAerial()
 endif
 
 " " ahmedkhalf/project.nvim
