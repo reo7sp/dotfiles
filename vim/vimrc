@@ -112,7 +112,6 @@ endif
 " " appearance
 if has('nvim')
   Plug 'rebelot/kanagawa.nvim'
-  Plug 'sainnhe/sonokai'
 else
   Plug 'sainnhe/sonokai'
 end
@@ -208,6 +207,8 @@ function! InitNvimCmp() abort
 
   require('mason').setup({})
 
+  local custom = {
+  };
   require('mason-lspconfig').setup({
     ensure_installed = {
       'cmake',
@@ -228,9 +229,9 @@ function! InitNvimCmp() abort
     },
     handlers = {
       function(server_name)
-        require('lspconfig')[server_name].setup({})
+        require('lspconfig')[server_name].setup(custom[server_name] or {})
       end,
-    }
+    },
   })
 
   require('luasnip.loaders.from_vscode').lazy_load()
@@ -859,7 +860,8 @@ function! InitLualine() abort
     groups = {},
     title = false,
     filter = { range = true },
-    format = "{symbol.name}",
+    format = "> {symbol.name}",
+    hl_group = "lualine_c_normal",
   })
 
   require('lualine').setup({
@@ -868,16 +870,25 @@ function! InitLualine() abort
       component_separators = { left = '', right = '' },
       section_separators = { left = '', right = '' },
     },
-    extensions = {'aerial', 'nvim-tree', 'fugitive', 'oil', 'trouble', 'quickfix'},
+    extensions = {
+      'aerial',
+      'nvim-tree',
+      'fugitive',
+      'oil',
+      'trouble',
+      'quickfix',
+    },
     sections = {
-      lualine_a = { 'mode', { multicursors_get_name, cond = multicursors_is_active } },
-      lualine_b = { 'b:gitsigns_head', {'diff', source = diff_source} },
-      lualine_c = { {'filename', path = 1}, 'diagnostics' },
-      lualine_x = { { symbols.get, cond = symbols.has, }, },
-      lualine_y = { 'filetype' },
-      lualine_z = { 'location' }
+      lualine_a = { 'mode', {multicursors_get_name, cond = multicursors_is_active} },
+      lualine_b = { },
+      lualine_c = { {'filename', path = 1}, {symbols.get, cond = symbols.has, padding = {left = 0, right = 1}} },
+      lualine_x = { 'b:gitsigns_head', {'diff', source = diff_source, padding = {left = 0, right = 1}}, },
+      lualine_y = { 'filetype', {'diagnostics', padding = {left = 0, right = 1}} },
+      lualine_z = { 'location', 'searchcount', 'selectioncount' }
     },
   })
+
+  vim.api.nvim_set_hl(0, "StatusLine", { link = "lualine_c_normal" })
 EOF
 endfunction
 
