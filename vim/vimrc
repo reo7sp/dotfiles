@@ -338,6 +338,15 @@ if has('nvim')
   call InitNvimCmp()
 endif
 
+" " cohama/lexima.vim
+function! InitLexima() abort
+  autocmd FileType TelescopePrompt let b:lexima_disabled = 1
+endfunction
+
+if v:version >= 801
+  call InitLexima()
+endif
+
 " " kylechui/nvim-surround
 function! InitNvimSurround() abort
   lua require('nvim-surround').setup()
@@ -427,8 +436,10 @@ function! InitComment() abort
 
   nnoremap <C-/> <Plug>(comment_toggle_linewise_current)
   nnoremap <C-_> <Plug>(comment_toggle_linewise_current)
+  nnoremap <D-/> <Plug>(comment_toggle_linewise_current)
   xnoremap <C-/> <Plug>(comment_toggle_linewise_visual)
   xnoremap <C-_> <Plug>(comment_toggle_linewise_visual)
+  xnoremap <D-/> <Plug>(comment_toggle_linewise_visual)
 endfunction
 
 function! InitNerdCommenter() abort
@@ -513,6 +524,7 @@ call InitSneak()
 " " moll/vim-bbye
 function! InitBbye() abort
   cnoreabbrev bq Bdelete
+  cnoreabbrev bd Bdelete
 endfunction
 
 call InitBbye()
@@ -520,6 +532,7 @@ call InitBbye()
 " " vim-scripts/BufOnly.vim
 function! InitBufOnly() abort
   cnoreabbrev bqo silent BufOnly
+  cnoreabbrev bdo silent BufOnly
   cnoreabbrev bo silent BufOnly
 endfunction
 
@@ -549,6 +562,10 @@ function! InitTelescope() abort
       recent_files = {
         stat_files = false,
         only_cwd = true,
+        ignore_patterns = {
+          '/tmp/',
+          'NvimTree_',
+        },
       },
       hierarchy = {
         disable_devicons = true,
@@ -781,6 +798,8 @@ endfunction
 function! InitNvimTree() abort
   nnoremap <leader>tt <cmd>call LazyNvimTreeToggle()<CR>
   nnoremap <leader>tf <cmd>call LazyNvimTreeToggle()<CR>
+  nnoremap <C-\> <cmd>call LazyNvimTreeToggle()<CR>
+  nnoremap <D-\> <cmd>call LazyNvimTreeToggle()<CR>
 endfunction
 
 if has('nvim')
@@ -883,10 +902,18 @@ function! InitLualine() abort
     sections = {
       lualine_a = { 'mode', {multicursors_get_name, cond = multicursors_is_active} },
       lualine_b = { },
-      lualine_c = { {'filename', path = 1}, {symbols.get, cond = symbols.has, padding = {left = 0, right = 1}} },
+      lualine_c = { {'filename', path = 1, file_status = false}, {symbols.get, cond = symbols.has, padding = {left = 0, right = 1}} },
       lualine_x = { 'b:gitsigns_head', {'diff', source = diff_source, padding = {left = 0, right = 1}}, },
       lualine_y = { 'filetype', {'diagnostics', padding = {left = 0, right = 1}} },
-      lualine_z = { 'location', 'searchcount', 'selectioncount' }
+      lualine_z = { 'location', 'searchcount', 'selectioncount' },
+    },
+    inactive_sections = {
+      lualine_a = {},
+      lualine_b = {},
+      lualine_c = { {'filename', path = 1, file_status = false} },
+      lualine_x = { 'location' },
+      lualine_y = {},
+      lualine_z = {},
     },
   })
 
@@ -935,6 +962,7 @@ function! InitBufferlineNvim() abort
       modified_icon = '',
       close_command = 'Bdelete %d',
       right_mouse_command = 'Bdelete %d',
+      persist_buffer_sort = false,
     }
   })
 
@@ -969,7 +997,16 @@ EOF
   nnoremap <leader>0 <cmd>BufferLineGoToBuffer -1<CR>
 
   cnoreabbrev bql BufferLineCloseLeft
+  cnoreabbrev bdl BufferLineCloseLeft
   cnoreabbrev bqr BufferLineCloseRight
+  cnoreabbrev bdr BufferLineCloseRight
+
+  cnoreabbrev bsort BufferLineSortByDirectory
+  cnoreabbrev bs BufferLineSortByDirectory
+  cnoreabbrev bsortext BufferLineSortByExtension
+  cnoreabbrev bse BufferLineSortByDirectory
+
+  cnoreabbrev bk BufferLineTogglePin
 
   lua << EOF
   vim.api.nvim_create_user_command('BufferLineCloseIdx',
@@ -993,6 +1030,15 @@ EOF
   cnoreabbrev bq7 BufferLineCloseIdx 7
   cnoreabbrev bq8 BufferLineCloseIdx 8
   cnoreabbrev bq9 BufferLineCloseIdx 9
+  cnoreabbrev bd1 BufferLineCloseIdx 1
+  cnoreabbrev bd2 BufferLineCloseIdx 2
+  cnoreabbrev bd3 BufferLineCloseIdx 3
+  cnoreabbrev bd4 BufferLineCloseIdx 4
+  cnoreabbrev bd5 BufferLineCloseIdx 5
+  cnoreabbrev bd6 BufferLineCloseIdx 6
+  cnoreabbrev bd7 BufferLineCloseIdx 7
+  cnoreabbrev bd8 BufferLineCloseIdx 8
+  cnoreabbrev bd9 BufferLineCloseIdx 9
 
   nnoremap <C--> <cmd>BufferLineMovePrev<CR>
   nnoremap <C-=> <cmd>BufferLineMoveNext<CR>
