@@ -18,7 +18,6 @@ if ! has('nvim')
 endif
 if has('nvim')
   Plug 'nvim-lua/plenary.nvim'
-  Plug 'nvimtools/hydra.nvim'
   Plug 'kkharji/sqlite.lua'
 endif
 Plug 'tpope/vim-repeat'
@@ -79,9 +78,6 @@ if has('nvim')
   Plug 'johmsalas/text-case.nvim'
   Plug 'echasnovski/mini.align'
   Plug 'Wansmer/treesj'
-endif
-if has('nvim')
-  Plug 'smoka7/multicursors.nvim'
 endif
 
 " " navigation
@@ -348,14 +344,10 @@ EOF
   nnoremap gr <cmd>lua require('telescope.builtin').lsp_references({fname_width = 60})<cr>
   nnoremap gh <cmd>Telescope hierarchy theme=ivy disable_devicons=true<cr>
   nnoremap go <cmd>lua vim.lsp.buf.hover()<cr>
-  nnoremap K <cmd>lua vim.lsp.buf.hover()<cr>
-  nnoremap gp <cmd>lua vim.diagnostic.open_float()<cr>
-  nnoremap gq <cmd>lua vim.lsp.buf.code_action()<cr>
   nnoremap <leader>lr <cmd>lua vim.lsp.buf.rename()<cr>
   nnoremap <leader>lf <cmd>lua vim.lsp.buf.format({async = true})<cr>
   xnoremap <leader>lf <cmd>lua vim.lsp.buf.format({async = true})<cr>
   nnoremap <leader>lc <cmd>lua vim.lsp.buf.code_action()<cr>
-  nnoremap <leader>lq <cmd>lua vim.lsp.buf.code_action()<cr>
   nnoremap [p <cmd>lua vim.diagnostic.goto_prev({float=false})<cr>
   nnoremap ]p <cmd>lua vim.diagnostic.goto_next({float=false})<cr>
 endfunction
@@ -414,9 +406,10 @@ function! InitBetterWhitespace() abort
   let g:strip_only_modified_lines = 1
   let g:strip_whitespace_confirm = 0
   let g:strip_max_file_size = 99999
+  let g:better_whitespace_operator = ''
 
-  nnoremap ]w :NextTrailingWhitespace<CR>
-  nnoremap [w :PrevTrailingWhitespace<CR>
+  nnoremap ]w <cmd>NextTrailingWhitespace<CR>
+  nnoremap [w <cmd>PrevTrailingWhitespace<CR>
 endfunction
 
 call InitBetterWhitespace()
@@ -432,6 +425,8 @@ function! InitYanky() abort
 
   vim.keymap.set({"n","x"}, "p", "<Plug>(YankyPutAfter)")
   vim.keymap.set({"n","x"}, "P", "<Plug>(YankyPutBefore)")
+  vim.keymap.set({"n","x"}, "gp", "<Plug>(YankyGPutAfter)")
+  vim.keymap.set({"n","x"}, "gP", "<Plug>(YankyGPutBefore)")
   vim.keymap.set("n", "[y", "<Plug>(YankyPreviousEntry)")
   vim.keymap.set("n", "]y", "<Plug>(YankyNextEntry)")
   vim.keymap.set("n", ">p", "<Plug>(YankyPutIndentAfterShiftRight)")
@@ -521,18 +516,6 @@ endfunction
 
 if has('nvim')
   call InitTreeSJ()
-endif
-
-" " smoka7/multicursors.nvim
-function! InitMulticursors() abort
-  lua require('multicursors').setup({})
-
-  nnoremap <leader>n <cmd>MCstart<cr>
-  vnoremap <leader>n <cmd>MCstart<cr>
-endfunction
-
-if has('nvim')
-  call InitMulticursors()
 endif
 
 " " justinmk/vim-sneak
@@ -825,7 +808,7 @@ endfunction
 function! InitNvimTree() abort
   nnoremap <leader>tt <cmd>call LazyNvimTreeToggle()<CR>
   nnoremap <leader>tf <cmd>call LazyNvimTreeToggle()<CR>
-  nnoremap <Space><Space> <cmd>call LazyNvimTreeToggle()<CR>
+  nnoremap <leader><Space> <cmd>call LazyNvimTreeToggle()<CR>
   nnoremap <C-\> <cmd>call LazyNvimTreeToggle()<CR>
   nnoremap <D-\> <cmd>call LazyNvimTreeToggle()<CR>
 endfunction
@@ -880,17 +863,13 @@ endif
 " " nvim-lualine/lualine.nvim or vim-airline/vim-airline
 function! InitLualine() abort
   lua << EOF
-  local function multicursors_is_active()
-    local ok, hydra = pcall(require, 'hydra.statusline')
-    return ok and hydra.is_active()
-  end
-
-  local function multicursors_get_name()
-    local ok, hydra = pcall(require, 'hydra.statusline')
-    if ok then
-        return hydra.get_name()
+  local function show_macro_recording()
+    local recording_register = vim.fn.reg_recording()
+    if recording_register == "" then
+        return ""
+    else
+        return "Recording @" .. recording_register
     end
-    return ''
   end
 
   local function diff_source()
@@ -913,7 +892,8 @@ function! InitLualine() abort
     hl_group = "lualine_c_normal",
   })
 
-  require('lualine').setup({
+  local lualine = require('lualine')
+  lualine.setup({
     options = {
       icons_enabled = false,
       component_separators = { left = '', right = '' },
@@ -928,24 +908,68 @@ function! InitLualine() abort
       'quickfix',
     },
     sections = {
-      lualine_a = { 'mode', {multicursors_get_name, cond = multicursors_is_active} },
-      lualine_b = { },
-      lualine_c = { {'filename', path = 1, file_status = false}, {symbols.get, cond = symbols.has, padding = {left = 0, right = 1}} },
-      lualine_x = { 'b:gitsigns_head', {'diff', source = diff_source, padding = {left = 0, right = 1}}, },
-      lualine_y = { 'filetype', {'diagnostics', padding = {left = 0, right = 1}} },
-      lualine_z = { 'location', 'searchcount', 'selectioncount' },
+      lualine_a = {
+        'mode',
+        { 'macro-recording', fmt = show_macro_recording },
+      },
+      lualine_b = {
+      },
+      lualine_c = {
+        { 'filename', path = 1, file_status = false},
+        { symbols.get, cond = symbols.has, padding = {left = 0, right = 1} },
+      },
+      lualine_x = {
+        'b:gitsigns_head',
+        { 'diff', source = diff_source, padding = {left = 0, right = 1} },
+      },
+      lualine_y = {
+        'filetype',
+        { 'diagnostics', padding = {left = 0, right = 1} },
+      },
+      lualine_z = {
+        'location',
+        'searchcount',
+        'selectioncount',
+      },
     },
     inactive_sections = {
-      lualine_a = {},
-      lualine_b = {},
-      lualine_c = { {'filename', path = 1, file_status = false} },
-      lualine_x = { 'location' },
-      lualine_y = {},
-      lualine_z = {},
+      lualine_a = {
+      },
+      lualine_b = {
+      },
+      lualine_c = {
+        { 'filename', path = 1, file_status = false },
+      },
+      lualine_x = {
+        'location',
+      },
+      lualine_y = {
+      },
+      lualine_z = {
+      },
     },
   })
 
   vim.api.nvim_set_hl(0, "StatusLine", { link = "lualine_c_normal" })
+
+  vim.api.nvim_create_autocmd("RecordingEnter", {
+    callback = function()
+      lualine.refresh({ place = { "statusline" }, })
+    end,
+  })
+
+  vim.api.nvim_create_autocmd("RecordingLeave", {
+    callback = function()
+      local timer = vim.loop.new_timer()
+      timer:start(
+        50,
+        0,
+        vim.schedule_wrap(function()
+          lualine.refresh({ place = { "statusline" }, })
+        end)
+      )
+    end,
+  })
 EOF
 endfunction
 
@@ -1490,17 +1514,14 @@ endif
 nnoremap <expr> j v:count ? 'j' : 'gj'
 nnoremap <expr> k v:count ? 'k' : 'gk'
 
-nnoremap <silent> } :<C-u>execute "keepjumps norm! " . v:count1 . "}"<CR> " https://superuser.com/a/836924/2151180
+nnoremap <silent> } :<C-u>execute "keepjumps norm! " . v:count1 . "}"<CR>  " https://superuser.com/a/836924/2151180
 nnoremap <silent> { :<C-u>execute "keepjumps norm! " . v:count1 . "{"<CR>
 
-nnoremap <expr> gV '`[' . getregtype()[0] . '`]'
+nnoremap c* *``cgn  " https://vonheikemen.github.io/devlog/tools/how-to-survive-without-multiple-cursors-in-vim/
 
-nnoremap + <C-a>
-nnoremap - <C-x>
-xnoremap + g<C-a>
-xnoremap - g<C-x>
+nnoremap gV `[v`]  " https://vi.stackexchange.com/a/35
 
-nnoremap <Backspace> <C-^>
+nnoremap <Backspace> <C-^>  " https://bluz71.github.io/2021/09/10/vim-tips-revisited.html#fast-previous-buffer-switching
 
 cnoreabbrev E e
 cnoreabbrev Q q
@@ -1523,14 +1544,14 @@ nnoremap <C-Down> <cmd>resize -2<cr>
 nnoremap <C-Right> <cmd>vertical resize +2<cr>
 nnoremap <C-Left> <cmd>vertical resize -2<cr>
 
-nnoremap <leader>y "+y
-nnoremap <leader>Y "+Y
-nnoremap <leader>p "+p
-nnoremap <leader>P "+P
-vnoremap <leader>y "+y
-vnoremap <leader>Y "+Y
-vnoremap <leader>p "+p
-vnoremap <leader>P "+P
+nnoremap +y "+y
+nnoremap +Y "+Y
+nnoremap +p "+p
+nnoremap +P "+P
+vnoremap +y "+y
+vnoremap +Y "+Y
+vnoremap +p "+p
+vnoremap +P "+P
 
 nnoremap <C-S> :w<CR>
 inoremap <C-S> <Esc>:w<CR>l
