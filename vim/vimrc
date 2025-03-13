@@ -2,7 +2,8 @@ set nocompatible
 let g:loaded_netrwPlugin = 1
 let g:loaded_netrw = 1
 
-let mapleader = ","
+let mapleader = " "
+nnoremap <Space> <Nop>
 
 
 " plugins
@@ -798,6 +799,7 @@ endfunction
 function! InitNvimTree() abort
   nnoremap <leader>tt <cmd>call LazyNvimTreeToggle()<CR>
   nnoremap <leader>tf <cmd>call LazyNvimTreeToggle()<CR>
+  nnoremap <Space><Space> <cmd>call LazyNvimTreeToggle()<CR>
   nnoremap <C-\> <cmd>call LazyNvimTreeToggle()<CR>
   nnoremap <D-\> <cmd>call LazyNvimTreeToggle()<CR>
 endfunction
@@ -975,16 +977,6 @@ EOF
   nnoremap <silent>[b <cmd>BufferLineCyclePrev<CR>
   nnoremap <silent>]b <cmd>BufferLineCycleNext<CR>
 
-  nnoremap <C-1> <cmd>BufferLineGoToBuffer 1<CR>
-  nnoremap <C-2> <cmd>BufferLineGoToBuffer 2<CR>
-  nnoremap <C-3> <cmd>BufferLineGoToBuffer 3<CR>
-  nnoremap <C-4> <cmd>BufferLineGoToBuffer 4<CR>
-  nnoremap <C-5> <cmd>BufferLineGoToBuffer 5<CR>
-  nnoremap <C-6> <cmd>BufferLineGoToBuffer 6<CR>
-  nnoremap <C-7> <cmd>BufferLineGoToBuffer 7<CR>
-  nnoremap <C-8> <cmd>BufferLineGoToBuffer 8<CR>
-  nnoremap <C-9> <cmd>BufferLineGoToBuffer 9<CR>
-  nnoremap <C-0> <cmd>BufferLineGoToBuffer -1<CR>
   nnoremap <leader>1 <cmd>BufferLineGoToBuffer 1<CR>
   nnoremap <leader>2 <cmd>BufferLineGoToBuffer 2<CR>
   nnoremap <leader>3 <cmd>BufferLineGoToBuffer 3<CR>
@@ -995,6 +987,16 @@ EOF
   nnoremap <leader>8 <cmd>BufferLineGoToBuffer 8<CR>
   nnoremap <leader>9 <cmd>BufferLineGoToBuffer 9<CR>
   nnoremap <leader>0 <cmd>BufferLineGoToBuffer -1<CR>
+  nnoremap <C-1> <cmd>BufferLineGoToBuffer 1<CR>
+  nnoremap <C-2> <cmd>BufferLineGoToBuffer 2<CR>
+  nnoremap <C-3> <cmd>BufferLineGoToBuffer 3<CR>
+  nnoremap <C-4> <cmd>BufferLineGoToBuffer 4<CR>
+  nnoremap <C-5> <cmd>BufferLineGoToBuffer 5<CR>
+  nnoremap <C-6> <cmd>BufferLineGoToBuffer 6<CR>
+  nnoremap <C-7> <cmd>BufferLineGoToBuffer 7<CR>
+  nnoremap <C-8> <cmd>BufferLineGoToBuffer 8<CR>
+  nnoremap <C-9> <cmd>BufferLineGoToBuffer 9<CR>
+  nnoremap <C-0> <cmd>BufferLineGoToBuffer -1<CR>
 
   cnoreabbrev bql BufferLineCloseLeft
   cnoreabbrev bdl BufferLineCloseLeft
@@ -1040,24 +1042,14 @@ EOF
   cnoreabbrev bd8 BufferLineCloseIdx 8
   cnoreabbrev bd9 BufferLineCloseIdx 9
 
-  nnoremap <C--> <cmd>BufferLineMovePrev<CR>
-  nnoremap <C-=> <cmd>BufferLineMoveNext<CR>
+  nnoremap <C-,> <cmd>BufferLineMovePrev<CR>
+  nnoremap <C-.> <cmd>BufferLineMoveNext<CR>
 endfunction
 
 function! InitBuftablineVim() abort
   nnoremap <C-P> :bp<CR>
   nnoremap <C-N> :bn<CR>
 
-  nnoremap <C-1> <Plug>BufTabLine.Go(1)
-  nnoremap <C-2> <Plug>BufTabLine.Go(2)
-  nnoremap <C-3> <Plug>BufTabLine.Go(3)
-  nnoremap <C-4> <Plug>BufTabLine.Go(4)
-  nnoremap <C-5> <Plug>BufTabLine.Go(5)
-  nnoremap <C-6> <Plug>BufTabLine.Go(6)
-  nnoremap <C-7> <Plug>BufTabLine.Go(7)
-  nnoremap <C-8> <Plug>BufTabLine.Go(8)
-  nnoremap <C-9> <Plug>BufTabLine.Go(9)
-  nnoremap <C-0> <Plug>BufTabLine.Go(-1)
   nnoremap <leader>1 <Plug>BufTabLine.Go(1)
   nnoremap <leader>2 <Plug>BufTabLine.Go(2)
   nnoremap <leader>3 <Plug>BufTabLine.Go(3)
@@ -1068,6 +1060,16 @@ function! InitBuftablineVim() abort
   nnoremap <leader>8 <Plug>BufTabLine.Go(8)
   nnoremap <leader>9 <Plug>BufTabLine.Go(9)
   nnoremap <leader>0 <Plug>BufTabLine.Go(-1)
+  nnoremap <C-1> <Plug>BufTabLine.Go(1)
+  nnoremap <C-2> <Plug>BufTabLine.Go(2)
+  nnoremap <C-3> <Plug>BufTabLine.Go(3)
+  nnoremap <C-4> <Plug>BufTabLine.Go(4)
+  nnoremap <C-5> <Plug>BufTabLine.Go(5)
+  nnoremap <C-6> <Plug>BufTabLine.Go(6)
+  nnoremap <C-7> <Plug>BufTabLine.Go(7)
+  nnoremap <C-8> <Plug>BufTabLine.Go(8)
+  nnoremap <C-9> <Plug>BufTabLine.Go(9)
+  nnoremap <C-0> <Plug>BufTabLine.Go(-1)
 endfunction
 
 if has('nvim')
@@ -1459,13 +1461,20 @@ endif
 
 
 " vim mappings
-nnoremap j gj
-nnoremap k gk
+nnoremap <expr> j v:count ? 'j' : 'gj'
+nnoremap <expr> k v:count ? 'k' : 'gk'
 
 nnoremap <silent> } :<C-u>execute "keepjumps norm! " . v:count1 . "}"<CR> " https://superuser.com/a/836924/2151180
 nnoremap <silent> { :<C-u>execute "keepjumps norm! " . v:count1 . "{"<CR>
 
 nnoremap <expr> gV '`[' . getregtype()[0] . '`]'
+
+nnoremap + <C-a>
+nnoremap - <C-x>
+xnoremap + g<C-a>
+xnoremap - g<C-x>
+
+nnoremap <Backspace> <C-^>
 
 cnoreabbrev E e
 cnoreabbrev Q q
