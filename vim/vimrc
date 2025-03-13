@@ -65,9 +65,11 @@ Plug 'tpope/vim-sleuth'
 Plug 'ntpeters/vim-better-whitespace'
 if has('nvim')
   Plug 'gbprod/yanky.nvim'
-  Plug 'debugloop/telescope-undo.nvim'
 else
   Plug 'maxbrunsfeld/vim-yankstack'
+endif
+if v:version >= 703
+  Plug 'mbbill/undotree'
 endif
 if has('nvim')
   Plug 'numToStr/Comment.nvim'
@@ -337,12 +339,12 @@ EOF
   autocmd FileType TelescopePrompt lua require('cmp').setup.buffer({ enabled = false })
   augroup END
 
-  nnoremap gd <cmd>lua require('telescope.builtin').lsp_definitions({fname_width = 60})<cr>
-  nnoremap gD <cmd>lua require('telescope.builtin').lsp_implementations({fname_width = 60})<cr>
-  nnoremap gi <cmd>lua require('telescope.builtin').lsp_implementations({fname_width = 60})<cr>
-  nnoremap gy <cmd>lua require('telescope.builtin').lsp_type_definitions({fname_width = 60})<cr>
-  nnoremap gr <cmd>lua require('telescope.builtin').lsp_references({fname_width = 60})<cr>
-  nnoremap gh <cmd>Telescope hierarchy theme=ivy disable_devicons=true<cr>
+  nnoremap gd <cmd>Telescope lsp_definitions<cr>
+  nnoremap gD <cmd>Telescope lsp_implementations<cr>
+  nnoremap gi <cmd>Telescope lsp_implementations<cr>
+  nnoremap gy <cmd>Telescope lsp_type_definitions<cr>
+  nnoremap gr <cmd>Telescope lsp_references<cr>
+  nnoremap gh <cmd>Telescope hierarchy<cr>
   nnoremap go <cmd>lua vim.lsp.buf.hover()<cr>
   nnoremap <leader>lr <cmd>lua vim.lsp.buf.rename()<cr>
   nnoremap <leader>lf <cmd>lua vim.lsp.buf.format({async = true})<cr>
@@ -379,8 +381,8 @@ function! InitAutosaveNvim() abort
   lua << EOF
   require('auto-save').setup({
     condition = function(buf)
-      local filetype = vim.fn.getbufvar(buf, "&filetype")
-      if vim.list_contains({ "oil" }, filetype) then
+      local filetype = vim.fn.getbufvar(buf, '&filetype')
+      if vim.list_contains({ 'oil' }, filetype) then
         return false
       end
       return true
@@ -451,6 +453,18 @@ else
   call InitYankStack()
 endif
 
+" " mbbill/undotree
+function! InitUndotree() abort
+  let g:undotree_SetFocusWhenToggle = 1
+  let g:undotree_SplitWidth = 40
+
+  nnoremap <leader>u :UndotreeToggle<CR>
+endfunction
+
+if v:version >= 703
+  call InitUndotree()
+endif
+
 " " numToStr/Comment.nvim or scrooloose/nerdcommenter
 function! InitComment() abort
   lua require('Comment').setup()
@@ -483,9 +497,6 @@ function! InitTextCase() abort
     prefix = 'gt',
   })
 EOF
-
-  nnoremap gt/ <cmd>TextCaseOpenTelescope<CR>
-  vnoremap gt/ <cmd>TextCaseOpenTelescope<CR>
 endfunction
 
 if has('nvim')
@@ -566,8 +577,34 @@ function! InitTelescope() abort
             ['<c-p>'] = require('telescope.actions.layout').toggle_preview,
           },
         },
+        initial_mode = 'normal',
       }
     ),
+    pickers = {
+      buffers = {
+        show_all_buffers = false,
+        sort_lastused = true,
+      },
+      lsp_definitions = {
+        fname_width = 60,
+      },
+      lsp_implementations = {
+        fname_width = 60,
+      },
+      lsp_implementations = {
+        fname_width = 60,
+      },
+      lsp_type_definitions = {
+        fname_width = 60,
+      },
+      lsp_references = {
+        fname_width = 60,
+      },
+      lsp_dynamic_workspace_symbols = {
+        ignore_symbols = {'variable', 'field'},
+        fname_width = 60,
+      },
+    },
     extensions = {
       recent_files = {
         stat_files = false,
@@ -575,43 +612,44 @@ function! InitTelescope() abort
         ignore_patterns = {
           '/tmp/',
           'NvimTree_',
+          'aerial',
+          'undotree',
+          'trouble',
+          'spectre',
+          'oil',
+          'diffpanel_',
+          'Plugins',
+          'COMMIT_',
+          '\\.git',
         },
       },
       hierarchy = {
+        theme = 'ivy',
         disable_devicons = true,
       },
     },
   })
   require('telescope').load_extension('fzf')
   require('telescope').load_extension('recent_files')
-  require('telescope').load_extension('dir')
   require('telescope').load_extension('live_grep_args')
+  require('telescope').load_extension('dir')
   require('telescope').load_extension('telescope-tabs')
   require('telescope-tabs').setup({})
   require('telescope').load_extension('yank_history')
-  require('telescope').load_extension('undo')
-  require('telescope').load_extension('aerial')
   require('telescope').load_extension('hierarchy')
-  require('telescope').load_extension('textcase')
 EOF
 
-  nnoremap <leader>ff <cmd>lua require('telescope.builtin').find_files()<cr>
-  nnoremap <leader>fdf <cmd>lua require('telescope').extensions.dir.find_files()<cr>
-  nnoremap <leader>fe <cmd>lua require('telescope').extensions.recent_files.pick()<cr>
-  nnoremap <leader>fg <cmd>lua require('telescope').extensions.live_grep_args.live_grep_args()<cr>
-  vnoremap <leader>fg <cmd>lua require('telescope-live-grep-args.shortcuts').grep_visual_selection()<cr>
-  nnoremap <leader>fdg <cmd>lua require('telescope').extensions.dir.live_grep()<cr>
-  nnoremap <leader>fb <cmd>lua require('telescope.builtin').buffers({show_all_buffers = false, sort_lastused = true})<cr>
-  nnoremap <leader>ft <cmd>Telescope telescope-tabs list_tabs<cr>
-  nnoremap <leader>fp <cmd>lua require('telescope.builtin').diagnostics()<cr>
-  nnoremap <leader>fj <cmd>lua require('telescope.builtin').jumplist()<cr>
-  nnoremap <leader>fl <cmd>lua require('telescope.builtin').loclist()<cr>
-  nnoremap <leader>fq <cmd>lua require('telescope.builtin').quickfix()<cr>
-  nnoremap <leader>fy <cmd>lua require('telescope').extensions.yank_history.yank_history()<cr>
-  nnoremap <leader>fu <cmd>lua require('telescope').extensions.undo.undo()<cr>
-  nnoremap <leader>fo <cmd>lua require('telescope').extensions.aerial.aerial()<cr>
-  nnoremap <leader>fO <cmd>lua require('telescope.builtin').lsp_dynamic_workspace_symbols({ignore_symbols={'variable', 'field'}, fname_width = 60})<cr>
-  nnoremap <leader>fc <cmd>lua require('telescope.builtin').commands()<cr>
+  nnoremap <leader>f <cmd>Telescope find_files<cr>
+  nnoremap <leader>e <cmd>lua require('telescope').extensions.recent_files.pick()<cr>
+  nnoremap <leader>s <cmd>Telescope live_grep_args<cr>
+  vnoremap <leader>s <cmd>lua require('telescope-live-grep-args.shortcuts').grep_visual_selection()<cr>
+  nnoremap <leader>df <cmd>Telescope dir find_files<cr>
+  nnoremap <leader>ds <cmd>Telescope dir live_grep<cr>
+  nnoremap <leader>b <cmd>Telescope buffers<cr>
+  nnoremap <leader>B <cmd>Telescope telescope-tabs list_tabs<cr>
+  nnoremap <leader>j <cmd>Telescope jumplist<cr>
+  nnoremap <leader>y <cmd>Telescope yank_history<cr>
+  nnoremap <leader>O <cmd>Telescope lsp_dynamic_workspace_symbols<cr>
 endfunction
 
 if has('nvim')
@@ -670,14 +708,12 @@ function! InitTrouble() abort
   })
 EOF
 
-  nnoremap <leader>td <cmd>Trouble lsp_definitions toggle<CR>
-  nnoremap <leader>tD <cmd>Trouble lsp_implementations toggle<CR>
-  nnoremap <leader>ti <cmd>Trouble lsp_implementations toggle<CR>
-  nnoremap <leader>ty <cmd>Trouble lsp_type_definitions toggle<CR>
-  nnoremap <leader>tr <cmd>Trouble lsp_references toggle<CR>
-  nnoremap <leader>tp <cmd>Trouble diagnostics toggle filter.buf=0<CR>
-  nnoremap <leader>tl <cmd>Trouble loclist toggle<CR>
-  nnoremap <leader>tq <cmd>Trouble qflist toggle<CR>
+  nnoremap <leader>gd <cmd>Trouble lsp_definitions toggle<CR>
+  nnoremap <leader>gD <cmd>Trouble lsp_implementations toggle<CR>
+  nnoremap <leader>gi <cmd>Trouble lsp_implementations toggle<CR>
+  nnoremap <leader>gy <cmd>Trouble lsp_type_definitions toggle<CR>
+  nnoremap <leader>gr <cmd>Trouble lsp_references toggle<CR>
+  nnoremap <leader>p <cmd>Trouble diagnostics toggle filter.buf=0<CR>
 endfunction
 
 if has('nvim')
@@ -786,6 +822,7 @@ function! InitLazyNvimTree() abort
       api.config.mappings.default_on_attach(bufnr)
 
       vim.keymap.set('n', '<c-f>', M.launch_find_files, opts('Launch Find Files'))
+      vim.keymap.set('n', '<c-s>', M.launch_live_grep,  opts('Launch Live Grep'))
       vim.keymap.set('n', '<c-g>', M.launch_live_grep,  opts('Launch Live Grep'))
     end,
   })
@@ -802,8 +839,7 @@ function! LazyNvimTreeToggle() abort
 endfunction
 
 function! InitNvimTree() abort
-  nnoremap <leader>tt <cmd>call LazyNvimTreeToggle()<CR>
-  nnoremap <leader>tf <cmd>call LazyNvimTreeToggle()<CR>
+  nnoremap <leader>t <cmd>call LazyNvimTreeToggle()<CR>
   nnoremap <leader><Space> <cmd>call LazyNvimTreeToggle()<CR>
   nnoremap <C-\> <cmd>call LazyNvimTreeToggle()<CR>
   nnoremap <D-\> <cmd>call LazyNvimTreeToggle()<CR>
@@ -819,6 +855,8 @@ function! InitAerial() abort
   require('aerial').setup({
     layout = {
       default_direction = 'left',
+      min_width = 40,
+      width = 40,
     },
     close_on_select = true,
     autojump = true,
@@ -826,7 +864,7 @@ function! InitAerial() abort
   })
 EOF
 
-  nnoremap <leader>to <cmd>AerialToggle<cr>
+  nnoremap <leader>o <cmd>AerialToggle<cr>
 endfunction
 
 if has('nvim')
@@ -896,11 +934,11 @@ function! InitLualine() abort
       section_separators = { left = '', right = '' },
     },
     extensions = {
-      'aerial',
       'nvim-tree',
+      'aerial',
+      'trouble',
       'fugitive',
       'oil',
-      'trouble',
       'quickfix',
     },
     sections = {
@@ -1008,6 +1046,16 @@ function! InitBufferlineNvim() abort
       show_close_icon = false,
       show_tab_indicators = true,
       modified_icon = '',
+      left_trunc_marker = '⋯ ',
+      right_trunc_marker = '⋯ ',
+      hover = {
+        enabled = false,
+      },
+      offsets = {
+        { filetype = 'NvimTree', },
+        { filetype = 'aerial', },
+        { filetype = 'undotree', },
+      },
       close_command = 'Bdelete %d',
       right_mouse_command = 'Bdelete %d',
       persist_buffer_sort = false,
@@ -1213,6 +1261,8 @@ function! InitIlluminate() abort
     disable_keymaps = true,
     filetypes_denylist = {
       'NvimTree',
+      'aerial',
+      'undotree',
       'trouble',
       'oil',
     },
@@ -1360,6 +1410,9 @@ function! InitWhichKeyNvim() abort
     delay = function(ctx)
       return ctx.plugin and 0 or 500
     end,
+    layout = {
+      width = { min = 25, max = 50 },
+    },
     icons = {
       mappings = false,
       keys = {
@@ -1395,18 +1448,10 @@ function! InitWhichKeyNvim() abort
     },
   })
 EOF
-
-  nnoremap <leader>fk <cmd>WhichKey<cr>
-endfunction
-
-function! InitWhichKeyVim() abort
-  nnoremap <leader>fk :WhichKey
 endfunction
 
 if has('nvim')
   call InitWhichKeyNvim()
-else
-  call InitWhichKeyVim()
 endif
 
 " " sindrets/diffview.nvim
@@ -1435,14 +1480,14 @@ function! InitLazySpectre() abort
   lua << EOF
   require('spectre').setup({
     use_trouble_qf = true,
-    is_insert_mode = true,
     is_block_ui_break = true,
+    is_insert_mode = false,
   })
 EOF
 endfunction
 
 function! InitSpectre() abort
-  nnoremap <leader>s <cmd>Spectre<cr>
+  nnoremap <leader>S <cmd>Spectre<cr>
 endfunction
 
 if has('nvim')
@@ -1453,6 +1498,8 @@ endif
 " " stevearc/oil.nvim
 function! InitOil() abort
   lua require('oil').setup()
+
+  nnoremap <leader>T <cmd>Oil<CR>
 endfunction
 
 if has('nvim')
