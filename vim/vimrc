@@ -249,6 +249,11 @@ function! InitNvimCmp() abort
       {name = 'buffer', keyword_length = 3},
       {name = 'nvim_lsp_signature_help'},
     },
+    view = {
+      entries = {
+        follow_cursor = true,
+      },
+    },
     preselect = 'none',
     completion = {
       completeopt = 'menu,menuone,noinsert,noselect'
@@ -259,8 +264,26 @@ function! InitNvimCmp() abort
       end,
     },
     mapping = cmp.mapping.preset.insert({
-      ['<C-d>'] = cmp.mapping(cmp.mapping.scroll_docs(4), {'i', 'c'}),
-      ['<C-u>'] = cmp.mapping(cmp.mapping.scroll_docs(-4), {'i', 'c'}),
+      --['<C-d>'] = cmp.mapping(cmp.mapping.scroll_docs(5), {'i', 'c'}),
+      --['<C-u>'] = cmp.mapping(cmp.mapping.scroll_docs(-5), {'i', 'c'}),
+      ['<C-d>'] = cmp.mapping(function(fallback)
+        if cmp.visible() then
+          for i = 1, 7, 1 do
+            cmp.select_next_item()
+          end
+        else
+          fallback()
+        end
+      end, { 'i', 's' }),
+      ['<C-u>'] = cmp.mapping(function(fallback)
+        if cmp.visible() then
+          for i = 1, 7, 1 do
+            cmp.select_prev_item()
+          end
+        else
+          fallback()
+        end
+      end, { 'i', 's' }),
       ['<C-Space>'] = cmp.mapping.complete(),
       ['<C-e>'] = cmp.mapping.close(),
       ['<CR>'] = cmp.mapping(function(fallback)
@@ -310,6 +333,8 @@ function! InitNvimCmp() abort
     matching = { disallow_symbol_nonprefix_matching = false }
   })
 EOF
+
+  set pumheight=7
 
   augroup NvimCmp
   autocmd!
@@ -512,6 +537,7 @@ endif
 
 " " justinmk/vim-sneak
 function! InitSneak() abort
+  let g:sneak#label = 1
   let g:sneak#use_ic_scs = 1
 
   map f <Plug>Sneak_f
