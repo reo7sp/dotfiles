@@ -590,7 +590,6 @@ function! InitTelescope() abort
   require('telescope-tabs').setup({})
   require('telescope').load_extension('yank_history')
   require('telescope').load_extension('undo')
-  require('telescope').load_extension('fidget')
   require('telescope').load_extension('aerial')
   require('telescope').load_extension('hierarchy')
   require('telescope').load_extension('textcase')
@@ -602,7 +601,7 @@ EOF
   nnoremap <leader>fg <cmd>lua require('telescope').extensions.live_grep_args.live_grep_args()<cr>
   vnoremap <leader>fg <cmd>lua require('telescope-live-grep-args.shortcuts').grep_visual_selection()<cr>
   nnoremap <leader>fdg <cmd>lua require('telescope').extensions.dir.live_grep()<cr>
-  nnoremap <leader>fb <cmd>lua require('telescope.builtin').buffers()<cr>
+  nnoremap <leader>fb <cmd>lua require('telescope.builtin').buffers({show_all_buffers = false, sort_lastused = true})<cr>
   nnoremap <leader>ft <cmd>Telescope telescope-tabs list_tabs<cr>
   nnoremap <leader>fp <cmd>lua require('telescope.builtin').diagnostics()<cr>
   nnoremap <leader>fj <cmd>lua require('telescope.builtin').jumplist()<cr>
@@ -610,11 +609,9 @@ EOF
   nnoremap <leader>fq <cmd>lua require('telescope.builtin').quickfix()<cr>
   nnoremap <leader>fy <cmd>lua require('telescope').extensions.yank_history.yank_history()<cr>
   nnoremap <leader>fu <cmd>lua require('telescope').extensions.undo.undo()<cr>
-  nnoremap <leader>fo <cmd>lua require("telescope").extensions.aerial.aerial()<cr>
+  nnoremap <leader>fo <cmd>lua require('telescope').extensions.aerial.aerial()<cr>
   nnoremap <leader>fO <cmd>lua require('telescope.builtin').lsp_dynamic_workspace_symbols({ignore_symbols={'variable', 'field'}, fname_width = 60})<cr>
-  nnoremap <leader>fn <cmd>lua require('telescope').extensions.fidget.fidget()<cr>
   nnoremap <leader>fc <cmd>lua require('telescope.builtin').commands()<cr>
-  nnoremap <leader>f/ <cmd>Telescope<cr>
 endfunction
 
 if has('nvim')
@@ -681,7 +678,6 @@ EOF
   nnoremap <leader>tp <cmd>Trouble diagnostics toggle filter.buf=0<CR>
   nnoremap <leader>tl <cmd>Trouble loclist toggle<CR>
   nnoremap <leader>tq <cmd>Trouble qflist toggle<CR>
-  nnoremap <leader>t/ <cmd>Trouble<cr>
 endfunction
 
 if has('nvim')
