@@ -82,8 +82,7 @@ export CLICOLOR=true
 # keybinds
 WORDCHARS=${WORDCHARS/\/}
 WORDCHARS=${WORDCHARS/_}
-autoload -U select-word-style
-select-word-style shell
+WORDCHARS=${WORDCHARS/|}
 ## shift-tab
 bindkey '^[[Z' reverse-menu-complete
 ## ctrl-w
