@@ -85,8 +85,10 @@ endif
 " " navigation
 Plug 'justinmk/vim-sneak'
 Plug 'tpope/vim-unimpaired'
-Plug 'moll/vim-bbye'
-Plug 'vim-scripts/BufOnly.vim'
+if ! has('nvim')
+  Plug 'moll/vim-bbye'
+  Plug 'vim-scripts/BufOnly.vim'
+endif
 if has('nvim')
   Plug 'nvim-telescope/telescope.nvim', {'tag': '0.1.8'}
   Plug 'nvim-telescope/telescope-fzf-native.nvim', {'do': 'make'}
@@ -120,8 +122,8 @@ else
   Plug 'vim-airline/vim-airline'
 endif
 if has('nvim')
-  Plug 'akinsho/bufferline.nvim'
   Plug 'tiagovla/scope.nvim'
+  Plug 'romgrk/barbar.nvim'
   Plug 'LukasPietzschmann/telescope-tabs'
 else
   Plug 'ap/vim-buftabline'
@@ -163,8 +165,8 @@ else
   Plug 'liuchengxu/vim-which-key'
 endif
 Plug 'tpope/vim-eunuch'
-Plug 'tpope/vim-fugitive', {'on': ['Git', 'Flog', 'Flogsplit']}
-Plug 'rbong/vim-flog', {'on': ['Git', 'Flog', 'Flogsplit']}
+Plug 'tpope/vim-fugitive', {'on': ['Git', 'G', 'Flog', 'Flogsplit']}
+Plug 'rbong/vim-flog', {'on': ['Git', 'G', 'Flog', 'Flogsplit']}
 if has('nvim')
   Plug 'sindrets/diffview.nvim', {'on': ['DiffviewOpen', 'DiffviewFileHistory']}
 endif
@@ -266,7 +268,7 @@ function! InitNvimCmp() abort
       --['<C-u>'] = cmp.mapping(cmp.mapping.scroll_docs(-5), {'i', 'c'}),
       ['<C-d>'] = cmp.mapping(function(fallback)
         if cmp.visible() then
-          for i = 1, 7, 1 do
+          for i = 1, 10, 1 do
             cmp.select_next_item()
           end
         else
@@ -275,7 +277,7 @@ function! InitNvimCmp() abort
       end, { 'i', 's' }),
       ['<C-u>'] = cmp.mapping(function(fallback)
         if cmp.visible() then
-          for i = 1, 7, 1 do
+          for i = 1, 10, 1 do
             cmp.select_prev_item()
           end
         else
@@ -331,8 +333,6 @@ function! InitNvimCmp() abort
     matching = { disallow_symbol_nonprefix_matching = false }
   })
 EOF
-
-  set pumheight=7
 
   augroup NvimCmp
   autocmd!
@@ -548,7 +548,9 @@ function! InitBbye() abort
   cnoreabbrev bd Bdelete
 endfunction
 
-call InitBbye()
+if ! has('nvim')
+  call InitBbye()
+endif
 
 " " vim-scripts/BufOnly.vim
 function! InitBufOnly() abort
@@ -557,7 +559,9 @@ function! InitBufOnly() abort
   cnoreabbrev bo silent BufOnly
 endfunction
 
-call InitBufOnly()
+if ! has('nvim')
+  call InitBufOnly()
+endif
 
 " " nvim-telescope/telescope.nvim
 function! InitTelescope() abort
@@ -617,6 +621,7 @@ function! InitTelescope() abort
           'trouble',
           'spectre',
           'oil',
+          'fugitiveblame',
           'diffpanel_',
           'Plugins',
           'COMMIT_',
@@ -1041,112 +1046,80 @@ else
   call InitAirline()
 endif
 
-" " akinsho/bufferline.nvim or ap/vim-buftabline
-function! InitBufferlineNvim() abort
+" " romgrk/barbar.nvim or ap/vim-buftabline
+function! InitBarbar() abort
   lua << EOF
-  require('bufferline').setup({
-    options = {
-      style_preset = {
-        require('bufferline').style_preset.no_italic,
-        require('bufferline').style_preset.no_bold,
-      },
-      show_buffer_icons = false,
-      show_buffer_close_icons = false,
-      show_close_icon = false,
-      show_tab_indicators = true,
-      modified_icon = '',
-      left_trunc_marker = '⋯ ',
-      right_trunc_marker = '⋯ ',
-      hover = {
+  require('scope').setup({})
+
+  vim.g.barbar_auto_setup = false
+  require('barbar').setup({
+    animation = false,
+    icons = {
+      button = false,
+      filetype = {
         enabled = false,
       },
-      offsets = {
-        { filetype = 'NvimTree', },
-        { filetype = 'aerial', },
-        { filetype = 'undotree', },
+      gitsigns = {
+        enabled = false,
       },
-      close_command = 'Bdelete %d',
-      right_mouse_command = 'Bdelete %d',
-      persist_buffer_sort = false,
-    }
+      modified = {
+        button = '',
+      },
+      separator_at_end = false,
+    },
+    sidebar_filetypes = {
+      NvimTree = true,
+      aerial = true,
+      undotree = true,
+      fugitiveblame = true,
+    },
+    no_name_title = '[No Name]',
   })
-
-  require('scope').setup({})
 EOF
 
-  nnoremap <C-P> <cmd>BufferLineCyclePrev<CR>
-  nnoremap <C-N> <cmd>BufferLineCycleNext<CR>
+  highlight BufferCurrentMod ctermfg=255 guifg=#c8c093 guibg=#282727
+  highlight BufferInactiveMod ctermfg=255 guifg=#7a8382 guibg=#0d0c0c
 
-  nnoremap <silent>[b <cmd>BufferLineCyclePrev<CR>
-  nnoremap <silent>]b <cmd>BufferLineCycleNext<CR>
+  cnoreabbrev bq BufferClose
+  cnoreabbrev bd BufferClose
 
-  nnoremap <leader>1 <cmd>BufferLineGoToBuffer 1<CR>
-  nnoremap <leader>2 <cmd>BufferLineGoToBuffer 2<CR>
-  nnoremap <leader>3 <cmd>BufferLineGoToBuffer 3<CR>
-  nnoremap <leader>4 <cmd>BufferLineGoToBuffer 4<CR>
-  nnoremap <leader>5 <cmd>BufferLineGoToBuffer 5<CR>
-  nnoremap <leader>6 <cmd>BufferLineGoToBuffer 6<CR>
-  nnoremap <leader>7 <cmd>BufferLineGoToBuffer 7<CR>
-  nnoremap <leader>8 <cmd>BufferLineGoToBuffer 8<CR>
-  nnoremap <leader>9 <cmd>BufferLineGoToBuffer 9<CR>
-  nnoremap <leader>0 <cmd>BufferLineGoToBuffer -1<CR>
-  nnoremap <C-1> <cmd>BufferLineGoToBuffer 1<CR>
-  nnoremap <C-2> <cmd>BufferLineGoToBuffer 2<CR>
-  nnoremap <C-3> <cmd>BufferLineGoToBuffer 3<CR>
-  nnoremap <C-4> <cmd>BufferLineGoToBuffer 4<CR>
-  nnoremap <C-5> <cmd>BufferLineGoToBuffer 5<CR>
-  nnoremap <C-6> <cmd>BufferLineGoToBuffer 6<CR>
-  nnoremap <C-7> <cmd>BufferLineGoToBuffer 7<CR>
-  nnoremap <C-8> <cmd>BufferLineGoToBuffer 8<CR>
-  nnoremap <C-9> <cmd>BufferLineGoToBuffer 9<CR>
-  nnoremap <C-0> <cmd>BufferLineGoToBuffer -1<CR>
+  cnoreabbrev bqo BufferCloseAllButCurrent
+  cnoreabbrev bdo BufferCloseAllButCurrent
+  cnoreabbrev bo BufferCloseAllButCurrent
 
-  cnoreabbrev bql BufferLineCloseLeft
-  cnoreabbrev bdl BufferLineCloseLeft
-  cnoreabbrev bqr BufferLineCloseRight
-  cnoreabbrev bdr BufferLineCloseRight
+  nnoremap <C-P> <cmd>BufferPrevious<CR>
+  nnoremap <C-N> <cmd>BufferNext<CR>
+  nnoremap <silent>[b <cmd>BufferPrevious<CR>
+  nnoremap <silent>]b <cmd>BufferNext<CR>
 
-  cnoreabbrev bsort BufferLineSortByDirectory
-  cnoreabbrev bs BufferLineSortByDirectory
-  cnoreabbrev bsortext BufferLineSortByExtension
-  cnoreabbrev bse BufferLineSortByDirectory
+  nnoremap <leader>1 <cmd>BufferGoto 1<CR>
+  nnoremap <leader>2 <cmd>BufferGoto 2<CR>
+  nnoremap <leader>3 <cmd>BufferGoto 3<CR>
+  nnoremap <leader>4 <cmd>BufferGoto 4<CR>
+  nnoremap <leader>5 <cmd>BufferGoto 5<CR>
+  nnoremap <leader>6 <cmd>BufferGoto 6<CR>
+  nnoremap <leader>7 <cmd>BufferGoto 7<CR>
+  nnoremap <leader>8 <cmd>BufferGoto 8<CR>
+  nnoremap <leader>9 <cmd>BufferLast<CR>
+  nnoremap <C-1> <cmd>BufferGoto 1<CR>
+  nnoremap <C-2> <cmd>BufferGoto 2<CR>
+  nnoremap <C-3> <cmd>BufferGoto 3<CR>
+  nnoremap <C-4> <cmd>BufferGoto 4<CR>
+  nnoremap <C-5> <cmd>BufferGoto 5<CR>
+  nnoremap <C-6> <cmd>BufferGoto 6<CR>
+  nnoremap <C-7> <cmd>BufferGoto 7<CR>
+  nnoremap <C-8> <cmd>BufferGoto 8<CR>
+  nnoremap <C-9> <cmd>BufferLast<CR>
 
-  cnoreabbrev bk BufferLineTogglePin
+  cnoreabbrev bql BufferCloseBuffersLeft
+  cnoreabbrev bdl BufferCloseBuffersLeft
+  cnoreabbrev bqr BufferCloseBuffersRight
+  cnoreabbrev bdr BufferCloseBuffersRight
 
-  lua << EOF
-  vim.api.nvim_create_user_command('BufferLineCloseIdx',
-    function (opts)
-      local num = tonumber(opts.fargs[1])
-      require('bufferline').exec(num, function(buf, visible_buffers)
-        vim.cmd('Bdelete ' .. buf.id)
-      end)
-    end,
-    {
-      nargs = 1,
-    }
-  )
-EOF
-  cnoreabbrev bq1 BufferLineCloseIdx 1
-  cnoreabbrev bq2 BufferLineCloseIdx 2
-  cnoreabbrev bq3 BufferLineCloseIdx 3
-  cnoreabbrev bq4 BufferLineCloseIdx 4
-  cnoreabbrev bq5 BufferLineCloseIdx 5
-  cnoreabbrev bq6 BufferLineCloseIdx 6
-  cnoreabbrev bq7 BufferLineCloseIdx 7
-  cnoreabbrev bq8 BufferLineCloseIdx 8
-  cnoreabbrev bq9 BufferLineCloseIdx 9
-  cnoreabbrev bd1 BufferLineCloseIdx 1
-  cnoreabbrev bd2 BufferLineCloseIdx 2
-  cnoreabbrev bd3 BufferLineCloseIdx 3
-  cnoreabbrev bd4 BufferLineCloseIdx 4
-  cnoreabbrev bd5 BufferLineCloseIdx 5
-  cnoreabbrev bd6 BufferLineCloseIdx 6
-  cnoreabbrev bd7 BufferLineCloseIdx 7
-  cnoreabbrev bd8 BufferLineCloseIdx 8
-  cnoreabbrev bd9 BufferLineCloseIdx 9
+  cnoreabbrev bs BufferOrderByDirectory
 
-  nnoremap <C-,> <cmd>BufferLineMovePrev<CR>
-  nnoremap <C-.> <cmd>BufferLineMoveNext<CR>
+  nnoremap <C-,> <cmd>BufferMovePrevious<CR>
+  nnoremap <C-.> <cmd>BufferMoveNext<CR>
 endfunction
 
 function! InitBuftablineVim() abort
@@ -1161,8 +1134,7 @@ function! InitBuftablineVim() abort
   nnoremap <leader>6 <Plug>BufTabLine.Go(6)
   nnoremap <leader>7 <Plug>BufTabLine.Go(7)
   nnoremap <leader>8 <Plug>BufTabLine.Go(8)
-  nnoremap <leader>9 <Plug>BufTabLine.Go(9)
-  nnoremap <leader>0 <Plug>BufTabLine.Go(-1)
+  nnoremap <leader>9 <Plug>BufTabLine.Go(-1)
   nnoremap <C-1> <Plug>BufTabLine.Go(1)
   nnoremap <C-2> <Plug>BufTabLine.Go(2)
   nnoremap <C-3> <Plug>BufTabLine.Go(3)
@@ -1171,12 +1143,11 @@ function! InitBuftablineVim() abort
   nnoremap <C-6> <Plug>BufTabLine.Go(6)
   nnoremap <C-7> <Plug>BufTabLine.Go(7)
   nnoremap <C-8> <Plug>BufTabLine.Go(8)
-  nnoremap <C-9> <Plug>BufTabLine.Go(9)
-  nnoremap <C-0> <Plug>BufTabLine.Go(-1)
+  nnoremap <C-9> <Plug>BufTabLine.Go(-1)
 endfunction
 
 if has('nvim')
-  call InitBufferlineNvim()
+  call InitBarbar()
 else
   call InitBuftablineVim()
 endif
@@ -1275,6 +1246,7 @@ function! InitIlluminate() abort
       'undotree',
       'trouble',
       'oil',
+      'fugitiveblame',
     },
   })
 EOF
@@ -1572,8 +1544,8 @@ endif
 
 
 " vim mappings
-nnoremap <expr> j v:count ? 'j' : 'gj'
-nnoremap <expr> k v:count ? 'k' : 'gk'
+nnoremap <expr> j v:count ? (v:count > 5 ? "m'" . v:count : '') . 'j' : 'gj'  " https://bluz71.github.io/2021/09/10/vim-tips-revisited.html#smarter-j-and-k-navigation
+nnoremap <expr> k v:count ? (v:count > 5 ? "m'" . v:count : '') . 'k' : 'gk'
 
 nnoremap <silent> } :<C-u>execute "keepjumps norm! " . v:count1 . "}"<CR>  " https://superuser.com/a/836924/2151180
 nnoremap <silent> { :<C-u>execute "keepjumps norm! " . v:count1 . "{"<CR>
@@ -1584,6 +1556,7 @@ nnoremap d* *``dgn
 nnoremap gV `[v`]  " https://vi.stackexchange.com/a/35
 
 nnoremap <Backspace> <C-^>  " https://bluz71.github.io/2021/09/10/vim-tips-revisited.html#fast-previous-buffer-switching
+nnoremap <S-Backspace> <cmd>lua require('telescope-tabs').go_to_previous()<cr>
 
 cnoreabbrev E e
 cnoreabbrev Q q
