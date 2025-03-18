@@ -62,7 +62,11 @@ else
   Plug '907th/vim-auto-save'
 endif
 Plug 'tpope/vim-sleuth'
-Plug 'ntpeters/vim-better-whitespace'
+if has('nvim')
+  Plug 'lewis6991/spaceless.nvim'
+else
+  Plug 'thirtythreeforty/lessspace.vim'
+endif
 if has('nvim')
   Plug 'gbprod/yanky.nvim'
 else
@@ -401,20 +405,6 @@ if has('nvim')
 else
   call InitAutosaveVim()
 endif
-
-" " ntpeters/vim-better-whitespace
-function! InitBetterWhitespace() abort
-  let g:strip_whitespace_on_save = 1
-  let g:strip_only_modified_lines = 1
-  let g:strip_whitespace_confirm = 0
-  let g:strip_max_file_size = 99999
-  let g:better_whitespace_operator = ''
-
-  nnoremap ]w <cmd>NextTrailingWhitespace<CR>
-  nnoremap [w <cmd>PrevTrailingWhitespace<CR>
-endfunction
-
-call InitBetterWhitespace()
 
 " " gbprod/yanky.nvim or maxbrunsfeld/vim-yankstack
 function! InitYanky() abort
@@ -1087,8 +1077,8 @@ EOF
   cnoreabbrev bdo BufferCloseAllButCurrent
   cnoreabbrev bo BufferCloseAllButCurrent
 
-  nnoremap <C-P> <cmd>BufferPrevious<CR>
-  nnoremap <C-N> <cmd>BufferNext<CR>
+  nnoremap <C-[> <cmd>BufferPrevious<CR>
+  nnoremap <C-]> <cmd>BufferNext<CR>
   nnoremap <silent>[b <cmd>BufferPrevious<CR>
   nnoremap <silent>]b <cmd>BufferNext<CR>
 
@@ -1123,8 +1113,8 @@ EOF
 endfunction
 
 function! InitBuftablineVim() abort
-  nnoremap <C-P> :bp<CR>
-  nnoremap <C-N> :bn<CR>
+  nnoremap <C-[> :bp<CR>
+  nnoremap <C-]> :bn<CR>
 
   nnoremap <leader>1 <Plug>BufTabLine.Go(1)
   nnoremap <leader>2 <Plug>BufTabLine.Go(2)
