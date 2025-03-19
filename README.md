@@ -6,6 +6,7 @@ My config files:
 - vim: [vim/vimrc](./vim/vimrc).
 - sublime text: [sublime-dotfiles repo](https://github.com/reo7sp/sublime-dotfiles?tab=readme-ov-file#sublime-dotfiles).
 - git: [git/install](./git/install).
+- kitty: [kitty/kitty.conf](./kitty/kitty.conf).
 
 <br>
 
