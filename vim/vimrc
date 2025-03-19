@@ -151,6 +151,7 @@ if has('nvim')
   Plug 'RRethy/vim-illuminate'
   Plug 'lukas-reineke/indent-blankline.nvim'
   Plug 'lukas-reineke/virt-column.nvim'
+  Plug 'psliwka/vim-smoothie'
 endif
 let g:polyglot_disabled = ['sensible', 'autoindent']
 Plug 'sheerun/vim-polyglot'
@@ -1275,6 +1276,16 @@ endfunction
 
 if has('nvim')
   call InitVirtColumn()
+endif
+
+" " psliwka/vim-smoothie
+function! InitSmoothie() abort
+  let g:smoothie_speed_constant_factor = 15
+  let g:smoothie_speed_linear_factor = 15
+endfunction
+
+if has('nvim')
+  call InitSmoothie()
 endif
 
 " " nvim-treesitter/nvim-treesitter
