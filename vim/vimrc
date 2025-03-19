@@ -1316,6 +1316,9 @@ function! InitTreesitter() abort
     auto_install = true,
     highlight = {
       enable = true,
+      disable = {
+        'mermaid',
+      },
     },
     indent = {
       enable = false,
