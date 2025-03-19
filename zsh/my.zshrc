@@ -198,13 +198,13 @@ alias edit-zshrc="vim ~/.zshrc; source ~/.zshrc"
 alias edit-kitty="vim ~/.config/kitty/kitty.conf"
 
 ## ssh
+if [[ $TERM == 'xterm-kitty' ]]; then
+  alias ssh='TERM=xterm-256color ssh'
+fi
+
 alias edit-ssh="vim ~/.ssh/config"
 alias copy-ssh="cat ~/.ssh/id_rsa.pub | pbcopy"
 alias show-ssh="cat ~/.ssh/config"
-
-sshz() {
-  ssh -t "$1" zsh
-}
 
 ## difft
 export DFT_CONTEXT=10
