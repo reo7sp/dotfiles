@@ -194,6 +194,9 @@ alias edit-vim="vim ~/.vimrc"
 alias edit-zsh="vim ~/.my.zshrc; source ~/.zshrc"
 alias edit-zshrc="vim ~/.zshrc; source ~/.zshrc"
 
+## kitty
+alias edit-kitty="vim ~/.config/kitty/kitty.conf"
+
 ## ssh
 alias edit-ssh="vim ~/.ssh/config"
 alias copy-ssh="cat ~/.ssh/id_rsa.pub | pbcopy"

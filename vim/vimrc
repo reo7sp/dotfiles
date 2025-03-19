@@ -1557,8 +1557,6 @@ cnoreabbrev w!! w !sudo tee % >/dev/null
 cnoreabbrev tabq tabclose
 cnoreabbrev tnew tabnew
 cnoreabbrev tq tabclose
-nnoremap <C-S-P> <cmd>tabprev<CR>
-nnoremap <C-S-N> <cmd>tabnext<CR>
 
 nnoremap <C-J> <C-W><C-J>
 nnoremap <C-K> <C-W><C-K>

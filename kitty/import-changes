@@ -1,0 +1,6 @@
+#!/bin/bash
+set -e -o pipefail
+
+
+cp ~/.config/kitty/kitty.conf kitty.conf
+cp ~/.config/kitty/current-theme.conf current-theme.conf
