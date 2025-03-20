@@ -162,6 +162,7 @@ endif
 Plug 'Vimjas/vim-python-pep8-indent', {'for': 'python'}
 Plug 'johejo/gomod.vim'
 Plug 'HiPhish/jinja.vim'
+Plug 'fladson/vim-kitty'
 
 " " commands
 if has('nvim')
@@ -661,7 +662,7 @@ function! InitTrouble() abort
     focus = true,
     auto_preview = false,
     auto_jump = false,
-    follow = true,
+    follow = false,
     win = {
       size = 0.4,
     },
@@ -1548,18 +1549,23 @@ endif
 
 
 " vim mappings
-nnoremap <expr> j v:count ? (v:count > 5 ? "m'" . v:count : '') . 'j' : 'gj'  " https://bluz71.github.io/2021/09/10/vim-tips-revisited.html#smarter-j-and-k-navigation
+" https://bluz71.github.io/2021/09/10/vim-tips-revisited.html#smarter-j-and-k-navigation
+nnoremap <expr> j v:count ? (v:count > 5 ? "m'" . v:count : '') . 'j' : 'gj'
 nnoremap <expr> k v:count ? (v:count > 5 ? "m'" . v:count : '') . 'k' : 'gk'
 
-nnoremap <silent> } :<C-u>execute "keepjumps norm! " . v:count1 . "}"<CR>  " https://superuser.com/a/836924/2151180
+" https://superuser.com/a/836924/2151180
+nnoremap <silent> } :<C-u>execute "keepjumps norm! " . v:count1 . "}"<CR>
 nnoremap <silent> { :<C-u>execute "keepjumps norm! " . v:count1 . "{"<CR>
 
-nnoremap c* *``cgn  " https://vonheikemen.github.io/devlog/tools/how-to-survive-without-multiple-cursors-in-vim/
+" https://vonheikemen.github.io/devlog/tools/how-to-survive-without-multiple-cursors-in-vim/
+nnoremap c* *``cgn
 nnoremap d* *``dgn
 
-nnoremap gV `[v`]  " https://vi.stackexchange.com/a/35
+" https://vi.stackexchange.com/a/35
+nnoremap gV `[v`]
 
-nnoremap <Backspace> <C-^>  " https://bluz71.github.io/2021/09/10/vim-tips-revisited.html#fast-previous-buffer-switching
+" https://bluz71.github.io/2021/09/10/vim-tips-revisited.html#fast-previous-buffer-switching
+nnoremap <Backspace> <C-^>
 nnoremap <S-Backspace> <cmd>lua require('telescope-tabs').go_to_previous()<cr>
 
 cnoreabbrev E e
