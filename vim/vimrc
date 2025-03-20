@@ -579,7 +579,12 @@ function! InitTelescope() abort
     pickers = {
       buffers = {
         show_all_buffers = false,
-        sort_lastused = true,
+        sort_buffers = function (a, b)
+          local index_of = require('barbar.utils.list').index_of
+          local state = require('barbar.state')
+          return index_of(state.buffers, a) < index_of(state.buffers, b)
+        end,
+        select_current = true,
       },
       lsp_definitions = {
         fname_width = 60,
@@ -949,7 +954,7 @@ function! InitLualine() abort
     },
     sections = {
       lualine_a = {
-        'mode',
+        { 'mode', fmt = function(str) return str:sub(1,1) end },
         { 'macro-recording', fmt = show_macro_recording },
       },
       lualine_b = {
@@ -1059,12 +1064,7 @@ function! InitBarbar() abort
       },
       separator_at_end = false,
     },
-    sidebar_filetypes = {
-      NvimTree = true,
-      aerial = true,
-      undotree = true,
-      fugitiveblame = true,
-    },
+    sidebar_filetypes = {},
     no_name_title = '[No Name]',
   })
 EOF
