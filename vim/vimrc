@@ -538,6 +538,7 @@ call InitSneak()
 function! InitBbye() abort
   cnoreabbrev bq Bdelete
   cnoreabbrev bd Bdelete
+  nnoremap <leader>q <cmd>Bdelete<cr>
 endfunction
 
 if ! has('nvim')
@@ -1074,6 +1075,7 @@ EOF
 
   cnoreabbrev bq BufferClose
   cnoreabbrev bd BufferClose
+  nnoremap <leader>q <cmd>BufferClose<cr>
 
   cnoreabbrev bqo BufferCloseAllButCurrent
   cnoreabbrev bdo BufferCloseAllButCurrent
