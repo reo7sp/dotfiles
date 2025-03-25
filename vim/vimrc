@@ -68,6 +68,9 @@ else
   Plug 'thirtythreeforty/lessspace.vim'
 endif
 if has('nvim')
+  Plug 'ThePrimeagen/refactoring.nvim'
+endif
+if has('nvim')
   Plug 'gbprod/yanky.nvim'
 else
   Plug 'maxbrunsfeld/vim-yankstack'
@@ -352,7 +355,7 @@ EOF
   nnoremap gr <cmd>Telescope lsp_references<cr>
   nnoremap gh <cmd>Telescope hierarchy<cr>
   nnoremap go <cmd>lua vim.lsp.buf.hover()<cr>
-  nnoremap <leader>lr <cmd>lua vim.lsp.buf.rename()<cr>
+  nnoremap <leader>ln <cmd>lua vim.lsp.buf.rename()<cr>
   nnoremap <leader>lf <cmd>lua vim.lsp.buf.format({async = true})<cr>
   xnoremap <leader>lf <cmd>lua vim.lsp.buf.format({async = true})<cr>
   nnoremap <leader>lc <cmd>lua vim.lsp.buf.code_action()<cr>
@@ -406,6 +409,19 @@ if has('nvim')
   call InitAutosaveNvim()
 else
   call InitAutosaveVim()
+endif
+
+" " ThePrimeagen/refactoring.nvim
+function! InitRefactoring() abort
+  lua << EOF
+  require('refactoring').setup({})
+
+  vim.keymap.set({ "n", "x" }, "<leader>lr", function() require('refactoring').select_refactor() end)
+EOF
+endfunction
+
+if has('nvim')
+  call InitRefactoring()
 endif
 
 " " gbprod/yanky.nvim or maxbrunsfeld/vim-yankstack
