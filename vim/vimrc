@@ -39,8 +39,8 @@ if has('nvim')
 else
   Plug 'vim-scripts/AutoComplPop'
 endif
-if v:version >= 801
-  Plug 'cohama/lexima.vim'
+if has('nvim')
+  Plug 'windwp/nvim-autopairs'
 else
   Plug 'Raimondi/delimitMate'
 end
@@ -148,7 +148,7 @@ else
   Plug 'airblade/vim-gitgutter'
 endif
 if has('nvim')
-  Plug 'Maan2003/lsp_lines.nvim'
+  Plug 'rachartier/tiny-inline-diagnostic.nvim'
 endif
 if has('nvim')
   Plug 'RRethy/vim-illuminate'
@@ -180,7 +180,7 @@ if has('nvim')
   Plug 'sindrets/diffview.nvim', {'on': ['DiffviewOpen', 'DiffviewFileHistory']}
 endif
 if has('nvim')
-  Plug 'nvim-pack/nvim-spectre', {'on': 'Spectre'}
+  Plug 'nvim-pack/nvim-spectre', {'on': 'Spectre', 'do': './build.sh nvim-oxi'}
 endif
 if has('nvim')
   Plug 'stevearc/oil.nvim'
@@ -195,7 +195,6 @@ if has('termguicolors')
 endif
 
 if has('nvim')
-  set cmdheight=0
   lua require('kanagawa').setup({compile = true, theme = 'dragon'})
   colorscheme kanagawa-dragon
 else
@@ -355,7 +354,7 @@ EOF
   nnoremap gr <cmd>Telescope lsp_references<cr>
   nnoremap gh <cmd>Telescope hierarchy<cr>
   nnoremap go <cmd>lua vim.lsp.buf.hover()<cr>
-  nnoremap <leader>ln <cmd>lua vim.lsp.buf.rename()<cr>
+  nnoremap <leader>lr <cmd>lua vim.lsp.buf.rename()<cr>
   nnoremap <leader>lf <cmd>lua vim.lsp.buf.format({async = true})<cr>
   xnoremap <leader>lf <cmd>lua vim.lsp.buf.format({async = true})<cr>
   nnoremap <leader>lc <cmd>lua vim.lsp.buf.code_action()<cr>
@@ -367,13 +366,13 @@ if has('nvim')
   call InitNvimCmp()
 endif
 
-" " cohama/lexima.vim
-function! InitLexima() abort
-  autocmd FileType TelescopePrompt let b:lexima_disabled = 1
+" " windwp/nvim-autopairs
+function! InitAutopairs() abort
+  lua require('nvim-autopairs').setup({})
 endfunction
 
-if v:version >= 801
-  call InitLexima()
+if has('nvim')
+  call InitAutopairs()
 endif
 
 " " kylechui/nvim-surround
@@ -416,7 +415,7 @@ function! InitRefactoring() abort
   lua << EOF
   require('refactoring').setup({})
 
-  vim.keymap.set({ "n", "x" }, "<leader>lr", function() require('refactoring').select_refactor() end)
+  vim.keymap.set({ "n", "x" }, "<leader>lt", function() require('refactoring').select_refactor() end)
 EOF
 endfunction
 
@@ -539,7 +538,6 @@ endif
 
 " " justinmk/vim-sneak
 function! InitSneak() abort
-  let g:sneak#label = 1
   let g:sneak#use_ic_scs = 1
 
   map f <Plug>Sneak_f
@@ -554,7 +552,7 @@ call InitSneak()
 function! InitBbye() abort
   cnoreabbrev bq Bdelete
   cnoreabbrev bd Bdelete
-  nnoremap <leader>q <cmd>Bdelete<cr>
+  nnoremap <C-q> <cmd>Bdelete<cr>
 endfunction
 
 if ! has('nvim')
@@ -563,9 +561,8 @@ endif
 
 " " vim-scripts/BufOnly.vim
 function! InitBufOnly() abort
-  cnoreabbrev bqo silent BufOnly
-  cnoreabbrev bdo silent BufOnly
   cnoreabbrev bo silent BufOnly
+  cnoreabbrev bon silent BufOnly
 endfunction
 
 if ! has('nvim')
@@ -627,6 +624,7 @@ function! InitTelescope() abort
       recent_files = {
         stat_files = false,
         only_cwd = true,
+        show_current_file = true,
         ignore_patterns = {
           '/tmp/',
           'NvimTree_',
@@ -925,15 +923,6 @@ endif
 " " nvim-lualine/lualine.nvim or vim-airline/vim-airline
 function! InitLualine() abort
   lua << EOF
-  local function show_macro_recording()
-    local recording_register = vim.fn.reg_recording()
-    if recording_register == "" then
-        return ""
-    else
-        return "Recording @" .. recording_register
-    end
-  end
-
   local function diff_source()
     local gitsigns = vim.b.gitsigns_status_dict
     if gitsigns then
@@ -972,7 +961,6 @@ function! InitLualine() abort
     sections = {
       lualine_a = {
         { 'mode', fmt = function(str) return str:sub(1,1) end },
-        { 'macro-recording', fmt = show_macro_recording },
       },
       lualine_b = {
       },
@@ -1013,25 +1001,6 @@ function! InitLualine() abort
   })
 
   vim.api.nvim_set_hl(0, "StatusLine", { link = "lualine_c_normal" })
-
-  vim.api.nvim_create_autocmd("RecordingEnter", {
-    callback = function()
-      lualine.refresh({ place = { "statusline" }, })
-    end,
-  })
-
-  vim.api.nvim_create_autocmd("RecordingLeave", {
-    callback = function()
-      local timer = vim.loop.new_timer()
-      timer:start(
-        50,
-        0,
-        vim.schedule_wrap(function()
-          lualine.refresh({ place = { "statusline" }, })
-        end)
-      )
-    end,
-  })
 EOF
 endfunction
 
@@ -1067,6 +1036,8 @@ function! InitBarbar() abort
 
   vim.g.barbar_auto_setup = false
   require('barbar').setup({
+    insert_at_end = true,
+    focus_on_close = 'left',
     animation = false,
     icons = {
       button = false,
@@ -1091,26 +1062,16 @@ EOF
 
   cnoreabbrev bq BufferClose
   cnoreabbrev bd BufferClose
-  nnoremap <leader>q <cmd>BufferClose<cr>
+  nnoremap <C-q> <cmd>BufferClose<cr>
 
-  cnoreabbrev bqo BufferCloseAllButCurrent
-  cnoreabbrev bdo BufferCloseAllButCurrent
   cnoreabbrev bo BufferCloseAllButCurrent
+  cnoreabbrev bon BufferCloseAllButCurrent
 
   nnoremap <C-[> <cmd>BufferPrevious<CR>
   nnoremap <C-]> <cmd>BufferNext<CR>
   nnoremap <silent>[b <cmd>BufferPrevious<CR>
   nnoremap <silent>]b <cmd>BufferNext<CR>
 
-  nnoremap <leader>1 <cmd>BufferGoto 1<CR>
-  nnoremap <leader>2 <cmd>BufferGoto 2<CR>
-  nnoremap <leader>3 <cmd>BufferGoto 3<CR>
-  nnoremap <leader>4 <cmd>BufferGoto 4<CR>
-  nnoremap <leader>5 <cmd>BufferGoto 5<CR>
-  nnoremap <leader>6 <cmd>BufferGoto 6<CR>
-  nnoremap <leader>7 <cmd>BufferGoto 7<CR>
-  nnoremap <leader>8 <cmd>BufferGoto 8<CR>
-  nnoremap <leader>9 <cmd>BufferLast<CR>
   nnoremap <C-1> <cmd>BufferGoto 1<CR>
   nnoremap <C-2> <cmd>BufferGoto 2<CR>
   nnoremap <C-3> <cmd>BufferGoto 3<CR>
@@ -1136,15 +1097,6 @@ function! InitBuftablineVim() abort
   nnoremap <C-[> :bp<CR>
   nnoremap <C-]> :bn<CR>
 
-  nnoremap <leader>1 <Plug>BufTabLine.Go(1)
-  nnoremap <leader>2 <Plug>BufTabLine.Go(2)
-  nnoremap <leader>3 <Plug>BufTabLine.Go(3)
-  nnoremap <leader>4 <Plug>BufTabLine.Go(4)
-  nnoremap <leader>5 <Plug>BufTabLine.Go(5)
-  nnoremap <leader>6 <Plug>BufTabLine.Go(6)
-  nnoremap <leader>7 <Plug>BufTabLine.Go(7)
-  nnoremap <leader>8 <Plug>BufTabLine.Go(8)
-  nnoremap <leader>9 <Plug>BufTabLine.Go(-1)
   nnoremap <C-1> <Plug>BufTabLine.Go(1)
   nnoremap <C-2> <Plug>BufTabLine.Go(2)
   nnoremap <C-3> <Plug>BufTabLine.Go(3)
@@ -1227,21 +1179,17 @@ if has('nvim')
   call InitGitConflict()
 endif
 
-" " Maan2003/lsp_lines.nvim
-function! InitLspLines() abort
+" " rachartier/tiny-inline-diagnostic.nvim
+function! InitTinyDiag() abort
   lua << EOF
-  require('lsp_lines').setup()
-  vim.diagnostic.config({
-    virtual_text = false,
-    virtual_lines = {
-      only_current_line = true,
-    },
-  })
+  require('tiny-inline-diagnostic').setup({})
+
+  vim.diagnostic.config({ virtual_text = false })
 EOF
 endfunction
 
 if has('nvim')
-  call InitLspLines()
+  call InitTinyDiag()
 endif
 
 " " RRethy/vim-illuminate
@@ -1416,7 +1364,7 @@ function! InitWhichKeyNvim() abort
       return ctx.plugin and 0 or 500
     end,
     layout = {
-      width = { min = 25, max = 50 },
+      width = { min = 25, max = 80 },
     },
     icons = {
       mappings = false,
@@ -1495,6 +1443,11 @@ function! InitLazySpectre() abort
     use_trouble_qf = true,
     is_block_ui_break = true,
     is_insert_mode = false,
+    default = {
+      replace = {
+        cmd = 'oxi',
+      },
+    },
   })
 EOF
 endfunction
@@ -1567,9 +1520,12 @@ endif
 
 
 " vim mappings
+" https://nanotipsforvim.prose.sh/esc-in-normal-mode
+nnoremap <esc> <cmd>echo<cr>
+
 " https://bluz71.github.io/2021/09/10/vim-tips-revisited.html#smarter-j-and-k-navigation
-nnoremap <expr> j v:count ? (v:count > 5 ? "m'" . v:count : '') . 'j' : 'gj'
-nnoremap <expr> k v:count ? (v:count > 5 ? "m'" . v:count : '') . 'k' : 'gk'
+nnoremap <silent> <expr> j v:count ? (v:count > 5 ? "m'" . v:count : '') . 'j' : 'gj'
+nnoremap <silent> <expr> k v:count ? (v:count > 5 ? "m'" . v:count : '') . 'k' : 'gk'
 
 " https://superuser.com/a/836924/2151180
 nnoremap <silent> } :<C-u>execute "keepjumps norm! " . v:count1 . "}"<CR>
@@ -1578,6 +1534,8 @@ nnoremap <silent> { :<C-u>execute "keepjumps norm! " . v:count1 . "{"<CR>
 " https://vonheikemen.github.io/devlog/tools/how-to-survive-without-multiple-cursors-in-vim/
 nnoremap c* *``cgn
 nnoremap d* *``dgn
+nnoremap c# #``cgN
+nnoremap d# #``dgN
 
 " https://vi.stackexchange.com/a/35
 nnoremap gV `[v`]
@@ -1596,10 +1554,6 @@ cnoreabbrev tabq tabclose
 cnoreabbrev tnew tabnew
 cnoreabbrev tq tabclose
 
-nnoremap <C-J> <C-W><C-J>
-nnoremap <C-K> <C-W><C-K>
-nnoremap <C-L> <C-W><C-L>
-nnoremap <C-H> <C-W><C-H>
 nnoremap <C-Up> <cmd>resize +2<cr>
 nnoremap <C-Down> <cmd>resize -2<cr>
 nnoremap <C-Right> <cmd>vertical resize +2<cr>
@@ -1628,19 +1582,7 @@ set colorcolumn=80,120
 set scrolloff=5
 set sidescroll=1
 
-augroup BgHighlight
-  autocmd!
-  autocmd InsertEnter * set cursorline | set colorcolumn=80,120 | if (&ft ==? "TelescopePrompt") | set nocursorline | endif | if (&ft ==? "TelescopePrompt" || &ft ==? "trouble" || &ft ==? "fugitive" || &ft ==? "DiffviewFileHistory" || &ft ==? "spectre_panel" || &ft ==? "oil") | set colorcolumn=0 | endif
-  autocmd WinEnter *    set cursorline | set colorcolumn=80,120 | if (&ft ==? "TelescopePrompt") | set nocursorline | endif | if (&ft ==? "TelescopePrompt" || &ft ==? "trouble" || &ft ==? "fugitive" || &ft ==? "DiffviewFileHistory" || &ft ==? "spectre_panel" || &ft ==? "oil") | set colorcolumn=0 | endif
-  autocmd WinLeave *    set nocursorline | set colorcolumn=0 | if (&ft ==? "NvimTree") | set cursorline | endif
-augroup END
-
 set nowrap
-
-if has('nvim')
-  set cmdheight=0
-endif
-set noshowmode
 
 if has('nvim')
   set mouse=a
@@ -1648,11 +1590,17 @@ else
   set mouse=i
 endif
 
+set noshowmode
 set shortmess+=aITF
 if has('patch-7.4.314')
   set shortmess+=c
 endif
 set title
+if has('nvim')
+  set titlestring=%{substitute(getcwd(),$HOME,'~','')}\ -\ NVIM
+else
+  set titlestring=%{substitute(getcwd(),$HOME,'~','')}\ -\ VIM
+endif
 set confirm
 if exists('+signcolumn')
   set signcolumn=yes
