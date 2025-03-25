@@ -17,8 +17,8 @@ if ! has('nvim')
   Plug 'Shougo/vimproc.vim', {'do': 'make'}
 endif
 if has('nvim')
+  Plug 'theHamsta/nvim_rocks', {'do': 'pip3 install --user --break-system-packages hererocks && python3 -mhererocks . -j2.1.0-beta3 -r3.0.0 && cp nvim_rocks.lua lua'}
   Plug 'nvim-lua/plenary.nvim'
-  Plug 'kkharji/sqlite.lua'
 endif
 Plug 'tpope/vim-repeat'
 
@@ -46,6 +46,11 @@ else
 end
 Plug 'alvan/vim-closetag'
 Plug 'wellle/targets.vim'
+if has('nvim')
+  Plug 'chrisgrieser/nvim-spider'
+else
+  Plug 'chaoren/vim-wordmotion'
+endif
 if has('nvim')
   Plug 'kylechui/nvim-surround'
 else
@@ -206,6 +211,15 @@ endif
 
 
 " plugin settings
+" " theHamsta/nvim_rocks
+function! InitRocks() abort
+  lua require('nvim_rocks').ensure_installed('luautf8')
+endfunction
+
+if has('nvim')
+  call InitRocks()
+endif
+
 " " hrsh7th/nvim-cmp
 function! InitNvimCmp() abort
   lua << EOF
@@ -375,6 +389,29 @@ if has('nvim')
   call InitAutopairs()
 endif
 
+" " chrisgrieser/nvim-spider
+function! InitSpider() abort
+  lua << EOF
+  require('spider').setup({
+    skipInsignificantPunctuation = false,
+    consistentOperatorPending = false,
+  })
+
+  vim.keymap.set({ "n", "o", "x" }, "w", "<cmd>lua require('spider').motion('w')<CR>")
+  vim.keymap.set({ "n", "o", "x" }, "e", "<cmd>lua require('spider').motion('e')<CR>")
+  vim.keymap.set({ "n", "o", "x" }, "b", "<cmd>lua require('spider').motion('b')<CR>")
+  vim.keymap.set("n", "cw", "ce", { remap = true })
+  vim.keymap.set("n", "dw", "de", { remap = true })
+  vim.keymap.set("n", "yw", "ye", { remap = true })
+  vim.keymap.set("i", "<C-f>", "<Esc>l<cmd>lua require('spider').motion('w')<CR>i")
+  vim.keymap.set("i", "<C-b>", "<Esc><cmd>lua require('spider').motion('b')<CR>i")
+EOF
+endfunction
+
+if has('nvim')
+  call InitSpider()
+endif
+
 " " kylechui/nvim-surround
 function! InitNvimSurround() abort
   lua require('nvim-surround').setup()
@@ -415,7 +452,7 @@ function! InitRefactoring() abort
   lua << EOF
   require('refactoring').setup({})
 
-  vim.keymap.set({ "n", "x" }, "<leader>lt", function() require('refactoring').select_refactor() end)
+  vim.keymap.set({ 'n', 'x' }, '<leader>lt', function() require('refactoring').select_refactor() end, { desc = 'Refactor' })
 EOF
 endfunction
 
@@ -432,10 +469,10 @@ function! InitYanky() abort
     }
   })
 
-  vim.keymap.set({"n","x"}, "p", "<Plug>(YankyPutAfter)")
-  vim.keymap.set({"n","x"}, "P", "<Plug>(YankyPutBefore)")
-  vim.keymap.set({"n","x"}, "gp", "<Plug>(YankyGPutAfter)")
-  vim.keymap.set({"n","x"}, "gP", "<Plug>(YankyGPutBefore)")
+  vim.keymap.set({ "n", "x" }, "p", "<Plug>(YankyPutAfter)")
+  vim.keymap.set({ "n", "x" }, "P", "<Plug>(YankyPutBefore)")
+  vim.keymap.set({ "n", "x" }, "gp", "<Plug>(YankyGPutAfter)")
+  vim.keymap.set({ "n", "x" }, "gP", "<Plug>(YankyGPutBefore)")
   vim.keymap.set("n", "[y", "<Plug>(YankyPreviousEntry)")
   vim.keymap.set("n", "]y", "<Plug>(YankyNextEntry)")
   vim.keymap.set("n", ">p", "<Plug>(YankyPutIndentAfterShiftRight)")
@@ -1452,8 +1489,14 @@ function! InitLazySpectre() abort
 EOF
 endfunction
 
+function! LazySpectreVisualFromYank() abort
+  call plug#load('nvim-spectre')
+  lua require('spectre').open({search_text = vim.fn.getreg('0')})
+endfunction
+
 function! InitSpectre() abort
   nnoremap <leader>S <cmd>Spectre<cr>
+  vnoremap <leader>S y<cmd>call LazySpectreVisualFromYank()<cr>
 endfunction
 
 if has('nvim')
