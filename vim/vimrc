@@ -17,7 +17,7 @@ if ! has('nvim')
   Plug 'Shougo/vimproc.vim', {'do': 'make'}
 endif
 if has('nvim')
-  Plug 'theHamsta/nvim_rocks', {'do': 'pip3 install --user --break-system-packages hererocks && python3 -mhererocks . -j2.1.0-beta3 -r3.0.0 && cp nvim_rocks.lua lua'}
+  " Plug 'theHamsta/nvim_rocks', {'do': 'pip3 install --user --break-system-packages hererocks && python3 -mhererocks . -j2.1.0-beta3 -r3.0.0 && cp nvim_rocks.lua lua'}
   Plug 'nvim-lua/plenary.nvim'
 endif
 Plug 'tpope/vim-repeat'
@@ -219,7 +219,7 @@ function! InitRocks() abort
 endfunction
 
 if has('nvim')
-  call InitRocks()
+  " call InitRocks()
 endif
 
 " " hrsh7th/nvim-cmp
