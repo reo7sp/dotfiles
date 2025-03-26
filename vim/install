@@ -16,7 +16,7 @@ cp after/syntax/vim.vim ~/.config/nvim/after/syntax/vim.vim
 cp after/ftplugin/jinja.vim ~/.config/nvim/after/ftplugin/jinja.vim
 curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 
-vim -e -c "PlugInstall" -c "qa"
+vim -e -c "PlugUpdate" -c "qa"
 if can-exec nvim; then
-  nvim -e -c "PlugInstall" -c "qa"
+  nvim -e -c "PlugUpdate" -c "qa"
 fi
