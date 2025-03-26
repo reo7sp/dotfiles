@@ -368,7 +368,7 @@ EOF
   nnoremap gi <cmd>Telescope lsp_implementations<cr>
   nnoremap gy <cmd>Telescope lsp_type_definitions<cr>
   nnoremap gr <cmd>Telescope lsp_references<cr>
-  nnoremap gh <cmd>Telescope hierarchy<cr>
+  nnoremap gR <cmd>Telescope hierarchy<cr>
   nnoremap go <cmd>lua vim.lsp.buf.hover()<cr>
   nnoremap <leader>lr <cmd>lua vim.lsp.buf.rename()<cr>
   nnoremap <leader>lf <cmd>lua vim.lsp.buf.format({async = true})<cr>
@@ -698,6 +698,7 @@ function! InitTelescope() abort
           'undotree',
           'trouble',
           'spectre',
+          'gitsigns',
           'oil',
           'fugitiveblame',
           'diffpanel_',
@@ -1227,9 +1228,14 @@ function! InitGitSigns() abort
           gitsigns.nav_hunk('prev')
         end
       end)
+
+      vim.keymap.set({'o', 'x'}, 'ih', '<Cmd>Gitsigns select_hunk<CR>')
     end
   })
 EOF
+
+  nnoremap gh <cmd>Gitsigns blame_line<CR>
+  nnoremap <leader>h <cmd>Gitsigns blame<CR>
 endfunction
 
 if has('nvim')
