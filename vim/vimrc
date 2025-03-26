@@ -72,6 +72,7 @@ if has('nvim')
 else
   Plug 'thirtythreeforty/lessspace.vim'
 endif
+Plug 'ntpeters/vim-better-whitespace'
 if has('nvim')
   Plug 'ThePrimeagen/refactoring.nvim'
 endif
@@ -447,6 +448,19 @@ if has('nvim')
 else
   call InitAutosaveVim()
 endif
+
+" " ntpeters/vim-better-whitespace
+function! InitBetterWhitespace() abort
+  let g:better_whitespace_enabled = 0
+  let g:better_whitespace_operator = ''
+  let g:strip_max_file_size = 99999
+  let g:strip_whitespace_confirm = 0
+
+  nnoremap ]w :NextTrailingWhitespace<CR>
+  nnoremap [w :PrevTrailingWhitespace<CR>
+endfunction
+
+call InitBetterWhitespace()
 
 " " ThePrimeagen/refactoring.nvim
 function! InitRefactoring() abort
