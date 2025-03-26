@@ -95,8 +95,9 @@ if has('nvim')
 endif
 
 " " navigation
-Plug 'justinmk/vim-sneak'
 Plug 'tpope/vim-unimpaired'
+Plug 'justinmk/vim-sneak'
+Plug 'haya14busa/vim-asterisk'
 if ! has('nvim')
   Plug 'moll/vim-bbye'
   Plug 'vim-scripts/BufOnly.vim'
@@ -584,6 +585,20 @@ function! InitSneak() abort
 endfunction
 
 call InitSneak()
+
+" " haya14busa/vim-asterisk
+function! InitAsterisk() abort
+  map *   <Plug>(asterisk-*)
+  map #   <Plug>(asterisk-#)
+  map g*  <Plug>(asterisk-g*)
+  map g#  <Plug>(asterisk-g#)
+  map z*  <Plug>(asterisk-z*)
+  map gz* <Plug>(asterisk-gz*)
+  map z#  <Plug>(asterisk-z#)
+  map gz# <Plug>(asterisk-gz#)
+endfunction
+
+call InitAsterisk()
 
 " " moll/vim-bbye
 function! InitBbye() abort
@@ -1574,18 +1589,12 @@ nnoremap <silent> <expr> k v:count ? (v:count > 5 ? "m'" . v:count : '') . 'k' :
 nnoremap <silent> } :<C-u>execute "keepjumps norm! " . v:count1 . "}"<CR>
 nnoremap <silent> { :<C-u>execute "keepjumps norm! " . v:count1 . "{"<CR>
 
-" https://vonheikemen.github.io/devlog/tools/how-to-survive-without-multiple-cursors-in-vim/
-nnoremap c* *``cgn
-nnoremap d* *``dgn
-nnoremap c# #``cgN
-nnoremap d# #``dgN
-
 " https://vi.stackexchange.com/a/35
 nnoremap gV `[v`]
 
 " https://bluz71.github.io/2021/09/10/vim-tips-revisited.html#fast-previous-buffer-switching
-nnoremap <Backspace> <C-^>
-nnoremap <S-Backspace> <cmd>lua require('telescope-tabs').go_to_previous()<cr>
+nnoremap <C-Backspace> <C-^>
+nnoremap <C-S-Backspace> <cmd>lua require('telescope-tabs').go_to_previous()<cr>
 
 cnoreabbrev E e
 cnoreabbrev Q q
