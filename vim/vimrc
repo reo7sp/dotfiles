@@ -17,7 +17,6 @@ if ! has('nvim')
   Plug 'Shougo/vimproc.vim', {'do': 'make'}
 endif
 if has('nvim')
-  " Plug 'theHamsta/nvim_rocks', {'do': 'pip3 install --user --break-system-packages hererocks && python3 -mhererocks . -j2.1.0-beta3 -r3.0.0 && cp nvim_rocks.lua lua'}
   Plug 'nvim-lua/plenary.nvim'
 endif
 Plug 'tpope/vim-repeat'
@@ -47,17 +46,14 @@ end
 Plug 'alvan/vim-closetag'
 Plug 'wellle/targets.vim'
 if has('nvim')
-  Plug 'chrisgrieser/nvim-spider'
-else
-  Plug 'chaoren/vim-wordmotion'
-endif
-if has('nvim')
   Plug 'kylechui/nvim-surround'
 else
   Plug 'tpope/vim-surround'
 endif
 Plug 'romainl/vim-cool'
-Plug 'ConradIrwin/vim-bracketed-paste'
+if ! has('nvim')
+  Plug 'ConradIrwin/vim-bracketed-paste'
+endif
 Plug 'vim-scripts/file-line'
 Plug 'pbrisbin/vim-mkdir'
 Plug 'farmergreg/vim-lastplace'
@@ -65,6 +61,9 @@ if has('nvim')
   Plug 'okuuva/auto-save.nvim'
 else
   Plug '907th/vim-auto-save'
+endif
+if has('nvim')
+  Plug 'ahmedkhalf/project.nvim'
 endif
 Plug 'tpope/vim-sleuth'
 if has('nvim')
@@ -118,10 +117,13 @@ if has('nvim')
   Plug 'nvim-tree/nvim-tree.lua'
 endif
 if has('nvim')
+  Plug 'stevearc/oil.nvim'
+endif
+if has('nvim')
   Plug 'stevearc/aerial.nvim'
 endif
 if has('nvim')
-  Plug 'ahmedkhalf/project.nvim'
+  Plug 'nvim-pack/nvim-spectre', {'on': 'Spectre', 'do': './build.sh nvim-oxi'}
 endif
 
 " " appearance
@@ -136,14 +138,11 @@ else
   Plug 'vim-airline/vim-airline'
 endif
 if has('nvim')
-  Plug 'tiagovla/scope.nvim'
   Plug 'romgrk/barbar.nvim'
+  Plug 'tiagovla/scope.nvim'
   Plug 'LukasPietzschmann/telescope-tabs'
 else
   Plug 'ap/vim-buftabline'
-endif
-if has('nvim')
-  Plug 'yorickpeterse/nvim-pqf'
 endif
 if has('nvim')
   Plug 'j-hui/fidget.nvim'
@@ -186,12 +185,6 @@ Plug 'rbong/vim-flog', {'on': ['Git', 'G', 'Flog', 'Flogsplit']}
 if has('nvim')
   Plug 'sindrets/diffview.nvim', {'on': ['DiffviewOpen', 'DiffviewFileHistory']}
 endif
-if has('nvim')
-  Plug 'nvim-pack/nvim-spectre', {'on': 'Spectre', 'do': './build.sh nvim-oxi'}
-endif
-if has('nvim')
-  Plug 'stevearc/oil.nvim'
-endif
 
 call plug#end()
 
@@ -213,15 +206,6 @@ endif
 
 
 " plugin settings
-" " theHamsta/nvim_rocks
-function! InitRocks() abort
-  lua require('nvim_rocks').ensure_installed('luautf8')
-endfunction
-
-if has('nvim')
-  " call InitRocks()
-endif
-
 " " hrsh7th/nvim-cmp
 function! InitNvimCmp() abort
   lua << EOF
@@ -391,29 +375,6 @@ if has('nvim')
   call InitAutopairs()
 endif
 
-" " chrisgrieser/nvim-spider
-function! InitSpider() abort
-  lua << EOF
-  require('spider').setup({
-    skipInsignificantPunctuation = false,
-    consistentOperatorPending = false,
-  })
-
-  vim.keymap.set({ "n", "o", "x" }, "w", "<cmd>lua require('spider').motion('w')<CR>")
-  vim.keymap.set({ "n", "o", "x" }, "e", "<cmd>lua require('spider').motion('e')<CR>")
-  vim.keymap.set({ "n", "o", "x" }, "b", "<cmd>lua require('spider').motion('b')<CR>")
-  vim.keymap.set("n", "cw", "ce", { remap = true })
-  vim.keymap.set("n", "dw", "de", { remap = true })
-  vim.keymap.set("n", "yw", "ye", { remap = true })
-  vim.keymap.set("i", "<C-f>", "<Esc>l<cmd>lua require('spider').motion('w')<CR>i")
-  vim.keymap.set("i", "<C-b>", "<Esc><cmd>lua require('spider').motion('b')<CR>i")
-EOF
-endfunction
-
-if has('nvim')
-  call InitSpider()
-endif
-
 " " kylechui/nvim-surround
 function! InitNvimSurround() abort
   lua require('nvim-surround').setup()
@@ -447,6 +408,29 @@ if has('nvim')
   call InitAutosaveNvim()
 else
   call InitAutosaveVim()
+endif
+
+" " ahmedkhalf/project.nvim
+function! InitProjectNvim() abort
+  lua << EOF
+  require('project_nvim').setup({
+    scope_chdir = 'tab',
+    silent_chdir = false,
+    patterns = {
+      ".git",
+      "_darcs",
+      ".hg",
+      ".bzr",
+      ".svn",
+      --"Makefile",
+      "package.json"
+    },
+  })
+EOF
+endfunction
+
+if has('nvim')
+  call InitProjectNvim()
 endif
 
 " " ntpeters/vim-better-whitespace
@@ -942,6 +926,17 @@ if has('nvim')
   call InitNvimTree()
 endif
 
+" " stevearc/oil.nvim
+function! InitOil() abort
+  lua require('oil').setup()
+
+  nnoremap <leader>T <cmd>Oil<CR>
+endfunction
+
+if has('nvim')
+  call InitOil()
+endif
+
 " " stevearc/aerial.nvim
 function! InitAerial() abort
   lua << EOF
@@ -964,27 +959,35 @@ if has('nvim')
   call InitAerial()
 endif
 
-" " ahmedkhalf/project.nvim
-function! InitProjectNvim() abort
+" " nvim-pack/nvim-spectre
+function! InitLazySpectre() abort
   lua << EOF
-  require('project_nvim').setup({
-    scope_chdir = 'tab',
-    silent_chdir = false,
-    patterns = {
-      ".git",
-      "_darcs",
-      ".hg",
-      ".bzr",
-      ".svn",
-      --"Makefile",
-      "package.json"
+  require('spectre').setup({
+    use_trouble_qf = true,
+    is_block_ui_break = true,
+    is_insert_mode = false,
+    default = {
+      replace = {
+        cmd = 'oxi',
+      },
     },
   })
 EOF
 endfunction
 
+function! LazySpectreVisualFromYank() abort
+  call plug#load('nvim-spectre')
+  lua require('spectre').open({search_text = vim.fn.getreg('0')})
+endfunction
+
+function! InitSpectre() abort
+  nnoremap <leader>S <cmd>Spectre<cr>
+  vnoremap <leader>S y<cmd>call LazySpectreVisualFromYank()<cr>
+endfunction
+
 if has('nvim')
-  call InitProjectNvim()
+  autocmd User nvim-spectre call InitLazySpectre()
+  call InitSpectre()
 endif
 
 " " nvim-lualine/lualine.nvim or vim-airline/vim-airline
@@ -1179,15 +1182,6 @@ if has('nvim')
   call InitBarbar()
 else
   call InitBuftablineVim()
-endif
-
-" " yorickpeterse/nvim-pqf
-function! InitPqf() abort
-  lua require('pqf').setup()
-endfunction
-
-if has('nvim')
-  call InitPqf()
 endif
 
 " " j-hui/fidget.nvim
@@ -1508,48 +1502,6 @@ if has('nvim')
   autocmd User diffview.nvim call InitLazyDiffview()
 endif
 
-" " nvim-pack/nvim-spectre
-function! InitLazySpectre() abort
-  lua << EOF
-  require('spectre').setup({
-    use_trouble_qf = true,
-    is_block_ui_break = true,
-    is_insert_mode = false,
-    default = {
-      replace = {
-        cmd = 'oxi',
-      },
-    },
-  })
-EOF
-endfunction
-
-function! LazySpectreVisualFromYank() abort
-  call plug#load('nvim-spectre')
-  lua require('spectre').open({search_text = vim.fn.getreg('0')})
-endfunction
-
-function! InitSpectre() abort
-  nnoremap <leader>S <cmd>Spectre<cr>
-  vnoremap <leader>S y<cmd>call LazySpectreVisualFromYank()<cr>
-endfunction
-
-if has('nvim')
-  autocmd User nvim-spectre call InitLazySpectre()
-  call InitSpectre()
-endif
-
-" " stevearc/oil.nvim
-function! InitOil() abort
-  lua require('oil').setup()
-
-  nnoremap <leader>T <cmd>Oil<CR>
-endfunction
-
-if has('nvim')
-  call InitOil()
-endif
-
 
 " own commands
 " " yank file line reference
@@ -1662,11 +1614,11 @@ else
   set mouse=i
 endif
 
-set noshowmode
 set shortmess+=aITF
 if has('patch-7.4.314')
   set shortmess+=c
 endif
+set noshowmode
 set title
 if has('nvim')
   set titlestring=%{substitute(getcwd(),$HOME,'~','')}\ -\ NVIM
@@ -1760,25 +1712,29 @@ if exists('g:neovide')
   set guifont=Jetbrains\ Mono:h14:#e-subpixelantialias:#h-none
   set linespace=1
 
-  lua vim.g.neovide_hide_mouse_when_typing = true
-  lua vim.g.neovide_position_animation_length = 0
-  lua vim.g.neovide_cursor_animation_length = 0.00
-  lua vim.g.neovide_cursor_trail_size = 0
-  lua vim.g.neovide_cursor_animate_in_insert_mode = false
-  lua vim.g.neovide_cursor_animate_command_line = false
-  lua vim.g.neovide_scroll_animation_far_lines = 0
-  lua vim.g.neovide_scroll_animation_length = 0.00
+  lua << EOF
+  vim.g.neovide_hide_mouse_when_typing = true
+  vim.g.neovide_position_animation_length = 0
+  vim.g.neovide_cursor_animation_length = 0.00
+  vim.g.neovide_cursor_trail_size = 0
+  vim.g.neovide_cursor_animate_in_insert_mode = false
+  vim.g.neovide_cursor_animate_command_line = false
+  vim.g.neovide_scroll_animation_far_lines = 0
+  vim.g.neovide_scroll_animation_length = 0.00
+EOF
 endif
 if has('nvim')
-  lua vim.keymap.set('n', '<D-s>', ':w<CR>')
-  lua vim.keymap.set('n', '<D-w>', ':wq<CR>')
-  lua vim.keymap.set('v', '<D-c>', '"+y')
-  lua vim.keymap.set('n', '<D-v>', '"+P')
-  lua vim.keymap.set('v', '<D-v>', '"+P')
-  lua vim.keymap.set('c', '<D-v>', '<C-R>+')
-  lua vim.keymap.set('i', '<D-v>', '<ESC>l"+Pli')
-  lua vim.api.nvim_set_keymap('', '<D-v>', '+p<CR>', { noremap = true, silent = true })
-  lua vim.api.nvim_set_keymap('!', '<D-v>', '<C-R>+', { noremap = true, silent = true })
-  lua vim.api.nvim_set_keymap('t', '<D-v>', '<C-R>+', { noremap = true, silent = true })
-  lua vim.api.nvim_set_keymap('v', '<D-v>', '<C-R>+', { noremap = true, silent = true })
+  lua << EOF
+  vim.keymap.set('n', '<D-s>', ':w<CR>')
+  vim.keymap.set('n', '<D-w>', ':wq<CR>')
+  vim.keymap.set('v', '<D-c>', '"+y')
+  vim.keymap.set('n', '<D-v>', '"+P')
+  vim.keymap.set('v', '<D-v>', '"+P')
+  vim.keymap.set('c', '<D-v>', '<C-R>+')
+  vim.keymap.set('i', '<D-v>', '<ESC>l"+Pli')
+  vim.api.nvim_set_keymap('', '<D-v>', '+p<CR>', { noremap = true, silent = true })
+  vim.api.nvim_set_keymap('!', '<D-v>', '<C-R>+', { noremap = true, silent = true })
+  vim.api.nvim_set_keymap('t', '<D-v>', '<C-R>+', { noremap = true, silent = true })
+  vim.api.nvim_set_keymap('v', '<D-v>', '<C-R>+', { noremap = true, silent = true })
+EOF
 endif
