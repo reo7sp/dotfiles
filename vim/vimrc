@@ -498,6 +498,7 @@ endif
 
 " " mbbill/undotree
 function! InitUndotree() abort
+  let g:undotree_DiffAutoOpen = 0
   let g:undotree_SetFocusWhenToggle = 1
   let g:undotree_SplitWidth = 40
 
@@ -884,7 +885,7 @@ function! InitLazyNvimTree() abort
     },
     actions = {
       open_file = {
-        quit_on_open = true,
+        quit_on_open = false,
         window_picker = {
           enable = false,
         },
@@ -915,9 +916,18 @@ function! LazyNvimTreeToggle() abort
   NvimTreeToggle
 endfunction
 
+function! LazyNvimTreeOpen() abort
+  if ! exists('g:inited_nvim_tree')
+    call InitLazyNvimTree()
+    let g:inited_nvim_tree = 1
+  endif
+
+  NvimTreeOpen
+endfunction
+
 function! InitNvimTree() abort
   nnoremap <leader>t <cmd>call LazyNvimTreeToggle()<CR>
-  nnoremap <leader><Space> <cmd>call LazyNvimTreeToggle()<CR>
+  nnoremap <leader><Space> <cmd>call LazyNvimTreeOpen()<CR>
   nnoremap <C-\> <cmd>call LazyNvimTreeToggle()<CR>
   nnoremap <D-\> <cmd>call LazyNvimTreeToggle()<CR>
 endfunction
@@ -946,7 +956,7 @@ function! InitAerial() abort
       min_width = 40,
       width = 40,
     },
-    close_on_select = true,
+    close_on_select = false,
     autojump = true,
     show_guides = true,
   })
