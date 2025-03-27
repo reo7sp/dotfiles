@@ -718,8 +718,8 @@ EOF
   nnoremap <leader>B <cmd>Telescope telescope-tabs list_tabs<cr>
   nnoremap <leader>E <cmd>Telescope jumplist<cr>
   nnoremap <leader>y <cmd>Telescope yank_history<cr>
-  nnoremap <leader>k <cmd>Telescope aerial<cr>i
-  nnoremap <leader>K <cmd>Telescope lsp_dynamic_workspace_symbols<cr>i
+  nnoremap <leader>k <cmd>Telescope aerial<cr>
+  nnoremap <leader>K <cmd>Telescope lsp_dynamic_workspace_symbols<cr>
 endfunction
 
 if has('nvim')
