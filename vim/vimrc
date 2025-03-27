@@ -16,8 +16,6 @@ call plug#begin('~/.vim/bundle')
 " " generic
 if ! has('nvim')
   Plug 'tpope/vim-sensible'
-endif
-if ! has('nvim')
   Plug 'Shougo/vimproc.vim', {'do': 'make'}
 endif
 if has('nvim')
@@ -78,6 +76,9 @@ endif
 Plug 'ntpeters/vim-better-whitespace'
 if has('nvim')
   Plug 'ThePrimeagen/refactoring.nvim'
+endif
+if has('nvim')
+  Plug 'stevearc/conform.nvim'
 endif
 if has('nvim')
   Plug 'gbprod/yanky.nvim'
@@ -159,8 +160,6 @@ else
 endif
 if has('nvim')
   Plug 'rachartier/tiny-inline-diagnostic.nvim'
-endif
-if has('nvim')
   Plug 'RRethy/vim-illuminate'
   Plug 'lukas-reineke/indent-blankline.nvim'
   Plug 'lukas-reineke/virt-column.nvim'
@@ -255,11 +254,11 @@ function! InitNvimCmp() abort
   local luasnip = require('luasnip')
   cmp.setup({
     sources = {
-      {name = 'path'},
-      {name = 'nvim_lsp'},
-      {name = 'luasnip', keyword_length = 2},
-      {name = 'buffer', keyword_length = 3},
-      {name = 'nvim_lsp_signature_help'},
+      { name = 'path' },
+      { name = 'nvim_lsp' },
+      { name = 'luasnip', keyword_length = 2 },
+      { name = 'buffer', keyword_length = 3 },
+      { name = 'nvim_lsp_signature_help' },
     },
     view = {
       entries = {
@@ -327,13 +326,17 @@ function! InitNvimCmp() abort
   cmp.setup.cmdline({ '/', '?' }, {
     mapping = cmp.mapping.preset.cmdline(),
     sources = {
-      { name = 'buffer' }
+      {
+        name = 'buffer',
+      }
     }
   })
   cmp.setup.cmdline(':', {
     mapping = cmp.mapping.preset.cmdline(),
     sources = cmp.config.sources({
-      { name = 'path' }
+      {
+        name = 'path',
+      }
     }, {
       {
         name = 'cmdline',
@@ -359,8 +362,8 @@ EOF
   nnoremap gR <cmd>Telescope hierarchy<cr>
   nnoremap go <cmd>lua vim.lsp.buf.hover()<cr>
   nnoremap <leader>lr <cmd>lua vim.lsp.buf.rename()<cr>
-  nnoremap <leader>lf <cmd>lua vim.lsp.buf.format({async = true})<cr>
-  xnoremap <leader>lf <cmd>lua vim.lsp.buf.format({async = true})<cr>
+  nnoremap <leader>lf <cmd>lua vim.lsp.buf.format({})<cr>
+  xnoremap <leader>lf <cmd>lua vim.lsp.buf.format({})<cr>
   nnoremap <leader>lc <cmd>lua vim.lsp.buf.code_action()<cr>
   nnoremap [p <cmd>lua vim.diagnostic.goto_prev({float=false})<cr>
   nnoremap ]p <cmd>lua vim.diagnostic.goto_next({float=false})<cr>
@@ -421,13 +424,12 @@ function! InitProjectNvim() abort
     scope_chdir = 'tab',
     silent_chdir = false,
     patterns = {
-      ".git",
-      "_darcs",
-      ".hg",
-      ".bzr",
-      ".svn",
-      --"Makefile",
-      "package.json"
+      '.git',
+      '_darcs',
+      '.hg',
+      '.bzr',
+      '.svn',
+      'package.json',
     },
   })
 EOF
@@ -455,12 +457,40 @@ function! InitRefactoring() abort
   lua << EOF
   require('refactoring').setup({})
 
-  vim.keymap.set({ 'n', 'x' }, '<leader>lt', function() require('refactoring').select_refactor() end, { desc = 'Refactor' })
+  vim.keymap.set({ 'n', 'x' }, '<leader>lR', function() require('refactoring').select_refactor() end, { desc = 'Refactor' })
 EOF
 endfunction
 
 if has('nvim')
   call InitRefactoring()
+endif
+
+" " stevearc/conform.nvim
+function! InitConform() abort
+  lua << EOF
+  require('conform').setup({
+    formatters_by_ft = {
+      go = {
+        'goimports',
+        'gofmt',
+      },
+      python = {
+        'isort',
+        'black',
+      },
+    },
+    default_format_opts = {
+      lsp_format = 'fallback',
+    },
+  })
+EOF
+
+  nnoremap <leader>lF <cmd>lua require('conform').format({})<cr>
+  xnoremap <leader>lF <cmd>lua require('conform').format({})<cr>
+endfunction
+
+if has('nvim')
+  call InitConform()
 endif
 
 " " gbprod/yanky.nvim or maxbrunsfeld/vim-yankstack
@@ -469,21 +499,21 @@ function! InitYanky() abort
   require('yanky').setup({
     ring = {
       storage = 'memory',
-    }
+    },
   })
 
-  vim.keymap.set({ "n", "x" }, "p", "<Plug>(YankyPutAfter)")
-  vim.keymap.set({ "n", "x" }, "P", "<Plug>(YankyPutBefore)")
-  vim.keymap.set({ "n", "x" }, "gp", "<Plug>(YankyGPutAfter)")
-  vim.keymap.set({ "n", "x" }, "gP", "<Plug>(YankyGPutBefore)")
-  vim.keymap.set("n", "[y", "<Plug>(YankyPreviousEntry)")
-  vim.keymap.set("n", "]y", "<Plug>(YankyNextEntry)")
-  vim.keymap.set("n", ">p", "<Plug>(YankyPutIndentAfterShiftRight)")
-  vim.keymap.set("n", "<p", "<Plug>(YankyPutIndentAfterShiftLeft)")
-  vim.keymap.set("n", ">P", "<Plug>(YankyPutIndentBeforeShiftRight)")
-  vim.keymap.set("n", "<P", "<Plug>(YankyPutIndentBeforeShiftLeft)")
-  vim.keymap.set("n", "=p", "<Plug>(YankyPutAfterFilter)")
-  vim.keymap.set("n", "=P", "<Plug>(YankyPutBeforeFilter)")
+  vim.keymap.set({ 'n', 'x' }, 'p', '<Plug>(YankyPutAfter)')
+  vim.keymap.set({ 'n', 'x' }, 'P', '<Plug>(YankyPutBefore)')
+  vim.keymap.set({ 'n', 'x' }, 'gp', '<Plug>(YankyGPutAfter)')
+  vim.keymap.set({ 'n', 'x' }, 'gP', '<Plug>(YankyGPutBefore)')
+  vim.keymap.set('n', '[y', '<Plug>(YankyPreviousEntry)')
+  vim.keymap.set('n', ']y', '<Plug>(YankyNextEntry)')
+  vim.keymap.set('n', '>p', '<Plug>(YankyPutIndentAfterShiftRight)')
+  vim.keymap.set('n', '<p', '<Plug>(YankyPutIndentAfterShiftLeft)')
+  vim.keymap.set('n', '>P', '<Plug>(YankyPutIndentBeforeShiftRight)')
+  vim.keymap.set('n', '<P', '<Plug>(YankyPutIndentBeforeShiftLeft)')
+  vim.keymap.set('n', '=p', '<Plug>(YankyPutAfterFilter)')
+  vim.keymap.set('n', '=P', '<Plug>(YankyPutBeforeFilter)')
 EOF
 endfunction
 
@@ -518,18 +548,14 @@ function! InitComment() abort
   lua require('Comment').setup()
 
   nnoremap <C-/> <Plug>(comment_toggle_linewise_current)
-  nnoremap <C-_> <Plug>(comment_toggle_linewise_current)
   nnoremap <D-/> <Plug>(comment_toggle_linewise_current)
   xnoremap <C-/> <Plug>(comment_toggle_linewise_visual)
-  xnoremap <C-_> <Plug>(comment_toggle_linewise_visual)
   xnoremap <D-/> <Plug>(comment_toggle_linewise_visual)
 endfunction
 
 function! InitNerdCommenter() abort
   nnoremap <C-/> <Plug>NERDCommenterToggle
-  nnoremap <C-_> <Plug>NERDCommenterToggle
   vnoremap <C-/> <Plug>NERDCommenterToggle<CR>gv
-  vnoremap <C-_> <Plug>NERDCommenterToggle<CR>gv
 endfunction
 
 if has('nvim')
@@ -671,7 +697,7 @@ function! InitTelescope() abort
         fname_width = 60,
       },
       lsp_dynamic_workspace_symbols = {
-        ignore_symbols = {'variable', 'field'},
+        ignore_symbols = { 'variable', 'field' },
         fname_width = 60,
       },
     },
@@ -700,6 +726,9 @@ function! InitTelescope() abort
         theme = 'ivy',
         disable_devicons = true,
       },
+      aerial = {
+        show_columns = 'symbols',
+      },
     },
   })
   require('telescope').load_extension('fzf')
@@ -724,7 +753,7 @@ EOF
   nnoremap <leader>E <cmd>Telescope jumplist<cr>
   nnoremap <leader>y <cmd>Telescope yank_history<cr>
   nnoremap <leader>k <cmd>Telescope aerial<cr>
-  nnoremap <leader>K <cmd>Telescope lsp_dynamic_workspace_symbols<cr>
+  nnoremap <leader>K <cmd>Telescope lsp_dynamic_workspace_symbols<cr>i
 endfunction
 
 if has('nvim')
@@ -848,7 +877,7 @@ function! InitLazyNvimTree() abort
     vim.api.nvim_feedkeys('i', 'n', false)
   end
 
-  require("nvim-tree").setup({
+  require('nvim-tree').setup({
     renderer = {
       icons = {
         show = {
@@ -862,7 +891,7 @@ function! InitLazyNvimTree() abort
           bookmarks = true,
         },
         glyphs = {
-          bookmark = "M",
+          bookmark = 'M',
         },
       },
       indent_markers = {
@@ -885,7 +914,7 @@ function! InitLazyNvimTree() abort
       enable = true,
       git_ignored = true,
       dotfiles = false,
-      custom = { "^.git$" },
+      custom = { '^.git$' },
     },
     actions = {
       open_file = {
@@ -1018,15 +1047,6 @@ function! InitLualine() abort
     end
   end
 
-  local symbols = require('trouble').statusline({
-    mode = "lsp_document_symbols",
-    groups = {},
-    title = false,
-    filter = { range = true },
-    format = "> {symbol.name}",
-    hl_group = "lualine_c_normal",
-  })
-
   local lualine = require('lualine')
   lualine.setup({
     options = {
@@ -1044,21 +1064,22 @@ function! InitLualine() abort
     },
     sections = {
       lualine_a = {
-        { 'mode', fmt = function(str) return str:sub(1,1) end },
+        { 'mode', fmt = function(str) return str:sub(1, 1) end },
       },
       lualine_b = {
       },
       lualine_c = {
-        { 'filename', path = 1, file_status = false},
-        { symbols.get, cond = symbols.has, padding = {left = 0, right = 1} },
+        { 'filename', path = 1, file_status = false },
+        { 'aerial', depth = 3, sep = ' > ', padding = { left = 0, right = 1 } },
       },
       lualine_x = {
         'b:gitsigns_head',
-        { 'diff', source = diff_source, padding = {left = 0, right = 1} },
+        { 'diff', source = diff_source, padding = { left = 0, right = 1 } },
       },
       lualine_y = {
         'filetype',
-        { 'diagnostics', padding = {left = 0, right = 1} },
+        { 'lsp_status', symbols = { done = '' }, padding = { left = 0, right = 1 } },
+        { 'diagnostics', padding = { left = 0, right = 1 } },
       },
       lualine_z = {
         'location',
@@ -1083,8 +1104,6 @@ function! InitLualine() abort
       },
     },
   })
-
-  vim.api.nvim_set_hl(0, "StatusLine", { link = "lualine_c_normal" })
 EOF
 endfunction
 
@@ -1237,7 +1256,7 @@ function! InitGitSigns() abort
         end
       end)
 
-      vim.keymap.set({'o', 'x'}, 'ih', '<Cmd>Gitsigns select_hunk<CR>')
+      vim.keymap.set({ 'o', 'x' }, 'ih', '<cmd>Gitsigns select_hunk<CR>')
     end
   })
 EOF
