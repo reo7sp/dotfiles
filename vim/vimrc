@@ -1519,7 +1519,8 @@ endif
 
 " own commands
 " " yank file line reference
-command YankReference redir @+ | echo join([expand('%'), line('.')], ':') | redir END
+command YankFilename redir @+ | echo substitute(expand('%'), getcwd() . '/', '', '') | redir END
+command YankReference redir @+ | echo join([substitute(expand('%'), getcwd() . '/', '', ''), line('.')], ':') | redir END
 
 " " sublime text & sublime merge integration
 if has('nvim')
