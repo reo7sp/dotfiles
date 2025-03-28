@@ -1,5 +1,6 @@
 # vim: ft=zsh
 
+# =============================================================================
 # env
 export PATH="$PATH:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 export LC_ALL=en_US.UTF-8
@@ -37,6 +38,7 @@ else
 fi
 
 
+# =============================================================================
 # plugins
 export PATH="$HOME/.antibody:$PATH"
 source <(antibody init)
@@ -51,21 +53,28 @@ export PATH="$(antibody list | grep zimfw | perl -lne 'print $1 if /\s+(.+)/')/f
 antibody bundle zsh-users/zsh-history-substring-search
 
 
+# =============================================================================
+# colors
+export LSCOLORS='exfxcxdxbxegedabagacad'
+export CLICOLOR=true
+
+
+# =============================================================================
 # history
 export HISTFILE="$HOME/.zsh_history"
 export HISTSIZE=10000
 export SAVEHIST=$HISTSIZE
-## add timestamps to history
+# add timestamps to history
 setopt EXTENDED_HISTORY
 setopt PROMPT_SUBST
 setopt CORRECT
 setopt COMPLETE_IN_WORD
-## adds history
+# adds history
 setopt APPEND_HISTORY
-## adds history incrementally and share it across sessions
+# adds history incrementally and share it across sessions
 setopt INC_APPEND_HISTORY
 setopt SHARE_HISTORY
-## don't record dupes in history
+# don't record dupes in history
 setopt HIST_IGNORE_ALL_DUPS
 setopt HIST_REDUCE_BLANKS
 setopt HIST_IGNORE_DUPS
@@ -74,39 +83,39 @@ setopt HIST_VERIFY
 setopt HIST_EXPIRE_DUPS_FIRST
 
 
-# colors
-export LSCOLORS='exfxcxdxbxegedabagacad'
-export CLICOLOR=true
+# =============================================================================
+# glob
+unsetopt nomatch
 
 
+# =============================================================================
 # keybinds
 WORDCHARS=${WORDCHARS/\/}
 WORDCHARS=${WORDCHARS/_}
 WORDCHARS=${WORDCHARS/|}
-## shift-tab
+# shift-tab
 bindkey '^[[Z' reverse-menu-complete
-## ctrl-w
+# ctrl-w
 bindkey '^W' backward-kill-word
-## ctrl-a, ctrl-e
+# ctrl-a, ctrl-e
 bindkey '^A' beginning-of-line
 bindkey '^E' end-of-line
-## alt-b, alt-f
+# alt-b, alt-f
 bindkey '\eb' backward-word
 bindkey '\ef' forward-word
-## ctrl-u
+# ctrl-u
 bindkey '^U' backward-kill-line
-## history
+# history
 bindkey '^[[A' history-substring-search-up
 bindkey '^[[B' history-substring-search-down
 bindkey '^R' history-incremental-search-backward
 
 
-# glob
-unsetopt nomatch
-
-
+# =============================================================================
 # aliases
-## general
+
+# -----------------------------------------------------------------------------
+# general
 alias ll="ls -lh"
 alias la="ls -a"
 alias lla="ls -lah"
@@ -162,7 +171,8 @@ fi
 alias edit-hosts="sudo vim /etc/hosts"
 alias show-hosts="cat /etc/hosts"
 
-## vim
+# -----------------------------------------------------------------------------
+# vim
 if can-exec nvim; then
   _vim() {
     lcd
@@ -190,14 +200,17 @@ v() {
 
 alias edit-vim="vim ~/.vimrc"
 
-## zsh
+# -----------------------------------------------------------------------------
+# zsh
 alias edit-zsh="vim ~/.my.zshrc; source ~/.zshrc"
 alias edit-zshrc="vim ~/.zshrc; source ~/.zshrc"
 
-## kitty
+# -----------------------------------------------------------------------------
+# kitty
 alias edit-kitty="vim ~/.config/kitty/kitty.conf"
 
-## ssh
+# -----------------------------------------------------------------------------
+# ssh
 if [[ $TERM == 'xterm-kitty' ]]; then
   alias ssh='TERM=xterm-256color ssh'
 fi
@@ -206,12 +219,14 @@ alias edit-ssh="vim ~/.ssh/config"
 alias copy-ssh="cat ~/.ssh/id_rsa.pub | pbcopy"
 alias show-ssh="cat ~/.ssh/config"
 
-## difft
+# -----------------------------------------------------------------------------
+# difft
 export DFT_CONTEXT=10
 export DFT_DISPLAY=side-by-side-show-both
 export DFT_PARSE_ERROR_LIMIT=9999
 
-## git
+# -----------------------------------------------------------------------------
+# git
 g() {
   git "$@"
 }
@@ -266,7 +281,8 @@ gbdr() {
 alias gfmall="find . -maxdepth 1 -type d | xargs -n1 -t -I{} git -C '{}' pull"
 alias gball="find . -maxdepth 1 -type d | xargs -n1 -t -I{} git -C '{}' branch"
 
-## fzf
+# -----------------------------------------------------------------------------
+# fzf
 alias f="fzf"
 
 catf() {
@@ -297,12 +313,14 @@ cdfm() {
   cd $(find .          -type d -not -path '*/\.*' -print 2> /dev/null | fzf-tmux)
 }
 
-## fd
+# -----------------------------------------------------------------------------
+# fd
 if can-exec fdfind; then
   alias fd="fdfind"
 fi
 
-## sublime text
+# -----------------------------------------------------------------------------
+# sublime text
 t() {
   lcd
   if [[ -z $1 ]]; then
@@ -312,7 +330,8 @@ t() {
   fi
 }
 
-## sublime merge
+# -----------------------------------------------------------------------------
+# sublime merge
 m() {
   lcd
   if [[ -z $1 ]]; then
@@ -322,7 +341,8 @@ m() {
   fi
 }
 
-## tmux
+# -----------------------------------------------------------------------------
+# tmux
 tm() {
   tmux -2 a || tmux -2 new
 }
@@ -332,17 +352,20 @@ tmcl() {
   tmux clear-history
 }
 
-## python
+# -----------------------------------------------------------------------------
+# python
 alias p="python3"
 alias p2="python2"
 alias pp="python3 -m ptpython || ptpython"
 alias ppinstall="pip3 install ptpython"
 alias jn="jupyter notebook"
 
-## k8s
+# -----------------------------------------------------------------------------
+# k8s
 alias k="kubectl"
 
-## markdown
+# -----------------------------------------------------------------------------
+# markdown
 make-markdown() {
   marked "$1" -o "${1%.*}".html --gfm && echo '<style>body { font: 16px sans-serif; width: 720px; margin: 1em auto; } img { width: 100%; }</style>' >> "${1%.*}".html
 }
@@ -351,7 +374,8 @@ watch-markdown() {
   fswatch "$1" | while read; do make-markdown "$1" ; done
 }
 
-## plantuml
+# -----------------------------------------------------------------------------
+# plantuml
 plantuml-server() {
   docker run -d --name plantuml --restart always -p 18080:8080 plantuml/plantuml-server:jetty
 }
@@ -372,7 +396,8 @@ watch-plantuml() {
   fswatch "$1" | while read; do make-plantuml "$1" ; done
 }
 
-## mermaid
+# -----------------------------------------------------------------------------
+# mermaid
 make-mermaid() {
   mmdc -i "$1" -o "${1%.*}".png
 }

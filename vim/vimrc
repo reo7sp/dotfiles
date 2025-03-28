@@ -10,10 +10,12 @@ let mapleader = " "
 nnoremap <Space> <Nop>
 
 
+" =============================================================================
 " plugins
 call plug#begin('~/.vim/bundle')
 
-" " generic
+" -----------------------------------------------------------------------------
+" generic
 if ! has('nvim')
   Plug 'tpope/vim-sensible'
   Plug 'Shougo/vimproc.vim', {'do': 'make'}
@@ -23,7 +25,8 @@ if has('nvim')
 endif
 Plug 'tpope/vim-repeat'
 
-" " editing
+" -----------------------------------------------------------------------------
+" editing
 if has('nvim')
   Plug 'neovim/nvim-lspconfig'
   Plug 'williamboman/mason.nvim'
@@ -101,8 +104,9 @@ if has('nvim')
   Plug 'Wansmer/treesj'
 endif
 
-" " navigation
-Plug 'tpope/vim-unimpaired'
+" -----------------------------------------------------------------------------
+" navigation
+Plug 'reo7sp/vim-unimpaired'
 Plug 'justinmk/vim-sneak'
 Plug 'haya14busa/vim-asterisk'
 if ! has('nvim')
@@ -133,7 +137,8 @@ if has('nvim')
   Plug 'nvim-pack/nvim-spectre', {'on': 'Spectre', 'do': './build.sh nvim-oxi'}
 endif
 
-" " appearance
+" -----------------------------------------------------------------------------
+" appearance
 if has('nvim')
   Plug 'rebelot/kanagawa.nvim'
 else
@@ -178,7 +183,8 @@ Plug 'johejo/gomod.vim'
 Plug 'HiPhish/jinja.vim'
 Plug 'fladson/vim-kitty'
 
-" " commands
+" -----------------------------------------------------------------------------
+" commands
 if has('nvim')
   Plug 'folke/which-key.nvim'
 else
@@ -194,6 +200,7 @@ endif
 call plug#end()
 
 
+" =============================================================================
 " colors
 if has('termguicolors')
   set termguicolors
@@ -210,8 +217,11 @@ else
 endif
 
 
+" =============================================================================
 " plugin settings
-" " hrsh7th/nvim-cmp
+
+" -----------------------------------------------------------------------------
+" hrsh7th/nvim-cmp
 function! InitNvimCmp() abort
   lua << EOF
   local lspconfig_defaults = require('lspconfig').util.default_config
@@ -375,7 +385,8 @@ if has('nvim')
   call InitNvimCmp()
 endif
 
-" " windwp/nvim-autopairs
+" -----------------------------------------------------------------------------
+" windwp/nvim-autopairs
 function! InitAutopairs() abort
   lua require('nvim-autopairs').setup({})
 endfunction
@@ -384,7 +395,8 @@ if has('nvim')
   call InitAutopairs()
 endif
 
-" " kylechui/nvim-surround
+" -----------------------------------------------------------------------------
+" kylechui/nvim-surround
 function! InitNvimSurround() abort
   lua require('nvim-surround').setup()
 endfunction
@@ -393,7 +405,8 @@ if has('nvim')
   call InitNvimSurround()
 endif
 
-" " okuuva/auto-save.nvim or 907th/vim-auto-save
+" -----------------------------------------------------------------------------
+" okuuva/auto-save.nvim or 907th/vim-auto-save
 function! InitAutosaveNvim() abort
   lua << EOF
   require('auto-save').setup({
@@ -419,7 +432,8 @@ else
   call InitAutosaveVim()
 endif
 
-" " ahmedkhalf/project.nvim
+" -----------------------------------------------------------------------------
+" ahmedkhalf/project.nvim
 function! InitProjectNvim() abort
   lua << EOF
   require('project_nvim').setup({
@@ -441,7 +455,8 @@ if has('nvim')
   call InitProjectNvim()
 endif
 
-" " ntpeters/vim-better-whitespace
+" -----------------------------------------------------------------------------
+" ntpeters/vim-better-whitespace
 function! InitBetterWhitespace() abort
   let g:better_whitespace_enabled = 0
   let g:better_whitespace_operator = ''
@@ -454,7 +469,8 @@ endfunction
 
 call InitBetterWhitespace()
 
-" " ThePrimeagen/refactoring.nvim
+" -----------------------------------------------------------------------------
+" ThePrimeagen/refactoring.nvim
 function! InitRefactoring() abort
   lua << EOF
   require('refactoring').setup({})
@@ -467,7 +483,8 @@ if has('nvim')
   call InitRefactoring()
 endif
 
-" " stevearc/conform.nvim
+" -----------------------------------------------------------------------------
+" stevearc/conform.nvim
 function! InitConform() abort
   lua << EOF
   require('conform').setup({
@@ -495,27 +512,41 @@ if has('nvim')
   call InitConform()
 endif
 
-" " gbprod/yanky.nvim or maxbrunsfeld/vim-yankstack
+" -----------------------------------------------------------------------------
+" gbprod/yanky.nvim or maxbrunsfeld/vim-yankstack
 function! InitYanky() abort
   lua << EOF
   require('yanky').setup({
     ring = {
       storage = 'memory',
     },
+    system_clipboard = {
+      sync_with_ring = false,
+    },
+    preserve_cursor_position = {
+      enabled = true,
+    },
+    textobj = {
+      enabled = true,
+    },
   })
 
+  vim.keymap.set({ 'n', 'x' }, 'y', '<Plug>(YankyYank)')
   vim.keymap.set({ 'n', 'x' }, 'p', '<Plug>(YankyPutAfter)')
   vim.keymap.set({ 'n', 'x' }, 'P', '<Plug>(YankyPutBefore)')
   vim.keymap.set({ 'n', 'x' }, 'gp', '<Plug>(YankyGPutAfter)')
   vim.keymap.set({ 'n', 'x' }, 'gP', '<Plug>(YankyGPutBefore)')
+
   vim.keymap.set('n', '[y', '<Plug>(YankyPreviousEntry)')
   vim.keymap.set('n', ']y', '<Plug>(YankyNextEntry)')
+
   vim.keymap.set('n', '>p', '<Plug>(YankyPutIndentAfterShiftRight)')
   vim.keymap.set('n', '<p', '<Plug>(YankyPutIndentAfterShiftLeft)')
   vim.keymap.set('n', '>P', '<Plug>(YankyPutIndentBeforeShiftRight)')
   vim.keymap.set('n', '<P', '<Plug>(YankyPutIndentBeforeShiftLeft)')
   vim.keymap.set('n', '=p', '<Plug>(YankyPutAfterFilter)')
   vim.keymap.set('n', '=P', '<Plug>(YankyPutBeforeFilter)')
+  vim.keymap.set({ 'o', 'x' }, 'iy', function() require('yanky.textobj').last_put() end, {})
 EOF
 endfunction
 
@@ -532,7 +563,8 @@ else
   call InitYankStack()
 endif
 
-" " jiaoshijie/undotree or mbbill/undotree
+" -----------------------------------------------------------------------------
+" jiaoshijie/undotree or mbbill/undotree
 function! InitUndotreeNvim() abort
   lua << EOF
   require('undotree').setup({
@@ -558,7 +590,8 @@ elseif v:version >= 703
   call InitUndotreeVim()
 endif
 
-" " numToStr/Comment.nvim or scrooloose/nerdcommenter
+" -----------------------------------------------------------------------------
+" numToStr/Comment.nvim or scrooloose/nerdcommenter
 function! InitComment() abort
   lua require('Comment').setup()
 
@@ -579,7 +612,8 @@ else
   call InitNerdCommenter()
 end
 
-" " johmsalas/text-case.nvim
+" -----------------------------------------------------------------------------
+" johmsalas/text-case.nvim
 function! InitTextCase() abort
   lua << EOF
   require('textcase').setup({
@@ -592,7 +626,8 @@ if has('nvim')
   call InitTextCase()
 endif
 
-" " echasnovski/mini.align
+" -----------------------------------------------------------------------------
+" echasnovski/mini.align
 function! InitMiniAlign() abort
   lua require('mini.align').setup()
 endfunction
@@ -601,7 +636,8 @@ if has('nvim')
   call InitMiniAlign()
 endif
 
-" " Wansmer/treesj
+" -----------------------------------------------------------------------------
+" Wansmer/treesj
 function! InitTreeSJ() abort
   lua << EOF
   require('treesj').setup({
@@ -618,7 +654,8 @@ if has('nvim')
   call InitTreeSJ()
 endif
 
-" " justinmk/vim-sneak
+" -----------------------------------------------------------------------------
+" justinmk/vim-sneak
 function! InitSneak() abort
   let g:sneak#use_ic_scs = 1
 
@@ -630,7 +667,8 @@ endfunction
 
 call InitSneak()
 
-" " haya14busa/vim-asterisk
+" -----------------------------------------------------------------------------
+" haya14busa/vim-asterisk
 function! InitAsterisk() abort
   map *   <Plug>(asterisk-*)
   map #   <Plug>(asterisk-#)
@@ -644,7 +682,8 @@ endfunction
 
 call InitAsterisk()
 
-" " moll/vim-bbye
+" -----------------------------------------------------------------------------
+" moll/vim-bbye
 function! InitBbye() abort
   cnoreabbrev bq Bdelete
   cnoreabbrev bd Bdelete
@@ -655,7 +694,8 @@ if ! has('nvim')
   call InitBbye()
 endif
 
-" " vim-scripts/BufOnly.vim
+" -----------------------------------------------------------------------------
+" vim-scripts/BufOnly.vim
 function! InitBufOnly() abort
   cnoreabbrev bo silent BufOnly
   cnoreabbrev bon silent BufOnly
@@ -665,7 +705,8 @@ if ! has('nvim')
   call InitBufOnly()
 endif
 
-" " nvim-telescope/telescope.nvim
+" -----------------------------------------------------------------------------
+" nvim-telescope/telescope.nvim
 function! InitTelescope() abort
   lua << EOF
   require('telescope').setup({
@@ -677,13 +718,18 @@ function! InitTelescope() abort
           i = {
             ['<c-t>'] = require('trouble.sources.telescope').open,
             ['<c-p>'] = require('telescope.actions.layout').toggle_preview,
+            ['<C-Down>'] = require('telescope.actions').cycle_history_next,
+            ['<C-Up>'] = require('telescope.actions').cycle_history_prev,
           },
           n = {
             ['<c-t>'] = require('trouble.sources.telescope').open,
             ['<c-p>'] = require('telescope.actions.layout').toggle_preview,
+            ['<C-Down>'] = require('telescope.actions').cycle_history_next,
+            ['<C-Up>'] = require('telescope.actions').cycle_history_prev,
           },
         },
         initial_mode = 'normal',
+        dynamic_preview_title = true,
       }
     ),
     pickers = {
@@ -788,7 +834,8 @@ if has('nvim')
   call InitTelescope()
 endif
 
-" " folke/trouble.nvim
+" -----------------------------------------------------------------------------
+" folke/trouble.nvim
 function! InitTrouble() abort
   lua << EOF
   require('trouble').setup({
@@ -856,7 +903,8 @@ if has('nvim')
   call InitTrouble()
 endif
 
-" " nvim-tree/nvim-tree.lua
+" -----------------------------------------------------------------------------
+" nvim-tree/nvim-tree.lua
 function! InitLazyNvimTree() abort
   lua << EOF
   local api = require("nvim-tree.api")
@@ -997,7 +1045,8 @@ if has('nvim')
   call InitNvimTree()
 endif
 
-" " stevearc/oil.nvim
+" -----------------------------------------------------------------------------
+" stevearc/oil.nvim
 function! InitOil() abort
   lua require('oil').setup()
 
@@ -1008,7 +1057,8 @@ if has('nvim')
   call InitOil()
 endif
 
-" " stevearc/aerial.nvim
+" -----------------------------------------------------------------------------
+" stevearc/aerial.nvim
 function! InitAerial() abort
   lua << EOF
   require('aerial').setup({
@@ -1030,7 +1080,8 @@ if has('nvim')
   call InitAerial()
 endif
 
-" " nvim-pack/nvim-spectre
+" -----------------------------------------------------------------------------
+" nvim-pack/nvim-spectre
 function! InitLazySpectre() abort
   lua << EOF
   require('spectre').setup({
@@ -1061,7 +1112,8 @@ if has('nvim')
   call InitSpectre()
 endif
 
-" " nvim-lualine/lualine.nvim or vim-airline/vim-airline
+" -----------------------------------------------------------------------------
+" nvim-lualine/lualine.nvim or vim-airline/vim-airline
 function! InitLualine() abort
   lua << EOF
   local function diff_source()
@@ -1160,7 +1212,8 @@ else
   call InitAirline()
 endif
 
-" " romgrk/barbar.nvim or ap/vim-buftabline
+" -----------------------------------------------------------------------------
+" romgrk/barbar.nvim or ap/vim-buftabline
 function! InitBarbar() abort
   lua << EOF
   require('scope').setup({})
@@ -1245,7 +1298,8 @@ else
   call InitBuftablineVim()
 endif
 
-" " j-hui/fidget.nvim
+" -----------------------------------------------------------------------------
+" j-hui/fidget.nvim
 function! InitFidget() abort
   lua << EOF
   require('fidget').setup({})
@@ -1258,7 +1312,8 @@ if has('nvim')
   call InitFidget()
 endif
 
-" " lewis6991/gitsigns.nvim
+" -----------------------------------------------------------------------------
+" lewis6991/gitsigns.nvim
 function! InitGitSigns() abort
   lua << EOF
   require('gitsigns').setup({
@@ -1297,7 +1352,8 @@ if has('nvim')
   call InitGitSigns()
 endif
 
-" " kinsho/git-conflict.nvim
+" -----------------------------------------------------------------------------
+" kinsho/git-conflict.nvim
 function! InitGitConflict() abort
   lua require('git-conflict').setup()
 endfunction
@@ -1306,7 +1362,8 @@ if has('nvim')
   call InitGitConflict()
 endif
 
-" " rachartier/tiny-inline-diagnostic.nvim
+" -----------------------------------------------------------------------------
+" rachartier/tiny-inline-diagnostic.nvim
 function! InitTinyDiag() abort
   lua << EOF
   require('tiny-inline-diagnostic').setup({})
@@ -1319,7 +1376,8 @@ if has('nvim')
   call InitTinyDiag()
 endif
 
-" " RRethy/vim-illuminate
+" -----------------------------------------------------------------------------
+" RRethy/vim-illuminate
 function! InitIlluminate() abort
   lua << EOF
   require('illuminate').configure({
@@ -1341,7 +1399,8 @@ if has('nvim')
   call InitIlluminate()
 endif
 
-" " lukas-reineke/indent-blankline.nvim
+" -----------------------------------------------------------------------------
+" lukas-reineke/indent-blankline.nvim
 function! InitIBL() abort
   lua << EOF
   require('ibl').setup({
@@ -1359,7 +1418,8 @@ if has('nvim')
   call InitIBL()
 endif
 
-" " lukas-reineke/virt-column.nvim
+" -----------------------------------------------------------------------------
+" lukas-reineke/virt-column.nvim
 function! InitVirtColumn() abort
   lua << EOF
   require('virt-column').setup({
@@ -1372,7 +1432,8 @@ if has('nvim')
   call InitVirtColumn()
 endif
 
-" " psliwka/vim-smoothie
+" -----------------------------------------------------------------------------
+" psliwka/vim-smoothie
 function! InitSmoothie() abort
   let g:smoothie_speed_constant_factor = 15
   let g:smoothie_speed_linear_factor = 15
@@ -1382,7 +1443,8 @@ if has('nvim')
   call InitSmoothie()
 endif
 
-" " nvim-treesitter/nvim-treesitter
+" -----------------------------------------------------------------------------
+" nvim-treesitter/nvim-treesitter
 function! InitTreesitter() abort
   lua << EOF
   require('nvim-treesitter.configs').setup({
@@ -1483,7 +1545,8 @@ if has('nvim')
   call InitTreesitter()
 endif
 
-" " folke/which-key.nvim or liuchengxu/vim-which-key
+" -----------------------------------------------------------------------------
+" folke/which-key.nvim or liuchengxu/vim-which-key
 function! InitWhichKeyNvim() abort
   lua << EOF
   require('which-key').setup({
@@ -1542,7 +1605,8 @@ else
   call InitWhichKeyVim()
 endif
 
-" " sindrets/diffview.nvim
+" -----------------------------------------------------------------------------
+" sindrets/diffview.nvim
 function! InitLazyDiffview() abort
   lua << EOF
   require('diffview').setup({
@@ -1564,12 +1628,16 @@ if has('nvim')
 endif
 
 
+" =============================================================================
 " own commands
-" " yank file line reference
+
+" -----------------------------------------------------------------------------
+" yank file line reference
 command YankFilename redir @+ | echo substitute(expand('%'), getcwd() . '/', '', '') | redir END
 command YankReference redir @+ | echo join([substitute(expand('%'), getcwd() . '/', '', ''), line('.')], ':') | redir END
 
-" " sublime text & sublime merge integration
+" -----------------------------------------------------------------------------
+" sublime text & sublime merge integration
 if has('nvim')
   lua << EOF
   vim.api.nvim_create_user_command('Subl',
@@ -1611,6 +1679,7 @@ EOF
 endif
 
 
+" =============================================================================
 " vim mappings
 " https://nanotipsforvim.prose.sh/esc-in-normal-mode
 nnoremap <esc> <cmd>echo<cr>
@@ -1658,9 +1727,17 @@ nnoremap <C-S> :w<CR>
 inoremap <C-S> <Esc>:w<CR>l
 vnoremap <C-S> <Esc>:w<CR>
 
+" https://neovim.io/doc/user/cmdline.html#cmdline-editing
+cnoremap <C-A> <Home>
+cnoremap <C-F> <Right>
+cnoremap <C-B> <Left>
 
+
+" =============================================================================
 " vim settings
-" " appearance
+
+" -----------------------------------------------------------------------------
+" appearance
 set number
 set relativenumber
 set cursorline
@@ -1696,7 +1773,8 @@ set breakindentopt=sbr
 set showbreak=↪
 let g:vimsyn_embed = 'l'
 
-" " editing
+" -----------------------------------------------------------------------------
+" editing
 set shiftwidth=4
 set tabstop=4
 set softtabstop=4
@@ -1741,18 +1819,21 @@ set nobackup
 set nowritebackup
 set noswapfile
 
-" " navigation
+" -----------------------------------------------------------------------------
+" navigation
 set ignorecase
 set smartcase
 set hlsearch
 
-" " encoding
+" -----------------------------------------------------------------------------
+" encoding
 set encoding=utf-8
 set fileencoding=utf-8
 set fileencodings=utf-8,cp1251,latin1
 set fileformats=unix,dos,mac
 
-" " other
+" -----------------------------------------------------------------------------
+" other
 " https://superuser.com/questions/1642954/how-to-start-vim-with-a-clean-jumplist
 autocmd VimEnter * :clearjumps
 
@@ -1765,6 +1846,7 @@ if &shell =~# 'fish$'
 endif
 
 
+" =============================================================================
 " neovide
 if exists('g:neovide')
   language en_US
