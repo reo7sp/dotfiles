@@ -85,7 +85,9 @@ if has('nvim')
 else
   Plug 'maxbrunsfeld/vim-yankstack'
 endif
-if v:version >= 703
+if has('nvim')
+  Plug 'jiaoshijie/undotree'
+elseif v:version >= 703
   Plug 'mbbill/undotree'
 endif
 if has('nvim')
@@ -530,17 +532,30 @@ else
   call InitYankStack()
 endif
 
-" " mbbill/undotree
-function! InitUndotree() abort
+" " jiaoshijie/undotree or mbbill/undotree
+function! InitUndotreeNvim() abort
+  lua << EOF
+  require('undotree').setup({
+    float_diff = false,
+    layout = 'left_left_bottom',
+  })
+EOF
+
+  nnoremap <leader>u <cmd>lua require('undotree').toggle()<cr>
+endfunction
+
+function! InitUndotreeVim() abort
   let g:undotree_DiffAutoOpen = 0
   let g:undotree_SetFocusWhenToggle = 1
   let g:undotree_SplitWidth = 40
 
-  nnoremap <leader>u :UndotreeToggle<CR>
+  nnoremap <leader>u <cmd>UndotreeToggle<cr>
 endfunction
 
-if v:version >= 703
-  call InitUndotree()
+if has('nvim')
+  call InitUndotreeNvim()
+elseif v:version >= 703
+  call InitUndotreeVim()
 endif
 
 " " numToStr/Comment.nvim or scrooloose/nerdcommenter
@@ -708,6 +723,7 @@ function! InitTelescope() abort
         show_current_file = true,
         ignore_patterns = {
           '/tmp/',
+          'Scratch',
           'NvimTree_',
           'aerial',
           'undotree',
@@ -720,6 +736,18 @@ function! InitTelescope() abort
           'Plugins',
           'COMMIT_',
           '-todo$',
+        },
+      },
+      live_grep_args = {
+        mappings = {
+          i = {
+            ['<C-k>'] = require('telescope-live-grep-args.actions').quote_prompt(),
+            ['<C-g>'] = require('telescope-live-grep-args.actions').quote_prompt({ postfix = ' --iglob ' }),
+            ['<C-t>'] = require('telescope-live-grep-args.actions').quote_prompt({ postfix = ' --type ' }),
+            ['<C-f>'] = require('telescope-live-grep-args.actions').quote_prompt({ postfix = ' -F ' }),
+            ['<C-i>'] = require('telescope-live-grep-args.actions').quote_prompt({ postfix = ' --no-ignore ' }),
+            ['<C-space>'] = require('telescope-live-grep-args.actions').to_fuzzy_refine,
+          },
         },
       },
       hierarchy = {
@@ -1677,7 +1705,7 @@ set expandtab
 set autoindent
 set copyindent
 set smartindent
-
+set fixendofline
 set nrformats+=unsigned
 
 set nospell
@@ -1725,6 +1753,9 @@ set fileencodings=utf-8,cp1251,latin1
 set fileformats=unix,dos,mac
 
 " " other
+" https://superuser.com/questions/1642954/how-to-start-vim-with-a-clean-jumplist
+autocmd VimEnter * :clearjumps
+
 set backupdir=~/.vim/backup
 set directory=~/.vim/tmp
 set undodir=~/.vim/undo
