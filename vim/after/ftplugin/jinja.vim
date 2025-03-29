@@ -6,4 +6,3 @@ if has('nvim')
         let b:jinja_syntax_autocmd_loaded = v:true
     endif
 endif
-

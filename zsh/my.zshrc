@@ -25,16 +25,16 @@ confirm() {
   esac
 }
 
-if can-exec nvim; then
-  export EDITOR="nvim"
-else
-  export EDITOR="vim"
-fi
-
 if uname -a | grep Darwin > /dev/null; then
   export IS_MACOS=1
 else
   export IS_MACOS=0
+fi
+
+if can-exec nvim; then
+  export EDITOR='nvim'
+else
+  export EDITOR='vim'
 fi
 
 
@@ -100,9 +100,9 @@ bindkey '^W' backward-kill-word
 # ctrl-a, ctrl-e
 bindkey '^A' beginning-of-line
 bindkey '^E' end-of-line
-# alt-b, alt-f
-bindkey '\eb' backward-word
-bindkey '\ef' forward-word
+# ctrl-b, ctrl-f
+bindkey '^B' backward-word
+bindkey '^F' forward-word
 # ctrl-u
 bindkey '^U' backward-kill-line
 # history
@@ -116,11 +116,11 @@ bindkey '^R' history-incremental-search-backward
 
 # -----------------------------------------------------------------------------
 # general
-alias ll="ls -lh"
-alias la="ls -a"
-alias lla="ls -lah"
+alias ll='ls -lh'
+alias la='ls -a'
+alias lla='ls -lah'
 
-alias le="less"
+alias le='less'
 
 lcd() {
   cd "$(pwd -P)"
@@ -135,6 +135,33 @@ new-tmp() {
   mkcd "$HOME/m/oneoff-code/$(date '+%Y-%m-%d')"
 }
 
+alias grep='grep --color=auto'
+
+if can-exec colordiff; then
+  alias diff='colordiff'
+fi
+
+if can-exec diff-so-fancy; then
+  GIT_PAGER='diff-so-fancy'
+fi
+
+alias rm='rm -f'
+alias cp='cp -f'
+alias mv='mv -f'
+
+alias _='sudo'
+alias suz='su -m -c zsh'
+alias sudoz="sudo ZDOTDIR=\$HOME PATH=\$PATH zsh"
+
+if [[ $IS_MACOS -eq 1 ]]; then
+  alias show-ports='lsof -iTCP -sTCP:LISTEN -n -P'
+else
+  alias show-ports='netstat -tulpn'
+fi
+
+alias edit-hosts='sudo vim /etc/hosts'
+alias show-hosts='cat /etc/hosts'
+
 random-string() {
   local arg=$1
   openssl rand -hex "$((arg / 2))"
@@ -143,33 +170,6 @@ random-string() {
 timestamp() {
   date +%s
 }
-
-alias grep="grep --color=auto"
-
-if can-exec colordiff; then
-  alias diff="colordiff"
-fi
-
-if can-exec diff-so-fancy; then
-  GIT_PAGER="diff-so-fancy"
-fi
-
-alias rm="rm -f"
-alias cp="cp -f"
-alias mv="mv -f"
-
-alias _="sudo"
-alias suz="su -m -c zsh"
-alias sudz="sudo ZDOTDIR=\$HOME PATH=\$PATH zsh"
-
-if [[ $IS_MACOS -eq 1 ]]; then
-  alias show-ports="lsof -iTCP -sTCP:LISTEN -n -P"
-else
-  alias show-ports="netstat -tulpn"
-fi
-
-alias edit-hosts="sudo vim /etc/hosts"
-alias show-hosts="cat /etc/hosts"
 
 # -----------------------------------------------------------------------------
 # vim
@@ -187,27 +187,32 @@ else
     $real_vim "$@"
   }
 fi
-alias vim="_vim"
+alias vim='_vim'
 
 v() {
-  lcd
   if [[ -z $1 ]]; then
-    $EDITOR .
+    vim .
   else
-    $EDITOR "$@"
+    vim "$@"
   fi
 }
 
-alias edit-vim="vim ~/.vimrc"
+alias edit-vim='vim ~/.vimrc'
 
 # -----------------------------------------------------------------------------
 # zsh
-alias edit-zsh="vim ~/.my.zshrc; source ~/.zshrc"
-alias edit-zshrc="vim ~/.zshrc; source ~/.zshrc"
+alias edit-zsh='vim ~/.my.zshrc; source ~/.zshrc'
+alias edit-zshrc='vim ~/.zshrc; source ~/.zshrc'
 
 # -----------------------------------------------------------------------------
 # kitty
 alias edit-kitty="vim ~/.config/kitty/kitty.conf"
+
+# -----------------------------------------------------------------------------
+# tmux
+tm() {
+  tmux -2 a || tmux -2 new
+}
 
 # -----------------------------------------------------------------------------
 # ssh
@@ -215,23 +220,15 @@ if [[ $TERM == 'xterm-kitty' ]]; then
   alias ssh='TERM=xterm-256color ssh'
 fi
 
-alias edit-ssh="vim ~/.ssh/config"
-alias copy-ssh="cat ~/.ssh/id_rsa.pub | pbcopy"
-alias show-ssh="cat ~/.ssh/config"
-
-# -----------------------------------------------------------------------------
-# difft
-export DFT_CONTEXT=10
-export DFT_DISPLAY=side-by-side-show-both
-export DFT_PARSE_ERROR_LIMIT=9999
+alias edit-ssh='vim ~/.ssh/config'
+alias copy-ssh='cat ~/.ssh/id_rsa.pub | pbcopy'
+alias show-ssh='cat ~/.ssh/config'
 
 # -----------------------------------------------------------------------------
 # git
 g() {
   git "$@"
 }
-
-alias aliases-git="cat $(antibody list | grep zimfw-git)/init.zsh"
 
 alias gid='git diff --cached' # remapping zimfw-git mappings to use ext-diff
 alias giD='git diff --cached --word-diff'
@@ -254,8 +251,8 @@ alias gcp='git cherry-pick'
 alias gcpa='git cherry-pick --abort'
 alias gcpc='git cherry-pick --continue'
 
-alias gg="lazygit"
-alias gll="tig"
+alias gg='lazygit'
+alias gll='tig'
 
 gfcd() {
   local repo=$1
@@ -265,21 +262,29 @@ gfcd() {
   cd "$repo"
 }
 
-alias gcu="git add -A && git commit --amend --reuse-message HEAD"
+alias gcu='git add -A && git commit --amend --reuse-message HEAD'
 
 alias gcwip="git add -A && git commit -m 'wip'"
 alias gcfix="git add -A && git commit -m 'fix'"
 alias gckik="git add -A && git commit -m 'kik'"
 
-alias gbd="gb -D"
+alias gbd='gb -D'
 
 gbdr() {
   echo "$@" | xargs -n1 git branch -D
   echo "$@" | xargs -n1 -P0 git push origin --delete
 }
 
-alias gfmall="find . -maxdepth 1 -type d | xargs -n1 -t -I{} git -C '{}' pull"
-alias gball="find . -maxdepth 1 -type d | xargs -n1 -t -I{} git -C '{}' branch"
+alias gfm-all="find . -maxdepth 1 -type d | xargs -n1 -t -I{} git -C '{}' pull"
+alias gb-all="find . -maxdepth 1 -type d | xargs -n1 -t -I{} git -C '{}' branch"
+
+alias aliases-git="cat $(antibody list | grep zimfw-git)/init.zsh"
+
+# -----------------------------------------------------------------------------
+# difft
+export DFT_CONTEXT=10
+export DFT_DISPLAY=side-by-side-show-both
+export DFT_PARSE_ERROR_LIMIT=9999
 
 # -----------------------------------------------------------------------------
 # fzf
@@ -316,7 +321,7 @@ cdfm() {
 # -----------------------------------------------------------------------------
 # fd
 if can-exec fdfind; then
-  alias fd="fdfind"
+  alias fd='fdfind'
 fi
 
 # -----------------------------------------------------------------------------
@@ -342,27 +347,16 @@ m() {
 }
 
 # -----------------------------------------------------------------------------
-# tmux
-tm() {
-  tmux -2 a || tmux -2 new
-}
-
-tmcl() {
-  clear
-  tmux clear-history
-}
-
-# -----------------------------------------------------------------------------
 # python
-alias p="python3"
-alias p2="python2"
-alias pp="python3 -m ptpython || ptpython"
-alias ppinstall="pip3 install ptpython"
-alias jn="jupyter notebook"
+alias p='python3'
+alias p2='python2'
+alias pp='python3 -m ptpython || ptpython'
+alias pp-install='pip3 install ptpython'
+alias jn='jupyter notebook'
 
 # -----------------------------------------------------------------------------
 # k8s
-alias k="kubectl"
+alias k='kubectl'
 
 # -----------------------------------------------------------------------------
 # markdown

@@ -50,6 +50,8 @@ else
 end
 Plug 'alvan/vim-closetag'
 Plug 'wellle/targets.vim'
+Plug 'kana/vim-textobj-user'
+Plug 'kana/vim-textobj-entire'
 if has('nvim')
   Plug 'kylechui/nvim-surround'
 else
@@ -62,6 +64,10 @@ endif
 Plug 'vim-scripts/file-line'
 Plug 'pbrisbin/vim-mkdir'
 Plug 'farmergreg/vim-lastplace'
+if ! has('nvim')
+  Plug 'moll/vim-bbye'
+  Plug 'vim-scripts/BufOnly.vim'
+endif
 if has('nvim')
   Plug 'okuuva/auto-save.nvim'
 else
@@ -78,19 +84,13 @@ else
 endif
 Plug 'ntpeters/vim-better-whitespace'
 if has('nvim')
-  Plug 'ThePrimeagen/refactoring.nvim'
-endif
-if has('nvim')
-  Plug 'stevearc/conform.nvim'
-endif
-if has('nvim')
   Plug 'gbprod/yanky.nvim'
 else
   Plug 'maxbrunsfeld/vim-yankstack'
 endif
 if has('nvim')
-  Plug 'jiaoshijie/undotree'
-elseif v:version >= 703
+  Plug 'jiaoshijie/undotree', {'as': 'undotree.nvim'}
+else
   Plug 'mbbill/undotree'
 endif
 if has('nvim')
@@ -100,8 +100,14 @@ else
 endif
 if has('nvim')
   Plug 'johmsalas/text-case.nvim'
-  Plug 'echasnovski/mini.align'
   Plug 'Wansmer/treesj'
+  Plug 'echasnovski/mini.align'
+endif
+if has('nvim')
+  Plug 'ThePrimeagen/refactoring.nvim'
+endif
+if has('nvim')
+  Plug 'stevearc/conform.nvim'
 endif
 
 " -----------------------------------------------------------------------------
@@ -109,16 +115,13 @@ endif
 Plug 'reo7sp/vim-unimpaired'
 Plug 'justinmk/vim-sneak'
 Plug 'haya14busa/vim-asterisk'
-if ! has('nvim')
-  Plug 'moll/vim-bbye'
-  Plug 'vim-scripts/BufOnly.vim'
-endif
 if has('nvim')
   Plug 'nvim-telescope/telescope.nvim', {'tag': '0.1.8'}
   Plug 'nvim-telescope/telescope-fzf-native.nvim', {'do': 'make'}
   Plug 'smartpde/telescope-recent-files'
   Plug 'nvim-telescope/telescope-live-grep-args.nvim'
   Plug 'princejoogie/dir-telescope.nvim'
+  Plug 'LukasPietzschmann/telescope-tabs'
   Plug 'jmacadie/telescope-hierarchy.nvim'
 endif
 if has('nvim')
@@ -152,7 +155,6 @@ endif
 if has('nvim')
   Plug 'romgrk/barbar.nvim'
   Plug 'tiagovla/scope.nvim'
-  Plug 'LukasPietzschmann/telescope-tabs'
 else
   Plug 'ap/vim-buftabline'
 endif
@@ -207,7 +209,7 @@ if has('termguicolors')
 endif
 
 if has('nvim')
-  lua require('kanagawa').setup({compile = true, theme = 'dragon'})
+  lua require('kanagawa').setup({ compile = true, theme = 'dragon' })
   colorscheme kanagawa-dragon
 else
   let g:sonokai_enable_italic = 1
@@ -398,11 +400,39 @@ endif
 " -----------------------------------------------------------------------------
 " kylechui/nvim-surround
 function! InitNvimSurround() abort
-  lua require('nvim-surround').setup()
+  lua << EOF
+  require('nvim-surround').setup({
+    move_cursor = false,
+  })
+EOF
 endfunction
 
 if has('nvim')
   call InitNvimSurround()
+endif
+
+" -----------------------------------------------------------------------------
+" moll/vim-bbye
+function! InitBbye() abort
+  cnoreabbrev bq Bdelete
+  cnoreabbrev bd Bdelete
+  nnoremap <C-q> <cmd>Bdelete<cr>
+endfunction
+
+if ! has('nvim')
+  call InitBbye()
+endif
+
+" -----------------------------------------------------------------------------
+" vim-scripts/BufOnly.vim
+function! InitBufOnly() abort
+  cnoreabbrev bo silent BufOnly
+  cnoreabbrev bon silent BufOnly
+  cnoreabbrev bonly silent BufOnly
+endfunction
+
+if ! has('nvim')
+  call InitBufOnly()
 endif
 
 " -----------------------------------------------------------------------------
@@ -463,11 +493,151 @@ function! InitBetterWhitespace() abort
   let g:strip_max_file_size = 99999
   let g:strip_whitespace_confirm = 0
 
-  nnoremap ]w :NextTrailingWhitespace<CR>
-  nnoremap [w :PrevTrailingWhitespace<CR>
+  nnoremap ]w <cmd>NextTrailingWhitespace<CR>
+  nnoremap [w <cmd>PrevTrailingWhitespace<CR>
 endfunction
 
 call InitBetterWhitespace()
+
+" -----------------------------------------------------------------------------
+" gbprod/yanky.nvim or maxbrunsfeld/vim-yankstack
+function! InitYanky() abort
+  lua << EOF
+  require('yanky').setup({
+    ring = {
+      storage = 'memory',
+    },
+    system_clipboard = {
+      sync_with_ring = false,
+    },
+    preserve_cursor_position = {
+      enabled = true,
+    },
+    textobj = {
+      enabled = true,
+    },
+  })
+
+  vim.keymap.set({ 'n', 'x' }, 'y', '<Plug>(YankyYank)')
+  vim.keymap.set({ 'n', 'x' }, 'p', '<Plug>(YankyPutAfter)')
+  vim.keymap.set({ 'n', 'x' }, 'P', '<Plug>(YankyPutBefore)')
+  vim.keymap.set({ 'n', 'x' }, 'gp', '<Plug>(YankyGPutAfter)')
+  vim.keymap.set({ 'n', 'x' }, 'gP', '<Plug>(YankyGPutBefore)')
+  vim.keymap.set('n', '>p', '<Plug>(YankyPutIndentAfterShiftRight)')
+  vim.keymap.set('n', '<p', '<Plug>(YankyPutIndentAfterShiftLeft)')
+  vim.keymap.set('n', '>P', '<Plug>(YankyPutIndentBeforeShiftRight)')
+  vim.keymap.set('n', '<P', '<Plug>(YankyPutIndentBeforeShiftLeft)')
+  vim.keymap.set('n', '=p', '<Plug>(YankyPutAfterFilter)')
+  vim.keymap.set('n', '=P', '<Plug>(YankyPutBeforeFilter)')
+  vim.keymap.set({ 'o', 'x' }, 'iy', function() require('yanky.textobj').last_put() end, {})
+  vim.keymap.set('n', '[y', '<Plug>(YankyPreviousEntry)')
+  vim.keymap.set('n', ']y', '<Plug>(YankyNextEntry)')
+EOF
+endfunction
+
+function! InitYankStack() abort
+  let g:yankstack_map_keys = 0
+
+  nnoremap ]y <Plug>yankstack_substitute_older_paste
+  nnoremap [y <Plug>yankstack_substitute_newer_paste
+endfunction
+
+if has('nvim')
+  call InitYanky()
+else
+  call InitYankStack()
+endif
+
+" -----------------------------------------------------------------------------
+" jiaoshijie/undotree or mbbill/undotree
+function! InitUndotreeNvim() abort
+  lua << EOF
+  require('undotree').setup({
+    float_diff = false,
+    layout = 'left_left_bottom',
+  })
+EOF
+
+  nnoremap <leader>u <cmd>lua require('undotree').toggle()<cr>
+endfunction
+
+function! InitUndotreeVim() abort
+  let g:undotree_DiffAutoOpen = 0
+  let g:undotree_SetFocusWhenToggle = 1
+  let g:undotree_SplitWidth = 40
+
+  nnoremap <leader>u <cmd>UndotreeToggle<cr>
+endfunction
+
+if has('nvim')
+  call InitUndotreeNvim()
+else
+  call InitUndotreeVim()
+endif
+
+" -----------------------------------------------------------------------------
+" numToStr/Comment.nvim or scrooloose/nerdcommenter
+function! InitComment() abort
+  lua require('Comment').setup()
+
+  nnoremap <C-/> <Plug>(comment_toggle_linewise_current)
+  nnoremap <D-/> <Plug>(comment_toggle_linewise_current)
+  xnoremap <C-/> <Plug>(comment_toggle_linewise_visual)
+  xnoremap <D-/> <Plug>(comment_toggle_linewise_visual)
+endfunction
+
+function! InitNerdCommenter() abort
+  nnoremap <C-/> <Plug>NERDCommenterToggle
+  vnoremap <C-/> <Plug>NERDCommenterToggle<CR>gv
+endfunction
+
+if has('nvim')
+  call InitComment()
+else
+  call InitNerdCommenter()
+end
+
+" -----------------------------------------------------------------------------
+" johmsalas/text-case.nvim
+function! InitTextCase() abort
+  lua << EOF
+  require('textcase').setup({
+    prefix = 'gt',
+  })
+EOF
+endfunction
+
+if has('nvim')
+  call InitTextCase()
+endif
+
+" -----------------------------------------------------------------------------
+" Wansmer/treesj
+function! InitTreeSJ() abort
+  lua << EOF
+  require('treesj').setup({
+    use_default_keymaps = false,
+    max_join_length = 9999,
+  })
+EOF
+
+  nnoremap gs <cmd>lua require('treesj').toggle()<cr>
+  nnoremap gS <cmd>lua require('treesj').toggle({ split = { recursive = true } })<cr>
+endfunction
+
+if has('nvim')
+  call InitTreeSJ()
+endif
+
+" -----------------------------------------------------------------------------
+" echasnovski/mini.align
+function! InitMiniAlign() abort
+  lua require('mini.align').setup()
+endfunction
+
+if has('nvim')
+  call InitMiniAlign()
+endif
 
 " -----------------------------------------------------------------------------
 " ThePrimeagen/refactoring.nvim
@@ -513,148 +683,6 @@ if has('nvim')
 endif
 
 " -----------------------------------------------------------------------------
-" gbprod/yanky.nvim or maxbrunsfeld/vim-yankstack
-function! InitYanky() abort
-  lua << EOF
-  require('yanky').setup({
-    ring = {
-      storage = 'memory',
-    },
-    system_clipboard = {
-      sync_with_ring = false,
-    },
-    preserve_cursor_position = {
-      enabled = true,
-    },
-    textobj = {
-      enabled = true,
-    },
-  })
-
-  vim.keymap.set({ 'n', 'x' }, 'y', '<Plug>(YankyYank)')
-  vim.keymap.set({ 'n', 'x' }, 'p', '<Plug>(YankyPutAfter)')
-  vim.keymap.set({ 'n', 'x' }, 'P', '<Plug>(YankyPutBefore)')
-  vim.keymap.set({ 'n', 'x' }, 'gp', '<Plug>(YankyGPutAfter)')
-  vim.keymap.set({ 'n', 'x' }, 'gP', '<Plug>(YankyGPutBefore)')
-
-  vim.keymap.set('n', '[y', '<Plug>(YankyPreviousEntry)')
-  vim.keymap.set('n', ']y', '<Plug>(YankyNextEntry)')
-
-  vim.keymap.set('n', '>p', '<Plug>(YankyPutIndentAfterShiftRight)')
-  vim.keymap.set('n', '<p', '<Plug>(YankyPutIndentAfterShiftLeft)')
-  vim.keymap.set('n', '>P', '<Plug>(YankyPutIndentBeforeShiftRight)')
-  vim.keymap.set('n', '<P', '<Plug>(YankyPutIndentBeforeShiftLeft)')
-  vim.keymap.set('n', '=p', '<Plug>(YankyPutAfterFilter)')
-  vim.keymap.set('n', '=P', '<Plug>(YankyPutBeforeFilter)')
-  vim.keymap.set({ 'o', 'x' }, 'iy', function() require('yanky.textobj').last_put() end, {})
-EOF
-endfunction
-
-function! InitYankStack() abort
-  let g:yankstack_map_keys = 0
-
-  nnoremap ]y <Plug>yankstack_substitute_older_paste
-  nnoremap [y <Plug>yankstack_substitute_newer_paste
-endfunction
-
-if has('nvim')
-  call InitYanky()
-else
-  call InitYankStack()
-endif
-
-" -----------------------------------------------------------------------------
-" jiaoshijie/undotree or mbbill/undotree
-function! InitUndotreeNvim() abort
-  lua << EOF
-  require('undotree').setup({
-    float_diff = false,
-    layout = 'left_left_bottom',
-  })
-EOF
-
-  nnoremap <leader>u <cmd>lua require('undotree').toggle()<cr>
-endfunction
-
-function! InitUndotreeVim() abort
-  let g:undotree_DiffAutoOpen = 0
-  let g:undotree_SetFocusWhenToggle = 1
-  let g:undotree_SplitWidth = 40
-
-  nnoremap <leader>u <cmd>UndotreeToggle<cr>
-endfunction
-
-if has('nvim')
-  call InitUndotreeNvim()
-elseif v:version >= 703
-  call InitUndotreeVim()
-endif
-
-" -----------------------------------------------------------------------------
-" numToStr/Comment.nvim or scrooloose/nerdcommenter
-function! InitComment() abort
-  lua require('Comment').setup()
-
-  nnoremap <C-/> <Plug>(comment_toggle_linewise_current)
-  nnoremap <D-/> <Plug>(comment_toggle_linewise_current)
-  xnoremap <C-/> <Plug>(comment_toggle_linewise_visual)
-  xnoremap <D-/> <Plug>(comment_toggle_linewise_visual)
-endfunction
-
-function! InitNerdCommenter() abort
-  nnoremap <C-/> <Plug>NERDCommenterToggle
-  vnoremap <C-/> <Plug>NERDCommenterToggle<CR>gv
-endfunction
-
-if has('nvim')
-  call InitComment()
-else
-  call InitNerdCommenter()
-end
-
-" -----------------------------------------------------------------------------
-" johmsalas/text-case.nvim
-function! InitTextCase() abort
-  lua << EOF
-  require('textcase').setup({
-    prefix = 'gt',
-  })
-EOF
-endfunction
-
-if has('nvim')
-  call InitTextCase()
-endif
-
-" -----------------------------------------------------------------------------
-" echasnovski/mini.align
-function! InitMiniAlign() abort
-  lua require('mini.align').setup()
-endfunction
-
-if has('nvim')
-  call InitMiniAlign()
-endif
-
-" -----------------------------------------------------------------------------
-" Wansmer/treesj
-function! InitTreeSJ() abort
-  lua << EOF
-  require('treesj').setup({
-    use_default_keymaps = false,
-    max_join_length = 9999,
-  })
-EOF
-
-  nnoremap gs <cmd>lua require('treesj').toggle()<cr>
-  nnoremap gS <cmd>lua require('treesj').toggle({ split = { recursive = true } })<cr>
-endfunction
-
-if has('nvim')
-  call InitTreeSJ()
-endif
-
-" -----------------------------------------------------------------------------
 " justinmk/vim-sneak
 function! InitSneak() abort
   let g:sneak#use_ic_scs = 1
@@ -681,29 +709,6 @@ function! InitAsterisk() abort
 endfunction
 
 call InitAsterisk()
-
-" -----------------------------------------------------------------------------
-" moll/vim-bbye
-function! InitBbye() abort
-  cnoreabbrev bq Bdelete
-  cnoreabbrev bd Bdelete
-  nnoremap <C-q> <cmd>Bdelete<cr>
-endfunction
-
-if ! has('nvim')
-  call InitBbye()
-endif
-
-" -----------------------------------------------------------------------------
-" vim-scripts/BufOnly.vim
-function! InitBufOnly() abort
-  cnoreabbrev bo silent BufOnly
-  cnoreabbrev bon silent BufOnly
-endfunction
-
-if ! has('nvim')
-  call InitBufOnly()
-endif
 
 " -----------------------------------------------------------------------------
 " nvim-telescope/telescope.nvim
@@ -770,13 +775,13 @@ function! InitTelescope() abort
         ignore_patterns = {
           '/tmp/',
           'Scratch',
+          'trouble',
           'NvimTree_',
+          'oil',
           'aerial',
           'undotree',
-          'trouble',
           'spectre',
           'gitsigns',
-          'oil',
           'fugitiveblame',
           'diffpanel_',
           'Plugins',
@@ -1099,7 +1104,7 @@ endfunction
 
 function! LazySpectreVisualFromYank() abort
   call plug#load('nvim-spectre')
-  lua require('spectre').open({search_text = vim.fn.getreg('0')})
+  lua require('spectre').open({ search_text = vim.fn.getreg('0') })
 endfunction
 
 function! InitSpectre() abort
@@ -1135,11 +1140,11 @@ function! InitLualine() abort
       section_separators = { left = '', right = '' },
     },
     extensions = {
-      'nvim-tree',
-      'aerial',
       'trouble',
-      'fugitive',
+      'nvim-tree',
       'oil',
+      'aerial',
+      'fugitive',
       'quickfix',
     },
     sections = {
@@ -1250,11 +1255,12 @@ EOF
 
   cnoreabbrev bo BufferCloseAllButCurrent
   cnoreabbrev bon BufferCloseAllButCurrent
+  cnoreabbrev bonly BufferCloseAllButCurrent
 
   nnoremap <C-[> <cmd>BufferPrevious<CR>
   nnoremap <C-]> <cmd>BufferNext<CR>
-  nnoremap <silent>[b <cmd>BufferPrevious<CR>
-  nnoremap <silent>]b <cmd>BufferNext<CR>
+  nnoremap <silent> [b <cmd>BufferPrevious<CR>
+  nnoremap <silent> ]b <cmd>BufferNext<CR>
 
   nnoremap <C-1> <cmd>BufferGoto 1<CR>
   nnoremap <C-2> <cmd>BufferGoto 2<CR>
@@ -1384,11 +1390,11 @@ function! InitIlluminate() abort
     disable_keymaps = true,
     filetypes_denylist = {
       'TelescopePrompt',
+      'trouble',
       'NvimTree',
+      'oil',
       'aerial',
       'undotree',
-      'trouble',
-      'oil',
       'fugitiveblame',
     },
   })
@@ -1401,7 +1407,7 @@ endif
 
 " -----------------------------------------------------------------------------
 " lukas-reineke/indent-blankline.nvim
-function! InitIBL() abort
+function! InitIndentBlankline() abort
   lua << EOF
   require('ibl').setup({
     indent = {
@@ -1415,7 +1421,7 @@ EOF
 endfunction
 
 if has('nvim')
-  call InitIBL()
+  call InitIndentBlankline()
 endif
 
 " -----------------------------------------------------------------------------
@@ -1695,6 +1701,11 @@ nnoremap <silent> { :<C-u>execute "keepjumps norm! " . v:count1 . "{"<CR>
 " https://vi.stackexchange.com/a/35
 nnoremap gV `[v`]
 
+" https://neovim.io/doc/user/cmdline.html#cmdline-editing
+cnoremap <C-A> <Home>
+cnoremap <C-F> <Right>
+cnoremap <C-B> <Left>
+
 " https://bluz71.github.io/2021/09/10/vim-tips-revisited.html#fast-previous-buffer-switching
 nnoremap <C-Backspace> <C-^>
 nnoremap <C-S-Backspace> <cmd>lua require('telescope-tabs').go_to_previous()<cr>
@@ -1726,11 +1737,6 @@ vnoremap +P "+P
 nnoremap <C-S> :w<CR>
 inoremap <C-S> <Esc>:w<CR>l
 vnoremap <C-S> <Esc>:w<CR>
-
-" https://neovim.io/doc/user/cmdline.html#cmdline-editing
-cnoremap <C-A> <Home>
-cnoremap <C-F> <Right>
-cnoremap <C-B> <Left>
 
 
 " =============================================================================
@@ -1784,7 +1790,9 @@ set autoindent
 set copyindent
 set smartindent
 set fixendofline
-set nrformats+=unsigned
+if v:version >= 802
+  set nrformats+=unsigned
+endif
 
 set nospell
 
