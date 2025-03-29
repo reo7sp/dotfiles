@@ -12,11 +12,11 @@ My config files:
 
 _How zsh looks:_
 
-![zsh screenshot](https://i.imgur.com/h92FoM8.png)
+![zsh screenshot](https://i.imgur.com/aFzMFKZ.png)
 
 _How vim looks:_
 
-![vim screenshot](https://i.imgur.com/ppNapnR.png)
+![vim screenshot](https://i.imgur.com/NDotxSH.png)
 
 ## How to install
 
@@ -43,7 +43,7 @@ cd dotfiles
 ./update [-q] MODULES     — updates dotfiles
 ```
 
-Available modules: `zsh`, `vim`, `git`.
+Available modules: `zsh`, `vim`, `git`, `kitty`.
 
 ## Tips and tricks
 
