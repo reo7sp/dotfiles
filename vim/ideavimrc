@@ -1,3 +1,5 @@
+" vim: ft=vim
+
 let mapleader=" "
 
 set ignorecase
@@ -7,8 +9,9 @@ set ideajoin
 
 set sneak
 set surround
-
-nnoremap <C-J> <C-W><C-J>
-nnoremap <C-K> <C-W><C-K>
-nnoremap <C-L> <C-W><C-L>
-nnoremap <C-H> <C-W><C-H>
+set matchit
+set highlightedyank
+set quickscope
+set vim-paragraph-motion
+set commentary
+set which-key

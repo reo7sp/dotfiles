@@ -50,8 +50,6 @@ else
 end
 Plug 'alvan/vim-closetag'
 Plug 'wellle/targets.vim'
-Plug 'kana/vim-textobj-user'
-Plug 'kana/vim-textobj-entire'
 if has('nvim')
   Plug 'kylechui/nvim-surround'
 else
