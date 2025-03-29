@@ -208,6 +208,11 @@ if has('termguicolors')
   set termguicolors
 endif
 
+if ! has('nvim')
+  " https://github.com/kovidgoyal/kitty/issues/108#issuecomment-320492663
+  let &t_ut=''
+endif
+
 if has('nvim')
   lua require('kanagawa').setup({ compile = true, theme = 'dragon' })
   colorscheme kanagawa-dragon
@@ -1753,11 +1758,10 @@ set sidescroll=1
 
 set nowrap
 
-if has('nvim')
-  set mouse=a
-else
-  set mouse=i
-endif
+set mouse=a
+
+" https://stackoverflow.com/a/51388837/1600438
+nnoremap <esc>^[ <esc>^[
 
 set shortmess+=aITF
 if has('patch-7.4.314')
