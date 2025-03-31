@@ -242,21 +242,26 @@ function! InitNvimCmp() abort
   };
   require('mason-lspconfig').setup({
     ensure_installed = {
-      'cmake',
-      'bashls',
-      'cssls',
-      'dockerls',
       'gopls',
-      'html',
-      'ts_ls',
-      'jsonls',
-      'lua_ls',
-      'nginx_language_server',
-      'vacuum',
-      'perlnavigator',
-      'puppet',
       'pyright',
+      'perlnavigator',
+      'lua_ls',
+      'bashls',
+      'cmake',
+      'html',
+      'cssls',
+      'ts_ls',
+      'jinja_lsp',
+      'sqlls',
+      'jsonls',
       'yamlls',
+      'lemminx',
+      'dockerls',
+      'docker_compose_language_service',
+      'nginx_language_server',
+      'ansiblels',
+      'puppet',
+      'gitlab_ci_ls',
     },
     handlers = {
       function(server_name)
@@ -1462,17 +1467,20 @@ function! InitTreesitter() abort
       'go',
       'python',
       'perl',
+      'ruby',
       'lua',
+      'bash',
+      'html',
+      'css',
       'javascript',
       'typescript',
       'tsx',
-      'html',
-      'vim',
       'jinja',
+      'sql',
       'json',
       'yaml',
-      'bash',
-      'sql',
+      'xml',
+      'vim',
       'markdown',
       'diff',
       'git_rebase',
@@ -1691,7 +1699,7 @@ endif
 " =============================================================================
 " vim mappings
 " https://nanotipsforvim.prose.sh/esc-in-normal-mode
-nnoremap <esc> <cmd>echo<cr>
+nnoremap <silent> <esc><esc> <cmd>echo<cr>
 
 " https://bluz71.github.io/2021/09/10/vim-tips-revisited.html#smarter-j-and-k-navigation
 nnoremap <silent> <expr> j v:count ? (v:count > 5 ? "m'" . v:count : '') . 'j' : 'gj'
@@ -1751,15 +1759,12 @@ set number
 set relativenumber
 set cursorline
 set colorcolumn=80,120
-set scrolloff=5
+set scrolloff=3
 set sidescroll=1
 
 set nowrap
 
 set mouse=a
-
-" https://stackoverflow.com/a/51388837/1600438
-nnoremap <esc>^[ <esc>^[
 
 set shortmess+=aITF
 if has('patch-7.4.314')
