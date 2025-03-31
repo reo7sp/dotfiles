@@ -93,6 +93,7 @@ unsetopt nomatch
 WORDCHARS=${WORDCHARS/\/}
 WORDCHARS=${WORDCHARS/_}
 WORDCHARS=${WORDCHARS/|}
+WORDCHARS=${WORDCHARS/-}
 # shift-tab
 bindkey '^[[Z' reverse-menu-complete
 # ctrl-w
@@ -198,6 +199,16 @@ v() {
 }
 
 alias edit-vim='vim ~/.vimrc'
+
+time-start-vim() {
+  vim --startuptime /tmp/startuptime.log "$@" +qa
+  cat /tmp/startuptime.log
+}
+
+profile-start-vim() {
+  vim --cmd 'profile start /tmp/profile.log' --cmd 'profile func *' --cmd 'profile file *' -c 'profdel func *' -c 'profdel file *' "$@" -c 'qa!'
+  cat /tmp/profile.log
+}
 
 # -----------------------------------------------------------------------------
 # zsh

@@ -89,7 +89,7 @@ endif
 if has('nvim')
   Plug 'jiaoshijie/undotree', {'as': 'undotree.nvim'}
 else
-  Plug 'mbbill/undotree'
+  Plug 'mbbill/undotree', {'on': 'UndotreeToggle'}
 endif
 if has('nvim')
   Plug 'numToStr/Comment.nvim'
@@ -383,15 +383,12 @@ EOF
   nnoremap gD <cmd>Telescope lsp_implementations<cr>
   nnoremap gi <cmd>Telescope lsp_implementations<cr>
   nnoremap gy <cmd>Telescope lsp_type_definitions<cr>
-  nnoremap gr <cmd>Telescope lsp_references<cr>
+  nnoremap <nowait> gr <cmd>Telescope lsp_references<cr>
   nnoremap gR <cmd>Telescope hierarchy<cr>
-  nnoremap go <cmd>lua vim.lsp.buf.hover()<cr>
+  nnoremap K <cmd>lua vim.lsp.buf.hover()<cr>
+  inoremap <C-S> <cmd>lua vim.lsp.buf.signature_help()<cr>
   nnoremap <leader>lr <cmd>lua vim.lsp.buf.rename()<cr>
-  nnoremap <leader>lf <cmd>lua vim.lsp.buf.format({})<cr>
-  xnoremap <leader>lf <cmd>lua vim.lsp.buf.format({})<cr>
-  nnoremap <leader>lc <cmd>lua vim.lsp.buf.code_action()<cr>
-  nnoremap [p <cmd>lua vim.diagnostic.goto_prev({float=false})<cr>
-  nnoremap ]p <cmd>lua vim.diagnostic.goto_next({float=false})<cr>
+  nnoremap <leader>la <cmd>lua vim.lsp.buf.code_action()<cr>
 endfunction
 
 if has('nvim')
@@ -572,6 +569,10 @@ EOF
   nnoremap <leader>u <cmd>lua require('undotree').toggle()<cr>
 endfunction
 
+function! LazyInitUndotreeNvim() abort
+  lua vim.keymap.set('n', '<leader>u', function() vim.call('InitUndotreeNvim') vim.api.nvim_input(vim.g.mapleader .. 'u') end)
+endfunction
+
 function! InitUndotreeVim() abort
   let g:undotree_DiffAutoOpen = 0
   let g:undotree_SetFocusWhenToggle = 1
@@ -581,7 +582,7 @@ function! InitUndotreeVim() abort
 endfunction
 
 if has('nvim')
-  call InitUndotreeNvim()
+  call LazyInitUndotreeNvim()
 else
   call InitUndotreeVim()
 endif
@@ -632,18 +633,26 @@ function! InitTreeSJ() abort
   })
 EOF
 
-  nnoremap gs <cmd>lua require('treesj').toggle()<cr>
-  nnoremap gS <cmd>lua require('treesj').toggle({ split = { recursive = true } })<cr>
+  nnoremap gm <cmd>lua require('treesj').toggle()<cr>
+endfunction
+
+function! LazyInitTreeSJ() abort
+  lua vim.keymap.set('n', 'gm', function() vim.call('InitTreeSJ') vim.api.nvim_input('gm') end)
 endfunction
 
 if has('nvim')
-  call InitTreeSJ()
+  call LazyInitTreeSJ()
 endif
 
 " -----------------------------------------------------------------------------
 " echasnovski/mini.align
 function! InitMiniAlign() abort
-  lua require('mini.align').setup()
+  lua << EOF
+  require('mini.align').setup({
+    start = '',
+    start_with_preview = 'ga',
+  })
+EOF
 endfunction
 
 if has('nvim')
@@ -656,12 +665,16 @@ function! InitRefactoring() abort
   lua << EOF
   require('refactoring').setup({})
 
-  vim.keymap.set({ 'n', 'x' }, '<leader>lR', function() require('refactoring').select_refactor() end, { desc = 'Refactor' })
+  vim.keymap.set({ 'n', 'x' }, '<leader>lR', function() require('refactoring').select_refactor({ prefer_ex_cmd = true }) end, { desc = 'Refactor', remap = true })
 EOF
 endfunction
 
+function! LazyInitRefactoring() abort
+  lua vim.keymap.set({ 'n', 'x' }, '<leader>lR', function() vim.call('InitRefactoring') vim.api.nvim_input(vim.g.mapleader .. 'lR') end)
+endfunction
+
 if has('nvim')
-  call InitRefactoring()
+  call LazyInitRefactoring()
 endif
 
 " -----------------------------------------------------------------------------
@@ -683,10 +696,17 @@ function! InitConform() abort
       lsp_format = 'fallback',
     },
   })
+
+  vim.api.nvim_create_autocmd('FileType', {
+    pattern = pattern,
+    callback = function(args)
+      vim.api.nvim_buf_set_option(args.buf, 'formatexpr', 'v:lua.require("conform").formatexpr()')
+    end,
+  })
 EOF
 
-  nnoremap <leader>lF <cmd>lua require('conform').format({})<cr>
-  xnoremap <leader>lF <cmd>lua require('conform').format({})<cr>
+  nnoremap <leader>lq <cmd>lua require('conform').format({})<cr>
+  xnoremap <leader>lq <cmd>lua require('conform').format({})<cr>
 endfunction
 
 if has('nvim')
@@ -724,6 +744,8 @@ endif
 " -----------------------------------------------------------------------------
 " haya14busa/vim-asterisk
 function! InitAsterisk() abort
+  let g:asterisk#keeppos = 1
+
   map *   <Plug>(asterisk-*)
   map #   <Plug>(asterisk-#)
   map g*  <Plug>(asterisk-g*)
@@ -927,7 +949,7 @@ EOF
   nnoremap <leader>gi <cmd>Trouble lsp_implementations toggle<CR>
   nnoremap <leader>gy <cmd>Trouble lsp_type_definitions toggle<CR>
   nnoremap <leader>gr <cmd>Trouble lsp_references toggle<CR>
-  nnoremap <leader>p <cmd>Trouble diagnostics toggle filter.buf=0<CR>
+  nnoremap <leader>d <cmd>Trouble diagnostics toggle filter.buf=0<CR>
 endfunction
 
 if has('nvim')
@@ -936,7 +958,7 @@ endif
 
 " -----------------------------------------------------------------------------
 " nvim-tree/nvim-tree.lua
-function! InitLazyNvimTree() abort
+function! InitNvimTree() abort
   lua << EOF
   local api = require("nvim-tree.api")
   local openfile = require'nvim-tree.actions.node.open-file'
@@ -1049,7 +1071,7 @@ endfunction
 
 function! LazyNvimTreeToggle() abort
   if ! exists('g:inited_nvim_tree')
-    call InitLazyNvimTree()
+    call InitNvimTree()
     let g:inited_nvim_tree = 1
   endif
 
@@ -1058,14 +1080,14 @@ endfunction
 
 function! LazyNvimTreeOpen() abort
   if ! exists('g:inited_nvim_tree')
-    call InitLazyNvimTree()
+    call InitNvimTree()
     let g:inited_nvim_tree = 1
   endif
 
   NvimTreeOpen
 endfunction
 
-function! InitNvimTree() abort
+function! LazyInitNvimTree() abort
   nnoremap <leader>t <cmd>call LazyNvimTreeToggle()<CR>
   nnoremap <leader><Space> <cmd>call LazyNvimTreeOpen()<CR>
   nnoremap <C-\> <cmd>call LazyNvimTreeToggle()<CR>
@@ -1073,7 +1095,7 @@ function! InitNvimTree() abort
 endfunction
 
 if has('nvim')
-  call InitNvimTree()
+  call LazyInitNvimTree()
 endif
 
 " -----------------------------------------------------------------------------
@@ -1113,7 +1135,7 @@ endif
 
 " -----------------------------------------------------------------------------
 " nvim-pack/nvim-spectre
-function! InitLazySpectre() abort
+function! InitSpectre() abort
   lua << EOF
   require('spectre').setup({
     use_trouble_qf = true,
@@ -1133,14 +1155,14 @@ function! LazySpectreVisualFromYank() abort
   lua require('spectre').open({ search_text = vim.fn.getreg('0') })
 endfunction
 
-function! InitSpectre() abort
+function! LazyInitSpectre() abort
   nnoremap <leader>S <cmd>Spectre<cr>
   vnoremap <leader>S y<cmd>call LazySpectreVisualFromYank()<cr>
 endfunction
 
 if has('nvim')
-  autocmd User nvim-spectre call InitLazySpectre()
-  call InitSpectre()
+  autocmd User nvim-spectre call InitSpectre()
+  call LazyInitSpectre()
 endif
 
 " -----------------------------------------------------------------------------
@@ -1643,7 +1665,7 @@ endif
 
 " -----------------------------------------------------------------------------
 " sindrets/diffview.nvim
-function! InitLazyDiffview() abort
+function! InitDiffview() abort
   lua << EOF
   require('diffview').setup({
     use_icons = false,
@@ -1660,7 +1682,7 @@ EOF
 endfunction
 
 if has('nvim')
-  autocmd User diffview.nvim call InitLazyDiffview()
+  autocmd User diffview.nvim call InitDiffview()
 endif
 
 
@@ -1731,14 +1753,14 @@ nnoremap <silent> { :<C-u>execute "keepjumps norm! " . v:count1 . "{"<CR>
 " https://vi.stackexchange.com/a/35
 nnoremap gV `[v`]
 
-" https://neovim.io/doc/user/cmdline.html#cmdline-editing
-cnoremap <C-A> <Home>
-cnoremap <C-F> <Right>
-cnoremap <C-B> <Left>
-
 " https://bluz71.github.io/2021/09/10/vim-tips-revisited.html#fast-previous-buffer-switching
 nnoremap <C-Backspace> <C-^>
 nnoremap <C-S-Backspace> <cmd>lua require('telescope-tabs').go_to_previous()<cr>
+
+inoremap <A-left> <C-left>
+inoremap <A-right> <C-right>
+cnoremap <A-left> <C-left>
+cnoremap <A-right> <C-right>
 
 cnoreabbrev E e
 cnoreabbrev Q q
@@ -1764,9 +1786,7 @@ vnoremap +Y "+Y
 vnoremap +p "+p
 vnoremap +P "+P
 
-nnoremap <C-S> :w<CR>
-inoremap <C-S> <Esc>:w<CR>l
-vnoremap <C-S> <Esc>:w<CR>
+nnoremap <C-S> <cmd>w<cr>
 
 
 " =============================================================================
