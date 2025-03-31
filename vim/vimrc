@@ -112,6 +112,9 @@ endif
 " navigation
 Plug 'reo7sp/vim-unimpaired'
 Plug 'justinmk/vim-sneak'
+if has('nvim')
+  Plug 'rlane/pounce.nvim'
+endif
 Plug 'haya14busa/vim-asterisk'
 if has('nvim')
   Plug 'nvim-telescope/telescope.nvim', {'tag': '0.1.8'}
@@ -702,6 +705,21 @@ function! InitSneak() abort
 endfunction
 
 call InitSneak()
+
+" -----------------------------------------------------------------------------
+" rlane/pounce.nvim
+function! InitPounce() abort
+  lua require('pounce').setup({})
+
+  nmap s <cmd>Pounce<CR>
+  xmap s <cmd>Pounce<CR>
+  omap gs <cmd>Pounce<CR>
+  nmap S :Pounce <C-r>/<cr>
+endfunction
+
+if has('nvim')
+  call InitPounce()
+endif
 
 " -----------------------------------------------------------------------------
 " haya14busa/vim-asterisk
@@ -1483,6 +1501,7 @@ function! InitTreesitter() abort
       'vim',
       'markdown',
       'diff',
+      'gitcommit',
       'git_rebase',
     },
     sync_install = false,
@@ -1699,7 +1718,7 @@ endif
 " =============================================================================
 " vim mappings
 " https://nanotipsforvim.prose.sh/esc-in-normal-mode
-nnoremap <silent> <esc><esc> <cmd>echo<cr>
+nnoremap <silent> <cr> <cmd>echo<cr>
 
 " https://bluz71.github.io/2021/09/10/vim-tips-revisited.html#smarter-j-and-k-navigation
 nnoremap <silent> <expr> j v:count ? (v:count > 5 ? "m'" . v:count : '') . 'j' : 'gj'
