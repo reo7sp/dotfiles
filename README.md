@@ -5,8 +5,9 @@ My config files:
 - zsh: [zsh/my.zshrc](./zsh/my.zshrc).
 - vim: [vim/vimrc](./vim/vimrc).
 - sublime text: [sublime-dotfiles repo](https://github.com/reo7sp/sublime-dotfiles?tab=readme-ov-file#sublime-dotfiles).
-- git: [git/install](./git/install).
 - kitty: [kitty/kitty.conf](./kitty/kitty.conf).
+- git: [git/install](./git/install).
+- rg: [ripgrep](./rg/ripgrep).
 
 <br>
 
@@ -31,7 +32,7 @@ cd dotfiles
 ```sh
 git clone --depth 1 https://github.com/reo7sp/dotfiles
 cd dotfiles
-./install -q zsh vim
+./install -q zsh vim rg
 ```
 
 ## Help
@@ -43,7 +44,7 @@ cd dotfiles
 ./update [-q] MODULES     — updates dotfiles
 ```
 
-Available modules: `zsh`, `vim`, `git`, `kitty`.
+Available modules: `zsh`, `vim`, `kitty`, `git`, `rg`.
 
 ## Tips and tricks
 

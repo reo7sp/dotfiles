@@ -263,10 +263,15 @@ alias gll='tig'
 
 gfcd() {
   local repo=$1
-  git clone "$repo"
-  local repo=${repo##*/}
-  local repo=${repo%.git}
-  cd "$repo"
+  local dir=$2
+
+  if [[ -z "$dir" ]]; then
+    dir=${repo##*/}
+    dir=${dir%.git}
+  fi
+
+  git clone "$repo" "$dir"
+  cd "$dir"
 }
 
 alias gcu='git add -A && git commit --amend --reuse-message HEAD'
@@ -293,6 +298,12 @@ alias aliases-git="cat $(antibody list | grep zimfw-git)/init.zsh"
 export DFT_CONTEXT=10
 export DFT_DISPLAY=side-by-side-show-both
 export DFT_PARSE_ERROR_LIMIT=9999
+
+# -----------------------------------------------------------------------------
+# rg
+export RIPGREP_CONFIG_PATH="$HOME/.ripgreprc"
+
+alias edit-rg="vim $RIPGREP_CONFIG_PATH"
 
 # -----------------------------------------------------------------------------
 # fzf
