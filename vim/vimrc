@@ -591,22 +591,10 @@ endif
 " numToStr/Comment.nvim or scrooloose/nerdcommenter
 function! InitComment() abort
   lua require('Comment').setup()
-
-  nnoremap <C-/> <Plug>(comment_toggle_linewise_current)
-  nnoremap <D-/> <Plug>(comment_toggle_linewise_current)
-  xnoremap <C-/> <Plug>(comment_toggle_linewise_visual)
-  xnoremap <D-/> <Plug>(comment_toggle_linewise_visual)
-endfunction
-
-function! InitNerdCommenter() abort
-  nnoremap <C-/> <Plug>NERDCommenterToggle
-  vnoremap <C-/> <Plug>NERDCommenterToggle<CR>gv
 endfunction
 
 if has('nvim')
   call InitComment()
-else
-  call InitNerdCommenter()
 end
 
 " -----------------------------------------------------------------------------
@@ -729,12 +717,15 @@ call InitSneak()
 " -----------------------------------------------------------------------------
 " rlane/pounce.nvim
 function! InitPounce() abort
-  lua require('pounce').setup({})
+  lua << EOF
+  require('pounce').setup({
+    multi_window = true,
+  })
+EOF
 
-  nmap s <cmd>Pounce<CR>
-  xmap s <cmd>Pounce<CR>
-  omap gs <cmd>Pounce<CR>
-  nmap S :Pounce <C-r>/<cr>
+  nmap <c-/> <cmd>Pounce<CR>
+  xmap <c-/> <cmd>Pounce<CR>
+  omap g<c-/> <cmd>Pounce<CR>
 endfunction
 
 if has('nvim')
@@ -768,21 +759,26 @@ function! InitTelescope() abort
       require('telescope.themes').get_ivy(),
       {
         mappings = {
-          i = {
-            ['<c-t>'] = require('trouble.sources.telescope').open,
-            ['<c-p>'] = require('telescope.actions.layout').toggle_preview,
-            ['<C-Down>'] = require('telescope.actions').cycle_history_next,
-            ['<C-Up>'] = require('telescope.actions').cycle_history_prev,
-          },
           n = {
-            ['<c-t>'] = require('trouble.sources.telescope').open,
-            ['<c-p>'] = require('telescope.actions.layout').toggle_preview,
+            ['q'] = require('telescope.actions').close,
             ['<C-Down>'] = require('telescope.actions').cycle_history_next,
             ['<C-Up>'] = require('telescope.actions').cycle_history_prev,
+            ['<c-t>'] = require('trouble.sources.telescope').open,
+            ['<c-p>'] = require('telescope.actions.layout').toggle_preview,
+          },
+          i = {
+            ['<C-Down>'] = require('telescope.actions').cycle_history_next,
+            ['<C-Up>'] = require('telescope.actions').cycle_history_prev,
+            ['<c-t>'] = require('trouble.sources.telescope').open,
+            ['<c-p>'] = require('telescope.actions.layout').toggle_preview,
           },
         },
         initial_mode = 'normal',
         dynamic_preview_title = true,
+        set_env = {
+          LESS = '',
+          DELTA_PAGER = 'less',
+        },
       }
     ),
     pickers = {
@@ -839,10 +835,18 @@ function! InitTelescope() abort
       },
       live_grep_args = {
         mappings = {
+          n = {
+            ['<C-k>'] = require('telescope-live-grep-args.actions').quote_prompt(),
+            ['<C-g>'] = require('telescope-live-grep-args.actions').quote_prompt({ postfix = ' --iglob ' }),
+            ['<C-y>'] = require('telescope-live-grep-args.actions').quote_prompt({ postfix = ' --type ' }),
+            ['<C-f>'] = require('telescope-live-grep-args.actions').quote_prompt({ postfix = ' -F ' }),
+            ['<C-i>'] = require('telescope-live-grep-args.actions').quote_prompt({ postfix = ' --no-ignore ' }),
+            ['<C-space>'] = require('telescope-live-grep-args.actions').to_fuzzy_refine,
+          },
           i = {
             ['<C-k>'] = require('telescope-live-grep-args.actions').quote_prompt(),
             ['<C-g>'] = require('telescope-live-grep-args.actions').quote_prompt({ postfix = ' --iglob ' }),
-            ['<C-t>'] = require('telescope-live-grep-args.actions').quote_prompt({ postfix = ' --type ' }),
+            ['<C-y>'] = require('telescope-live-grep-args.actions').quote_prompt({ postfix = ' --type ' }),
             ['<C-f>'] = require('telescope-live-grep-args.actions').quote_prompt({ postfix = ' -F ' }),
             ['<C-i>'] = require('telescope-live-grep-args.actions').quote_prompt({ postfix = ' --no-ignore ' }),
             ['<C-space>'] = require('telescope-live-grep-args.actions').to_fuzzy_refine,
@@ -867,6 +871,40 @@ function! InitTelescope() abort
   require('telescope').load_extension('yank_history')
   require('telescope').load_extension('aerial')
   require('telescope').load_extension('hierarchy')
+
+  -- https://github.com/nvim-telescope/telescope.nvim/issues/605
+  local actions = require('telescope.actions')
+  local previewers = require('telescope.previewers')
+  local builtin = require('telescope.builtin')
+  local M = {}
+  local git_status_previewer = previewers.new_termopen_previewer({
+    get_command = function(entry)
+      if entry.status == '??' or 'A ' then
+          return { 'git', '-c', 'core.pager=delta', '-c', 'delta.paging=always', 'diff', '--no-ext-diff', entry.value }
+      end
+      return { 'git', '-c', 'core.pager=delta', '-c', 'delta.paging=always', 'diff', '--no-ext-diff', entry.value .. '^!' }
+    end
+  })
+  local git_commits_previewer = previewers.new_termopen_previewer({
+    get_command = function(entry)
+      if entry.status == '??' or 'A ' then
+          return { 'git', '-c', 'core.pager=delta', '-c', 'delta.paging=always', 'show', '--no-ext-diff', '--name-only', entry.value }
+      end
+      return { 'git', '-c', 'core.pager=delta', '-c', 'delta.paging=always', 'show', '--no-ext-diff', '--name-only', entry.value .. '^!' }
+    end
+  })
+  M.git_status = function(opts)
+      opts = opts or {}
+      opts.previewer = git_status_previewer
+      builtin.git_status(opts)
+  end
+  M.git_commits = function(opts)
+      opts = opts or {}
+      opts.previewer = git_commits_previewer
+      builtin.git_commits(opts)
+  end
+  vim.keymap.set('n', '<leader>ge', M.git_status, { desc = 'Telescope git_status' })
+  vim.keymap.set('n', '<leader>gB', M.git_commits, { desc = 'Telescope git_commits' })
 EOF
 
   nnoremap <leader>e <cmd>lua require('telescope').extensions.recent_files.pick()<cr>
@@ -881,6 +919,7 @@ EOF
   nnoremap <leader>y <cmd>Telescope yank_history<cr>
   nnoremap <leader>k <cmd>Telescope aerial<cr>
   nnoremap <leader>K <cmd>Telescope lsp_dynamic_workspace_symbols<cr>i
+  nnoremap <leader>gb <cmd>Telescope git_branches<cr>
 endfunction
 
 if has('nvim')
@@ -1064,8 +1103,9 @@ function! InitNvimTree() abort
 
       vim.keymap.set('n', '<c-f>', M.launch_find_files, opts('Launch Find Files'))
       vim.keymap.set('n', '<c-s>', M.launch_live_grep,  opts('Launch Live Grep'))
-      vim.keymap.set('n', 's', function() require('pounce').pounce({}) end, opts('Pounce'))
-      vim.keymap.set('n', 'S', function() require('pounce').pounce({ input = { reg = '/' } }) end, opts('Pounce'))
+      vim.keymap.set('n', 's', '<Plug>Sneak_s',  opts('Sneak'))
+      vim.keymap.set('n', 'S', '<Plug>Sneak_S',  opts('Sneak'))
+      vim.keymap.set('n', '<c-/>', function() require('pounce').pounce({}) end, opts('Pounce'))
     end,
   })
 EOF
@@ -1092,8 +1132,6 @@ endfunction
 function! LazyInitNvimTree() abort
   nnoremap <leader>t <cmd>call LazyNvimTreeToggle()<CR>
   nnoremap <leader><Space> <cmd>call LazyNvimTreeOpen()<CR>
-  nnoremap <C-\> <cmd>call LazyNvimTreeToggle()<CR>
-  nnoremap <D-\> <cmd>call LazyNvimTreeToggle()<CR>
 endfunction
 
 if has('nvim')
@@ -1409,8 +1447,8 @@ function! InitGitSigns() abort
   })
 EOF
 
-  nnoremap gh <cmd>Gitsigns blame_line<CR>
-  nnoremap <leader>h <cmd>Gitsigns blame<CR>
+  nnoremap <c-w>g <cmd>Gitsigns blame_line<CR>
+  nnoremap <leader>gh <cmd>Gitsigns blame<CR>
 endfunction
 
 if has('nvim')

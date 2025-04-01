@@ -138,10 +138,6 @@ if can-exec colordiff; then
   alias diff='colordiff'
 fi
 
-if can-exec diff-so-fancy; then
-  GIT_PAGER='diff-so-fancy'
-fi
-
 alias rm='rm -f'
 alias cp='cp -f'
 alias mv='mv -f'
