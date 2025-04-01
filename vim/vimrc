@@ -175,27 +175,28 @@ if has('nvim')
   Plug 'lukas-reineke/virt-column.nvim'
   Plug 'psliwka/vim-smoothie'
 endif
+if has('nvim')
+  Plug 'folke/which-key.nvim'
+else
+  Plug 'liuchengxu/vim-which-key'
+  Plug 'junegunn/vim-peekaboo'
+endif
 let g:polyglot_disabled = ['sensible', 'autoindent']
 Plug 'sheerun/vim-polyglot'
 if has('nvim')
   Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
   Plug 'nvim-treesitter/nvim-treesitter-textobjects'
 endif
-Plug 'Vimjas/vim-python-pep8-indent', {'for': 'python'}
 Plug 'johejo/gomod.vim'
+Plug 'Vimjas/vim-python-pep8-indent', {'for': 'python'}
 Plug 'HiPhish/jinja.vim'
 Plug 'fladson/vim-kitty'
 
 " -----------------------------------------------------------------------------
 " commands
-if has('nvim')
-  Plug 'folke/which-key.nvim'
-else
-  Plug 'liuchengxu/vim-which-key'
-endif
 Plug 'tpope/vim-eunuch'
-Plug 'tpope/vim-fugitive', {'on': ['Git', 'G', 'Flog', 'Flogsplit']}
-Plug 'rbong/vim-flog', {'on': ['Git', 'G', 'Flog', 'Flogsplit']}
+Plug 'tpope/vim-fugitive'
+Plug 'rbong/vim-flog', {'on': ['Flog', 'Flogsplit']}
 if has('nvim')
   Plug 'sindrets/diffview.nvim', {'on': ['DiffviewOpen', 'DiffviewFileHistory']}
 endif
@@ -366,11 +367,13 @@ function! InitNvimCmp() abort
       {
         name = 'cmdline',
         option = {
-          ignore_cmds = { 'Man', '!' }
+          ignore_cmds = { 'Man', '!' },
         }
       }
     }),
-    matching = { disallow_symbol_nonprefix_matching = false }
+    matching = {
+      disallow_symbol_nonprefix_matching = false,
+    }
   })
 EOF
 
@@ -719,7 +722,7 @@ call InitSneak()
 function! InitPounce() abort
   lua << EOF
   require('pounce').setup({
-    multi_window = true,
+    multi_window = false,
   })
 EOF
 
@@ -1102,9 +1105,9 @@ function! InitNvimTree() abort
       api.config.mappings.default_on_attach(bufnr)
 
       vim.keymap.set('n', '<c-f>', M.launch_find_files, opts('Launch Find Files'))
-      vim.keymap.set('n', '<c-s>', M.launch_live_grep,  opts('Launch Live Grep'))
-      vim.keymap.set('n', 's', '<Plug>Sneak_s',  opts('Sneak'))
-      vim.keymap.set('n', 'S', '<Plug>Sneak_S',  opts('Sneak'))
+      vim.keymap.set('n', '<c-s>', M.launch_live_grep, opts('Launch Live Grep'))
+      vim.keymap.set('n', 's', '<Plug>Sneak_s', opts('Sneak'))
+      vim.keymap.set('n', 'S', '<Plug>Sneak_S', opts('Sneak'))
       vim.keymap.set('n', '<c-/>', function() require('pounce').pounce({}) end, opts('Pounce'))
     end,
   })
@@ -1381,8 +1384,8 @@ EOF
 endfunction
 
 function! InitBuftablineVim() abort
-  nnoremap <C-[> :bp<CR>
-  nnoremap <C-]> :bn<CR>
+  nnoremap <C-[> <cmd>bp<CR>
+  nnoremap <C-]> <cmd>bn<CR>
 
   nnoremap <C-1> <Plug>BufTabLine.Go(1)
   nnoremap <C-2> <Plug>BufTabLine.Go(2)
@@ -1547,6 +1550,67 @@ if has('nvim')
 endif
 
 " -----------------------------------------------------------------------------
+" folke/which-key.nvim or liuchengxu/vim-which-key
+function! InitWhichKeyNvim() abort
+  lua << EOF
+  require('which-key').setup({
+    preset = 'helix',
+    win = {
+      width = 80,
+    },
+    delay = function(ctx)
+      return ctx.plugin and 0 or 500
+    end,
+    icons = {
+      mappings = false,
+      keys = {
+        Up = "<Up>",
+        Down = "<Down>",
+        Left = "<Left>",
+        Right = "<Right>",
+        C = "<C>",
+        M = "<M>",
+        D = "<D>",
+        S = "<S>",
+        CR = "<CR>",
+        Esc = "<Esc>",
+        ScrollWheelDown = "<ScrollWheelDown>",
+        ScrollWheelUp = "<ScrollWheelUp>",
+        NL = "<NL>",
+        BS = "<BS>",
+        Space = "<Space>",
+        Tab = "<Tab>",
+        F1 = "<F1>",
+        F2 = "<F2>",
+        F3 = "<F3>",
+        F4 = "<F4>",
+        F5 = "<F5>",
+        F6 = "<F6>",
+        F7 = "<F7>",
+        F8 = "<F8>",
+        F9 = "<F9>",
+        F10 = "<F10>",
+        F11 = "<F11>",
+        F12 = "<F12>",
+      },
+    },
+  })
+EOF
+
+  nnoremap <leader>? <cmd>WhichKey<cr>
+endfunction
+
+function! InitWhichKeyVim() abort
+  nnoremap <leader>? :WhichKey
+endfunction
+
+if has('nvim')
+  call InitWhichKeyNvim()
+else
+  call InitWhichKeyVim()
+endif
+
+" -----------------------------------------------------------------------------
 " nvim-treesitter/nvim-treesitter
 function! InitTreesitter() abort
   lua << EOF
@@ -1653,66 +1717,6 @@ if has('nvim')
 endif
 
 " -----------------------------------------------------------------------------
-" folke/which-key.nvim or liuchengxu/vim-which-key
-function! InitWhichKeyNvim() abort
-  lua << EOF
-  require('which-key').setup({
-    delay = function(ctx)
-      return ctx.plugin and 0 or 500
-    end,
-    layout = {
-      width = { min = 25, max = 80 },
-    },
-    icons = {
-      mappings = false,
-      keys = {
-        Up = "<Up>",
-        Down = "<Down>",
-        Left = "<Left>",
-        Right = "<Right>",
-        C = "<C>",
-        M = "<M>",
-        D = "<D>",
-        S = "<S>",
-        CR = "<CR>",
-        Esc = "<Esc>",
-        ScrollWheelDown = "<ScrollWheelDown>",
-        ScrollWheelUp = "<ScrollWheelUp>",
-        NL = "<NL>",
-        BS = "<BS>",
-        Space = "<Space>",
-        Tab = "<Tab>",
-        F1 = "<F1>",
-        F2 = "<F2>",
-        F3 = "<F3>",
-        F4 = "<F4>",
-        F5 = "<F5>",
-        F6 = "<F6>",
-        F7 = "<F7>",
-        F8 = "<F8>",
-        F9 = "<F9>",
-        F10 = "<F10>",
-        F11 = "<F11>",
-        F12 = "<F12>",
-      },
-    },
-  })
-EOF
-
-  nnoremap <leader>? <cmd>WhichKey<cr>
-endfunction
-
-function! InitWhichKeyVim() abort
-  nnoremap <leader>? :WhichKey
-endfunction
-
-if has('nvim')
-  call InitWhichKeyNvim()
-else
-  call InitWhichKeyVim()
-endif
-
-" -----------------------------------------------------------------------------
 " sindrets/diffview.nvim
 function! InitDiffview() abort
   lua << EOF
@@ -1803,6 +1807,22 @@ nnoremap <silent> { :<C-u>execute "keepjumps norm! " . v:count1 . "{"<CR>
 nnoremap c. /\V\C<C-r>"<CR>cgn<C-a><Esc>
 nnoremap d. /\V\C<C-r>"<CR>dgn
 
+" https://vim.fandom.com/wiki/Comfortable_handling_of_registers
+nnoremap <silent> [+ :let @"=@+<CR>
+nnoremap <silent> [= :let @"=@+<CR>
+nnoremap <silent> ]+ :let @+=@"<CR>
+nnoremap <silent> ]= :let @+=@"<CR>
+nnoremap <silent> ++ :let @o=@" \| let @"=@+ \| let @+=@o<CR>
+
+nnoremap +y "+y
+nnoremap +Y "+Y
+nnoremap +p "+p
+nnoremap +P "+P
+vnoremap +y "+y
+vnoremap +Y "+Y
+vnoremap +p "+p
+vnoremap +P "+P
+
 " https://bluz71.github.io/2021/09/10/vim-tips-revisited.html#fast-previous-buffer-switching
 nnoremap <C-Backspace> <C-^>
 nnoremap <C-S-Backspace> <cmd>lua require('telescope-tabs').go_to_previous()<cr>
@@ -1817,7 +1837,6 @@ cnoreabbrev Q q
 cnoreabbrev Qa qa
 cnoreabbrev Wqa wqa
 cnoreabbrev w!! w !sudo tee % >/dev/null
-
 cnoreabbrev tabq tabclose
 cnoreabbrev tnew tabnew
 cnoreabbrev tq tabclose
@@ -1826,15 +1845,6 @@ nnoremap <C-Up> <cmd>resize +2<cr>
 nnoremap <C-Down> <cmd>resize -2<cr>
 nnoremap <C-Right> <cmd>vertical resize +2<cr>
 nnoremap <C-Left> <cmd>vertical resize -2<cr>
-
-nnoremap +y "+y
-nnoremap +Y "+Y
-nnoremap +p "+p
-nnoremap +P "+P
-vnoremap +y "+y
-vnoremap +Y "+Y
-vnoremap +p "+p
-vnoremap +P "+P
 
 nnoremap <C-S> <cmd>w<cr>
 
@@ -1951,7 +1961,7 @@ endif
 
 
 " =============================================================================
-" neovide
+" gui
 if exists('g:neovide')
   language en_US
   language messages en_US
