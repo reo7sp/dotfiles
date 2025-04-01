@@ -1064,6 +1064,8 @@ function! InitNvimTree() abort
 
       vim.keymap.set('n', '<c-f>', M.launch_find_files, opts('Launch Find Files'))
       vim.keymap.set('n', '<c-s>', M.launch_live_grep,  opts('Launch Live Grep'))
+      vim.keymap.set('n', 's', function() require('pounce').pounce({}) end, opts('Pounce'))
+      vim.keymap.set('n', 'S', function() require('pounce').pounce({ input = { reg = '/' } }) end, opts('Pounce'))
     end,
   })
 EOF
@@ -1180,6 +1182,15 @@ function! InitLualine() abort
     end
   end
 
+  local conditions = {
+    hide_in_width = function()
+      return vim.fn.winwidth(0) > 120
+    end,
+    hide_in_width_very = function()
+      return vim.fn.winwidth(0) > 80
+    end,
+  }
+
   local lualine = require('lualine')
   lualine.setup({
     options = {
@@ -1203,16 +1214,16 @@ function! InitLualine() abort
       },
       lualine_c = {
         { 'filename', path = 1, file_status = false },
-        { 'aerial', depth = 3, sep = ' > ', padding = { left = 0, right = 1 } },
+        { 'aerial', depth = 3, sep = ' > ', padding = { left = 0, right = 1 }, cond = conditions.hide_in_width_very },
       },
       lualine_x = {
-        'b:gitsigns_head',
-        { 'diff', source = diff_source, padding = { left = 0, right = 1 } },
+        { 'b:gitsigns_head', cond = conditions.hide_in_width },
+        { 'diff', source = diff_source, padding = { left = 0, right = 1 }, cond = conditions.hide_in_width },
       },
       lualine_y = {
-        'filetype',
-        { 'lsp_status', symbols = { done = '' }, padding = { left = 0, right = 1 } },
-        { 'diagnostics', padding = { left = 0, right = 1 } },
+        { 'filetype', cond = conditions.hide_in_width },
+        { 'lsp_status', symbols = { done = '' }, padding = { left = 0, right = 1 }, cond = conditions.hide_in_width },
+        { 'diagnostics', padding = { left = 0, right = 1 }, cond = conditions.hide_in_width },
       },
       lualine_z = {
         'location',

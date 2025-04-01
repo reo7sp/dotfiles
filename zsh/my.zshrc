@@ -117,10 +117,6 @@ bindkey '^R' history-incremental-search-backward
 
 # -----------------------------------------------------------------------------
 # general
-alias ll='ls -lh'
-alias la='ls -a'
-alias lla='ls -lah'
-
 alias le='less'
 
 lcd() {
