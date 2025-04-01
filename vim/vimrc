@@ -1799,8 +1799,9 @@ nnoremap <silent> <expr> k v:count ? (v:count > 5 ? "m'" . v:count : '') . 'k' :
 nnoremap <silent> } :<C-u>execute "keepjumps norm! " . v:count1 . "}"<CR>
 nnoremap <silent> { :<C-u>execute "keepjumps norm! " . v:count1 . "{"<CR>
 
-" https://vi.stackexchange.com/a/35
-nnoremap gV `[v`]
+" https://www.reddit.com/r/neovim/comments/sf0hmc/im_really_proud_of_this_mapping_i_came_up_with/
+nnoremap c. /\V\C<C-r>"<CR>cgn<C-a><Esc>
+nnoremap d. /\V\C<C-r>"<CR>dgn
 
 " https://bluz71.github.io/2021/09/10/vim-tips-revisited.html#fast-previous-buffer-switching
 nnoremap <C-Backspace> <C-^>
