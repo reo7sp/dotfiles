@@ -382,12 +382,6 @@ EOF
   autocmd FileType TelescopePrompt lua require('cmp').setup.buffer({ enabled = false })
   augroup END
 
-  nnoremap gd <cmd>Telescope lsp_definitions<cr>
-  nnoremap gD <cmd>Telescope lsp_implementations<cr>
-  nnoremap gi <cmd>Telescope lsp_implementations<cr>
-  nnoremap gy <cmd>Telescope lsp_type_definitions<cr>
-  nnoremap <nowait> gr <cmd>Telescope lsp_references<cr>
-  nnoremap gR <cmd>Telescope hierarchy<cr>
   nnoremap K <cmd>lua vim.lsp.buf.hover()<cr>
   inoremap <C-S> <cmd>lua vim.lsp.buf.signature_help()<cr>
   nnoremap <leader>lr <cmd>lua vim.lsp.buf.rename()<cr>
@@ -777,6 +771,7 @@ function! InitTelescope() abort
           },
         },
         initial_mode = 'normal',
+        disable_devicons = true,
         dynamic_preview_title = true,
         set_env = {
           LESS = '',
@@ -785,6 +780,21 @@ function! InitTelescope() abort
       }
     ),
     pickers = {
+      find_files = {
+        hidden = true,
+        initial_mode = 'insert',
+        mappings = {
+          n = {
+            ['<C-i>'] = function () require('telescope.builtin').find_files({ no_ignore = true }) end,
+          },
+          i = {
+            ['<C-i>'] = function () require('telescope.builtin').find_files({ no_ignore = true }) end,
+          },
+        },
+      },
+      live_grep = {
+        initial_mode = 'insert',
+      },
       buffers = {
         show_all_buffers = false,
         sort_buffers = function (a, b)
@@ -812,6 +822,7 @@ function! InitTelescope() abort
       lsp_dynamic_workspace_symbols = {
         ignore_symbols = { 'variable', 'field' },
         fname_width = 60,
+        initial_mode = 'insert',
       },
     },
     extensions = {
@@ -837,28 +848,28 @@ function! InitTelescope() abort
         },
       },
       live_grep_args = {
+        initial_mode = 'insert',
         mappings = {
           n = {
             ['<C-k>'] = require('telescope-live-grep-args.actions').quote_prompt(),
-            ['<C-g>'] = require('telescope-live-grep-args.actions').quote_prompt({ postfix = ' --iglob ' }),
-            ['<C-y>'] = require('telescope-live-grep-args.actions').quote_prompt({ postfix = ' --type ' }),
+            ['<C-g>'] = require('telescope-live-grep-args.actions').quote_prompt({ postfix = ' -g ' }),
+            ['<C-y>'] = require('telescope-live-grep-args.actions').quote_prompt({ postfix = ' -t ' }),
+            ['<C-i>'] = require('telescope-live-grep-args.actions').quote_prompt({ postfix = ' -u ' }),
             ['<C-f>'] = require('telescope-live-grep-args.actions').quote_prompt({ postfix = ' -F ' }),
-            ['<C-i>'] = require('telescope-live-grep-args.actions').quote_prompt({ postfix = ' --no-ignore ' }),
             ['<C-space>'] = require('telescope-live-grep-args.actions').to_fuzzy_refine,
           },
           i = {
             ['<C-k>'] = require('telescope-live-grep-args.actions').quote_prompt(),
-            ['<C-g>'] = require('telescope-live-grep-args.actions').quote_prompt({ postfix = ' --iglob ' }),
-            ['<C-y>'] = require('telescope-live-grep-args.actions').quote_prompt({ postfix = ' --type ' }),
+            ['<C-g>'] = require('telescope-live-grep-args.actions').quote_prompt({ postfix = ' -g ' }),
+            ['<C-y>'] = require('telescope-live-grep-args.actions').quote_prompt({ postfix = ' -t ' }),
+            ['<C-i>'] = require('telescope-live-grep-args.actions').quote_prompt({ postfix = ' -u ' }),
             ['<C-f>'] = require('telescope-live-grep-args.actions').quote_prompt({ postfix = ' -F ' }),
-            ['<C-i>'] = require('telescope-live-grep-args.actions').quote_prompt({ postfix = ' --no-ignore ' }),
             ['<C-space>'] = require('telescope-live-grep-args.actions').to_fuzzy_refine,
           },
         },
       },
       hierarchy = {
         theme = 'ivy',
-        disable_devicons = true,
       },
       aerial = {
         show_columns = 'symbols',
@@ -911,18 +922,24 @@ function! InitTelescope() abort
 EOF
 
   nnoremap <leader>e <cmd>lua require('telescope').extensions.recent_files.pick()<cr>
-  nnoremap <leader>f <cmd>Telescope find_files<cr>i
-  nnoremap <leader>s <cmd>Telescope live_grep_args<cr>i
+  nnoremap <leader>f <cmd>Telescope find_files<cr>
+  nnoremap <leader>s <cmd>Telescope live_grep_args<cr>
   vnoremap <leader>s <cmd>lua require('telescope-live-grep-args.shortcuts').grep_visual_selection()<cr>
-  nnoremap <leader>Ff <cmd>Telescope dir find_files<cr>i
-  nnoremap <leader>Fs <cmd>Telescope dir live_grep<cr>i
+  nnoremap <leader>Ff <cmd>Telescope dir find_files<cr>
+  nnoremap <leader>Fs <cmd>Telescope dir live_grep<cr>
   nnoremap <leader>b <cmd>Telescope buffers<cr>
   nnoremap <leader>B <cmd>Telescope telescope-tabs list_tabs<cr>
   nnoremap <leader>E <cmd>Telescope jumplist<cr>
   nnoremap <leader>y <cmd>Telescope yank_history<cr>
   nnoremap <leader>k <cmd>Telescope aerial<cr>
-  nnoremap <leader>K <cmd>Telescope lsp_dynamic_workspace_symbols<cr>i
+  nnoremap <leader>K <cmd>Telescope lsp_dynamic_workspace_symbols<cr>
   nnoremap <leader>gb <cmd>Telescope git_branches<cr>
+  nnoremap gd <cmd>Telescope lsp_definitions<cr>
+  nnoremap gD <cmd>Telescope lsp_implementations<cr>
+  nnoremap gi <cmd>Telescope lsp_implementations<cr>
+  nnoremap gy <cmd>Telescope lsp_type_definitions<cr>
+  nnoremap <nowait> gr <cmd>Telescope lsp_references<cr>
+  nnoremap gR <cmd>Telescope hierarchy theme=ivy<cr>
 endfunction
 
 if has('nvim')
@@ -979,9 +996,14 @@ function! InitTrouble() abort
     },
   })
 
-  vim.api.nvim_create_autocmd("QuickFixCmdPost", {
-    callback = function()
-      vim.cmd([[Trouble qflist open]])
+  vim.api.nvim_create_autocmd("BufRead", {
+    callback = function(ev)
+      if vim.bo[ev.buf].buftype == "quickfix" then
+        vim.schedule(function()
+          vim.cmd([[cclose]])
+          vim.cmd([[Trouble qflist open]])
+        end)
+      end
     end,
   })
 EOF
@@ -1461,7 +1483,11 @@ endif
 " -----------------------------------------------------------------------------
 " kinsho/git-conflict.nvim
 function! InitGitConflict() abort
-  lua require('git-conflict').setup()
+  lua << EOF
+  require('git-conflict').setup({
+    disable_diagnostics = true,
+  })
+EOF
 endfunction
 
 if has('nvim')
@@ -1796,6 +1822,7 @@ endif
 nnoremap <silent> <cr> <cmd>echo<cr>
 
 " https://stackoverflow.com/a/51388837/1600438
+nunmap <esc>
 nnoremap <esc>^[ <esc>^[
 
 " https://bluz71.github.io/2021/09/10/vim-tips-revisited.html#smarter-j-and-k-navigation
