@@ -34,6 +34,7 @@ if has('nvim')
   Plug 'hrsh7th/nvim-cmp'
   Plug 'hrsh7th/cmp-nvim-lsp'
   Plug 'hrsh7th/cmp-buffer'
+  Plug 'amarz45/nvim-cmp-buffer-lines'
   Plug 'hrsh7th/cmp-path'
   Plug 'hrsh7th/cmp-nvim-lsp-signature-help'
   Plug 'hrsh7th/cmp-cmdline'
@@ -93,6 +94,7 @@ else
 endif
 if has('nvim')
   Plug 'numToStr/Comment.nvim'
+  Plug 'JoosepAlviste/nvim-ts-context-commentstring'
 else
   Plug 'scrooloose/nerdcommenter'
 endif
@@ -117,7 +119,7 @@ if has('nvim')
 endif
 Plug 'haya14busa/vim-asterisk'
 if has('nvim')
-  Plug 'nvim-telescope/telescope.nvim', {'tag': '0.1.8'}
+  Plug 'nvim-telescope/telescope.nvim'
   Plug 'nvim-telescope/telescope-fzf-native.nvim', {'do': 'make'}
   Plug 'smartpde/telescope-recent-files'
   Plug 'nvim-telescope/telescope-live-grep-args.nvim'
@@ -156,6 +158,7 @@ endif
 if has('nvim')
   Plug 'romgrk/barbar.nvim'
   Plug 'tiagovla/scope.nvim'
+  Plug 's1n7ax/nvim-window-picker'
 else
   Plug 'ap/vim-buftabline'
 endif
@@ -284,6 +287,7 @@ function! InitNvimCmp() abort
       { name = 'nvim_lsp' },
       { name = 'luasnip', keyword_length = 2 },
       { name = 'buffer', keyword_length = 3 },
+      { name = 'buffer-lines', keyword_length = 4 },
       { name = 'nvim_lsp_signature_help' },
     },
     view = {
@@ -587,7 +591,14 @@ endif
 " -----------------------------------------------------------------------------
 " numToStr/Comment.nvim or scrooloose/nerdcommenter
 function! InitComment() abort
-  lua require('Comment').setup()
+  lua << EOF
+  require('ts_context_commentstring').setup({
+    enable_autocmd = false,
+  })
+  require('Comment').setup({
+    pre_hook = require('ts_context_commentstring.integrations.comment_nvim').create_pre_hook(),
+  })
+EOF
 endfunction
 
 if has('nvim')
@@ -618,11 +629,11 @@ function! InitTreeSJ() abort
   })
 EOF
 
-  nnoremap gm <cmd>lua require('treesj').toggle()<cr>
+  nnoremap gs <cmd>lua require('treesj').toggle()<cr>
 endfunction
 
 function! LazyInitTreeSJ() abort
-  lua vim.keymap.set('n', 'gm', function() vim.call('InitTreeSJ') vim.api.nvim_input('gm') end)
+  lua vim.keymap.set('n', 'gs', function() vim.call('InitTreeSJ') vim.api.nvim_input('gs') end)
 endfunction
 
 if has('nvim')
@@ -634,8 +645,10 @@ endif
 function! InitMiniAlign() abort
   lua << EOF
   require('mini.align').setup({
-    start = '',
-    start_with_preview = 'ga',
+    mappings = {
+      start = '',
+      start_with_preview = 'ga',
+    },
   })
 EOF
 endfunction
@@ -650,7 +663,7 @@ function! InitRefactoring() abort
   lua << EOF
   require('refactoring').setup({})
 
-  vim.keymap.set({ 'n', 'x' }, '<leader>lR', function() require('refactoring').select_refactor({ prefer_ex_cmd = true }) end, { desc = 'Refactor', remap = true })
+  vim.keymap.set({ 'n', 'x' }, '<leader>lR', function() require('refactoring').select_refactor({}) end, { desc = 'Refactor', remap = true })
 EOF
 endfunction
 
@@ -856,7 +869,6 @@ function! InitTelescope() abort
             ['<C-y>'] = require('telescope-live-grep-args.actions').quote_prompt({ postfix = ' -t ' }),
             ['<C-i>'] = require('telescope-live-grep-args.actions').quote_prompt({ postfix = ' -u ' }),
             ['<C-f>'] = require('telescope-live-grep-args.actions').quote_prompt({ postfix = ' -F ' }),
-            ['<C-space>'] = require('telescope-live-grep-args.actions').to_fuzzy_refine,
           },
           i = {
             ['<C-k>'] = require('telescope-live-grep-args.actions').quote_prompt(),
@@ -864,12 +876,12 @@ function! InitTelescope() abort
             ['<C-y>'] = require('telescope-live-grep-args.actions').quote_prompt({ postfix = ' -t ' }),
             ['<C-i>'] = require('telescope-live-grep-args.actions').quote_prompt({ postfix = ' -u ' }),
             ['<C-f>'] = require('telescope-live-grep-args.actions').quote_prompt({ postfix = ' -F ' }),
-            ['<C-space>'] = require('telescope-live-grep-args.actions').to_fuzzy_refine,
           },
         },
       },
       hierarchy = {
         theme = 'ivy',
+        disable_devicons = true,
       },
       aerial = {
         show_columns = 'symbols',
@@ -939,7 +951,7 @@ EOF
   nnoremap gi <cmd>Telescope lsp_implementations<cr>
   nnoremap gy <cmd>Telescope lsp_type_definitions<cr>
   nnoremap <nowait> gr <cmd>Telescope lsp_references<cr>
-  nnoremap gR <cmd>Telescope hierarchy theme=ivy<cr>
+  nnoremap gR <cmd>Telescope hierarchy theme=ivy disable_devicons=true<cr>
 endfunction
 
 if has('nvim')
@@ -1067,7 +1079,6 @@ function! InitNvimTree() abort
     opts.search_dirs = { basedir }
     opts.attach_mappings = view_selection
     require("telescope.builtin")[func_name](opts)
-    vim.api.nvim_feedkeys('i', 'n', false)
   end
 
   require('nvim-tree').setup({
@@ -1114,6 +1125,7 @@ function! InitNvimTree() abort
         quit_on_open = false,
         window_picker = {
           enable = true,
+          picker = require('window-picker').pick_window,
         },
       },
     },
@@ -1252,6 +1264,9 @@ function! InitLualine() abort
     hide_in_width_very = function()
       return vim.fn.winwidth(0) > 80
     end,
+    hide_in_width_not_very = function()
+      return vim.fn.winwidth(0) > 140
+    end,
   }
 
   local lualine = require('lualine')
@@ -1280,7 +1295,7 @@ function! InitLualine() abort
         { 'aerial', depth = 3, sep = ' > ', padding = { left = 0, right = 1 }, cond = conditions.hide_in_width_very },
       },
       lualine_x = {
-        { 'b:gitsigns_head', cond = conditions.hide_in_width },
+        { 'b:gitsigns_head', cond = conditions.hide_in_width_not_very },
         { 'diff', source = diff_source, padding = { left = 0, right = 1 }, cond = conditions.hide_in_width },
       },
       lualine_y = {
@@ -1424,6 +1439,30 @@ if has('nvim')
   call InitBarbar()
 else
   call InitBuftablineVim()
+endif
+
+" -----------------------------------------------------------------------------
+" s1n7ax/nvim-window-picker
+function! InitWindowPicker() abort
+  lua << EOF
+  require('window-picker').setup({
+    hint = 'floating-big-letter',
+    picker_config = {
+      handle_mouse_click = true,
+    },
+    filter_rules = {
+      bo = {
+        filetype = {},
+      },
+    },
+  })
+EOF
+
+  nnoremap <c-w><c-w> <cmd>lua vim.api.nvim_set_current_win(require('window-picker').pick_window() or vim.api.nvim_get_current_win())<cr>
+endfunction
+
+if has('nvim')
+  call InitWindowPicker()
 endif
 
 " -----------------------------------------------------------------------------
@@ -1822,8 +1861,10 @@ endif
 nnoremap <silent> <cr> <cmd>echo<cr>
 
 " https://stackoverflow.com/a/51388837/1600438
+if ! has('nvim')
+  nnoremap <esc>^[ <esc>^[
+endif
 nunmap <esc>
-nnoremap <esc>^[ <esc>^[
 
 " https://bluz71.github.io/2021/09/10/vim-tips-revisited.html#smarter-j-and-k-navigation
 nnoremap <silent> <expr> j v:count ? (v:count > 5 ? "m'" . v:count : '') . 'j' : 'gj'
