@@ -164,6 +164,9 @@ else
   Plug 'ap/vim-buftabline'
 endif
 if has('nvim')
+  Plug 'kevinhwang91/nvim-bqf'
+endif
+if has('nvim')
   Plug 'j-hui/fidget.nvim'
 endif
 if has('nvim')
@@ -794,14 +797,12 @@ function! InitTelescope() abort
         mappings = {
           n = {
             ['q'] = require('telescope.actions').close,
-            ['<C-q>'] = require('telescope.actions').close,
             ['<C-Down>'] = require('telescope.actions').cycle_history_next,
             ['<C-Up>'] = require('telescope.actions').cycle_history_prev,
             ['<C-t>'] = require('trouble.sources.telescope').open,
             ['<C-p>'] = require('telescope.actions.layout').toggle_preview,
           },
           i = {
-            ['<C-q>'] = require('telescope.actions').close,
             ['<C-Down>'] = require('telescope.actions').cycle_history_next,
             ['<C-Up>'] = require('telescope.actions').cycle_history_prev,
             ['<C-t>'] = require('trouble.sources.telescope').open,
@@ -871,6 +872,7 @@ function! InitTelescope() abort
         ignore_patterns = {
           '/tmp/',
           'Scratch',
+          'Bqf',
           'trouble',
           'NvimTree_',
           'oil',
@@ -879,7 +881,7 @@ function! InitTelescope() abort
           'spectre',
           'gitsigns',
           'fugitiveblame',
-          'diffpanel_',
+          'flog',
           'Plugins',
           'COMMIT_',
           '-todo$',
@@ -994,7 +996,7 @@ function! InitTrouble() abort
   require('trouble').setup({
     focus = true,
     auto_refresh = false,
-    auto_preview = false,
+    auto_preview = true,
     follow = true,
     win = {
       size = 0.4,
@@ -1035,25 +1037,6 @@ function! InitTrouble() abort
         Variable      = "",
       },
     },
-  })
-
-  vim.api.nvim_create_autocmd("BufRead", {
-    callback = function(ev)
-      if vim.bo[ev.buf].buftype == "quickfix" then
-        local is_loclist = 0 ~= vim.fn.getloclist(0, { filewinid = 1 }).filewinid
-        if is_loclist then
-          vim.schedule(function()
-            vim.cmd([[lclose]])
-            vim.cmd([[Trouble loclist open]])
-          end)
-        else
-          vim.schedule(function()
-            vim.cmd([[cclose]])
-            vim.cmd([[Trouble qflist open]])
-          end)
-        end
-      end
-    end,
   })
 EOF
 
@@ -1500,6 +1483,33 @@ endfunction
 
 if has('nvim')
   call InitWindowPicker()
+endif
+
+" -----------------------------------------------------------------------------
+" kevinhwang91/nvim-bqf
+function! InitBqf() abort
+  lua << EOF
+  require('bqf').setup({
+    preview = {
+      winblend = 0,
+      should_preview_cb = function(bufnr, qwinid)
+        local ret = true
+        local bufname = vim.api.nvim_buf_get_name(bufnr)
+        local fsize = vim.fn.getfsize(bufname)
+        if fsize > 100 * 1024 then
+          ret = false
+        elseif bufname:match('^fugitive://') then
+          ret = false
+        end
+        return ret
+      end,
+    },
+  })
+EOF
+endfunction
+
+if has('nvim')
+  call InitBqf()
 endif
 
 " -----------------------------------------------------------------------------
