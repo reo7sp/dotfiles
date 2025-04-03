@@ -388,8 +388,8 @@ EOF
 
   nnoremap K <cmd>lua vim.lsp.buf.hover()<cr>
   inoremap <C-S> <cmd>lua vim.lsp.buf.signature_help()<cr>
-  nnoremap <leader>lr <cmd>lua vim.lsp.buf.rename()<cr>
-  nnoremap <leader>la <cmd>lua vim.lsp.buf.code_action()<cr>
+  nnoremap cr <cmd>lua vim.lsp.buf.rename()<cr>
+  nnoremap c<C-R> <cmd>lua vim.lsp.buf.code_action()<cr>
 endfunction
 
 if has('nvim')
@@ -663,12 +663,12 @@ function! InitRefactoring() abort
   lua << EOF
   require('refactoring').setup({})
 
-  vim.keymap.set({ 'n', 'x' }, '<leader>lR', function() require('refactoring').select_refactor({}) end, { desc = 'Refactor', remap = true })
+  vim.keymap.set({ 'n', 'x' }, 'cR', function() require('refactoring').select_refactor({}) end, { desc = 'Refactor', remap = true })
 EOF
 endfunction
 
 function! LazyInitRefactoring() abort
-  lua vim.keymap.set({ 'n', 'x' }, '<leader>lR', function() vim.call('InitRefactoring') vim.api.nvim_input(vim.g.mapleader .. 'lR') end)
+  lua vim.keymap.set({ 'n', 'x' }, 'cR', function() vim.call('InitRefactoring') vim.api.nvim_input('cR') end)
 endfunction
 
 if has('nvim')
@@ -703,8 +703,8 @@ function! InitConform() abort
   })
 EOF
 
-  nnoremap <leader>lq <cmd>lua require('conform').format({})<cr>
-  xnoremap <leader>lq <cmd>lua require('conform').format({})<cr>
+  nnoremap <leader>q <cmd>lua require('conform').format({})<cr>
+  xnoremap <leader>q <cmd>lua require('conform').format({})<cr>
 endfunction
 
 if has('nvim')
