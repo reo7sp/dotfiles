@@ -121,6 +121,7 @@ Plug 'haya14busa/vim-asterisk'
 if has('nvim')
   Plug 'nvim-telescope/telescope.nvim'
   Plug 'nvim-telescope/telescope-fzf-native.nvim', {'do': 'make'}
+  Plug 'nvim-telescope/telescope-ui-select.nvim'
   Plug 'smartpde/telescope-recent-files'
   Plug 'nvim-telescope/telescope-live-grep-args.nvim'
   Plug 'princejoogie/dir-telescope.nvim'
@@ -280,15 +281,40 @@ function! InitNvimCmp() abort
   require('luasnip.loaders.from_vscode').lazy_load()
 
   local cmp = require('cmp')
+  local compare = require('cmp.config.compare')
   local luasnip = require('luasnip')
   cmp.setup({
     sources = {
-      { name = 'path' },
       { name = 'nvim_lsp' },
       { name = 'luasnip', keyword_length = 2 },
+      { name = 'path' },
       { name = 'buffer', keyword_length = 3 },
-      { name = 'buffer-lines', keyword_length = 4 },
+      { name = 'buffer-lines', keyword_length = 3 },
       { name = 'nvim_lsp_signature_help' },
+    },
+    sorting = {
+      comparators = {
+        function (a, b)
+          local scores = {
+            ['buffer-lines'] = -1,
+          }
+          local a_score = scores[a.source.name] or 0
+          local b_score = scores[b.source.name] or 0
+          if a_score == 0 and b_score == 0 then
+            return nil
+          end
+          return a_score > b_score
+        end,
+        compare.offset,
+        compare.exact,
+        compare.score,
+        compare.recently_used,
+        compare.locality,
+        compare.kind,
+        compare.sort_text,
+        compare.length,
+        compare.order,
+      },
     },
     view = {
       entries = {
@@ -663,7 +689,7 @@ function! InitRefactoring() abort
   lua << EOF
   require('refactoring').setup({})
 
-  vim.keymap.set({ 'n', 'x' }, 'cR', function() require('refactoring').select_refactor({}) end, { desc = 'Refactor', remap = true })
+  vim.keymap.set({ 'n', 'x' }, 'cR', function() require('telescope').extensions.refactoring.refactors(require('telescope.themes').get_ivy()) end, { desc = 'Refactor', remap = true })
 EOF
 endfunction
 
@@ -771,16 +797,18 @@ function! InitTelescope() abort
         mappings = {
           n = {
             ['q'] = require('telescope.actions').close,
+            ['<C-q>'] = require('telescope.actions').close,
             ['<C-Down>'] = require('telescope.actions').cycle_history_next,
             ['<C-Up>'] = require('telescope.actions').cycle_history_prev,
-            ['<c-t>'] = require('trouble.sources.telescope').open,
-            ['<c-p>'] = require('telescope.actions.layout').toggle_preview,
+            ['<C-t>'] = require('trouble.sources.telescope').open,
+            ['<C-p>'] = require('telescope.actions.layout').toggle_preview,
           },
           i = {
+            ['<C-q>'] = require('telescope.actions').close,
             ['<C-Down>'] = require('telescope.actions').cycle_history_next,
             ['<C-Up>'] = require('telescope.actions').cycle_history_prev,
-            ['<c-t>'] = require('trouble.sources.telescope').open,
-            ['<c-p>'] = require('telescope.actions.layout').toggle_preview,
+            ['<C-t>'] = require('trouble.sources.telescope').open,
+            ['<C-p>'] = require('telescope.actions.layout').toggle_preview,
           },
         },
         initial_mode = 'normal',
@@ -889,6 +917,7 @@ function! InitTelescope() abort
     },
   })
   require('telescope').load_extension('fzf')
+  require('telescope').load_extension('ui-select')
   require('telescope').load_extension('recent_files')
   require('telescope').load_extension('live_grep_args')
   require('telescope').load_extension('dir')
@@ -897,6 +926,7 @@ function! InitTelescope() abort
   require('telescope').load_extension('yank_history')
   require('telescope').load_extension('aerial')
   require('telescope').load_extension('hierarchy')
+  require('telescope').load_extension('refactoring')
 
   -- https://github.com/nvim-telescope/telescope.nvim/issues/605
   local actions = require('telescope.actions')
@@ -933,25 +963,27 @@ function! InitTelescope() abort
   vim.keymap.set('n', '<leader>gB', M.git_commits, { desc = 'Telescope git_commits' })
 EOF
 
-  nnoremap <leader>e <cmd>lua require('telescope').extensions.recent_files.pick()<cr>
-  nnoremap <leader>f <cmd>Telescope find_files<cr>
-  nnoremap <leader>s <cmd>Telescope live_grep_args<cr>
-  vnoremap <leader>s <cmd>lua require('telescope-live-grep-args.shortcuts').grep_visual_selection()<cr>
-  nnoremap <leader>Ff <cmd>Telescope dir find_files<cr>
-  nnoremap <leader>Fs <cmd>Telescope dir live_grep<cr>
-  nnoremap <leader>b <cmd>Telescope buffers<cr>
-  nnoremap <leader>B <cmd>Telescope telescope-tabs list_tabs<cr>
-  nnoremap <leader>E <cmd>Telescope jumplist<cr>
-  nnoremap <leader>y <cmd>Telescope yank_history<cr>
-  nnoremap <leader>k <cmd>Telescope aerial<cr>
-  nnoremap <leader>K <cmd>Telescope lsp_dynamic_workspace_symbols<cr>
-  nnoremap <leader>gb <cmd>Telescope git_branches<cr>
   nnoremap gd <cmd>Telescope lsp_definitions<cr>
   nnoremap gD <cmd>Telescope lsp_implementations<cr>
   nnoremap gi <cmd>Telescope lsp_implementations<cr>
   nnoremap gy <cmd>Telescope lsp_type_definitions<cr>
   nnoremap <nowait> gr <cmd>Telescope lsp_references<cr>
   nnoremap gR <cmd>Telescope hierarchy theme=ivy disable_devicons=true<cr>
+  nnoremap <leader>e <cmd>lua require('telescope').extensions.recent_files.pick()<cr>
+  nnoremap <leader>E <cmd>Telescope jumplist<cr>
+  nnoremap <leader>f <cmd>Telescope find_files<cr>
+  nnoremap <leader>Ff <cmd>Telescope dir find_files<cr>
+  nnoremap <leader>s <cmd>Telescope live_grep_args<cr>
+  vnoremap <leader>s <cmd>lua require('telescope-live-grep-args.shortcuts').grep_visual_selection()<cr>
+  nnoremap <leader>Fs <cmd>Telescope dir live_grep<cr>
+  nnoremap <leader>b <cmd>Telescope buffers<cr>
+  nnoremap <leader>B <cmd>Telescope telescope-tabs list_tabs<cr>
+  nnoremap <leader>m <cmd>Telescope marks<cr>
+  nnoremap <leader>M <cmd>Telescope registers<cr>
+  nnoremap <leader>y <cmd>Telescope yank_history<cr>
+  nnoremap <leader>k <cmd>Telescope aerial<cr>
+  nnoremap <leader>K <cmd>Telescope lsp_dynamic_workspace_symbols<cr>
+  nnoremap <leader>gb <cmd>Telescope git_branches<cr>
 endfunction
 
 if has('nvim')
