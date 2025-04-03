@@ -201,9 +201,6 @@ Plug 'fladson/vim-kitty'
 Plug 'tpope/vim-eunuch'
 Plug 'tpope/vim-fugitive'
 Plug 'rbong/vim-flog', {'on': ['Flog', 'Flogsplit']}
-if has('nvim')
-  Plug 'sindrets/diffview.nvim', {'on': ['DiffviewOpen', 'DiffviewFileHistory']}
-endif
 
 call plug#end()
 
@@ -1043,10 +1040,18 @@ function! InitTrouble() abort
   vim.api.nvim_create_autocmd("BufRead", {
     callback = function(ev)
       if vim.bo[ev.buf].buftype == "quickfix" then
-        vim.schedule(function()
-          vim.cmd([[cclose]])
-          vim.cmd([[Trouble qflist open]])
-        end)
+        local is_loclist = 0 ~= vim.fn.getloclist(0, { filewinid = 1 }).filewinid
+        if is_loclist then
+          vim.schedule(function()
+            vim.cmd([[lclose]])
+            vim.cmd([[Trouble loclist open]])
+          end)
+        else
+          vim.schedule(function()
+            vim.cmd([[cclose]])
+            vim.cmd([[Trouble qflist open]])
+          end)
+        end
       end
     end,
   })
@@ -1811,28 +1816,6 @@ endfunction
 
 if has('nvim')
   call InitTreesitter()
-endif
-
-" -----------------------------------------------------------------------------
-" sindrets/diffview.nvim
-function! InitDiffview() abort
-  lua << EOF
-  require('diffview').setup({
-    use_icons = false,
-    icons = {
-      folder_closed = "",
-      folder_open = "",
-    },
-    signs = {
-      fold_closed = "",
-      fold_open = "",
-    },
-  })
-EOF
-endfunction
-
-if has('nvim')
-  autocmd User diffview.nvim call InitDiffview()
 endif
 
 
