@@ -573,7 +573,7 @@ endfunction
 function! InitUndotreeVim() abort
   let g:undotree_DiffAutoOpen = 0
   let g:undotree_SetFocusWhenToggle = 1
-  let g:undotree_SplitWidth = 40
+  let g:undotree_SplitWidth = 35
 
   nnoremap <leader>u <cmd>UndotreeToggle<cr>
 endfunction
@@ -952,9 +952,9 @@ function! InitTrouble() abort
   lua << EOF
   require('trouble').setup({
     focus = true,
+    auto_refresh = false,
     auto_preview = false,
-    auto_jump = false,
-    follow = false,
+    follow = true,
     win = {
       size = 0.4,
     },
@@ -1092,7 +1092,7 @@ function! InitNvimTree() abort
       },
     },
     view = {
-      width = 40,
+      width = 35,
     },
     git = {
       enable = false,
@@ -1113,7 +1113,7 @@ function! InitNvimTree() abort
       open_file = {
         quit_on_open = false,
         window_picker = {
-          enable = false,
+          enable = true,
         },
       },
     },
@@ -1182,8 +1182,8 @@ function! InitAerial() abort
   require('aerial').setup({
     layout = {
       default_direction = 'left',
-      min_width = 40,
-      width = 40,
+      min_width = 35,
+      width = 35,
     },
     close_on_select = false,
     autojump = true,
