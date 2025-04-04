@@ -155,15 +155,6 @@ fi
 alias edit-hosts='sudo vim /etc/hosts'
 alias show-hosts='cat /etc/hosts'
 
-random-string() {
-  local arg=$1
-  openssl rand -hex "$((arg / 2))"
-}
-
-timestamp() {
-  date +%s
-}
-
 # -----------------------------------------------------------------------------
 # vim
 if can-exec nvim; then
@@ -372,6 +363,33 @@ alias jn='jupyter notebook'
 # -----------------------------------------------------------------------------
 # k8s
 alias k='kubectl'
+
+# -----------------------------------------------------------------------------
+# utils
+random-string() {
+  local arg=$1
+  openssl rand -hex "$((arg / 2))"
+}
+
+alias timestamp='date +%s'
+
+alias is-ip-in-net='python3 -c "import sys; from ipaddress import ip_address, ip_network; print(ip_address(sys.argv[1]) in ip_network(sys.argv[2]))"'
+
+# -----------------------------------------------------------------------------
+# encode / decode
+alias encode-url='python3 -c "import sys, urllib.parse; print(urllib.parse.quote(sys.stdin.read().strip()))"'
+alias decode-url='python3 -c "import sys, urllib.parse; print(urllib.parse.unquote_plus(sys.stdin.read().strip()))"'
+
+alias encode-html='python3 -c "import sys, html; print(html.escape(sys.stdin.read().strip()))"'
+alias decode-html='python3 -c "import sys, html; print(html.unescape(sys.stdin.read().strip()))"'
+
+alias encode-base64='python3 -c "import sys, base64; sys.stdout.buffer.write(base64.b64encode(sys.stdin.buffer.read()))"'
+alias decode-base64='python3 -c "import sys, base64; sys.stdout.buffer.write(base64.b64decode(sys.stdin.read().strip()))"'
+
+# -----------------------------------------------------------------------------
+# flags
+alias decode-flags-bin="python3 -c \"print([f'(1 << {i})' for i, v in enumerate(bin(int(input()))[2:][::-1]) if v == '1'])\""
+alias decode-flags-hex="python3 -c \"print([hex(1 << i) for i, v in enumerate(bin(int(input()))[2:][::-1]) if v == '1'])\""
 
 # -----------------------------------------------------------------------------
 # markdown
