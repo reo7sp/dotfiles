@@ -181,6 +181,7 @@ if has('nvim')
   Plug 'lukas-reineke/indent-blankline.nvim'
   Plug 'lukas-reineke/virt-column.nvim'
   Plug 'psliwka/vim-smoothie'
+  Plug 'stevearc/stickybuf.nvim'
 endif
 if has('nvim')
   Plug 'folke/which-key.nvim'
@@ -193,11 +194,13 @@ Plug 'sheerun/vim-polyglot'
 if has('nvim')
   Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
   Plug 'nvim-treesitter/nvim-treesitter-textobjects'
+  Plug 'nvim-treesitter/nvim-treesitter-context'
 endif
 Plug 'johejo/gomod.vim'
 Plug 'Vimjas/vim-python-pep8-indent', {'for': 'python'}
 Plug 'HiPhish/jinja.vim'
 Plug 'fladson/vim-kitty'
+Plug 'hat0uma/csvview.nvim'
 
 " -----------------------------------------------------------------------------
 " commands
@@ -265,11 +268,6 @@ function! InitNvimCmp() abort
       'yamlls',
       'lemminx',
       'dockerls',
-      'docker_compose_language_service',
-      'nginx_language_server',
-      'ansiblels',
-      'puppet',
-      'gitlab_ci_ls',
     },
     handlers = {
       function(server_name)
@@ -1220,6 +1218,7 @@ function! InitAerial() abort
     close_on_select = false,
     autojump = true,
     show_guides = true,
+    disable_max_lines = 99999,
   })
 EOF
 
@@ -1386,6 +1385,7 @@ function! InitBarbar() abort
     focus_on_close = 'left',
     animation = false,
     icons = {
+      buffer_index = true,
       button = false,
       filetype = {
         enabled = false,
@@ -1396,8 +1396,18 @@ function! InitBarbar() abort
       modified = {
         button = '',
       },
-      separator_at_end = false,
+      separator = {
+        right = ' ',
+      },
+      inactive = {
+        separator = {
+          right = ' ',
+        },
+      },
+      separator_at_end = true,
     },
+    minimum_padding = 0,
+    maximum_padding = 0,
     sidebar_filetypes = {},
     no_name_title = '[No Name]',
   })
@@ -1662,6 +1672,16 @@ if has('nvim')
 endif
 
 " -----------------------------------------------------------------------------
+" stevearc/stickybuf.nvim
+function! InitStickyBuf() abort
+  lua require('stickybuf').setup()
+endfunction
+
+if has('nvim')
+  call InitStickyBuf()
+endif
+
+" -----------------------------------------------------------------------------
 " folke/which-key.nvim or liuchengxu/vim-which-key
 function! InitWhichKeyNvim() abort
   lua << EOF
@@ -1757,6 +1777,8 @@ function! InitTreesitter() abort
       enable = true,
       disable = {
         'mermaid',
+        'csv',
+        'tsv',
       },
     },
     indent = {
@@ -1821,11 +1843,46 @@ function! InitTreesitter() abort
       },
     },
   })
+
+  require('treesitter-context').setup({
+    max_lines = 1,
+  })
 EOF
 endfunction
 
 if has('nvim')
   call InitTreesitter()
+endif
+
+" -----------------------------------------------------------------------------
+" hat0uma/csvview.nvim
+function! InitCsvView() abort
+  lua << EOF
+  require('csvview').setup({
+    view = {
+      display_mode = 'border',
+    },
+    keymaps = {
+      textobject_field_inner = { 'if', mode = { 'o', 'x' } },
+      textobject_field_outer = { 'af', mode = { 'o', 'x' } },
+      jump_next_field_end = { '<Tab>', mode = { 'n', 'v' } },
+      jump_prev_field_end = { '<S-Tab>', mode = { 'n', 'v' } },
+      jump_next_row = { '<Enter>', mode = { 'n', 'v' } },
+      jump_prev_row = { '<S-Enter>', mode = { 'n', 'v' } },
+    },
+  })
+
+  vim.api.nvim_create_autocmd('FileType', {
+    pattern = 'csv',
+    callback = function()
+      require('csvview').enable()
+    end,
+  })
+EOF
+endfunction
+
+if has('nvim')
+  call InitCsvView()
 endif
 
 
@@ -1844,9 +1901,9 @@ if has('nvim')
   vim.api.nvim_create_user_command('Subl',
     function (opts)
       if opts.fargs[1] == 'dir' then
-        vim.cmd('!subl ' .. vim.fn.getcwd())
+        vim.cmd('!subl "' .. vim.fn.getcwd() .. '"')
       else
-        vim.cmd('!subl %')
+        vim.cmd('!subl "%"')
       end
     end,
     {
@@ -1861,11 +1918,11 @@ if has('nvim')
   vim.api.nvim_create_user_command('Smerge',
     function (opts)
       if opts.fargs[1] == 'blame' then
-        vim.cmd('!smerge blame %')
+        vim.cmd('!smerge blame "%"')
       elseif opts.fargs[1] == 'log' then
-        vim.cmd('!smerge log %')
+        vim.cmd('!smerge log "%"')
       else
-        vim.cmd('!smerge ' .. vim.fn.getcwd())
+        vim.cmd('!smerge "' .. vim.fn.getcwd() .. '"')
       end
     end,
     {
