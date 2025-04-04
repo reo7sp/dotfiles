@@ -1199,6 +1199,7 @@ function! InitOil() abort
   lua require('oil').setup()
 
   nnoremap <leader>T <cmd>Oil<CR>
+  nnoremap - <cmd>Oil<CR>
 endfunction
 
 if has('nvim')
@@ -2048,6 +2049,7 @@ set expandtab
 set autoindent
 set copyindent
 set smartindent
+set formatoptions+=cro
 set fixendofline
 if v:version >= 802
   set nrformats+=unsigned
