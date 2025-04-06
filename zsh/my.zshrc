@@ -48,9 +48,12 @@ antibody bundle reo7sp/pure
 antibody bundle zsh-users/zsh-completions
 antibody bundle zsh-users/zsh-autosuggestions
 antibody bundle zsh-users/zsh-history-substring-search
+antibody bundle mdumitru/fancy-ctrl-z
 antibody bundle reo7sp/zimfw-git
 export PATH="$(antibody list | grep zimfw | perl -lne 'print $1 if /\s+(.+)/')/functions:$PATH"
 antibody bundle zuxfoucault/colored-man-pages_mod
+antibody bundle MichaelAquilina/zsh-autoswitch-virtualenv
+export AUTOSWITCH_DEFAULT_PYTHON=python3
 
 
 # =============================================================================
