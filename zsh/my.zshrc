@@ -402,6 +402,8 @@ make-markdown() {
 }
 
 watch-markdown() {
+  make-markdown "$1"
+  open "${1%.*}".html
   fswatch "$1" | while read; do make-markdown "$1" ; done
 }
 
