@@ -49,10 +49,11 @@ antibody bundle zsh-users/zsh-completions
 antibody bundle zsh-users/zsh-autosuggestions
 antibody bundle zsh-users/zsh-history-substring-search
 antibody bundle mdumitru/fancy-ctrl-z
+antibody bundle jeffreytse/zsh-vi-mode
 antibody bundle reo7sp/zimfw-git
 export PATH="$(antibody list | grep zimfw | perl -lne 'print $1 if /\s+(.+)/')/functions:$PATH"
 antibody bundle zuxfoucault/colored-man-pages_mod
-antibody bundle MichaelAquilina/zsh-autoswitch-virtualenv
+antibody bundle reo7sp/zsh-autoswitch-virtualenv
 export AUTOSWITCH_DEFAULT_PYTHON=python3
 
 
@@ -419,10 +420,14 @@ make-plantuml() {
 }
 
 watch-plantuml-slow() {
+  make-plantuml-slow "$1"
+  open "${1%.*}".png
   fswatch "$1" | while read; do make-plantuml-slow "$1" ; done
 }
 
 watch-plantuml() {
+  make-plantuml "$1"
+  open "${1%.*}".png
   fswatch "$1" | while read; do make-plantuml "$1" ; done
 }
 
@@ -433,5 +438,7 @@ make-mermaid() {
 }
 
 watch-mermaid() {
+  make-mermaid "$1"
+  open "${1%.*}".png
   fswatch "$1" | while read; do make-mermaid "$1" ; done
 }

@@ -12,7 +12,11 @@ nnoremap <Space> <Nop>
 
 " =============================================================================
 " plugins
-call plug#begin('~/.vim/bundle')
+if has('nvim')
+  call plug#begin('~/.vim/nbundle')
+else
+  call plug#begin('~/.vim/bundle')
+endif
 
 " -----------------------------------------------------------------------------
 " generic
@@ -52,6 +56,9 @@ end
 Plug 'alvan/vim-closetag'
 Plug 'wellle/targets.vim'
 if has('nvim')
+  Plug 'monaqa/dial.nvim'
+endif
+if has('nvim')
   Plug 'kylechui/nvim-surround'
 else
   Plug 'tpope/vim-surround'
@@ -75,7 +82,11 @@ endif
 if has('nvim')
   Plug 'ahmedkhalf/project.nvim'
 endif
-Plug 'tpope/vim-sleuth'
+if has('nvim')
+  Plug 'nmac427/guess-indent.nvim'
+else
+  Plug 'tpope/vim-sleuth'
+endif
 if has('nvim')
   Plug 'lewis6991/spaceless.nvim'
 else
@@ -200,7 +211,7 @@ Plug 'johejo/gomod.vim'
 Plug 'Vimjas/vim-python-pep8-indent', {'for': 'python'}
 Plug 'HiPhish/jinja.vim'
 Plug 'fladson/vim-kitty'
-Plug 'hat0uma/csvview.nvim'
+Plug 'hat0uma/csvview.nvim', {'for': 'csv'}
 
 " -----------------------------------------------------------------------------
 " commands
@@ -431,6 +442,45 @@ if has('nvim')
 endif
 
 " -----------------------------------------------------------------------------
+" monaqa/dial.nvim
+function! InitDial() abort
+  lua << EOF
+  local augend = require('dial.augend')
+  require('dial.config').augends:register_group({
+    default = {
+      augend.integer.alias.decimal,
+      augend.integer.alias.hex,
+      augend.date.alias['%Y-%m-%d'],
+      augend.constant.alias.bool,
+      augend.constant.new({
+        elements = { 'and', 'or' },
+        word = true,
+        cyclic = true,
+      }),
+      augend.constant.new({
+        elements = { '&&', '||' },
+        word = false,
+        cyclic = true,
+      }),
+    },
+  })
+EOF
+
+  nmap  <C-a>  <Plug>(dial-increment)
+  nmap  <C-x>  <Plug>(dial-decrement)
+  nmap g<C-a> g<Plug>(dial-increment)
+  nmap g<C-x> g<Plug>(dial-decrement)
+  vmap  <C-a>  <Plug>(dial-increment)
+  vmap  <C-x>  <Plug>(dial-decrement)
+  vmap g<C-a> g<Plug>(dial-increment)
+  vmap g<C-x> g<Plug>(dial-decrement)
+endfunction
+
+if has('nvim')
+  call InitDial()
+endif
+
+" -----------------------------------------------------------------------------
 " kylechui/nvim-surround
 function! InitNvimSurround() abort
   lua << EOF
@@ -516,6 +566,16 @@ endfunction
 
 if has('nvim')
   call InitProjectNvim()
+endif
+
+" -----------------------------------------------------------------------------
+" nmac427/guess-indent.nvim
+function! InitGuessIndent() abort
+  lua require('guess-indent').setup({})
+endfunction
+
+if has('nvim')
+  call InitGuessIndent()
 endif
 
 " -----------------------------------------------------------------------------
@@ -613,7 +673,7 @@ else
 endif
 
 " -----------------------------------------------------------------------------
-" numToStr/Comment.nvim or scrooloose/nerdcommenter
+" numToStr/Comment.nvim
 function! InitComment() abort
   lua << EOF
   require('ts_context_commentstring').setup({
@@ -686,6 +746,7 @@ endif
 function! InitRefactoring() abort
   lua << EOF
   require('refactoring').setup({})
+  require('telescope').load_extension('refactoring')
 
   vim.keymap.set({ 'n', 'x' }, 'cR', function() require('telescope').extensions.refactoring.refactors(require('telescope.themes').get_ivy()) end, { desc = 'Refactor', remap = true })
 EOF
@@ -923,7 +984,6 @@ function! InitTelescope() abort
   require('telescope').load_extension('yank_history')
   require('telescope').load_extension('aerial')
   require('telescope').load_extension('hierarchy')
-  require('telescope').load_extension('refactoring')
 
   -- https://github.com/nvim-telescope/telescope.nvim/issues/605
   local actions = require('telescope.actions')
@@ -978,7 +1038,7 @@ EOF
   nnoremap <leader>m <cmd>Telescope marks<cr>
   nnoremap <leader>M <cmd>Telescope registers<cr>
   nnoremap <leader>y <cmd>Telescope yank_history<cr>
-  nnoremap <leader>k <cmd>Telescope aerial<cr>
+  nnoremap <leader>k <cmd>Telescope aerial initial_mode=insert<cr>
   nnoremap <leader>K <cmd>Telescope lsp_dynamic_workspace_symbols<cr>
   nnoremap <leader>gb <cmd>Telescope git_branches<cr>
 endfunction
@@ -994,7 +1054,7 @@ function! InitTrouble() abort
   require('trouble').setup({
     focus = true,
     auto_refresh = false,
-    auto_preview = true,
+    auto_preview = false,
     follow = true,
     win = {
       size = 0.4,
@@ -1161,6 +1221,7 @@ function! InitNvimTree() abort
       vim.keymap.set('n', 's', '<Plug>Sneak_s', opts('Sneak'))
       vim.keymap.set('n', 'S', '<Plug>Sneak_S', opts('Sneak'))
       vim.keymap.set('n', '<c-/>', function() require('pounce').pounce({}) end, opts('Pounce'))
+      vim.keymap.set('n', 'gs', api.node.run.system, opts('Run System'))
     end,
   })
 EOF
@@ -1196,7 +1257,13 @@ endif
 " -----------------------------------------------------------------------------
 " stevearc/oil.nvim
 function! InitOil() abort
-  lua require('oil').setup()
+  lua << EOF
+  require('oil').setup({
+    view_options = {
+      show_hidden = true,
+    },
+  })
+EOF
 
   nnoremap <leader>T <cmd>Oil<CR>
   nnoremap - <cmd>Oil<CR>
@@ -1405,7 +1472,7 @@ function! InitBarbar() abort
           right = ' ',
         },
       },
-      separator_at_end = true,
+      separator_at_end = false,
     },
     minimum_padding = 0,
     maximum_padding = 0,
@@ -1756,6 +1823,7 @@ function! InitTreesitter() abort
       'ruby',
       'lua',
       'bash',
+      'make',
       'html',
       'css',
       'javascript',
@@ -1883,7 +1951,7 @@ EOF
 endfunction
 
 if has('nvim')
-  call InitCsvView()
+  autocmd User csvview.nvim call InitCsvView()
 endif
 
 
@@ -1892,8 +1960,8 @@ endif
 
 " -----------------------------------------------------------------------------
 " yank file line reference
-command YankFilename redir @+ | echo substitute(expand('%'), getcwd() . '/', '', '') | redir END
-command YankReference redir @+ | echo join([substitute(expand('%'), getcwd() . '/', '', ''), line('.')], ':') | redir END
+command YankFilename let @+ = substitute(expand('%'), getcwd() . '/', '', '')
+command YankReference let @+ = join([substitute(expand('%'), getcwd() . '/', '', ''), line('.')], ':')
 
 " -----------------------------------------------------------------------------
 " sublime text & sublime merge integration

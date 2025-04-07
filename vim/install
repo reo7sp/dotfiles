@@ -6,7 +6,7 @@ can-exec() {
 }
 
 
-mkdir -p ~/.vim/{bundle,backup,tmp,undo,sessions,spell,view} ~/.config/nvim ~/.config/nvim/after/{syntax,ftplugin}
+mkdir -p ~/.vim/{bundle,nbundle,backup,tmp,undo,sessions,spell,view} ~/.config/nvim ~/.config/nvim/after/{syntax,ftplugin}
 
 cp vimrc ~/.vimrc
 cp nvim/init.vim ~/.config/nvim/init.vim
