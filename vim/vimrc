@@ -54,7 +54,6 @@ else
   Plug 'Raimondi/delimitMate'
 end
 Plug 'alvan/vim-closetag'
-Plug 'wellle/targets.vim'
 if has('nvim')
   Plug 'monaqa/dial.nvim'
 endif
@@ -499,7 +498,8 @@ endif
 function! InitBbye() abort
   cnoreabbrev bq Bdelete
   cnoreabbrev bd Bdelete
-  nnoremap <C-q> <cmd>Bdelete<cr>
+  nnoremap <c-q> <cmd>Bdelete<cr>
+  nnoremap <c-w>Q <cmd>Bdelete<cr>
 endfunction
 
 if ! has('nvim')
@@ -512,6 +512,7 @@ function! InitBufOnly() abort
   cnoreabbrev bo silent BufOnly
   cnoreabbrev bon silent BufOnly
   cnoreabbrev bonly silent BufOnly
+  nnoremap <c-w>O <cmd>BufOnly<cr>
 endfunction
 
 if ! has('nvim')
@@ -1134,21 +1135,17 @@ function! InitNvimTree() abort
   end
 
   function M.launch_live_grep(opts)
-    return M.launch_telescope("live_grep", opts)
+    return M.launch_telescope('live_grep', opts)
   end
 
   function M.launch_find_files(opts)
-    return M.launch_telescope("find_files", opts)
+    return M.launch_telescope('find_files', opts)
   end
 
   function M.launch_telescope(func_name, opts)
-    local telescope_status_ok, _ = pcall(require, "telescope")
-    if not telescope_status_ok then
-      return
-    end
     local node = api.tree.get_node_under_cursor()
     local is_folder = node.fs_stat and node.fs_stat.type == 'directory' or false
-    local basedir = is_folder and node.absolute_path or vim.fn.fnamemodify(node.absolute_path, ":h")
+    local basedir = is_folder and node.absolute_path or vim.fn.fnamemodify(node.absolute_path, ':h')
     if (node.name == '..' and TreeExplorer ~= nil) then
       basedir = TreeExplorer.cwd
     end
@@ -1156,7 +1153,7 @@ function! InitNvimTree() abort
     opts.cwd = basedir
     opts.search_dirs = { basedir }
     opts.attach_mappings = view_selection
-    require("telescope.builtin")[func_name](opts)
+    require('telescope.builtin')[func_name](opts)
   end
 
   require('nvim-tree').setup({
@@ -1258,14 +1255,47 @@ endif
 " stevearc/oil.nvim
 function! InitOil() abort
   lua << EOF
+  local M = {}
+
+  function M.launch_live_grep(opts)
+    return M.launch_telescope('live_grep', opts)
+  end
+
+  function M.launch_find_files(opts)
+    return M.launch_telescope('find_files', opts)
+  end
+
+  function M.launch_telescope(func_name, opts)
+    local bufnr = vim.api.nvim_get_current_buf()
+    local entry = require('oil').get_cursor_entry()
+    if not entry then
+      return
+    end
+    local is_folder = entry.type == 'directory'
+    require('oil.util').get_edit_path(bufnr, entry, function(normalized_url)
+      local basedir = is_folder and normalized_url:gsub('oil://', '') or vim.fn.fnamemodify(normalized_url, ':h')
+      opts = opts or {}
+      opts.cwd = basedir
+      opts.search_dirs = { basedir }
+      require('telescope.builtin')[func_name](opts)
+    end)
+  end
+
   require('oil').setup({
     view_options = {
       show_hidden = true,
     },
+    keymaps = {
+      ['<C-f>'] = { callback = function() M.launch_find_files() end, desc = 'Launch Find Files' },
+      ['<C-s>'] = { callback = function() M.launch_live_grep() end, desc = 'Launch Live Grep' },
+      ['<C-x>'] = { 'actions.select', opts = { horizontal = true } },
+      ['<C-v>'] = { 'actions.select', opts = { vertical = true } },
+      ['<C-h>'] = false,
+      ['q'] = { 'actions.close', mode = 'n' },
+    },
   })
 EOF
 
-  nnoremap <leader>T <cmd>Oil<CR>
   nnoremap - <cmd>Oil<CR>
 endfunction
 
@@ -1486,11 +1516,13 @@ EOF
 
   cnoreabbrev bq BufferClose
   cnoreabbrev bd BufferClose
-  nnoremap <C-q> <cmd>BufferClose<cr>
+  nnoremap <c-q> <cmd>BufferClose<cr>
+  nnoremap <c-w>Q <cmd>BufferClose<cr>
 
   cnoreabbrev bo BufferCloseAllButCurrent
   cnoreabbrev bon BufferCloseAllButCurrent
   cnoreabbrev bonly BufferCloseAllButCurrent
+  nnoremap <c-w>O <cmd>BufferCloseAllButCurrent<cr>
 
   nnoremap <C-[> <cmd>BufferPrevious<CR>
   nnoremap <C-]> <cmd>BufferNext<CR>
@@ -2048,6 +2080,13 @@ vnoremap +P "+P
 " https://bluz71.github.io/2021/09/10/vim-tips-revisited.html#fast-previous-buffer-switching
 nnoremap <C-Backspace> <C-^>
 nnoremap <C-S-Backspace> <cmd>lua require('telescope-tabs').go_to_previous()<cr>
+
+nnoremap <C-w><Backspace> <cmd>vsplit #<cr>
+nnoremap <C-w><C-Backspace> <cmd>vsplit #<cr>
+nnoremap <C-w>^ <cmd>vsplit #<cr>
+nnoremap <C-w><C-^> <cmd>vsplit #<cr>
+nnoremap <silent> <C-w>n :vsplit<cr>:enew<cr>
+nnoremap <silent> <C-w><C-n> :vsplit<cr>:enew<cr>
 
 inoremap <A-left> <C-left>
 inoremap <A-right> <C-right>
