@@ -62,6 +62,11 @@ if has('nvim')
 else
   Plug 'tpope/vim-surround'
 endif
+if has('nvim')
+  Plug 'gbprod/substitute.nvim'
+else
+  Plug 'svermeulen/vim-subversive'
+endif
 Plug 'romainl/vim-cool'
 if ! has('nvim')
   Plug 'ConradIrwin/vim-bracketed-paste'
@@ -491,6 +496,35 @@ endfunction
 
 if has('nvim')
   call InitNvimSurround()
+endif
+
+" -----------------------------------------------------------------------------
+" gbprod/substitute.nvim or svermeulen/vim-subversive
+function! InitSubstitute() abort
+  lua << EOF
+  require('substitute').setup({
+    range = {
+      prefix = 'x',
+    },
+  })
+
+  vim.keymap.set('n', 'x', require('substitute').operator, { noremap = true })
+  vim.keymap.set('n', 'xx', require('substitute').line, { noremap = true })
+  vim.keymap.set('n', 'X', require('substitute').eol, { noremap = true })
+  vim.keymap.set('x', 'x', require('substitute').visual, { noremap = true })
+EOF
+endfunction
+
+function! InitSubversive() abort
+  nmap x <plug>(SubversiveSubstitute)
+  nmap xx <plug>(SubversiveSubstituteLine)
+  nmap X <plug>(SubversiveSubstituteToEndOfLine)
+endfunction
+
+if has('nvim')
+  call InitSubstitute()
+else
+  call InitSubversive()
 endif
 
 " -----------------------------------------------------------------------------
