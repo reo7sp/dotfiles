@@ -114,11 +114,9 @@ else
   Plug 'scrooloose/nerdcommenter'
 endif
 if has('nvim')
-  Plug 'johmsalas/text-case.nvim'
   Plug 'Wansmer/treesj'
+  Plug 'johmsalas/text-case.nvim'
   Plug 'echasnovski/mini.align'
-endif
-if has('nvim')
   Plug 'ThePrimeagen/refactoring.nvim'
 endif
 if has('nvim')
@@ -296,7 +294,7 @@ function! InitNvimCmp() abort
   local cmp = require('cmp')
   local compare = require('cmp.config.compare')
   local luasnip = require('luasnip')
-  local max_buffer_size = 1024 * 1024 -- 1 Megabyte max
+  local max_buffer_size = 1024 * 1024
   cmp.setup({
     sources = {
       {
@@ -365,7 +363,7 @@ function! InitNvimCmp() abort
     },
     preselect = 'none',
     completion = {
-      completeopt = 'menu,menuone,noinsert,noselect'
+      completeopt = 'menu,menuone,noinsert,noselect',
     },
     snippet = {
       expand = function(args)
@@ -373,11 +371,9 @@ function! InitNvimCmp() abort
       end,
     },
     mapping = cmp.mapping.preset.insert({
-      --['<C-d>'] = cmp.mapping(cmp.mapping.scroll_docs(5), {'i', 'c'}),
-      --['<C-u>'] = cmp.mapping(cmp.mapping.scroll_docs(-5), {'i', 'c'}),
       ['<C-d>'] = cmp.mapping(function(fallback)
         if cmp.visible() then
-          for i = 1, 10, 1 do
+          for i = 1, 5, 1 do
             cmp.select_next_item()
           end
         else
@@ -386,7 +382,7 @@ function! InitNvimCmp() abort
       end, { 'i', 's' }),
       ['<C-u>'] = cmp.mapping(function(fallback)
         if cmp.visible() then
-          for i = 1, 10, 1 do
+          for i = 1, 5, 1 do
             cmp.select_prev_item()
           end
         else
@@ -426,26 +422,26 @@ function! InitNvimCmp() abort
     sources = {
       {
         name = 'buffer',
-      }
-    }
+      },
+    },
   })
   cmp.setup.cmdline(':', {
     mapping = cmp.mapping.preset.cmdline(),
     sources = cmp.config.sources({
       {
         name = 'path',
-      }
+      },
     }, {
       {
         name = 'cmdline',
         option = {
           ignore_cmds = { 'Man', '!' },
-        }
-      }
+        },
+      },
     }),
     matching = {
       disallow_symbol_nonprefix_matching = false,
-    }
+    },
   })
 EOF
 
@@ -754,20 +750,6 @@ if has('nvim')
 end
 
 " -----------------------------------------------------------------------------
-" johmsalas/text-case.nvim
-function! InitTextCase() abort
-  lua << EOF
-  require('textcase').setup({
-    prefix = 'gt',
-  })
-EOF
-endfunction
-
-if has('nvim')
-  call InitTextCase()
-endif
-
-" -----------------------------------------------------------------------------
 " Wansmer/treesj
 function! InitTreeSJ() abort
   lua << EOF
@@ -786,6 +768,20 @@ endfunction
 
 if has('nvim')
   call LazyInitTreeSJ()
+endif
+
+" -----------------------------------------------------------------------------
+" johmsalas/text-case.nvim
+function! InitTextCase() abort
+  lua << EOF
+  require('textcase').setup({
+    prefix = 'gt',
+  })
+EOF
+endfunction
+
+if has('nvim')
+  call InitTextCase()
 endif
 
 " -----------------------------------------------------------------------------
@@ -1181,10 +1177,10 @@ endif
 " nvim-tree/nvim-tree.lua
 function! InitNvimTree() abort
   lua << EOF
-  local api = require("nvim-tree.api")
-  local openfile = require'nvim-tree.actions.node.open-file'
-  local actions = require'telescope.actions'
-  local action_state = require'telescope.actions.state'
+  local api = require('nvim-tree.api')
+  local openfile = require('nvim-tree.actions.node.open-file')
+  local actions = require('telescope.actions')
+  local action_state = require('telescope.actions.state')
   local M = {}
 
   local view_selection = function(prompt_bufnr, map)
@@ -1352,12 +1348,12 @@ function! InitOil() abort
       show_hidden = true,
     },
     keymaps = {
-      ['<C-f>'] = { callback = function() M.launch_find_files() end, desc = 'Launch Find Files' },
-      ['<C-s>'] = { callback = function() M.launch_live_grep() end, desc = 'Launch Live Grep' },
+      ['q'] = { 'actions.close', mode = 'n' },
       ['<C-x>'] = { 'actions.select', opts = { horizontal = true } },
       ['<C-v>'] = { 'actions.select', opts = { vertical = true } },
       ['<C-h>'] = false,
-      ['q'] = { 'actions.close', mode = 'n' },
+      ['<C-f>'] = { callback = function() M.launch_find_files() end, desc = 'Launch Find Files' },
+      ['<C-s>'] = { callback = function() M.launch_live_grep() end, desc = 'Launch Live Grep' },
     },
   })
 EOF
@@ -1434,7 +1430,7 @@ function! InitLualine() abort
       return {
         added = gitsigns.added,
         modified = gitsigns.changed,
-        removed = gitsigns.removed
+        removed = gitsigns.removed,
       }
     end
   end
@@ -2264,13 +2260,13 @@ set foldlevelstart=99
 set foldmethod=syntax
 if has('nvim')
   lua << EOF
-  vim.api.nvim_create_autocmd({ "FileType" }, {
+  vim.api.nvim_create_autocmd({ 'FileType' }, {
     callback = function()
-      if require("nvim-treesitter.parsers").has_parser() then
-        vim.opt.foldmethod = "expr"
-        vim.opt.foldexpr = "nvim_treesitter#foldexpr()"
+      if require('nvim-treesitter.parsers').has_parser() then
+        vim.opt.foldmethod = 'expr'
+        vim.opt.foldexpr = 'nvim_treesitter#foldexpr()'
       else
-        vim.opt.foldmethod = "syntax"
+        vim.opt.foldmethod = 'syntax'
       end
     end,
   })
