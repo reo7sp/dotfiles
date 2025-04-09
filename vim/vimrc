@@ -71,7 +71,7 @@ Plug 'romainl/vim-cool'
 if ! has('nvim')
   Plug 'ConradIrwin/vim-bracketed-paste'
 endif
-Plug 'vim-scripts/file-line'
+Plug 'bogado/file-line'
 Plug 'pbrisbin/vim-mkdir'
 Plug 'farmergreg/vim-lastplace'
 if ! has('nvim')
@@ -296,14 +296,43 @@ function! InitNvimCmp() abort
   local cmp = require('cmp')
   local compare = require('cmp.config.compare')
   local luasnip = require('luasnip')
+  local max_buffer_size = 1024 * 1024 -- 1 Megabyte max
   cmp.setup({
     sources = {
-      { name = 'nvim_lsp' },
-      { name = 'luasnip', keyword_length = 2 },
-      { name = 'path' },
-      { name = 'buffer', keyword_length = 3 },
-      { name = 'buffer-lines', keyword_length = 3 },
-      { name = 'nvim_lsp_signature_help' },
+      {
+        name = 'nvim_lsp',
+      },
+      {
+        name = 'luasnip',
+        keyword_length = 2,
+      },
+      {
+        name = 'path',
+      },
+      {
+        name = 'buffer',
+        keyword_length = 4,
+        get_bufnrs = function()
+          local buf = vim.api.nvim_get_current_buf()
+          local byte_size = vim.api.nvim_buf_get_offset(buf, vim.api.nvim_buf_line_count(buf))
+          if byte_size > max_buffer_size then
+            return {}
+          end
+          return { buf }
+        end,
+        indexing_interval = 1000,
+      },
+      {
+        name = 'buffer-lines',
+        keyword_length = 4,
+        leading_whitespace = false,
+      },
+      {
+        name = 'nvim_lsp_signature_help',
+      },
+    },
+    performance = {
+      max_view_entries = 25,
     },
     sorting = {
       comparators = {
@@ -427,8 +456,8 @@ EOF
 
   nnoremap K <cmd>lua vim.lsp.buf.hover()<cr>
   inoremap <C-S> <cmd>lua vim.lsp.buf.signature_help()<cr>
-  nnoremap cr <cmd>lua vim.lsp.buf.rename()<cr>
-  nnoremap c<C-R> <cmd>lua vim.lsp.buf.code_action()<cr>
+  nnoremap <nowait> gr <cmd>lua vim.lsp.buf.rename()<cr>
+  nnoremap g<C-R> <cmd>lua vim.lsp.buf.code_action()<cr>
 endfunction
 
 if has('nvim')
@@ -783,12 +812,12 @@ function! InitRefactoring() abort
   require('refactoring').setup({})
   require('telescope').load_extension('refactoring')
 
-  vim.keymap.set({ 'n', 'x' }, 'cR', function() require('telescope').extensions.refactoring.refactors(require('telescope.themes').get_ivy()) end, { desc = 'Refactor', remap = true })
+  vim.keymap.set({ 'n', 'x' }, 'gR', function() require('telescope').extensions.refactoring.refactors(require('telescope.themes').get_ivy()) end, { desc = 'Refactor', remap = true })
 EOF
 endfunction
 
 function! LazyInitRefactoring() abort
-  lua vim.keymap.set({ 'n', 'x' }, 'cR', function() vim.call('InitRefactoring') vim.api.nvim_input('cR') end)
+  lua vim.keymap.set({ 'n', 'x' }, 'gR', function() vim.call('InitRefactoring') vim.api.nvim_input('gR') end)
 endfunction
 
 if has('nvim')
@@ -1057,10 +1086,9 @@ EOF
 
   nnoremap gd <cmd>Telescope lsp_definitions<cr>
   nnoremap gD <cmd>Telescope lsp_implementations<cr>
-  nnoremap gi <cmd>Telescope lsp_implementations<cr>
   nnoremap gy <cmd>Telescope lsp_type_definitions<cr>
-  nnoremap <nowait> gr <cmd>Telescope lsp_references<cr>
-  nnoremap gR <cmd>Telescope hierarchy theme=ivy disable_devicons=true<cr>
+  nnoremap ge <cmd>Telescope lsp_references<cr>
+  nnoremap gE <cmd>Telescope hierarchy theme=ivy disable_devicons=true<cr>
   nnoremap <leader>e <cmd>lua require('telescope').extensions.recent_files.pick()<cr>
   nnoremap <leader>E <cmd>Telescope jumplist<cr>
   nnoremap <leader>f <cmd>Telescope find_files<cr>
@@ -1093,6 +1121,10 @@ function! InitTrouble() abort
     follow = true,
     win = {
       size = 0.4,
+    },
+    keys = {
+      ['<c-x>'] = 'jump_split',
+      ['<c-s>'] = false,
     },
     icons = {
       indent = {
@@ -1133,12 +1165,12 @@ function! InitTrouble() abort
   })
 EOF
 
-  nnoremap <leader>gd <cmd>Trouble lsp_definitions toggle<CR>
-  nnoremap <leader>gD <cmd>Trouble lsp_implementations toggle<CR>
-  nnoremap <leader>gi <cmd>Trouble lsp_implementations toggle<CR>
-  nnoremap <leader>gy <cmd>Trouble lsp_type_definitions toggle<CR>
-  nnoremap <leader>gr <cmd>Trouble lsp_references toggle<CR>
   nnoremap <leader>d <cmd>Trouble diagnostics toggle filter.buf=0<CR>
+  nnoremap <leader>D <cmd>Trouble diagnostics toggle<CR>
+  nnoremap [t <cmd>lua require('trouble').prev() require('trouble').jump()<CR>
+  nnoremap ]t <cmd>lua require('trouble').next() require('trouble').jump()<CR>
+  nnoremap [T <cmd>lua require('trouble').first() require('trouble').jump()<CR>
+  nnoremap ]T <cmd>lua require('trouble').last() require('trouble').jump()<CR>
 endfunction
 
 if has('nvim')
@@ -1366,7 +1398,6 @@ endif
 function! InitSpectre() abort
   lua << EOF
   require('spectre').setup({
-    use_trouble_qf = true,
     is_block_ui_break = true,
     is_insert_mode = false,
     default = {
@@ -1614,6 +1645,7 @@ function! InitWindowPicker() abort
     picker_config = {
       handle_mouse_click = true,
     },
+    show_prompt = false,
     filter_rules = {
       bo = {
         filetype = {},
@@ -1648,6 +1680,24 @@ function! InitBqf() abort
         return ret
       end,
     },
+    func_map = {
+      tab = '',
+      tabb = '',
+      tabc = '',
+    },
+  })
+
+  vim.api.nvim_create_autocmd('BufRead', {
+    callback = function(ev)
+      if vim.bo[ev.buf].buftype == 'quickfix' then
+        vim.schedule(function()
+          vim.keymap.set('n', '<c-t>', function()
+            vim.cmd([[cclose]])
+            vim.cmd([[Trouble qflist open]])
+          end, { noremap = true, buffer = ev.buf })
+        end)
+      end
+    end,
   })
 EOF
 endfunction
@@ -2076,6 +2126,17 @@ endif
 " vim mappings
 " https://nanotipsforvim.prose.sh/esc-in-normal-mode
 nnoremap <silent> <cr> <cmd>echo<cr>
+
+function! s:empty_message(timer)
+  if mode() ==# 'n'
+    echon ''
+  endif
+endfunction
+
+augroup cmd_msg_cls
+  autocmd!
+  autocmd CmdlineLeave : call timer_start(3000, funcref('s:empty_message'))
+augroup END
 
 " https://stackoverflow.com/a/51388837/1600438
 if ! has('nvim')
