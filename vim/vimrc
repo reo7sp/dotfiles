@@ -549,7 +549,7 @@ endfunction
 if has('nvim')
   call InitSubstitute()
 else
-  call InitSubversive()
+  autocmd BufEnter * call InitSubversive()
 endif
 
 " -----------------------------------------------------------------------------
