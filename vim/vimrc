@@ -54,6 +54,7 @@ else
   Plug 'Raimondi/delimitMate'
 end
 Plug 'alvan/vim-closetag'
+Plug 'wellle/targets.vim'
 if has('nvim')
   Plug 'monaqa/dial.nvim'
 endif
@@ -209,7 +210,12 @@ if has('nvim')
   Plug 'nvim-treesitter/nvim-treesitter-textobjects'
   Plug 'nvim-treesitter/nvim-treesitter-context'
 endif
-Plug 'johejo/gomod.vim'
+if has('nvim')
+  Plug 'ray-x/go.nvim'
+  Plug 'ray-x/guihua.lua'
+else
+  Plug 'johejo/gomod.vim'
+endif
 Plug 'Vimjas/vim-python-pep8-indent', {'for': 'python'}
 Plug 'HiPhish/jinja.vim'
 Plug 'fladson/vim-kitty'
@@ -350,8 +356,6 @@ function! InitNvimCmp() abort
         compare.score,
         compare.recently_used,
         compare.locality,
-        compare.kind,
-        compare.sort_text,
         compare.length,
         compare.order,
       },
@@ -371,6 +375,32 @@ function! InitNvimCmp() abort
       end,
     },
     mapping = cmp.mapping.preset.insert({
+      ['<C-Space>'] = cmp.mapping.complete(),
+      ['<Tab>'] = cmp.mapping(function(fallback)
+        if cmp.visible() then
+          local entry = cmp.get_selected_entry()
+          if not entry then
+            cmp.select_next_item({ behavior = cmp.SelectBehavior.Select })
+          end
+          cmp.confirm()
+        elseif luasnip.expand_or_jumpable() then
+          luasnip.expand_or_jump()
+        else
+          fallback()
+        end
+      end, { 'i', 's' }),
+      -- ['<CR>'] = cmp.mapping(function(fallback)
+      --   if cmp.visible() then
+      --     if luasnip.expandable() then
+      --       luasnip.expand()
+      --     else
+      --       cmp.confirm({ select = true })
+      --     end
+      --   else
+      --     fallback()
+      --   end
+      -- end),
+      ['<C-e>'] = cmp.mapping.close(),
       ['<C-d>'] = cmp.mapping(function(fallback)
         if cmp.visible() then
           for i = 1, 5, 1 do
@@ -385,32 +415,6 @@ function! InitNvimCmp() abort
           for i = 1, 5, 1 do
             cmp.select_prev_item()
           end
-        else
-          fallback()
-        end
-      end, { 'i', 's' }),
-      ['<C-Space>'] = cmp.mapping.complete(),
-      ['<C-e>'] = cmp.mapping.close(),
-      ['<CR>'] = cmp.mapping(function(fallback)
-        if cmp.visible() then
-          if luasnip.expandable() then
-            luasnip.expand()
-          else
-            cmp.confirm({ select = true })
-          end
-        else
-          fallback()
-        end
-      end),
-      ['<Tab>'] = cmp.mapping(function(fallback)
-        if cmp.visible() then
-          local entry = cmp.get_selected_entry()
-          if not entry then
-            cmp.select_next_item({ behavior = cmp.SelectBehavior.Select })
-          end
-          cmp.confirm()
-        elseif luasnip.expand_or_jumpable() then
-          luasnip.expand_or_jump()
         else
           fallback()
         end
@@ -451,9 +455,11 @@ EOF
   augroup END
 
   nnoremap K <cmd>lua vim.lsp.buf.hover()<cr>
+  nnoremap <C-S> <cmd>lua vim.lsp.buf.signature_help()<cr>
   inoremap <C-S> <cmd>lua vim.lsp.buf.signature_help()<cr>
   nnoremap <nowait> gr <cmd>lua vim.lsp.buf.rename()<cr>
-  nnoremap g<C-R> <cmd>lua vim.lsp.buf.code_action()<cr>
+  nnoremap g: <cmd>lua vim.lsp.buf.code_action()<cr>
+  nnoremap gO <nop>
 endfunction
 
 if has('nvim')
@@ -808,7 +814,16 @@ function! InitRefactoring() abort
   require('refactoring').setup({})
   require('telescope').load_extension('refactoring')
 
-  vim.keymap.set({ 'n', 'x' }, 'gR', function() require('telescope').extensions.refactoring.refactors(require('telescope.themes').get_ivy()) end, { desc = 'Refactor', remap = true })
+  vim.keymap.set({ 'n', 'x' }, 'gR', function()
+    require('telescope').extensions.refactoring.refactors(
+      vim.tbl_extend('force', require('telescope.themes').get_cursor({
+        layout_config = {
+          height = 15+4,
+        },
+      }), {
+      })
+    )
+  end, { desc = 'Refactor', remap = true })
 EOF
 endfunction
 
@@ -909,34 +924,30 @@ call InitAsterisk()
 function! InitTelescope() abort
   lua << EOF
   require('telescope').setup({
-    defaults = vim.tbl_extend(
-      'force',
-      require('telescope.themes').get_ivy(),
-      {
-        mappings = {
-          n = {
-            ['q'] = require('telescope.actions').close,
-            ['<C-Down>'] = require('telescope.actions').cycle_history_next,
-            ['<C-Up>'] = require('telescope.actions').cycle_history_prev,
-            ['<C-t>'] = require('trouble.sources.telescope').open,
-            ['<C-p>'] = require('telescope.actions.layout').toggle_preview,
-          },
-          i = {
-            ['<C-Down>'] = require('telescope.actions').cycle_history_next,
-            ['<C-Up>'] = require('telescope.actions').cycle_history_prev,
-            ['<C-t>'] = require('trouble.sources.telescope').open,
-            ['<C-p>'] = require('telescope.actions.layout').toggle_preview,
-          },
+    defaults = vim.tbl_extend('force', require('telescope.themes').get_ivy(), {
+      mappings = {
+        n = {
+          ['q'] = require('telescope.actions').close,
+          ['<C-Down>'] = require('telescope.actions').cycle_history_next,
+          ['<C-Up>'] = require('telescope.actions').cycle_history_prev,
+          ['<C-t>'] = require('trouble.sources.telescope').open,
+          ['<C-p>'] = require('telescope.actions.layout').toggle_preview,
         },
-        initial_mode = 'normal',
-        disable_devicons = true,
-        dynamic_preview_title = true,
-        set_env = {
-          LESS = '',
-          DELTA_PAGER = 'less',
+        i = {
+          ['<C-Down>'] = require('telescope.actions').cycle_history_next,
+          ['<C-Up>'] = require('telescope.actions').cycle_history_prev,
+          ['<C-t>'] = require('trouble.sources.telescope').open,
+          ['<C-p>'] = require('telescope.actions.layout').toggle_preview,
         },
-      }
-    ),
+      },
+      initial_mode = 'normal',
+      disable_devicons = true,
+      dynamic_preview_title = true,
+      set_env = {
+        LESS = '',
+        DELTA_PAGER = 'less',
+      },
+    }),
     pickers = {
       find_files = {
         hidden = true,
@@ -982,8 +993,17 @@ function! InitTelescope() abort
         fname_width = 60,
         initial_mode = 'insert',
       },
+      commands = {
+        initial_mode = 'insert',
+      },
     },
     extensions = {
+      ['ui-select'] = vim.tbl_extend('force', require('telescope.themes').get_cursor({
+        layout_config = {
+          height = 15+4,
+        },
+      }), {
+      }),
       recent_files = {
         stat_files = false,
         only_cwd = true,
@@ -998,6 +1018,7 @@ function! InitTelescope() abort
           'aerial',
           'undotree',
           'spectre',
+          'guihua',
           'gitsigns',
           'fugitiveblame',
           'flog',
@@ -1094,12 +1115,13 @@ EOF
   nnoremap <leader>Fs <cmd>Telescope dir live_grep<cr>
   nnoremap <leader>b <cmd>Telescope buffers<cr>
   nnoremap <leader>B <cmd>Telescope telescope-tabs list_tabs<cr>
-  nnoremap <leader>m <cmd>Telescope marks<cr>
-  nnoremap <leader>M <cmd>Telescope registers<cr>
   nnoremap <leader>y <cmd>Telescope yank_history<cr>
   nnoremap <leader>k <cmd>Telescope aerial initial_mode=insert<cr>
   nnoremap <leader>K <cmd>Telescope lsp_dynamic_workspace_symbols<cr>
   nnoremap <leader>gb <cmd>Telescope git_branches<cr>
+  nnoremap <leader>' <cmd>Telescope marks<cr>
+  nnoremap <leader>` <cmd>Telescope marks<cr>
+  nnoremap <leader>" <cmd>Telescope registers<cr>
 endfunction
 
 if has('nvim')
@@ -1540,8 +1562,6 @@ function! InitBarbar() abort
 
   vim.g.barbar_auto_setup = false
   require('barbar').setup({
-    insert_at_end = true,
-    focus_on_close = 'left',
     animation = false,
     icons = {
       buffer_index = true,
@@ -2036,6 +2056,57 @@ if has('nvim')
 endif
 
 " -----------------------------------------------------------------------------
+" ray-x/go.nvim
+function! InitGo() abort
+  lua << EOF
+  require('go').setup({
+    lsp_keymaps = false,
+    lsp_codelens = false,
+    lsp_document_formatting = false,
+    lsp_inlay_hints = {
+      enable = false,
+    },
+    textobjects = false,
+    diagnostic = false,
+    dap_debug = false,
+    dap_debug_keymap = false,
+    dap_debug_vt = false,
+    lsp_gofumpt = false,
+    luasnip = true,
+    tag_options = '',
+    comment_placeholder = '',
+    icons = false,
+  })
+
+  require('guihua').setup({
+    maps = {
+      split = '<C-x>',
+    },
+    icons = {
+      syntax = {
+        var = '',
+        method = '',
+        ['function'] = '',
+        ['arrow_function'] = '',
+        parameter = '',
+        associated = '',
+        namespace = '',
+        type = '',
+        field = '',
+        interface = '',
+        module = '',
+        flag = '',
+      },
+    },
+  })
+EOF
+endfunction
+
+if has('nvim')
+  call InitGo()
+endif
+
+" -----------------------------------------------------------------------------
 " hat0uma/csvview.nvim
 function! InitCsvView() abort
   lua << EOF
@@ -2197,8 +2268,6 @@ nnoremap <C-Up> <cmd>resize +2<cr>
 nnoremap <C-Down> <cmd>resize -2<cr>
 nnoremap <C-Right> <cmd>vertical resize +2<cr>
 nnoremap <C-Left> <cmd>vertical resize -2<cr>
-
-nnoremap <C-S> <cmd>w<cr>
 
 
 " =============================================================================

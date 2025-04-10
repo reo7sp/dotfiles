@@ -58,12 +58,14 @@ export AUTOSWITCH_DEFAULT_PYTHON=python3
 
 
 # =============================================================================
+# zsh config
+
+# -----------------------------------------------------------------------------
 # colors
 export LSCOLORS='exfxcxdxbxegedabagacad'
 export CLICOLOR=true
 
-
-# =============================================================================
+# -----------------------------------------------------------------------------
 # history
 export HISTFILE="$HOME/.zsh_history"
 export HISTSIZE=10000
@@ -86,13 +88,11 @@ setopt HIST_IGNORE_SPACE
 setopt HIST_VERIFY
 setopt HIST_EXPIRE_DUPS_FIRST
 
-
-# =============================================================================
+# -----------------------------------------------------------------------------
 # glob
 unsetopt nomatch
 
-
-# =============================================================================
+# -----------------------------------------------------------------------------
 # keybinds
 WORDCHARS=${WORDCHARS/\/}
 WORDCHARS=${WORDCHARS/_}
@@ -117,7 +117,7 @@ bindkey '^R' history-incremental-search-backward
 
 
 # =============================================================================
-# aliases
+# aliases & settings
 
 # -----------------------------------------------------------------------------
 # general
@@ -354,6 +354,10 @@ alias p2='python2'
 alias pp='python3 -m ptpython || ptpython'
 alias pp-install='pip3 install ptpython'
 alias jn='jupyter notebook'
+
+# -----------------------------------------------------------------------------
+# go
+export GOTESTSUM_FORMAT=testdox
 
 # -----------------------------------------------------------------------------
 # k8s
