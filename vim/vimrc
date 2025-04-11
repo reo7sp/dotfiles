@@ -143,9 +143,6 @@ if has('nvim')
   Plug 'jmacadie/telescope-hierarchy.nvim'
 endif
 if has('nvim')
-  Plug 'folke/trouble.nvim'
-endif
-if has('nvim')
   Plug 'nvim-tree/nvim-tree.lua'
 endif
 if has('nvim')
@@ -179,6 +176,10 @@ else
 endif
 if has('nvim')
   Plug 'kevinhwang91/nvim-bqf'
+  Plug 'stevearc/quicker.nvim'
+endif
+if has('nvim')
+  Plug 'folke/trouble.nvim'
 endif
 if has('nvim')
   Plug 'j-hui/fidget.nvim'
@@ -210,7 +211,7 @@ if has('nvim')
   Plug 'nvim-treesitter/nvim-treesitter-context'
 endif
 if has('nvim')
-  Plug 'ray-x/go.nvim'
+  Plug 'reo7sp/go.nvim'
   Plug 'ray-x/guihua.lua'
 else
   Plug 'johejo/gomod.vim'
@@ -591,7 +592,7 @@ function! InitAutosaveNvim() abort
   require('auto-save').setup({
     condition = function(buf)
       local filetype = vim.fn.getbufvar(buf, '&filetype')
-      if vim.list_contains({ 'oil' }, filetype) then
+      if vim.list_contains({ 'oil', 'qf' }, filetype) then
         return false
       end
       return true
@@ -863,8 +864,7 @@ function! InitConform() abort
   })
 EOF
 
-  nnoremap <leader>q <cmd>lua require('conform').format({})<cr>
-  xnoremap <leader>q <cmd>lua require('conform').format({})<cr>
+  nnoremap gQ <cmd>lua require('conform').format({})<cr>
 endfunction
 
 if has('nvim')
@@ -975,18 +975,23 @@ function! InitTelescope() abort
       },
       lsp_definitions = {
         fname_width = 60,
+        include_current_line = true,
       },
       lsp_implementations = {
         fname_width = 60,
+        include_current_line = true,
       },
       lsp_implementations = {
         fname_width = 60,
+        include_current_line = true,
       },
       lsp_type_definitions = {
         fname_width = 60,
+        include_current_line = true,
       },
       lsp_references = {
         fname_width = 60,
+        include_current_line = true,
       },
       lsp_dynamic_workspace_symbols = {
         ignore_symbols = { 'variable', 'field' },
@@ -1012,6 +1017,7 @@ function! InitTelescope() abort
           '/tmp/',
           'Scratch',
           'Bqf',
+          'quickfix',
           'trouble',
           'NvimTree_',
           'oil',
@@ -1118,6 +1124,8 @@ EOF
   nnoremap <leader>y <cmd>Telescope yank_history<cr>
   nnoremap <leader>k <cmd>Telescope aerial initial_mode=insert<cr>
   nnoremap <leader>K <cmd>Telescope lsp_dynamic_workspace_symbols<cr>
+  nnoremap <leader>d <cmd>Telescope diagnostics bufnr=0<CR>
+  nnoremap <leader>D <cmd>Telescope diagnostics<CR>
   nnoremap <leader>gb <cmd>Telescope git_branches<cr>
   nnoremap <leader>' <cmd>Telescope marks<cr>
   nnoremap <leader>` <cmd>Telescope marks<cr>
@@ -1127,73 +1135,6 @@ endfunction
 
 if has('nvim')
   call InitTelescope()
-endif
-
-" -----------------------------------------------------------------------------
-" folke/trouble.nvim
-function! InitTrouble() abort
-  lua << EOF
-  require('trouble').setup({
-    focus = true,
-    auto_refresh = false,
-    auto_preview = false,
-    follow = true,
-    win = {
-      size = 0.35,
-    },
-    keys = {
-      ['<c-x>'] = 'jump_split',
-      ['<c-s>'] = false,
-    },
-    icons = {
-      indent = {
-        fold_open     = "  ",
-        fold_closed   = "│ ",
-      },
-      folder_closed   = "",
-      folder_open     = "",
-      kinds = {
-        Array         = "",
-        Boolean       = "",
-        Class         = "",
-        Constant      = "",
-        Constructor   = "",
-        Enum          = "",
-        EnumMember    = "",
-        Event         = "",
-        Field         = "",
-        File          = "",
-        Function      = "",
-        Interface     = "",
-        Key           = "",
-        Method        = "",
-        Module        = "",
-        Namespace     = "",
-        Null          = "",
-        Number        = "",
-        Object        = "",
-        Operator      = "",
-        Package       = "",
-        Property      = "",
-        String        = "",
-        Struct        = "",
-        TypeParameter = "",
-        Variable      = "",
-      },
-    },
-  })
-EOF
-
-  nnoremap <leader>d <cmd>Trouble diagnostics toggle filter.buf=0<CR>
-  nnoremap <leader>D <cmd>Trouble diagnostics toggle<CR>
-  nnoremap [t <cmd>lua require('trouble').prev() require('trouble').jump()<CR>
-  nnoremap ]t <cmd>lua require('trouble').next() require('trouble').jump()<CR>
-  nnoremap [T <cmd>lua require('trouble').first() require('trouble').jump()<CR>
-  nnoremap ]T <cmd>lua require('trouble').last() require('trouble').jump()<CR>
-endfunction
-
-if has('nvim')
-  call InitTrouble()
 endif
 
 " -----------------------------------------------------------------------------
@@ -1478,12 +1419,12 @@ function! InitLualine() abort
       section_separators = { left = '', right = '' },
     },
     extensions = {
-      'trouble',
       'nvim-tree',
       'oil',
       'aerial',
-      'fugitive',
       'quickfix',
+      'trouble',
+      'fugitive',
     },
     sections = {
       lualine_a = {
@@ -1684,6 +1625,7 @@ function! InitBqf() abort
   lua << EOF
   require('bqf').setup({
     preview = {
+      auto_preview = false,
       winblend = 0,
       should_preview_cb = function(bufnr, qwinid)
         local ret = true
@@ -1717,6 +1659,10 @@ function! InitBqf() abort
             vim.cmd([[cclose]])
             vim.cmd([[Trouble qflist open]])
           end, { noremap = true, buffer = ev.buf })
+
+          vim.keymap.set('n', 'zr', function()
+            require('quicker').refresh()
+          end, { noremap = true, buffer = ev.buf })
         end)
       end
     end,
@@ -1726,6 +1672,101 @@ endfunction
 
 if has('nvim')
   call InitBqf()
+endif
+
+" -----------------------------------------------------------------------------
+" stevearc/quicker.nvim
+function! InitQuicker() abort
+  lua << EOF
+  require('quicker').setup({
+    edit = {
+      enabled = true,
+      autosave = true,
+    },
+    follow = {
+      enabled = true,
+    },
+    type_icons = {
+      E = "E",
+      W = "W",
+      I = "I",
+      N = "N",
+      H = "H",
+    },
+  })
+EOF
+
+  nnoremap <leader>q <cmd>lua require('quicker').toggle({focus = true})<CR>
+endfunction
+
+if has('nvim')
+  call InitQuicker()
+endif
+
+" -----------------------------------------------------------------------------
+" folke/trouble.nvim
+function! InitTrouble() abort
+  lua << EOF
+  require('trouble').setup({
+    focus = true,
+    auto_refresh = false,
+    auto_preview = false,
+    follow = true,
+    win = {
+      position = 'right',
+      size = 0.45,
+    },
+    keys = {
+      ['<c-x>'] = 'jump_split',
+      ['<c-s>'] = false,
+    },
+    icons = {
+      indent = {
+        fold_open     = "  ",
+        fold_closed   = "│ ",
+      },
+      folder_closed   = "",
+      folder_open     = "",
+      kinds = {
+        Array         = "",
+        Boolean       = "",
+        Class         = "",
+        Constant      = "",
+        Constructor   = "",
+        Enum          = "",
+        EnumMember    = "",
+        Event         = "",
+        Field         = "",
+        File          = "",
+        Function      = "",
+        Interface     = "",
+        Key           = "",
+        Method        = "",
+        Module        = "",
+        Namespace     = "",
+        Null          = "",
+        Number        = "",
+        Object        = "",
+        Operator      = "",
+        Package       = "",
+        Property      = "",
+        String        = "",
+        Struct        = "",
+        TypeParameter = "",
+        Variable      = "",
+      },
+    },
+  })
+EOF
+
+  nnoremap [t <cmd>lua require('trouble').prev() require('trouble').jump()<CR>
+  nnoremap ]t <cmd>lua require('trouble').next() require('trouble').jump()<CR>
+  nnoremap [T <cmd>lua require('trouble').first() require('trouble').jump()<CR>
+  nnoremap ]T <cmd>lua require('trouble').last() require('trouble').jump()<CR>
+endfunction
+
+if has('nvim')
+  call InitTrouble()
 endif
 
 " -----------------------------------------------------------------------------
