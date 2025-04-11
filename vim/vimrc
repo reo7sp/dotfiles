@@ -219,8 +219,12 @@ endif
 Plug 'Vimjas/vim-python-pep8-indent', {'for': 'python'}
 Plug 'HiPhish/jinja.vim'
 Plug 'fladson/vim-kitty'
-Plug 'hat0uma/csvview.nvim', {'for': 'csv'}
-Plug 'RRethy/vim-hexokinase', {'do': 'make hexokinase'}
+if has('nvim')
+  Plug 'hat0uma/csvview.nvim', {'for': 'csv'}
+endif
+if has('nvim')
+  Plug 'RRethy/vim-hexokinase', {'do': 'make hexokinase'}
+endif
 
 " -----------------------------------------------------------------------------
 " commands
