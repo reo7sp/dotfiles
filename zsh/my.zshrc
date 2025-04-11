@@ -50,6 +50,7 @@ antibody bundle zsh-users/zsh-autosuggestions
 antibody bundle zsh-users/zsh-history-substring-search
 antibody bundle mdumitru/fancy-ctrl-z
 antibody bundle jeffreytse/zsh-vi-mode
+antibody bundle djui/alias-tips
 antibody bundle reo7sp/zimfw-git
 export PATH="$(antibody list | grep zimfw | perl -lne 'print $1 if /\s+(.+)/')/functions:$PATH"
 antibody bundle zuxfoucault/colored-man-pages_mod
@@ -62,8 +63,8 @@ export AUTOSWITCH_DEFAULT_PYTHON=python3
 
 # -----------------------------------------------------------------------------
 # colors
-export LSCOLORS='exfxcxdxbxegedabagacad'
 export CLICOLOR=true
+export LSCOLORS='exfxcxdxbxegedabagacad'
 
 # -----------------------------------------------------------------------------
 # history
@@ -114,6 +115,7 @@ bindkey '^U' backward-kill-line
 bindkey '^[[A' history-substring-search-up
 bindkey '^[[B' history-substring-search-down
 bindkey '^R' history-incremental-search-backward
+bindkey '^S' history-incremental-search-forward
 
 
 # =============================================================================
@@ -122,6 +124,8 @@ bindkey '^R' history-incremental-search-backward
 # -----------------------------------------------------------------------------
 # general
 alias le='less'
+
+alias w='which'
 
 lcd() {
   cd "$(pwd -P)"

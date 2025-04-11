@@ -1,9 +1,9 @@
 ## fzf shell integration
 
-See https://github.com/junegunn/fzf?tab=readme-ov-file#setting-up-shell-integration.
+See https://github.com/junegunn/fzf?tab=readme-ov-file#setting-up-shell-integration and https://github.com/jeffreytse/zsh-vi-mode#execute-extra-commands.
 
 ```sh
-source <(fzf --zsh)
+zvm_after_init_commands+=('[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh')
 ```
 
 

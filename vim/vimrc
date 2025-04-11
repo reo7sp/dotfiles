@@ -194,7 +194,6 @@ if has('nvim')
   Plug 'RRethy/vim-illuminate'
   Plug 'lukas-reineke/indent-blankline.nvim'
   Plug 'lukas-reineke/virt-column.nvim'
-  Plug 'psliwka/vim-smoothie'
   Plug 'stevearc/stickybuf.nvim'
 endif
 if has('nvim')
@@ -220,6 +219,7 @@ Plug 'Vimjas/vim-python-pep8-indent', {'for': 'python'}
 Plug 'HiPhish/jinja.vim'
 Plug 'fladson/vim-kitty'
 Plug 'hat0uma/csvview.nvim', {'for': 'csv'}
+Plug 'RRethy/vim-hexokinase', {'do': 'make hexokinase'}
 
 " -----------------------------------------------------------------------------
 " commands
@@ -1122,6 +1122,7 @@ EOF
   nnoremap <leader>' <cmd>Telescope marks<cr>
   nnoremap <leader>` <cmd>Telescope marks<cr>
   nnoremap <leader>" <cmd>Telescope registers<cr>
+  nnoremap <leader>. <cmd>Telescope resume<cr>
 endfunction
 
 if has('nvim')
@@ -1138,7 +1139,7 @@ function! InitTrouble() abort
     auto_preview = false,
     follow = true,
     win = {
-      size = 0.4,
+      size = 0.35,
     },
     keys = {
       ['<c-x>'] = 'jump_split',
@@ -1317,18 +1318,18 @@ function! LazyNvimTreeToggle() abort
   NvimTreeToggle
 endfunction
 
-function! LazyNvimTreeOpen() abort
+function! LazyNvimTreeFocus() abort
   if ! exists('g:inited_nvim_tree')
     call InitNvimTree()
     let g:inited_nvim_tree = 1
   endif
 
-  NvimTreeOpen
+  NvimTreeFocus
 endfunction
 
 function! LazyInitNvimTree() abort
   nnoremap <leader>t <cmd>call LazyNvimTreeToggle()<CR>
-  nnoremap <leader><Space> <cmd>call LazyNvimTreeOpen()<CR>
+  nnoremap _ <cmd>call LazyNvimTreeFocus()<CR>
 endfunction
 
 if has('nvim')
@@ -1688,7 +1689,7 @@ function! InitBqf() abort
         local ret = true
         local bufname = vim.api.nvim_buf_get_name(bufnr)
         local fsize = vim.fn.getfsize(bufname)
-        if fsize > 100 * 1024 then
+        if fsize > 1024 * 1024 then
           ret = false
         elseif bufname:match('^fugitive://') then
           ret = false
@@ -1700,6 +1701,11 @@ function! InitBqf() abort
       tab = '',
       tabb = '',
       tabc = '',
+      prevfile = '',
+      nextfile = '',
+      pscrollup = '<c-u>',
+      pscrolldown = '<c-d>',
+      ptoggleauto = '<c-p>',
     },
   })
 
@@ -1858,17 +1864,6 @@ endfunction
 
 if has('nvim')
   call InitVirtColumn()
-endif
-
-" -----------------------------------------------------------------------------
-" psliwka/vim-smoothie
-function! InitSmoothie() abort
-  let g:smoothie_speed_constant_factor = 15
-  let g:smoothie_speed_linear_factor = 15
-endfunction
-
-if has('nvim')
-  call InitSmoothie()
 endif
 
 " -----------------------------------------------------------------------------
@@ -2137,6 +2132,16 @@ if has('nvim')
   autocmd User csvview.nvim call InitCsvView()
 endif
 
+" -----------------------------------------------------------------------------
+" RRethy/vim-hexokinase
+function! InitHexokinase() abort
+  let g:Hexokinase_highlighters = ['virtual']
+endfunction
+
+if has('nvim')
+  call InitHexokinase()
+endif
+
 
 " =============================================================================
 " own commands
@@ -2225,19 +2230,31 @@ nnoremap d. /\V\C<C-r>"<CR>dgn
 
 " https://vim.fandom.com/wiki/Comfortable_handling_of_registers
 nnoremap <silent> [+ :let @"=@+<CR>
-nnoremap <silent> [= :let @"=@+<CR>
 nnoremap <silent> ]+ :let @+=@"<CR>
+nnoremap <silent> [= :let @"=@+<CR>
 nnoremap <silent> ]= :let @+=@"<CR>
-nnoremap <silent> ++ :let @o=@" \| let @"=@+ \| let @+=@o<CR>
 
 nnoremap +y "+y
 nnoremap +Y "+Y
 nnoremap +p "+p
 nnoremap +P "+P
+nnoremap +c "+c
+nnoremap +C "+C
+nnoremap +d "+d
+nnoremap +D "+D
+nnoremap +x "+x
+nnoremap +X "+X
+
 vnoremap +y "+y
 vnoremap +Y "+Y
 vnoremap +p "+p
 vnoremap +P "+P
+vnoremap +c "+c
+vnoremap +C "+C
+vnoremap +d "+d
+vnoremap +D "+D
+vnoremap +x "+x
+vnoremap +X "+X
 
 " https://bluz71.github.io/2021/09/10/vim-tips-revisited.html#fast-previous-buffer-switching
 nnoremap <C-Backspace> <C-^>
