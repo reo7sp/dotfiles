@@ -2209,6 +2209,11 @@ nnoremap <C-w><C-^> <cmd>vsplit #<cr>
 nnoremap <silent> <C-w>n :vsplit<cr>:enew<cr>
 nnoremap <silent> <C-w><C-n> :vsplit<cr>:enew<cr>
 
+cnoremap <C-A> <Home>
+cnoremap <C-E> <End>
+cnoremap <C-F> <C-right>
+cnoremap <C-B> <C-left>
+
 inoremap <A-left> <C-left>
 inoremap <A-right> <C-right>
 cnoremap <A-left> <C-left>

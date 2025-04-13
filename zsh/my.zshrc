@@ -80,23 +80,13 @@ WORDCHARS=${WORDCHARS/\/}
 WORDCHARS=${WORDCHARS/_}
 WORDCHARS=${WORDCHARS/|}
 WORDCHARS=${WORDCHARS/-}
-# shift-tab
-bindkey '^[[Z' reverse-menu-complete
-# ctrl-w
-bindkey '^W' backward-kill-word
-# ctrl-a, ctrl-e
-bindkey '^A' beginning-of-line
-bindkey '^E' end-of-line
-# ctrl-b, ctrl-f
-bindkey '^B' backward-word
-bindkey '^F' forward-word
-# ctrl-u
-bindkey '^U' backward-kill-line
-# history
-bindkey '^[[A' history-substring-search-up
-bindkey '^[[B' history-substring-search-down
-bindkey '^R' history-incremental-search-backward
-bindkey '^S' history-incremental-search-forward
+zmodload zsh/complist
+bindkey -M menuselect '^[[Z' reverse-menu-complete # shift-tab
+function my_keybindings() {
+  bindkey '^B' backward-word
+  bindkey '^F' forward-word
+}
+zvm_after_init_commands+=(my_keybindings)
 
 
 # =============================================================================
