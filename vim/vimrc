@@ -35,15 +35,9 @@ if has('nvim')
   Plug 'neovim/nvim-lspconfig'
   Plug 'williamboman/mason.nvim'
   Plug 'williamboman/mason-lspconfig.nvim'
-  Plug 'hrsh7th/nvim-cmp'
-  Plug 'hrsh7th/cmp-nvim-lsp'
-  Plug 'hrsh7th/cmp-buffer'
-  Plug 'amarz45/nvim-cmp-buffer-lines'
-  Plug 'hrsh7th/cmp-path'
-  Plug 'hrsh7th/cmp-nvim-lsp-signature-help'
-  Plug 'hrsh7th/cmp-cmdline'
+  Plug 'saghen/blink.cmp', {'tag': 'v1.1.1'}
+  Plug 'xzbdmw/colorful-menu.nvim'
   Plug 'L3MON4D3/LuaSnip'
-  Plug 'saadparwaiz1/cmp_luasnip'
   Plug 'rafamadriz/friendly-snippets'
 else
   Plug 'vim-scripts/AutoComplPop'
@@ -261,12 +255,12 @@ endif
 " plugin settings
 
 " -----------------------------------------------------------------------------
-" hrsh7th/nvim-cmp
-function! InitNvimCmp() abort
+" williamboman/mason.nvim
+function! InitLSP() abort
   lua << EOF
   local lspconfig_defaults = require('lspconfig').util.default_config
   lspconfig_defaults.capabilities = vim.tbl_deep_extend('force', lspconfig_defaults.capabilities,
-    require('cmp_nvim_lsp').default_capabilities())
+    require('blink.cmp').get_lsp_capabilities({}, false))
 
   require('mason').setup({})
 
@@ -296,154 +290,7 @@ function! InitNvimCmp() abort
       end,
     },
   })
-
-  require('luasnip.loaders.from_vscode').lazy_load()
-
-  local cmp = require('cmp')
-  local compare = require('cmp.config.compare')
-  local luasnip = require('luasnip')
-  cmp.setup({
-    sources = {
-      {
-        name = 'nvim_lsp',
-      },
-      {
-        name = 'luasnip',
-        keyword_length = 2,
-      },
-      {
-        name = 'path',
-        keyword_length = 4,
-      },
-      {
-        name = 'buffer',
-        keyword_length = 4,
-        get_bufnrs = function()
-          local buf = vim.api.nvim_get_current_buf()
-          local byte_size = vim.api.nvim_buf_get_offset(buf, vim.api.nvim_buf_line_count(buf))
-          if byte_size > 1024 * 1024 then
-            return {}
-          end
-          return { buf }
-        end,
-        indexing_interval = 1000,
-      },
-      {
-        name = 'buffer-lines',
-        keyword_length = 4,
-        leading_whitespace = false,
-      },
-      {
-        name = 'nvim_lsp_signature_help',
-      },
-    },
-    performance = {
-      max_view_entries = 25,
-    },
-    sorting = {
-      comparators = {
-        function (a, b)
-          local scores = {
-            ['buffer-lines'] = -1,
-          }
-          local a_score = scores[a.source.name] or 0
-          local b_score = scores[b.source.name] or 0
-          if a_score == 0 and b_score == 0 then
-            return nil
-          end
-          return a_score > b_score
-        end,
-        compare.offset,
-        compare.exact,
-        compare.score,
-        compare.recently_used,
-        compare.locality,
-        compare.length,
-        compare.order,
-      },
-    },
-    view = {
-      entries = {
-        follow_cursor = true,
-      },
-    },
-    preselect = 'none',
-    completion = {
-      completeopt = 'menu,menuone,noinsert,noselect',
-    },
-    snippet = {
-      expand = function(args)
-        luasnip.lsp_expand(args.body)
-      end,
-    },
-    mapping = cmp.mapping.preset.insert({
-      ['<C-Space>'] = cmp.mapping.complete(),
-      ['<Tab>'] = cmp.mapping(function(fallback)
-        if cmp.visible() then
-          local entry = cmp.get_selected_entry()
-          if not entry then
-            cmp.select_next_item({ behavior = cmp.SelectBehavior.Select })
-          end
-          cmp.confirm()
-        elseif luasnip.expand_or_jumpable() then
-          luasnip.expand_or_jump()
-        else
-          fallback()
-        end
-      end, { 'i', 's' }),
-      ['<C-e>'] = cmp.mapping.close(),
-      ['<C-d>'] = cmp.mapping(function(fallback)
-        if cmp.visible() then
-          for i = 1, 5, 1 do
-            cmp.select_next_item()
-          end
-        else
-          fallback()
-        end
-      end, { 'i', 's' }),
-      ['<C-u>'] = cmp.mapping(function(fallback)
-        if cmp.visible() then
-          for i = 1, 5, 1 do
-            cmp.select_prev_item()
-          end
-        else
-          fallback()
-        end
-      end, { 'i', 's' }),
-    }),
-  })
-  cmp.setup.cmdline({ '/', '?' }, {
-    mapping = cmp.mapping.preset.cmdline(),
-    sources = {
-      {
-        name = 'buffer',
-      },
-    },
-  })
-  cmp.setup.cmdline(':', {
-    mapping = cmp.mapping.preset.cmdline(),
-    sources = cmp.config.sources({
-      {
-        name = 'path',
-      },
-    }, {
-      {
-        name = 'cmdline',
-        option = {
-          ignore_cmds = { 'Man', '!' },
-        },
-      },
-    }),
-    matching = {
-      disallow_symbol_nonprefix_matching = false,
-    },
-  })
 EOF
-
-  augroup NvimCmp
-  autocmd!
-  autocmd FileType TelescopePrompt lua require('cmp').setup.buffer({ enabled = false })
-  augroup END
 
   nnoremap K <cmd>lua vim.lsp.buf.hover()<cr>
   nnoremap <C-S> <cmd>lua vim.lsp.buf.signature_help()<cr>
@@ -454,7 +301,65 @@ EOF
 endfunction
 
 if has('nvim')
-  call InitNvimCmp()
+  call InitLSP()
+endif
+
+" -----------------------------------------------------------------------------
+" saghen/blink.cmp
+function! InitBlink() abort
+lua << EOF
+  require('luasnip.loaders.from_vscode').lazy_load()
+
+  require('colorful-menu').setup({})
+
+  require('blink.cmp').setup({
+    keymap = {
+      preset = 'super-tab',
+    },
+    completion = {
+      list = {
+        max_items = 50,
+      },
+      menu = {
+        draw = {
+          columns = { { 'label', gap = 1 }, { 'kind' } },
+          components = {
+            label = {
+              text = function(ctx)
+                return require('colorful-menu').blink_components_text(ctx)
+              end,
+              highlight = function(ctx)
+                return require('colorful-menu').blink_components_highlight(ctx)
+              end,
+            },
+          },
+        },
+      },
+    },
+    snippets = {
+      preset = 'luasnip',
+    },
+    signature = {
+      enabled = true,
+    },
+    cmdline = {
+      completion = {
+        list = {
+          selection = {
+            preselect = false,
+          },
+        },
+        menu = {
+          auto_show = true,
+        },
+      },
+    },
+  })
+EOF
+endfunction
+
+if has('nvim')
+  call InitBlink()
 endif
 
 " -----------------------------------------------------------------------------
@@ -1677,11 +1582,11 @@ function! InitQuicker() abort
       enabled = true,
     },
     type_icons = {
-      E = "E",
-      W = "W",
-      I = "I",
-      N = "N",
-      H = "H",
+      E = 'E',
+      W = 'W',
+      I = 'I',
+      N = 'N',
+      H = 'H',
     },
   })
 EOF
@@ -1712,38 +1617,38 @@ function! InitTrouble() abort
     },
     icons = {
       indent = {
-        fold_open     = "  ",
-        fold_closed   = "│ ",
+        fold_open     = '  ',
+        fold_closed   = '│ ',
       },
-      folder_closed   = "",
-      folder_open     = "",
+      folder_closed   = '',
+      folder_open     = '',
       kinds = {
-        Array         = "",
-        Boolean       = "",
-        Class         = "",
-        Constant      = "",
-        Constructor   = "",
-        Enum          = "",
-        EnumMember    = "",
-        Event         = "",
-        Field         = "",
-        File          = "",
-        Function      = "",
-        Interface     = "",
-        Key           = "",
-        Method        = "",
-        Module        = "",
-        Namespace     = "",
-        Null          = "",
-        Number        = "",
-        Object        = "",
-        Operator      = "",
-        Package       = "",
-        Property      = "",
-        String        = "",
-        Struct        = "",
-        TypeParameter = "",
-        Variable      = "",
+        Array         = '',
+        Boolean       = '',
+        Class         = '',
+        Constant      = '',
+        Constructor   = '',
+        Enum          = '',
+        EnumMember    = '',
+        Event         = '',
+        Field         = '',
+        File          = '',
+        Function      = '',
+        Interface     = '',
+        Key           = '',
+        Method        = '',
+        Module        = '',
+        Namespace     = '',
+        Null          = '',
+        Number        = '',
+        Object        = '',
+        Operator      = '',
+        Package       = '',
+        Property      = '',
+        String        = '',
+        Struct        = '',
+        TypeParameter = '',
+        Variable      = '',
       },
     },
   })
@@ -1922,34 +1827,34 @@ function! InitWhichKeyNvim() abort
     icons = {
       mappings = false,
       keys = {
-        Up = "<Up>",
-        Down = "<Down>",
-        Left = "<Left>",
-        Right = "<Right>",
-        C = "<C>",
-        M = "<M>",
-        D = "<D>",
-        S = "<S>",
-        CR = "<CR>",
-        Esc = "<Esc>",
-        ScrollWheelDown = "<ScrollWheelDown>",
-        ScrollWheelUp = "<ScrollWheelUp>",
-        NL = "<NL>",
-        BS = "<BS>",
-        Space = "<Space>",
-        Tab = "<Tab>",
-        F1 = "<F1>",
-        F2 = "<F2>",
-        F3 = "<F3>",
-        F4 = "<F4>",
-        F5 = "<F5>",
-        F6 = "<F6>",
-        F7 = "<F7>",
-        F8 = "<F8>",
-        F9 = "<F9>",
-        F10 = "<F10>",
-        F11 = "<F11>",
-        F12 = "<F12>",
+        Up = '<Up>',
+        Down = '<Down>',
+        Left = '<Left>',
+        Right = '<Right>',
+        C = '<C>',
+        M = '<M>',
+        D = '<D>',
+        S = '<S>',
+        CR = '<CR>',
+        Esc = '<Esc>',
+        ScrollWheelDown = '<ScrollWheelDown>',
+        ScrollWheelUp = '<ScrollWheelUp>',
+        NL = '<NL>',
+        BS = '<BS>',
+        Space = '<Space>',
+        Tab = '<Tab>',
+        F1 = '<F1>',
+        F2 = '<F2>',
+        F3 = '<F3>',
+        F4 = '<F4>',
+        F5 = '<F5>',
+        F6 = '<F6>',
+        F7 = '<F7>',
+        F8 = '<F8>',
+        F9 = '<F9>',
+        F10 = '<F10>',
+        F11 = '<F11>',
+        F12 = '<F12>',
       },
     },
   })
@@ -2016,56 +1921,56 @@ function! InitTreesitter() abort
         enable = true,
         lookahead = true,
         keymaps = {
-          ["aa"] = { query = "@parameter.outer", desc = "Select outer part of a parameter/argument" },
-          ["ia"] = { query = "@parameter.inner", desc = "Select inner part of a parameter/argument" },
-          ["ai"] = { query = "@conditional.outer", desc = "Select outer part of a conditional" },
-          ["ii"] = { query = "@conditional.inner", desc = "Select inner part of a conditional" },
-          ["al"] = { query = "@loop.outer", desc = "Select outer part of a loop" },
-          ["il"] = { query = "@loop.inner", desc = "Select inner part of a loop" },
-          ["af"] = { query = "@call.outer", desc = "Select outer part of a function call" },
-          ["if"] = { query = "@call.inner", desc = "Select inner part of a function call" },
-          ["am"] = { query = "@function.outer", desc = "Select outer part of a method/function definition" },
-          ["im"] = { query = "@function.inner", desc = "Select inner part of a method/function definition" },
-          ["ac"] = { query = "@class.outer", desc = "Select outer part of a class" },
-          ["ic"] = { query = "@class.inner", desc = "Select inner part of a class" },
+          ['aa'] = { query = '@parameter.outer', desc = 'Select outer part of a parameter/argument' },
+          ['ia'] = { query = '@parameter.inner', desc = 'Select inner part of a parameter/argument' },
+          ['ai'] = { query = '@conditional.outer', desc = 'Select outer part of a conditional' },
+          ['ii'] = { query = '@conditional.inner', desc = 'Select inner part of a conditional' },
+          ['al'] = { query = '@loop.outer', desc = 'Select outer part of a loop' },
+          ['il'] = { query = '@loop.inner', desc = 'Select inner part of a loop' },
+          ['af'] = { query = '@call.outer', desc = 'Select outer part of a function call' },
+          ['if'] = { query = '@call.inner', desc = 'Select inner part of a function call' },
+          ['am'] = { query = '@function.outer', desc = 'Select outer part of a method/function definition' },
+          ['im'] = { query = '@function.inner', desc = 'Select inner part of a method/function definition' },
+          ['ac'] = { query = '@class.outer', desc = 'Select outer part of a class' },
+          ['ic'] = { query = '@class.inner', desc = 'Select inner part of a class' },
         },
       },
       swap = {
         enable = true,
         swap_next = {
-          ["cm"] = "@parameter.inner",
+          ['cm'] = '@parameter.inner',
         },
       },
       move = {
         enable = true,
         set_jumps = true,
         goto_next_start = {
-          ["]f"] = { query = "@call.outer", desc = "Next function call start" },
-          ["]m"] = { query = "@function.outer", desc = "Next method/function def start" },
-          ["]c"] = { query = "@class.outer", desc = "Next class start" },
-          ["]i"] = { query = "@conditional.outer", desc = "Next conditional start" },
-          ["]l"] = { query = "@loop.outer", desc = "Next loop start" },
+          [']f'] = { query = '@call.outer', desc = 'Next function call start' },
+          [']m'] = { query = '@function.outer', desc = 'Next method/function def start' },
+          [']c'] = { query = '@class.outer', desc = 'Next class start' },
+          [']i'] = { query = '@conditional.outer', desc = 'Next conditional start' },
+          [']l'] = { query = '@loop.outer', desc = 'Next loop start' },
         },
         goto_next_end = {
-          ["]F"] = { query = "@call.outer", desc = "Next function call end" },
-          ["]M"] = { query = "@function.outer", desc = "Next method/function def end" },
-          ["]C"] = { query = "@class.outer", desc = "Next class end" },
-          ["]I"] = { query = "@conditional.outer", desc = "Next conditional end" },
-          ["]L"] = { query = "@loop.outer", desc = "Next loop end" },
+          [']F'] = { query = '@call.outer', desc = 'Next function call end' },
+          [']M'] = { query = '@function.outer', desc = 'Next method/function def end' },
+          [']C'] = { query = '@class.outer', desc = 'Next class end' },
+          [']I'] = { query = '@conditional.outer', desc = 'Next conditional end' },
+          [']L'] = { query = '@loop.outer', desc = 'Next loop end' },
         },
         goto_previous_start = {
-          ["[f"] = { query = "@call.outer", desc = "Prev function call start" },
-          ["[m"] = { query = "@function.outer", desc = "Prev method/function def start" },
-          ["[c"] = { query = "@class.outer", desc = "Prev class start" },
-          ["[i"] = { query = "@conditional.outer", desc = "Prev conditional start" },
-          ["[l"] = { query = "@loop.outer", desc = "Prev loop start" },
+          ['[f'] = { query = '@call.outer', desc = 'Prev function call start' },
+          ['[m'] = { query = '@function.outer', desc = 'Prev method/function def start' },
+          ['[c'] = { query = '@class.outer', desc = 'Prev class start' },
+          ['[i'] = { query = '@conditional.outer', desc = 'Prev conditional start' },
+          ['[l'] = { query = '@loop.outer', desc = 'Prev loop start' },
         },
         goto_previous_end = {
-          ["[F"] = { query = "@call.outer", desc = "Prev function call end" },
-          ["[M"] = { query = "@function.outer", desc = "Prev method/function def end" },
-          ["[C"] = { query = "@class.outer", desc = "Prev class end" },
-          ["[I"] = { query = "@conditional.outer", desc = "Prev conditional end" },
-          ["[L"] = { query = "@loop.outer", desc = "Prev loop end" },
+          ['[F'] = { query = '@call.outer', desc = 'Prev function call end' },
+          ['[M'] = { query = '@function.outer', desc = 'Prev method/function def end' },
+          ['[C'] = { query = '@class.outer', desc = 'Prev class end' },
+          ['[I'] = { query = '@conditional.outer', desc = 'Prev conditional end' },
+          ['[L'] = { query = '@loop.outer', desc = 'Prev loop end' },
         },
       },
     },
