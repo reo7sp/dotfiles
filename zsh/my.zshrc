@@ -344,6 +344,12 @@ export GOTESTSUM_FORMAT=testdox
 
 # -----------------------------------------------------------------------------
 # python
+if can-exec python3 && ! can-exec python; then
+  python() {
+    python3 "$@"
+  }
+fi
+
 if can-exec pyenv; then
   export PYENV_ROOT="$HOME/.pyenv"
   export PATH="$PYENV_ROOT/bin:$PATH"
