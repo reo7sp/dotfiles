@@ -1558,6 +1558,10 @@ function! InitBqf() abort
           vim.keymap.set('n', 'zr', function()
             require('quicker').refresh()
           end, { buffer = ev.buf })
+
+          vim.keymap.set('n', 'q', function()
+            vim.cmd('cclose')
+          end, { buffer = ev.buf })
         end)
       end
     end,
