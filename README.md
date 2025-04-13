@@ -7,7 +7,7 @@ My config files:
 - sublime text: [sublime-dotfiles repo](https://github.com/reo7sp/sublime-dotfiles?tab=readme-ov-file#sublime-dotfiles).
 - kitty: [kitty/kitty.conf](./kitty/kitty.conf).
 - git: [git/install](./git/install).
-- rg: [ripgrep](./rg/ripgrep).
+- rg: [rg/ripgreprc](./rg/ripgreprc).
 
 <br>
 

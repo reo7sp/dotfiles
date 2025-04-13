@@ -7,14 +7,16 @@ can-exec() {
 
 
 mkdir -p ~/.vim/{bundle,nbundle,backup,tmp,undo,sessions,spell,view} ~/.config/nvim ~/.config/nvim/after/{syntax,ftplugin}
-
 cp vimrc ~/.vimrc
 cp nvim/init.vim ~/.config/nvim/init.vim
+cp nvim/after/syntax/vim.vim ~/.config/nvim/after/syntax/vim.vim
+cp nvim/after/ftplugin/jinja.vim ~/.config/nvim/after/ftplugin/jinja.vim
 cp neovintageousrc ~/.neovintageousrc
 cp ideavimrc ~/.ideavimrc
-cp after/syntax/vim.vim ~/.config/nvim/after/syntax/vim.vim
-cp after/ftplugin/jinja.vim ~/.config/nvim/after/ftplugin/jinja.vim
-curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+
+if [ ! -f ~/.vim/autoload/plug.vim ]; then
+  curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+fi
 
 vim -e -c "PlugUpdate" -c "qa"
 if can-exec nvim; then

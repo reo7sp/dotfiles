@@ -33,9 +33,9 @@ export NVM_DIR="$HOME/.nvm"
 export NVM_LAZY_LOAD=true
 
 antidote load
+
 autoload -Uz promptinit && promptinit && prompt pure
 compstyle prezto
-
 export PATH="$(antidote path reo7sp/zimfw-git)/functions:$PATH"
 
 
@@ -82,11 +82,11 @@ WORDCHARS=${WORDCHARS/|}
 WORDCHARS=${WORDCHARS/-}
 zmodload zsh/complist
 bindkey -M menuselect '^[[Z' reverse-menu-complete # shift-tab
-function my_keybindings() {
+function my_bindkeys() {
   bindkey '^B' backward-word
   bindkey '^F' forward-word
 }
-zvm_after_init_commands+=(my_keybindings)
+zvm_after_init_commands+=(my_bindkeys)
 
 
 # =============================================================================
@@ -198,8 +198,6 @@ tm() {
 
 # -----------------------------------------------------------------------------
 # git
-alias g='git'
-
 alias gg='lazygit'
 alias gll='tig'
 
@@ -207,8 +205,16 @@ gwdn() {
   gwd --name-only "$@"
 }
 
+gwde() {
+  gwd --ext-diff "$@"
+}
+
 gcsn() {
   gcs --name-only "$@"
+}
+
+gcse() {
+  gcs --ext-diff "$@"
 }
 
 alias gcss='git rev-parse HEAD'

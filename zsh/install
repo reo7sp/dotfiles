@@ -27,10 +27,6 @@ confirm() {
   fi
 }
 
-can-exec() {
-  which "$1" 2>/dev/null 1>/dev/null
-}
-
 
 if [ ! -d ~/.antidote ]; then
   git clone --depth=1 https://github.com/mattmc3/antidote.git ${ZDOTDIR:-~}/.antidote
