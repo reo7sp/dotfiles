@@ -53,7 +53,7 @@ if has('nvim')
 else
   Plug 'Raimondi/delimitMate'
 end
-Plug 'alvan/vim-closetag'
+Plug 'alvan/vim-closetag', {'for': ['html', 'htm', 'xml', 'js', 'jsx']}
 Plug 'wellle/targets.vim'
 if has('nvim')
   Plug 'monaqa/dial.nvim'
@@ -75,14 +75,14 @@ endif
 Plug 'bogado/file-line'
 Plug 'pbrisbin/vim-mkdir'
 Plug 'farmergreg/vim-lastplace'
-if ! has('nvim')
-  Plug 'moll/vim-bbye'
-  Plug 'vim-scripts/BufOnly.vim'
-endif
 if has('nvim')
   Plug 'okuuva/auto-save.nvim'
 else
   Plug '907th/vim-auto-save'
+endif
+if ! has('nvim')
+  Plug 'moll/vim-bbye'
+  Plug 'vim-scripts/BufOnly.vim'
 endif
 if has('nvim')
   Plug 'ahmedkhalf/project.nvim'
@@ -265,11 +265,8 @@ endif
 function! InitNvimCmp() abort
   lua << EOF
   local lspconfig_defaults = require('lspconfig').util.default_config
-  lspconfig_defaults.capabilities = vim.tbl_deep_extend(
-    'force',
-    lspconfig_defaults.capabilities,
-    require('cmp_nvim_lsp').default_capabilities()
-  )
+  lspconfig_defaults.capabilities = vim.tbl_deep_extend('force', lspconfig_defaults.capabilities,
+    require('cmp_nvim_lsp').default_capabilities())
 
   require('mason').setup({})
 
@@ -305,7 +302,6 @@ function! InitNvimCmp() abort
   local cmp = require('cmp')
   local compare = require('cmp.config.compare')
   local luasnip = require('luasnip')
-  local max_buffer_size = 1024 * 1024
   cmp.setup({
     sources = {
       {
@@ -317,6 +313,7 @@ function! InitNvimCmp() abort
       },
       {
         name = 'path',
+        keyword_length = 4,
       },
       {
         name = 'buffer',
@@ -324,7 +321,7 @@ function! InitNvimCmp() abort
         get_bufnrs = function()
           local buf = vim.api.nvim_get_current_buf()
           local byte_size = vim.api.nvim_buf_get_offset(buf, vim.api.nvim_buf_line_count(buf))
-          if byte_size > max_buffer_size then
+          if byte_size > 1024 * 1024 then
             return {}
           end
           return { buf }
@@ -376,7 +373,7 @@ function! InitNvimCmp() abort
     },
     snippet = {
       expand = function(args)
-        require('luasnip').lsp_expand(args.body)
+        luasnip.lsp_expand(args.body)
       end,
     },
     mapping = cmp.mapping.preset.insert({
@@ -394,17 +391,6 @@ function! InitNvimCmp() abort
           fallback()
         end
       end, { 'i', 's' }),
-      -- ['<CR>'] = cmp.mapping(function(fallback)
-      --   if cmp.visible() then
-      --     if luasnip.expandable() then
-      --       luasnip.expand()
-      --     else
-      --       cmp.confirm({ select = true })
-      --     end
-      --   else
-      --     fallback()
-      --   end
-      -- end),
       ['<C-e>'] = cmp.mapping.close(),
       ['<C-d>'] = cmp.mapping(function(fallback)
         if cmp.visible() then
@@ -544,10 +530,10 @@ function! InitSubstitute() abort
     },
   })
 
-  vim.keymap.set('n', 'x', require('substitute').operator, { noremap = true })
-  vim.keymap.set('n', 'xx', require('substitute').line, { noremap = true })
-  vim.keymap.set('n', 'X', require('substitute').eol, { noremap = true })
-  vim.keymap.set('x', 'x', require('substitute').visual, { noremap = true })
+  vim.keymap.set('n', 'x', require('substitute').operator)
+  vim.keymap.set('n', 'xx', require('substitute').line)
+  vim.keymap.set('n', 'X', require('substitute').eol)
+  vim.keymap.set('x', 'x', require('substitute').visual)
 EOF
 endfunction
 
@@ -561,32 +547,6 @@ if has('nvim')
   call InitSubstitute()
 else
   autocmd BufEnter * call InitSubversive()
-endif
-
-" -----------------------------------------------------------------------------
-" moll/vim-bbye
-function! InitBbye() abort
-  cnoreabbrev bq Bdelete
-  cnoreabbrev bd Bdelete
-  nnoremap <c-q> <cmd>Bdelete<cr>
-  nnoremap <c-w>Q <cmd>Bdelete<cr>
-endfunction
-
-if ! has('nvim')
-  call InitBbye()
-endif
-
-" -----------------------------------------------------------------------------
-" vim-scripts/BufOnly.vim
-function! InitBufOnly() abort
-  cnoreabbrev bo silent BufOnly
-  cnoreabbrev bon silent BufOnly
-  cnoreabbrev bonly silent BufOnly
-  nnoremap <c-w>O <cmd>BufOnly<cr>
-endfunction
-
-if ! has('nvim')
-  call InitBufOnly()
 endif
 
 " -----------------------------------------------------------------------------
@@ -614,6 +574,32 @@ if has('nvim')
   call InitAutosaveNvim()
 else
   call InitAutosaveVim()
+endif
+
+" -----------------------------------------------------------------------------
+" moll/vim-bbye
+function! InitBbye() abort
+  cnoreabbrev bq Bdelete
+  cnoreabbrev bd Bdelete
+  nnoremap <c-q> <cmd>Bdelete<cr>
+  nnoremap <c-w>Q <cmd>Bdelete<cr>
+endfunction
+
+if ! has('nvim')
+  call InitBbye()
+endif
+
+" -----------------------------------------------------------------------------
+" vim-scripts/BufOnly.vim
+function! InitBufOnly() abort
+  cnoreabbrev bo silent BufOnly
+  cnoreabbrev bon silent BufOnly
+  cnoreabbrev bonly silent BufOnly
+  nnoremap <c-w>O <cmd>BufOnly<cr>
+endfunction
+
+if ! has('nvim')
+  call InitBufOnly()
 endif
 
 " -----------------------------------------------------------------------------
@@ -828,7 +814,7 @@ function! InitRefactoring() abort
       }), {
       })
     )
-  end, { desc = 'Refactor', remap = true })
+  end, { desc = 'Refactor' })
 EOF
 endfunction
 
@@ -1238,7 +1224,7 @@ function! InitNvimTree() abort
       local api = require('nvim-tree.api')
 
       local function opts(desc)
-        return { desc = 'nvim-tree: ' .. desc, buffer = bufnr, noremap = true, silent = true, nowait = true }
+        return { desc = 'nvim-tree: ' .. desc, buffer = bufnr, silent = true, nowait = true }
       end
 
       api.config.mappings.default_on_attach(bufnr)
@@ -1662,11 +1648,11 @@ function! InitBqf() abort
           vim.keymap.set('n', '<c-t>', function()
             vim.cmd([[cclose]])
             vim.cmd([[Trouble qflist open]])
-          end, { noremap = true, buffer = ev.buf })
+          end, { buffer = ev.buf })
 
           vim.keymap.set('n', 'zr', function()
             require('quicker').refresh()
-          end, { noremap = true, buffer = ev.buf })
+          end, { buffer = ev.buf })
         end)
       end
     end,
@@ -2278,6 +2264,8 @@ nnoremap <silent> [+ :let @"=@+<CR>
 nnoremap <silent> ]+ :let @+=@"<CR>
 nnoremap <silent> [= :let @"=@+<CR>
 nnoremap <silent> ]= :let @+=@"<CR>
+nnoremap <silent> +[ :let @"=@+<CR>
+nnoremap <silent> +] :let @+=@"<CR>
 
 nnoremap +y "+y
 nnoremap +Y "+Y
@@ -2477,9 +2465,9 @@ if has('nvim')
   vim.keymap.set('v', '<D-v>', '"+P')
   vim.keymap.set('c', '<D-v>', '<C-R>+')
   vim.keymap.set('i', '<D-v>', '<ESC>l"+Pli')
-  vim.api.nvim_set_keymap('', '<D-v>', '+p<CR>', { noremap = true, silent = true })
-  vim.api.nvim_set_keymap('!', '<D-v>', '<C-R>+', { noremap = true, silent = true })
-  vim.api.nvim_set_keymap('t', '<D-v>', '<C-R>+', { noremap = true, silent = true })
-  vim.api.nvim_set_keymap('v', '<D-v>', '<C-R>+', { noremap = true, silent = true })
+  vim.api.nvim_set_keymap('', '<D-v>', '+p<CR>', { silent = true })
+  vim.api.nvim_set_keymap('!', '<D-v>', '<C-R>+', { silent = true })
+  vim.api.nvim_set_keymap('t', '<D-v>', '<C-R>+', { silent = true })
+  vim.api.nvim_set_keymap('v', '<D-v>', '<C-R>+', { silent = true })
 EOF
 endif

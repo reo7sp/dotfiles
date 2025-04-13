@@ -10,21 +10,6 @@ can-exec() {
   which "$1" 2>/dev/null 1>/dev/null
 }
 
-confirm() {
-  local message=$1
-
-  echo -n -e "${BWhite}$message${Color_Off} [Y/n] "
-  read response
-  case $response in
-    [yY][eE][sS]|[yY]|"")
-      true
-      ;;
-    *)
-      false
-      ;;
-  esac
-}
-
 if uname -a | grep Darwin > /dev/null; then
   export IS_MACOS=1
 else
@@ -54,6 +39,7 @@ antibody bundle djui/alias-tips
 antibody bundle reo7sp/zimfw-git
 export PATH="$(antibody list | grep zimfw | perl -lne 'print $1 if /\s+(.+)/')/functions:$PATH"
 antibody bundle zuxfoucault/colored-man-pages_mod
+antibody bundle qoomon/zsh-lazyload
 antibody bundle reo7sp/zsh-autoswitch-virtualenv
 export AUTOSWITCH_DEFAULT_PYTHON=python3
 
@@ -150,7 +136,6 @@ alias rm='rm -f'
 alias cp='cp -f'
 alias mv='mv -f'
 
-alias _='sudo'
 alias suz='su -m -c zsh'
 alias sudoz="sudo ZDOTDIR=\$HOME PATH=\$PATH zsh"
 
@@ -211,12 +196,6 @@ alias edit-zshrc='vim ~/.zshrc; source ~/.zshrc'
 alias edit-kitty="vim ~/.config/kitty/kitty.conf"
 
 # -----------------------------------------------------------------------------
-# tmux
-tm() {
-  tmux -2 a || tmux -2 new
-}
-
-# -----------------------------------------------------------------------------
 # ssh
 if [[ $TERM == 'xterm-kitty' ]]; then
   alias ssh='TERM=xterm-256color ssh'
@@ -227,10 +206,17 @@ alias copy-ssh='cat ~/.ssh/id_rsa.pub | pbcopy'
 alias show-ssh='cat ~/.ssh/config'
 
 # -----------------------------------------------------------------------------
-# git
-g() {
-  git "$@"
+# tmux
+tm() {
+  tmux -2 a || tmux -2 new
 }
+
+# -----------------------------------------------------------------------------
+# git
+alias g='git'
+
+alias gg='lazygit'
+alias gll='tig'
 
 gwdn() {
   gwd --name-only "$@"
@@ -243,9 +229,6 @@ gcsn() {
 alias gcp='git cherry-pick'
 alias gcpa='git cherry-pick --abort'
 alias gcpc='git cherry-pick --continue'
-
-alias gg='lazygit'
-alias gll='tig'
 
 gfcd() {
   local repo=$1
@@ -292,8 +275,18 @@ export RIPGREP_CONFIG_PATH="$HOME/.ripgreprc"
 alias edit-rg="vim $RIPGREP_CONFIG_PATH"
 
 # -----------------------------------------------------------------------------
+# fd
+if can-exec fdfind; then
+  alias fd='fdfind'
+fi
+
+# -----------------------------------------------------------------------------
 # fzf
-alias f="fzf"
+if can-exec fzf; then
+  zvm_after_init_commands+=('source <(fzf --zsh)')
+fi
+
+alias f='fzf'
 
 catf() {
   cat $(f)
@@ -324,12 +317,6 @@ cdfm() {
 }
 
 # -----------------------------------------------------------------------------
-# fd
-if can-exec fdfind; then
-  alias fd='fdfind'
-fi
-
-# -----------------------------------------------------------------------------
 # sublime text
 t() {
   lcd
@@ -352,7 +339,17 @@ m() {
 }
 
 # -----------------------------------------------------------------------------
+# go
+export GOTESTSUM_FORMAT=testdox
+
+# -----------------------------------------------------------------------------
 # python
+if can-exec pyenv; then
+  export PYENV_ROOT="$HOME/.pyenv"
+  export PATH="$PYENV_ROOT/bin:$PATH"
+  lazyload pyenv -- 'eval "$(pyenv init -)"'
+fi
+
 alias p='python3'
 alias p2='python2'
 alias pp='python3 -m ptpython || ptpython'
@@ -360,8 +357,19 @@ alias pp-install='pip3 install ptpython'
 alias jn='jupyter notebook'
 
 # -----------------------------------------------------------------------------
-# go
-export GOTESTSUM_FORMAT=testdox
+# node js
+if [ -s "/usr/local/opt/nvm/nvm.sh" ]; then
+  export NVM_DIR="$HOME/.nvm"
+  export NVM_LAZY_LOAD=true
+  antibody bundle lukechilds/zsh-nvm
+fi
+
+# -----------------------------------------------------------------------------
+# docker
+export DOCKER_BUILDKIT=1
+
+alias d='docker'
+alias dc='docker-compose'
 
 # -----------------------------------------------------------------------------
 # k8s
