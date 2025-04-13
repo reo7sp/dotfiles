@@ -211,6 +211,8 @@ gcsn() {
   gcs --name-only "$@"
 }
 
+alias gcss='git rev-parse HEAD'
+
 alias gcp='git cherry-pick'
 alias gcpa='git cherry-pick --abort'
 alias gcpc='git cherry-pick --continue'
@@ -244,6 +246,11 @@ gbdr() {
 alias gfm-all="find . -maxdepth 1 -type d | xargs -n1 -t -I{} git -C '{}' pull"
 alias gfr-all="find . -maxdepth 1 -type d | xargs -n1 -t -I{} git -C '{}' pull --rebase"
 alias gb-all="find . -maxdepth 1 -type d | xargs -n1 -t -I{} git -C '{}' branch"
+
+if can-exec glab; then
+  source <(glab completion -s zsh)
+  compdef _glab glab
+fi
 
 aliases-git() {
   cat $(antidote path reo7sp/zimfw-git)/init.zsh
