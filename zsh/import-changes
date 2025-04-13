@@ -3,6 +3,4 @@ set -e -o pipefail
 
 
 cp ~/.my.zshrc my.zshrc
-
-sed -i.bak 's/auth_user=.* auth_pass=.* /auth_user=??? auth_pass=??? /g' my.zshrc
-rm my.zshrc.bak
+cp ~/.zsh_plugins.txt zsh_plugins.txt

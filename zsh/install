@@ -32,7 +32,10 @@ can-exec() {
 }
 
 
-can-exec antibody || ./install-antibody
+if [ ! -d ~/.antidote ]; then
+  git clone --depth=1 https://github.com/mattmc3/antidote.git ${ZDOTDIR:-~}/.antidote
+fi
+
 if [ -f ~/.zshrc ]; then
   if confirm "Do you want to overwrite ~/.zshrc?"; then
     cp zshrc ~/.zshrc
@@ -41,3 +44,4 @@ else
   cp zshrc ~/.zshrc
 fi
 cp my.zshrc ~/.my.zshrc
+cp zsh_plugins.txt ~/.zsh_plugins.txt

@@ -7,7 +7,7 @@ export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
 
 can-exec() {
-  which "$1" 2>/dev/null 1>/dev/null
+  (( $+commands[$1] ))
 }
 
 if uname -a | grep Darwin > /dev/null; then
@@ -25,23 +25,18 @@ fi
 
 # =============================================================================
 # plugins
-export PATH="$HOME/.antibody:$PATH"
-source <(antibody init)
+source $HOME/.antidote/antidote.zsh
 
-antibody bundle mafredri/zsh-async
-antibody bundle reo7sp/pure
-antibody bundle zsh-users/zsh-completions
-antibody bundle zsh-users/zsh-autosuggestions
-antibody bundle zsh-users/zsh-history-substring-search
-antibody bundle mdumitru/fancy-ctrl-z
-antibody bundle jeffreytse/zsh-vi-mode
-antibody bundle djui/alias-tips
-antibody bundle reo7sp/zimfw-git
-export PATH="$(antibody list | grep zimfw | perl -lne 'print $1 if /\s+(.+)/')/functions:$PATH"
-antibody bundle zuxfoucault/colored-man-pages_mod
-antibody bundle qoomon/zsh-lazyload
-antibody bundle reo7sp/zsh-autoswitch-virtualenv
-export AUTOSWITCH_DEFAULT_PYTHON=python3
+export PYENV_ROOT="$HOME/.pyenv"
+export PATH="$PYENV_ROOT/bin:$PATH"
+export NVM_DIR="$HOME/.nvm"
+export NVM_LAZY_LOAD=true
+
+antidote load
+autoload -Uz promptinit && promptinit && prompt pure
+compstyle prezto
+
+export PATH="$(antidote path reo7sp/zimfw-git)/functions:$PATH"
 
 
 # =============================================================================
@@ -151,7 +146,7 @@ alias show-hosts='cat /etc/hosts'
 # -----------------------------------------------------------------------------
 # vim
 if can-exec nvim; then
-  _vim() {
+  vim() {
     lcd
     nvim "$@"
   }
@@ -159,12 +154,11 @@ else
   if [[ -z $real_vim ]]; then
     real_vim=$(which vim)
   fi
-  _vim() {
+  vim() {
     lcd
     $real_vim "$@"
   }
 fi
-alias vim='_vim'
 
 v() {
   if [[ -z $1 ]]; then
@@ -189,6 +183,7 @@ profile-start-vim() {
 # -----------------------------------------------------------------------------
 # zsh
 alias edit-zsh='vim ~/.my.zshrc; source ~/.zshrc'
+alias edit-zsh-plugins='vim ~/.zsh_plugins.txt; source ~/.zshrc'
 alias edit-zshrc='vim ~/.zshrc; source ~/.zshrc'
 
 # -----------------------------------------------------------------------------
@@ -260,7 +255,9 @@ alias gfm-all="find . -maxdepth 1 -type d | xargs -n1 -t -I{} git -C '{}' pull"
 alias gfr-all="find . -maxdepth 1 -type d | xargs -n1 -t -I{} git -C '{}' pull --rebase"
 alias gb-all="find . -maxdepth 1 -type d | xargs -n1 -t -I{} git -C '{}' branch"
 
-alias aliases-git="cat $(antibody list | grep zimfw-git)/init.zsh"
+aliases-git() {
+  cat $(antidote path reo7sp/zimfw-git)/init.zsh
+}
 
 # -----------------------------------------------------------------------------
 # difft
@@ -283,7 +280,7 @@ fi
 # -----------------------------------------------------------------------------
 # fzf
 if can-exec fzf; then
-  zvm_after_init_commands+=('source <(fzf --zsh)')
+  zvm_after_init_commands+=('source <(fzf --zsh 2>/dev/null)')
 fi
 
 alias f='fzf'
@@ -351,8 +348,6 @@ if can-exec python3 && ! can-exec python; then
 fi
 
 if can-exec pyenv; then
-  export PYENV_ROOT="$HOME/.pyenv"
-  export PATH="$PYENV_ROOT/bin:$PATH"
   lazyload pyenv -- 'eval "$(pyenv init -)"'
 fi
 
@@ -361,14 +356,6 @@ alias p2='python2'
 alias pp='python3 -m ptpython || ptpython'
 alias pp-install='pip3 install ptpython'
 alias jn='jupyter notebook'
-
-# -----------------------------------------------------------------------------
-# node js
-if [ -s "/usr/local/opt/nvm/nvm.sh" ]; then
-  export NVM_DIR="$HOME/.nvm"
-  export NVM_LAZY_LOAD=true
-  antibody bundle lukechilds/zsh-nvm
-fi
 
 # -----------------------------------------------------------------------------
 # docker
