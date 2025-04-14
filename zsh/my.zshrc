@@ -150,14 +150,6 @@ else
   }
 fi
 
-v() {
-  if [[ -z $1 ]]; then
-    vim .
-  else
-    vim "$@"
-  fi
-}
-
 alias edit-vim='vim ~/.vimrc'
 
 time-start-vim() {
@@ -292,15 +284,15 @@ catf() {
   cat $(f)
 }
 
+batf() {
+  bat $(f)
+}
+
 lessf() {
   less $(f)
 }
 
 vimf() {
-  vim $(f)
-}
-
-vf() {
   vim $(f)
 }
 
