@@ -1,0 +1,15 @@
+#!/bin/bash
+set -e -o pipefail
+
+do_import() {
+  echo "$1:"
+  cd "$1"
+  ./import-changes
+  cd ..
+  echo
+}
+
+
+for it in zsh vim kitty rg; do
+  do_import $it
+done
