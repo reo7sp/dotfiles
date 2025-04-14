@@ -165,6 +165,7 @@ if has('nvim')
   Plug 'romgrk/barbar.nvim'
   Plug 'tiagovla/scope.nvim'
   Plug 's1n7ax/nvim-window-picker'
+  Plug 'sindrets/winshift.nvim'
 else
   Plug 'ap/vim-buftabline'
 endif
@@ -1515,6 +1516,22 @@ if has('nvim')
 endif
 
 " -----------------------------------------------------------------------------
+" sindrets/winshift.nvim
+function! InitWinshift() abort
+  lua << EOF
+  require('winshift').setup({
+    window_picker = require('window-picker').pick_window,
+  })
+EOF
+
+  nnoremap <c-w>x <cmd>WinShift swap<cr>
+endfunction
+
+if has('nvim')
+  call InitWinshift()
+endif
+
+" -----------------------------------------------------------------------------
 " kevinhwang91/nvim-bqf
 function! InitBqf() abort
   lua << EOF
@@ -1881,6 +1898,9 @@ endif
 " nvim-treesitter/nvim-treesitter
 function! InitTreesitter() abort
   lua << EOF
+  -- https://github.com/neovim/neovim/issues/32660
+  vim.g._ts_force_sync_parsing = true
+
   require('nvim-treesitter.configs').setup({
     ensure_installed = {
       'c',
