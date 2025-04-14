@@ -223,6 +223,7 @@ endif
 
 " -----------------------------------------------------------------------------
 " commands
+Plug 'tpope/vim-dispatch'
 Plug 'tpope/vim-eunuch'
 Plug 'tpope/vim-fugitive'
 Plug 'rbong/vim-flog', {'on': ['Flog', 'Flogsplit']}
@@ -579,6 +580,10 @@ function! InitYanky() abort
   vim.keymap.set({ 'n', 'x' }, 'P', '<Plug>(YankyPutBefore)')
   vim.keymap.set({ 'n', 'x' }, 'gp', '<Plug>(YankyGPutAfter)')
   vim.keymap.set({ 'n', 'x' }, 'gP', '<Plug>(YankyGPutBefore)')
+  vim.keymap.set('n', ']p', '<Plug>(YankyPutIndentAfterLinewise)')
+  vim.keymap.set('n', '[p', '<Plug>(YankyPutIndentBeforeLinewise)')
+  vim.keymap.set('n', ']P', '<Plug>(YankyPutIndentAfterLinewise)')
+  vim.keymap.set('n', '[P', '<Plug>(YankyPutIndentBeforeLinewise)')
   vim.keymap.set('n', '>p', '<Plug>(YankyPutIndentAfterShiftRight)')
   vim.keymap.set('n', '<p', '<Plug>(YankyPutIndentAfterShiftLeft)')
   vim.keymap.set('n', '>P', '<Plug>(YankyPutIndentBeforeShiftRight)')
@@ -1237,6 +1242,9 @@ function! InitAerial() abort
     },
     close_on_select = false,
     autojump = true,
+    manage_folds = true,
+    link_folds_to_tree = true,
+    link_tree_to_folds = false,
     show_guides = true,
     disable_max_lines = 99999,
   })
@@ -1572,7 +1580,7 @@ function! InitBqf() abort
             vim.cmd([[Trouble qflist open]])
           end, { buffer = ev.buf })
 
-          vim.keymap.set('n', 'zr', function()
+          vim.keymap.set('n', 'zx', function()
             require('quicker').refresh()
           end, { buffer = ev.buf })
 
@@ -2189,34 +2197,51 @@ nnoremap c. /\V\C<C-r>"<CR>cgn<C-a><Esc>
 nnoremap d. /\V\C<C-r>"<CR>dgn
 
 " https://vim.fandom.com/wiki/Comfortable_handling_of_registers
-nnoremap <silent> [+ :let @"=@+<CR>
-nnoremap <silent> ]+ :let @+=@"<CR>
-nnoremap <silent> [= :let @"=@+<CR>
-nnoremap <silent> ]= :let @+=@"<CR>
-nnoremap <silent> +[ :let @"=@+<CR>
-nnoremap <silent> +] :let @+=@"<CR>
+nnoremap [+ <cmd>let @"=@+<CR>
+nnoremap ]+ <cmd>let @+=@"<CR>
 
-nnoremap +y "+y
-nnoremap +Y "+Y
-nnoremap +p "+p
-nnoremap +P "+P
-nnoremap +c "+c
-nnoremap +C "+C
-nnoremap +d "+d
-nnoremap +D "+D
-nnoremap +x "+x
-nnoremap +X "+X
+nmap +c "+c
+nmap +C "+C
+nmap +d "+d
+nmap +D "+D
+nmap +x "+x
+nmap +X "+X
+nmap +y "+y
+nmap +Y "+Y
+nmap +p "+p
+nmap +P "+P
+nmap +]p "+]p
+nmap +[p "+[p
+nmap +]P "+]P
+nmap +[P "+[P
+nmap +>p "+>p
+nmap +<p "+<p
+nmap +>P "+>P
+nmap +<P "+<P
+nmap +=p "+=p
+nmap +=P "+=P
 
-vnoremap +y "+y
-vnoremap +Y "+Y
-vnoremap +p "+p
-vnoremap +P "+P
-vnoremap +c "+c
-vnoremap +C "+C
-vnoremap +d "+d
-vnoremap +D "+D
-vnoremap +x "+x
-vnoremap +X "+X
+vmap +c "+c
+vmap +C "+C
+vmap +d "+d
+vmap +D "+D
+vmap +x "+x
+vmap +X "+X
+vmap +y "+y
+vmap +Y "+Y
+vmap +p "+p
+vmap +P "+P
+vmap +]p "+]p
+vmap +[p "+[p
+vmap +]P "+]P
+vmap +[P "+[P
+vmap +>p "+>p
+vmap +<p "+<p
+vmap +>P "+>P
+vmap +<P "+<P
+vmap +=p "+=p
+vmap +=P "+=P
+
 
 " https://bluz71.github.io/2021/09/10/vim-tips-revisited.html#fast-previous-buffer-switching
 nnoremap <C-Backspace> <C-^>
