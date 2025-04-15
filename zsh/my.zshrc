@@ -133,6 +133,10 @@ fi
 alias edit-hosts='sudo vim /etc/hosts'
 alias show-hosts='cat /etc/hosts'
 
+aliases-ls() {
+  cat $(antidote path zimfw/exa)/init.zsh
+}
+
 # -----------------------------------------------------------------------------
 # vim
 if can-exec nvim; then
@@ -268,8 +272,14 @@ alias edit-rg="vim $RIPGREP_CONFIG_PATH"
 
 # -----------------------------------------------------------------------------
 # fd
+export FD_BIN=fd
+
 if can-exec fdfind; then
-  alias fd='fdfind'
+  export FD_BIN=fdfind
+
+  fd() {
+    $FD_BIN "$@"
+  }
 fi
 
 # -----------------------------------------------------------------------------
@@ -278,34 +288,41 @@ if can-exec fzf; then
   zvm_after_init_commands+=('source <(fzf --zsh 2>/dev/null)')
 fi
 
+if can-exec fd; then
+  export FZF_DEFAULT_COMMAND="$FD_BIN --type f --strip-cwd-prefix"
+  export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+fi
+
 alias f='fzf'
 
 catf() {
-  cat $(f)
+  fzf --bind 'enter:become(cat {})'
 }
 
 batf() {
-  bat $(f)
+  fzf --bind 'enter:become(bat {})'
 }
 
 lessf() {
-  less $(f)
+  fzf --bind 'enter:become(less {})'
 }
 
 vimf() {
-  vim $(f)
+  lcd
+  fzf --bind "enter:become($EDITOR {})"
 }
 
 tf() {
-  t $(f)
+  lcd
+  fzf --bind 'enter:become(subl {})'
 }
 
 cdf() {
-  cd $(find . -depth 5 -type d -not -path '*/\.*' -print 2> /dev/null | fzf-tmux)
+  cd $(find . -depth 5 -type d -not -path '*/\.*' -print 2> /dev/null | fzf)
 }
 
 cdfm() {
-  cd $(find .          -type d -not -path '*/\.*' -print 2> /dev/null | fzf-tmux)
+  cd $(find .          -type d -not -path '*/\.*' -print 2> /dev/null | fzf)
 }
 
 # -----------------------------------------------------------------------------
