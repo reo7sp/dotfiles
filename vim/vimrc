@@ -874,29 +874,25 @@ function! InitTelescope() abort
         end,
         select_current = true,
       },
+      jumplist = {
+        show_line = false,
+      },
       lsp_definitions = {
         fname_width = 60,
-        include_current_line = true,
       },
       lsp_implementations = {
         fname_width = 60,
-        include_current_line = true,
-      },
-      lsp_implementations = {
-        fname_width = 60,
-        include_current_line = true,
       },
       lsp_type_definitions = {
         fname_width = 60,
-        include_current_line = true,
       },
       lsp_references = {
         fname_width = 60,
         include_current_line = true,
       },
       lsp_dynamic_workspace_symbols = {
-        ignore_symbols = { 'variable', 'field' },
         fname_width = 60,
+        ignore_symbols = { 'variable', 'field' },
         initial_mode = 'insert',
       },
       commands = {
