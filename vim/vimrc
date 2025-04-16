@@ -206,6 +206,9 @@ if has('nvim')
   Plug 'nvim-treesitter/nvim-treesitter-context'
 endif
 if has('nvim')
+  Plug 'RRethy/vim-hexokinase', {'do': 'make hexokinase'}
+endif
+if has('nvim')
   Plug 'reo7sp/go.nvim'
   Plug 'ray-x/guihua.lua'
 else
@@ -213,12 +216,10 @@ else
 endif
 Plug 'Vimjas/vim-python-pep8-indent', {'for': 'python'}
 Plug 'HiPhish/jinja.vim'
+Plug 'rodjek/vim-puppet', {'for': ['pascal', 'puppet']}
 Plug 'fladson/vim-kitty'
 if has('nvim')
   Plug 'hat0uma/csvview.nvim', {'for': 'csv'}
-endif
-if has('nvim')
-  Plug 'RRethy/vim-hexokinase', {'do': 'make hexokinase'}
 endif
 
 " -----------------------------------------------------------------------------
@@ -1939,6 +1940,7 @@ function! InitTreesitter() abort
         'mermaid',
         'csv',
         'tsv',
+        'pascal',
       },
     },
     indent = {
@@ -2015,6 +2017,16 @@ if has('nvim')
 endif
 
 " -----------------------------------------------------------------------------
+" RRethy/vim-hexokinase
+function! InitHexokinase() abort
+  let g:Hexokinase_highlighters = ['virtual']
+endfunction
+
+if has('nvim')
+  call InitHexokinase()
+endif
+
+" -----------------------------------------------------------------------------
 " ray-x/go.nvim
 function! InitGo() abort
   lua << EOF
@@ -2066,6 +2078,16 @@ if has('nvim')
 endif
 
 " -----------------------------------------------------------------------------
+" rodjek/vim-puppet
+function! BufInitPuppet() abort
+  set ft=puppet
+endfunction
+
+if has('nvim')
+  autocmd BufEnter *.pp call BufInitPuppet()
+endif
+
+" -----------------------------------------------------------------------------
 " hat0uma/csvview.nvim
 function! InitCsvView() abort
   lua << EOF
@@ -2094,16 +2116,6 @@ endfunction
 
 if has('nvim')
   autocmd User csvview.nvim call InitCsvView()
-endif
-
-" -----------------------------------------------------------------------------
-" RRethy/vim-hexokinase
-function! InitHexokinase() abort
-  let g:Hexokinase_highlighters = ['virtual']
-endfunction
-
-if has('nvim')
-  call InitHexokinase()
 endif
 
 

@@ -8,15 +8,41 @@ set smartcase
 nnoremap c. /\V\C<C-r>"<CR>cgn<C-a><Esc>
 nnoremap d. /\V\C<C-r>"<CR>dgn
 nnoremap <silent> [+ :let @"=@+<CR>
-nnoremap <silent> [= :let @"=@+<CR>
 nnoremap <silent> ]+ :let @+=@"<CR>
-nnoremap <silent> ]= :let @+=@"<CR>
-nnoremap <silent> ++ :let @o=@" \| let @"=@+ \| let @+=@o<CR>
-nnoremap +y "+y
-nnoremap +Y "+Y
-nnoremap +p "+p
-nnoremap +P "+P
-vnoremap +y "+y
-vnoremap +Y "+Y
-vnoremap +p "+p
-vnoremap +P "+P
+nmap +c "+c
+nmap +C "+C
+nmap +d "+d
+nmap +D "+D
+nmap +y "+y
+nmap +Y "+Y
+nmap +p "+p
+nmap +P "+P
+nmap +]p "+]p
+nmap +[p "+[p
+nmap +]P "+]P
+nmap +[P "+[P
+nmap +>p "+>p
+nmap +<p "+<p
+nmap +>P "+>P
+nmap +<P "+<P
+nmap +=p "+=p
+nmap +=P "+=P
+vmap +c "+c
+vmap +C "+C
+vmap +d "+d
+vmap +D "+D
+vmap +y "+y
+vmap +Y "+Y
+vmap +p "+p
+vmap +P "+P
+vmap +]p "+]p
+vmap +[p "+[p
+vmap +]P "+]P
+vmap +[P "+[P
+vmap +>p "+>p
+vmap +<p "+<p
+vmap +>P "+>P
+vmap +<P "+<P
+vmap +=p "+=p
+vmap +=P "+=P
+
