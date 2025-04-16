@@ -97,6 +97,7 @@ zvm_after_init_commands+=(my_bindkeys)
 alias le='less'
 
 alias w='which'
+alias h='history'
 
 lcd() {
   cd "$(pwd -P)"
