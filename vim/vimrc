@@ -318,6 +318,7 @@ lua << EOF
   require('blink.cmp').setup({
     keymap = {
       preset = 'super-tab',
+      ['<CR>'] = { 'accept', 'fallback' },
     },
     completion = {
       list = {

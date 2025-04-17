@@ -16,6 +16,10 @@ else
   export IS_MACOS=0
 fi
 
+if can-exec brew; then
+  eval "$(brew shellenv)"
+fi
+
 if can-exec nvim; then
   export EDITOR='nvim'
 else
@@ -249,11 +253,6 @@ gbdr() {
 alias gfm-all="find . -maxdepth 1 -type d | xargs -n1 -t -I{} git -C '{}' pull"
 alias gfr-all="find . -maxdepth 1 -type d | xargs -n1 -t -I{} git -C '{}' pull --rebase"
 alias gb-all="find . -maxdepth 1 -type d | xargs -n1 -t -I{} git -C '{}' branch"
-
-if can-exec glab; then
-  source <(glab completion -s zsh)
-  compdef _glab glab
-fi
 
 aliases-git() {
   cat $(antidote path reo7sp/zimfw-git)/init.zsh

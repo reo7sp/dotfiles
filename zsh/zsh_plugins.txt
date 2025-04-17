@@ -1,16 +1,25 @@
+# general
 mafredri/zsh-async
+
+# prompt
 sindresorhus/pure kind:fpath
-belak/zsh-utils path:completion
+
+# editing
 zsh-users/zsh-completions kind:fpath path:src
 zsh-users/zsh-autosuggestions
 zsh-users/zsh-history-substring-search
 jeffreytse/zsh-vi-mode
 mdumitru/fancy-ctrl-z
 djui/alias-tips
-rupa/z
-zimfw/exa
+
+# aliases & settings
+agkozak/zsh-z
+reo7sp/zimfw-exa
 reo7sp/zimfw-git
 zuxfoucault/colored-man-pages_mod
 qoomon/zsh-lazyload
 reo7sp/zsh-autoswitch-virtualenv
 lukechilds/zsh-nvm
+
+# completion
+belak/zsh-utils path:completion
