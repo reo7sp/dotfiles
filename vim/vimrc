@@ -1371,6 +1371,8 @@ function! InitLualine() abort
     },
   })
 EOF
+
+  set noruler
 endfunction
 
 function! InitAirline() abort
@@ -1390,6 +1392,27 @@ function! InitAirline() abort
   autocmd User AirlineAfterInit :let g:airline_section_z = airline#section#create(['linenr', 'colnr'])
 
   let g:airline#extensions#whitespace#enabled = 0
+
+  let g:airline_mode_map = {
+    \ '__'     : '-',
+    \ 'c'      : 'C',
+    \ 'i'      : 'I',
+    \ 'ic'     : 'I',
+    \ 'ix'     : 'I',
+    \ 'n'      : 'N',
+    \ 'multi'  : 'M',
+    \ 'ni'     : 'N',
+    \ 'no'     : 'N',
+    \ 'R'      : 'R',
+    \ 'Rv'     : 'R',
+    \ 's'      : 'S',
+    \ 'S'      : 'S',
+    \ '␓'     : 'S',
+    \ 't'      : 'T',
+    \ 'v'      : 'V',
+    \ 'V'      : 'V',
+    \ '␖'     : 'V',
+    \ }
 endfunction
 
 if has('nvim')
@@ -1416,15 +1439,22 @@ function! InitBarbar() abort
       gitsigns = {
         enabled = false,
       },
-      modified = {
-        button = '',
-      },
       separator = {
         right = ' ',
       },
       inactive = {
         separator = {
           right = ' ',
+        },
+      },
+      modified = {
+        button = '',
+      },
+      pinned = {
+        filename = true,
+        button = ' ★',
+        separator = {
+          right = '',
         },
       },
       separator_at_end = false,
@@ -1444,10 +1474,12 @@ EOF
   nnoremap <c-q> <cmd>BufferClose<cr>
   nnoremap <c-w>Q <cmd>BufferClose<cr>
 
-  cnoreabbrev bo BufferCloseAllButCurrent
-  cnoreabbrev bon BufferCloseAllButCurrent
-  cnoreabbrev bonly BufferCloseAllButCurrent
-  nnoremap <c-w>O <cmd>BufferCloseAllButCurrent<cr>
+  cnoreabbrev bo BufferCloseAllButCurrentOrPinned
+  cnoreabbrev bon BufferCloseAllButCurrentOrPinned
+  cnoreabbrev bonly BufferCloseAllButCurrentOrPinned
+  nnoremap <c-w>O <cmd>BufferCloseAllButCurrentOrPinned<cr>
+
+  cnoreabbrev bpin BufferPin
 
   nnoremap <C-[> <cmd>BufferPrevious<CR>
   nnoremap <C-]> <cmd>BufferNext<CR>
