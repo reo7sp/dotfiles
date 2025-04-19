@@ -13,11 +13,11 @@ My config files:
 
 _How zsh looks:_
 
-![zsh screenshot](https://i.imgur.com/aFzMFKZ.png)
+![zsh screenshot](https://i.imgur.com/ADOhxTn.png)
 
 _How vim looks:_
 
-![vim screenshot](https://i.imgur.com/NDotxSH.png)
+![vim screenshot](https://i.imgur.com/506F2IZ.png)
 
 ## How to install
 

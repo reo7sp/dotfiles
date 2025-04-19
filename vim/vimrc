@@ -219,7 +219,7 @@ Plug 'HiPhish/jinja.vim'
 Plug 'rodjek/vim-puppet', {'for': ['pascal', 'puppet']}
 Plug 'fladson/vim-kitty'
 if has('nvim')
-  Plug 'hat0uma/csvview.nvim', {'for': 'csv'}
+  Plug 'hat0uma/csvview.nvim', {'for': ['csv', 'tsv']}
 endif
 
 " -----------------------------------------------------------------------------
@@ -310,7 +310,7 @@ endif
 " -----------------------------------------------------------------------------
 " saghen/blink.cmp
 function! InitBlink() abort
-lua << EOF
+  lua << EOF
   require('luasnip.loaders.from_vscode').lazy_load()
 
   require('colorful-menu').setup({})
@@ -760,7 +760,6 @@ function! InitConform() abort
   })
 
   vim.api.nvim_create_autocmd('FileType', {
-    pattern = pattern,
     callback = function(args)
       vim.api.nvim_buf_set_option(args.buf, 'formatexpr', 'v:lua.require("conform").formatexpr()')
     end,
@@ -2139,7 +2138,7 @@ function! InitCsvView() abort
   })
 
   vim.api.nvim_create_autocmd('FileType', {
-    pattern = 'csv',
+    pattern = {'*.csv', '*.tsv'},
     callback = function()
       require('csvview').enable()
     end,
@@ -2283,7 +2282,6 @@ vmap +<P "+<P
 vmap +=p "+=p
 vmap +=P "+=P
 
-
 " https://bluz71.github.io/2021/09/10/vim-tips-revisited.html#fast-previous-buffer-switching
 nnoremap <C-Backspace> <C-^>
 nnoremap <C-S-Backspace> <cmd>lua require('telescope-tabs').go_to_previous()<cr>
@@ -2379,7 +2377,7 @@ set foldlevelstart=99
 set foldmethod=syntax
 if has('nvim')
   lua << EOF
-  vim.api.nvim_create_autocmd({ 'FileType' }, {
+  vim.api.nvim_create_autocmd('FileType', {
     callback = function()
       if require('nvim-treesitter.parsers').has_parser() then
         vim.opt.foldmethod = 'expr'
@@ -2454,10 +2452,7 @@ if exists('g:neovide')
   vim.g.neovide_cursor_animate_command_line = false
   vim.g.neovide_scroll_animation_far_lines = 0
   vim.g.neovide_scroll_animation_length = 0.00
-EOF
-endif
-if has('nvim')
-  lua << EOF
+
   vim.keymap.set('n', '<D-s>', ':w<CR>')
   vim.keymap.set('n', '<D-w>', ':wq<CR>')
   vim.keymap.set('v', '<D-c>', '"+y')
