@@ -1479,6 +1479,7 @@ EOF
   nnoremap <c-w>O <cmd>BufferCloseAllButCurrentOrPinned<cr>
 
   cnoreabbrev bpin BufferPin
+  cnoreabbrev bpi BufferPin
 
   nnoremap <C-[> <cmd>BufferPrevious<CR>
   nnoremap <C-]> <cmd>BufferNext<CR>
@@ -2399,6 +2400,7 @@ set hidden
 set autoread
 set autowriteall
 set undofile
+set undolevels=200
 set nobackup
 set nowritebackup
 set noswapfile

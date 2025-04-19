@@ -40,6 +40,16 @@ antidote load
 
 autoload -Uz promptinit && promptinit && prompt pure
 compstyle prezto
+function fancy-ctrl-z-with-zvm() {
+  fancy-ctrl-z
+  zvm_enter_insert_mode
+}
+function fancy-ctrl-z-with-zvm-init() {
+  zvm_define_widget fancy-ctrl-z-with-zvm
+  zvm_bindkey viins '^Z' fancy-ctrl-z-with-zvm
+  zvm_bindkey vicmd '^Z' fancy-ctrl-z-with-zvm
+}
+zvm_after_init_commands+=(fancy-ctrl-z-with-zvm-init)
 export PATH="$(antidote path reo7sp/zimfw-git)/functions:$PATH"
 
 
@@ -86,11 +96,11 @@ WORDCHARS=${WORDCHARS/|}
 WORDCHARS=${WORDCHARS/-}
 zmodload zsh/complist
 bindkey -M menuselect '^[[Z' reverse-menu-complete # shift-tab
-function my_bindkeys() {
+function my-bindkeys() {
   bindkey '^B' backward-word
   bindkey '^F' forward-word
 }
-zvm_after_init_commands+=(my_bindkeys)
+zvm_after_init_commands+=(my-bindkeys)
 
 
 # =============================================================================

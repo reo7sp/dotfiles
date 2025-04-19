@@ -5,11 +5,11 @@ mafredri/zsh-async
 sindresorhus/pure kind:fpath
 
 # editing
+jeffreytse/zsh-vi-mode
+mdumitru/fancy-ctrl-z
 zsh-users/zsh-completions kind:fpath path:src
 zsh-users/zsh-autosuggestions
 zsh-users/zsh-history-substring-search
-jeffreytse/zsh-vi-mode
-mdumitru/fancy-ctrl-z
 djui/alias-tips
 
 # aliases & settings
