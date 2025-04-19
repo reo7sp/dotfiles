@@ -29,7 +29,7 @@ fi
 
 # =============================================================================
 # plugins
-source $HOME/.antidote/antidote.zsh
+source "$HOME/.antidote/antidote.zsh"
 
 export PYENV_ROOT="$HOME/.pyenv"
 export PATH="$PYENV_ROOT/bin:$PATH"

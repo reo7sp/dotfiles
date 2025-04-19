@@ -2138,7 +2138,7 @@ function! InitCsvView() abort
   })
 
   vim.api.nvim_create_autocmd('FileType', {
-    pattern = {'*.csv', '*.tsv'},
+    pattern = {'csv', 'tsv'},
     callback = function()
       require('csvview').enable()
     end,
@@ -2286,10 +2286,10 @@ vmap +=P "+=P
 nnoremap <C-Backspace> <C-^>
 nnoremap <C-S-Backspace> <cmd>lua require('telescope-tabs').go_to_previous()<cr>
 
-nnoremap <C-w><Backspace> <cmd>vsplit #<cr>
-nnoremap <C-w><C-Backspace> <cmd>vsplit #<cr>
 nnoremap <C-w>^ <cmd>vsplit #<cr>
 nnoremap <C-w><C-^> <cmd>vsplit #<cr>
+nnoremap <C-w><Backspace> <cmd>vsplit #<cr>
+nnoremap <C-w><C-Backspace> <cmd>vsplit #<cr>
 nnoremap <silent> <C-w>n :vsplit<cr>:enew<cr>
 nnoremap <silent> <C-w><C-n> :vsplit<cr>:enew<cr>
 

@@ -11,8 +11,8 @@ cp vimrc ~/.vimrc
 cp nvim/init.vim ~/.config/nvim/init.vim
 cp nvim/after/syntax/vim.vim ~/.config/nvim/after/syntax/vim.vim
 cp nvim/after/ftplugin/jinja.vim ~/.config/nvim/after/ftplugin/jinja.vim
-cp neovintageousrc ~/.neovintageousrc
 cp ideavimrc ~/.ideavimrc
+cp neovintageousrc ~/.neovintageousrc
 
 if [ ! -f ~/.vim/autoload/plug.vim ]; then
   curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim

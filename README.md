@@ -2,8 +2,8 @@
 
 My config files:
 
-- zsh: [zsh/my.zshrc](./zsh/my.zshrc).
-- vim: [vim/vimrc](./vim/vimrc).
+- zsh: [zsh/my.zshrc](./zsh/my.zshrc), [zsh/zsh_plugins.txt](./zsh/zsh_plugins.txt).
+- vim: [vim/vimrc](./vim/vimrc), [vim/ideavimrc](./vim/ideavimrc), [vim/neovintageousrc](./vim/neovintageousrc).
 - sublime text: [sublime-dotfiles repo](https://github.com/reo7sp/sublime-dotfiles?tab=readme-ov-file#sublime-dotfiles).
 - kitty: [kitty/kitty.conf](./kitty/kitty.conf).
 - git: [git/install](./git/install).
@@ -45,7 +45,3 @@ cd dotfiles
 ```
 
 Available modules: `zsh`, `vim`, `kitty`, `git`, `rg`.
-
-## Tips and tricks
-
-See [README_TIPS_AND_TRICKS.md](./README_TIPS_AND_TRICKS.md).
