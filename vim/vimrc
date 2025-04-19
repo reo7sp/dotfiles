@@ -190,7 +190,6 @@ if has('nvim')
   Plug 'RRethy/vim-illuminate'
   Plug 'lukas-reineke/indent-blankline.nvim'
   Plug 'lukas-reineke/virt-column.nvim'
-  Plug 'stevearc/stickybuf.nvim'
 endif
 if has('nvim')
   Plug 'folke/which-key.nvim'
@@ -1451,9 +1450,8 @@ function! InitBarbar() abort
       },
       pinned = {
         filename = true,
-        button = ' ★',
         separator = {
-          right = '',
+          right = ' ★ ',
         },
       },
       separator_at_end = false,
@@ -1859,16 +1857,6 @@ endfunction
 
 if has('nvim')
   call InitVirtColumn()
-endif
-
-" -----------------------------------------------------------------------------
-" stevearc/stickybuf.nvim
-function! InitStickyBuf() abort
-  lua require('stickybuf').setup()
-endfunction
-
-if has('nvim')
-  call InitStickyBuf()
 endif
 
 " -----------------------------------------------------------------------------
