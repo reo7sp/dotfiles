@@ -38,8 +38,24 @@ export NVM_LAZY_LOAD=true
 
 antidote load
 
-autoload -Uz promptinit && promptinit && prompt pure
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+typeset -g POWERLEVEL9K_ASDF_SHOW_SYSTEM=false
+typeset -g POWERLEVEL9K_PYENV_SHOW_SYSTEM=false
+typeset -g POWERLEVEL9K_GOENV_SHOW_SYSTEM=false
+typeset -g POWERLEVEL9K_NODENV_SHOW_SYSTEM=false
+typeset -g POWERLEVEL9K_NVM_SHOW_SYSTEM=false
+typeset -g POWERLEVEL9K_RBENV_SHOW_SYSTEM=false
+typeset -g POWERLEVEL9K_LUAENV_SHOW_SYSTEM=false
+typeset -g POWERLEVEL9K_JENV_SHOW_SYSTEM=false
+typeset -g POWERLEVEL9K_PLENV_SHOW_SYSTEM=false
+typeset -g POWERLEVEL9K_PHPENV_SHOW_SYSTEM=false
+typeset -g POWERLEVEL9K_SCALAENV_SHOW_SYSTEM=false
+typeset -g POWERLEVEL9K_PYENV_SOURCES=(shell)
+typeset -g POWERLEVEL9K_VIRTUALENV_SHOW_PYTHON_VERSION=true
+typeset -g POWERLEVEL9K_VIRTUALENV_SHOW_WITH_PYENV=true
+
 compstyle prezto
+
 function fancy-ctrl-z-with-zvm() {
   fancy-ctrl-z
   zvm_enter_insert_mode
@@ -50,6 +66,7 @@ function fancy-ctrl-z-with-zvm-init() {
   zvm_bindkey vicmd '^Z' fancy-ctrl-z-with-zvm
 }
 zvm_after_init_commands+=(fancy-ctrl-z-with-zvm-init)
+
 export PATH="$(antidote path reo7sp/zimfw-git)/functions:$PATH"
 
 
@@ -186,6 +203,9 @@ profile-start-vim() {
 alias edit-zsh='vim ~/.my.zshrc; source ~/.zshrc'
 alias edit-zsh-plugins='vim ~/.zsh_plugins.txt; source ~/.zshrc'
 alias edit-zshrc='vim ~/.zshrc; source ~/.zshrc'
+
+alias autoenv-edit-enter='vim .autoenv.zsh'
+alias autoenv-edit-leave='vim .autoenv_leave.zsh'
 
 # -----------------------------------------------------------------------------
 # kitty

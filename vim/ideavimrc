@@ -13,6 +13,7 @@ set matchit
 set highlightedyank
 set quickscope
 set vim-paragraph-motion
+set textobj-entire
 set commentary
 set which-key
 

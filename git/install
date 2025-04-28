@@ -55,3 +55,5 @@ fi
 if confirm "Use sublime merge?"; then
   git config --global merge.tool smerge
 fi
+
+cp gitignore_global ~/.gitignore_global

@@ -4,3 +4,4 @@ set -e -o pipefail
 
 cp ~/.my.zshrc my.zshrc
 cp ~/.zsh_plugins.txt zsh_plugins.txt
+cp ~/.p10k.zsh p10k.zsh

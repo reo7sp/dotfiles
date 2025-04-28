@@ -13,7 +13,7 @@ My config files:
 
 _How zsh looks:_
 
-![zsh screenshot](https://i.imgur.com/ADOhxTn.png)
+![zsh screenshot](https://i.imgur.com/VE2uYlu.png)
 
 _How vim looks:_
 

@@ -2271,6 +2271,27 @@ vmap +<P "+<P
 vmap +=p "+=p
 vmap +=P "+=P
 
+" https://gist.github.com/romainl/d2ad868afd7520519057475bd8e9db0c
+function! Format(type, ...)
+  normal! '[v']gq
+  if v:shell_error > 0
+    silent undo
+    redraw
+    echomsg 'formatprg "' . &formatprg . '" exited with status ' . v:shell_error
+  endif
+  if exists('w:gqview')
+    call winrestview(w:gqview)
+    unlet w:gqview
+  endif
+endfunction
+nmap <silent> gq :let w:gqview = winsaveview()<CR>:set opfunc=Format<CR>g@
+
+nmap gqq gq_
+
+" https://www.reddit.com/r/neovim/comments/lchm1o/comment/glzx6zf/
+onoremap <silent> ie :silent normal ggVG<CR>
+xnoremap <silent> ie :<c-u>silent normal ggVG<CR>
+
 " https://bluz71.github.io/2021/09/10/vim-tips-revisited.html#fast-previous-buffer-switching
 nnoremap <C-Backspace> <C-^>
 nnoremap <C-S-Backspace> <cmd>lua require('telescope-tabs').go_to_previous()<cr>
