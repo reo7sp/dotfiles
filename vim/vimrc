@@ -13,6 +13,7 @@ nnoremap <Space> <Nop>
 " =============================================================================
 " plugins
 if has('nvim')
+  lua vim.loader.enable()
   call plug#begin('~/.vim/nbundle')
 else
   call plug#begin('~/.vim/bundle')
@@ -101,6 +102,10 @@ if has('nvim')
   Plug 'jiaoshijie/undotree', {'as': 'undotree.nvim'}
 else
   Plug 'mbbill/undotree', {'on': 'UndotreeToggle'}
+endif
+if has('nvim')
+  Plug 'kevinhwang91/nvim-ufo'
+  Plug 'kevinhwang91/promise-async'
 endif
 if has('nvim')
   Plug 'numToStr/Comment.nvim'
@@ -640,6 +645,32 @@ if has('nvim')
 else
   call InitUndotreeVim()
 endif
+
+" -----------------------------------------------------------------------------
+" kevinhwang91/nvim-ufo
+function! InitUfo() abort
+  lua << EOF
+  vim.o.foldlevel = 999
+  vim.o.foldlevelstart = 999
+  vim.o.foldenable = true
+
+  require('ufo').setup({
+    open_fold_hl_timeout = 0,
+    provider_selector = function(bufnr, filetype, buftype)
+      return { 'treesitter', 'indent' }
+    end
+  })
+
+  vim.keymap.set('n', 'zR', require('ufo').openAllFolds)
+  vim.keymap.set('n', 'zM', require('ufo').closeAllFolds)
+  vim.keymap.set('n', 'zr', require('ufo').openFoldsExceptKinds)
+  vim.keymap.set('n', 'zm', require('ufo').closeFoldsWith)
+EOF
+endfunction
+
+if has('nvim')
+  call InitUfo()
+end
 
 " -----------------------------------------------------------------------------
 " numToStr/Comment.nvim
@@ -2383,22 +2414,7 @@ endif
 set nospell
 
 set completeopt=menu,menuone,preview
-set foldlevelstart=99
-set foldmethod=syntax
-if has('nvim')
-  lua << EOF
-  vim.api.nvim_create_autocmd('FileType', {
-    callback = function()
-      if require('nvim-treesitter.parsers').has_parser() then
-        vim.opt.foldmethod = 'expr'
-        vim.opt.foldexpr = 'nvim_treesitter#foldexpr()'
-      else
-        vim.opt.foldmethod = 'syntax'
-      end
-    end,
-  })
-EOF
-endif
+set foldlevelstart=999
 set whichwrap+=b,s,h,l,<,>
 set updatetime=300
 
