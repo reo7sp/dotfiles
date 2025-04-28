@@ -38,6 +38,12 @@ export NVM_LAZY_LOAD=true
 
 antidote load
 
+
+# =============================================================================
+# plugins settings
+
+# -----------------------------------------------------------------------------
+# romkatv/powerlevel10k
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 typeset -g POWERLEVEL9K_ASDF_SHOW_SYSTEM=false
 typeset -g POWERLEVEL9K_PYENV_SHOW_SYSTEM=false
@@ -55,8 +61,8 @@ typeset -g POWERLEVEL9K_VIRTUALENV_SHOW_PYTHON_VERSION=true
 typeset -g POWERLEVEL9K_VIRTUALENV_SHOW_WITH_PYENV=true
 typeset -g POWERLEVEL9K_BACKGROUND_JOBS_VERBOSE=true
 
-compstyle prezto
-
+# -----------------------------------------------------------------------------
+# mdumitru/fancy-ctrl-z
 function fancy-ctrl-z-with-zvm() {
   fancy-ctrl-z
   zvm_enter_insert_mode
@@ -68,11 +74,17 @@ function fancy-ctrl-z-with-zvm-init() {
 }
 zvm_after_init_commands+=(fancy-ctrl-z-with-zvm-init)
 
+# -----------------------------------------------------------------------------
+# zimfw/git
 export PATH="$(antidote path reo7sp/zimfw-git)/functions:$PATH"
+
+# -----------------------------------------------------------------------------
+# belak/zsh-utils path:completion
+compstyle prezto
 
 
 # =============================================================================
-# zsh config
+# zsh settings
 
 # -----------------------------------------------------------------------------
 # colors
@@ -357,7 +369,7 @@ cdfm() {
 }
 
 # -----------------------------------------------------------------------------
-# sublime text
+# sublime text & sublime merge
 t() {
   lcd
   if [[ -z $1 ]]; then
@@ -367,8 +379,6 @@ t() {
   fi
 }
 
-# -----------------------------------------------------------------------------
-# sublime merge
 m() {
   lcd
   if [[ -z $1 ]]; then

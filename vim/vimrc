@@ -142,10 +142,10 @@ if has('nvim')
   Plug 'jmacadie/telescope-hierarchy.nvim'
 endif
 if has('nvim')
-  Plug 'nvim-tree/nvim-tree.lua'
+  Plug 'stevearc/oil.nvim'
 endif
 if has('nvim')
-  Plug 'stevearc/oil.nvim'
+  Plug 'nvim-tree/nvim-tree.lua'
 endif
 if has('nvim')
   Plug 'stevearc/aerial.nvim'
@@ -169,10 +169,12 @@ endif
 if has('nvim')
   Plug 'romgrk/barbar.nvim'
   Plug 'tiagovla/scope.nvim'
-  Plug 's1n7ax/nvim-window-picker'
-  Plug 'sindrets/winshift.nvim'
 else
   Plug 'ap/vim-buftabline'
+endif
+if has('nvim')
+  Plug 's1n7ax/nvim-window-picker'
+  Plug 'sindrets/winshift.nvim'
 endif
 if has('nvim')
   Plug 'kevinhwang91/nvim-bqf'
@@ -185,12 +187,6 @@ if has('nvim')
   Plug 'j-hui/fidget.nvim'
 endif
 if has('nvim')
-  Plug 'lewis6991/gitsigns.nvim'
-  Plug 'akinsho/git-conflict.nvim'
-else
-  Plug 'airblade/vim-gitgutter'
-endif
-if has('nvim')
   Plug 'rachartier/tiny-inline-diagnostic.nvim'
   Plug 'RRethy/vim-illuminate'
   Plug 'lukas-reineke/indent-blankline.nvim'
@@ -201,6 +197,12 @@ if has('nvim')
 else
   Plug 'liuchengxu/vim-which-key'
   Plug 'junegunn/vim-peekaboo'
+endif
+if has('nvim')
+  Plug 'lewis6991/gitsigns.nvim'
+  Plug 'akinsho/git-conflict.nvim'
+else
+  Plug 'airblade/vim-gitgutter'
 endif
 let g:polyglot_disabled = ['sensible', 'autoindent']
 Plug 'sheerun/vim-polyglot'
@@ -1066,6 +1068,58 @@ if has('nvim')
 endif
 
 " -----------------------------------------------------------------------------
+" stevearc/oil.nvim
+function! InitOil() abort
+  lua << EOF
+  local M = {}
+
+  function M.launch_live_grep(opts)
+    return M.launch_telescope('live_grep', opts)
+  end
+
+  function M.launch_find_files(opts)
+    return M.launch_telescope('find_files', opts)
+  end
+
+  function M.launch_telescope(func_name, opts)
+    local bufnr = vim.api.nvim_get_current_buf()
+    local entry = require('oil').get_cursor_entry()
+    if not entry then
+      return
+    end
+    local is_folder = entry.type == 'directory'
+    require('oil.util').get_edit_path(bufnr, entry, function(normalized_url)
+      local basedir = is_folder and normalized_url:gsub('oil://', '') or vim.fn.fnamemodify(normalized_url, ':h')
+      opts = opts or {}
+      opts.cwd = basedir
+      opts.search_dirs = { basedir }
+      require('telescope.builtin')[func_name](opts)
+    end)
+  end
+
+  require('oil').setup({
+    view_options = {
+      show_hidden = true,
+    },
+    keymaps = {
+      ['q'] = { 'actions.close', mode = 'n' },
+      ['<C-x>'] = { 'actions.select', opts = { horizontal = true } },
+      ['<C-v>'] = { 'actions.select', opts = { vertical = true } },
+      ['<C-h>'] = false,
+      ['<C-f>'] = { callback = function() M.launch_find_files() end, desc = 'Launch Find Files' },
+      ['<C-s>'] = { callback = function() M.launch_live_grep() end, desc = 'Launch Live Grep' },
+    },
+  })
+EOF
+
+  nnoremap - <cmd>Oil<CR>
+endfunction
+
+if has('nvim')
+  call InitOil()
+endif
+
+" -----------------------------------------------------------------------------
 " nvim-tree/nvim-tree.lua
 function! InitNvimTree() abort
   lua << EOF
@@ -1073,6 +1127,7 @@ function! InitNvimTree() abort
   local openfile = require('nvim-tree.actions.node.open-file')
   local actions = require('telescope.actions')
   local action_state = require('telescope.actions.state')
+
   local M = {}
 
   local view_selection = function(prompt_bufnr, map)
@@ -1206,58 +1261,6 @@ if has('nvim')
 endif
 
 " -----------------------------------------------------------------------------
-" stevearc/oil.nvim
-function! InitOil() abort
-  lua << EOF
-  local M = {}
-
-  function M.launch_live_grep(opts)
-    return M.launch_telescope('live_grep', opts)
-  end
-
-  function M.launch_find_files(opts)
-    return M.launch_telescope('find_files', opts)
-  end
-
-  function M.launch_telescope(func_name, opts)
-    local bufnr = vim.api.nvim_get_current_buf()
-    local entry = require('oil').get_cursor_entry()
-    if not entry then
-      return
-    end
-    local is_folder = entry.type == 'directory'
-    require('oil.util').get_edit_path(bufnr, entry, function(normalized_url)
-      local basedir = is_folder and normalized_url:gsub('oil://', '') or vim.fn.fnamemodify(normalized_url, ':h')
-      opts = opts or {}
-      opts.cwd = basedir
-      opts.search_dirs = { basedir }
-      require('telescope.builtin')[func_name](opts)
-    end)
-  end
-
-  require('oil').setup({
-    view_options = {
-      show_hidden = true,
-    },
-    keymaps = {
-      ['q'] = { 'actions.close', mode = 'n' },
-      ['<C-x>'] = { 'actions.select', opts = { horizontal = true } },
-      ['<C-v>'] = { 'actions.select', opts = { vertical = true } },
-      ['<C-h>'] = false,
-      ['<C-f>'] = { callback = function() M.launch_find_files() end, desc = 'Launch Find Files' },
-      ['<C-s>'] = { callback = function() M.launch_live_grep() end, desc = 'Launch Live Grep' },
-    },
-  })
-EOF
-
-  nnoremap - <cmd>Oil<CR>
-endfunction
-
-if has('nvim')
-  call InitOil()
-endif
-
-" -----------------------------------------------------------------------------
 " stevearc/aerial.nvim
 function! InitAerial() abort
   lua << EOF
@@ -1269,9 +1272,6 @@ function! InitAerial() abort
     },
     close_on_select = false,
     autojump = true,
-    manage_folds = true,
-    link_folds_to_tree = true,
-    link_tree_to_folds = false,
     show_guides = true,
     disable_max_lines = 99999,
   })
@@ -1331,14 +1331,14 @@ function! InitLualine() abort
   end
 
   local conditions = {
-    hide_in_width = function()
+    hide_in_width_first = function()
+      return vim.fn.winwidth(0) > 140
+    end,
+    hide_in_width_middle = function()
       return vim.fn.winwidth(0) > 120
     end,
-    hide_in_width_very = function()
+    hide_in_width_last = function()
       return vim.fn.winwidth(0) > 80
-    end,
-    hide_in_width_not_very = function()
-      return vim.fn.winwidth(0) > 140
     end,
   }
 
@@ -1365,16 +1365,16 @@ function! InitLualine() abort
       },
       lualine_c = {
         { 'filename', path = 1, file_status = false },
-        { 'aerial', depth = 3, sep = ' > ', padding = { left = 0, right = 1 }, cond = conditions.hide_in_width_very },
+        { 'aerial', depth = 3, sep = ' > ', padding = { left = 0, right = 1 }, cond = conditions.hide_in_width_last },
       },
       lualine_x = {
-        { 'b:gitsigns_head', cond = conditions.hide_in_width_not_very },
-        { 'diff', source = diff_source, padding = { left = 0, right = 1 }, cond = conditions.hide_in_width },
+        { 'b:gitsigns_head', cond = conditions.hide_in_width_first },
+        { 'diff', source = diff_source, padding = { left = 0, right = 1 }, cond = conditions.hide_in_width_middle },
       },
       lualine_y = {
-        { 'filetype', cond = conditions.hide_in_width },
-        { 'lsp_status', symbols = { done = '' }, padding = { left = 0, right = 1 }, cond = conditions.hide_in_width },
-        { 'diagnostics', padding = { left = 0, right = 1 }, cond = conditions.hide_in_width },
+        { 'filetype', cond = conditions.hide_in_width_middle },
+        { 'lsp_status', symbols = { done = '' }, padding = { left = 0, right = 1 }, cond = conditions.hide_in_width_middle },
+        { 'diagnostics', padding = { left = 0, right = 1 }, cond = conditions.hide_in_width_middle },
       },
       lualine_z = {
         'location',
@@ -1436,11 +1436,11 @@ function! InitAirline() abort
     \ 'Rv'     : 'R',
     \ 's'      : 'S',
     \ 'S'      : 'S',
-    \ '␓'     : 'S',
+    \ '␓'      : 'S',
     \ 't'      : 'T',
     \ 'v'      : 'V',
     \ 'V'      : 'V',
-    \ '␖'     : 'V',
+    \ '␖'      : 'V',
     \ }
 endfunction
 
@@ -1767,60 +1767,6 @@ if has('nvim')
 endif
 
 " -----------------------------------------------------------------------------
-" lewis6991/gitsigns.nvim
-function! InitGitSigns() abort
-  lua << EOF
-  require('gitsigns').setup({
-    on_attach = function(bufnr)
-      local gitsigns = require('gitsigns')
-      local function map(mode, l, r, opts)
-        opts = opts or {}
-        opts.buffer = bufnr
-        vim.keymap.set(mode, l, r, opts)
-      end
-      map('n', ']h', function()
-        if vim.wo.diff then
-          vim.cmd.normal({']h', bang = true})
-        else
-          gitsigns.nav_hunk('next')
-        end
-      end)
-      map('n', '[h', function()
-        if vim.wo.diff then
-          vim.cmd.normal({'[h', bang = true})
-        else
-          gitsigns.nav_hunk('prev')
-        end
-      end)
-
-      vim.keymap.set({ 'o', 'x' }, 'ih', '<cmd>Gitsigns select_hunk<CR>')
-    end
-  })
-EOF
-
-  nnoremap <c-w>g <cmd>Gitsigns blame_line<CR>
-  nnoremap <leader>gh <cmd>Gitsigns blame<CR>
-endfunction
-
-if has('nvim')
-  call InitGitSigns()
-endif
-
-" -----------------------------------------------------------------------------
-" kinsho/git-conflict.nvim
-function! InitGitConflict() abort
-  lua << EOF
-  require('git-conflict').setup({
-    disable_diagnostics = true,
-  })
-EOF
-endfunction
-
-if has('nvim')
-  call InitGitConflict()
-endif
-
-" -----------------------------------------------------------------------------
 " rachartier/tiny-inline-diagnostic.nvim
 function! InitTinyDiag() abort
   lua << EOF
@@ -1949,6 +1895,60 @@ if has('nvim')
   call InitWhichKeyNvim()
 else
   call InitWhichKeyVim()
+endif
+
+" -----------------------------------------------------------------------------
+" lewis6991/gitsigns.nvim
+function! InitGitSigns() abort
+  lua << EOF
+  require('gitsigns').setup({
+    on_attach = function(bufnr)
+      local gitsigns = require('gitsigns')
+      local function map(mode, l, r, opts)
+        opts = opts or {}
+        opts.buffer = bufnr
+        vim.keymap.set(mode, l, r, opts)
+      end
+      map('n', ']h', function()
+        if vim.wo.diff then
+          vim.cmd.normal({']h', bang = true})
+        else
+          gitsigns.nav_hunk('next')
+        end
+      end)
+      map('n', '[h', function()
+        if vim.wo.diff then
+          vim.cmd.normal({'[h', bang = true})
+        else
+          gitsigns.nav_hunk('prev')
+        end
+      end)
+
+      vim.keymap.set({ 'o', 'x' }, 'ih', '<cmd>Gitsigns select_hunk<CR>')
+    end
+  })
+EOF
+
+  nnoremap <c-w>g <cmd>Gitsigns blame_line<CR>
+  nnoremap <leader>gh <cmd>Gitsigns blame<CR>
+endfunction
+
+if has('nvim')
+  call InitGitSigns()
+endif
+
+" -----------------------------------------------------------------------------
+" kinsho/git-conflict.nvim
+function! InitGitConflict() abort
+  lua << EOF
+  require('git-conflict').setup({
+    disable_diagnostics = true,
+  })
+EOF
+endfunction
+
+if has('nvim')
+  call InitGitConflict()
 endif
 
 " -----------------------------------------------------------------------------
