@@ -316,11 +316,37 @@ gfcd() {
   cd "$dir"
 }
 
+glab-cd() {
+  local repo=$1
+  local dir=$2
+
+  if [[ -z "$dir" ]]; then
+    dir=${repo##*/}
+    dir=${dir%.git}
+  fi
+
+  glab repo clone "$repo" "$dir"
+  cd "$dir"
+}
+
+gh-cd() {
+  local repo=$1
+  local dir=$2
+
+  if [[ -z "$dir" ]]; then
+    dir=${repo##*/}
+    dir=${dir%.git}
+  fi
+
+  gh repo clone "$repo" "$dir"
+  cd "$dir"
+}
+
 alias gcu='git add -A && git commit --amend --reuse-message HEAD'
 
-alias gcwip="git add -A && git commit -m 'wip'"
-alias gcfix="git add -A && git commit -m 'fix'"
-alias gckik="git add -A && git commit -m 'kik'"
+alias gc-wip="git add -A && git commit -m 'wip'"
+alias gc-fix="git add -A && git commit -m 'fix'"
+alias gc-kik="git add -A && git commit -m 'kik'"
 
 alias gbd='gb -D'
 
