@@ -59,6 +59,7 @@ antidote load
 # -----------------------------------------------------------------------------
 # romkatv/powerlevel10k
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+typeset -g POWERLEVEL9K_INSTANT_PROMPT=quiet
 typeset -g POWERLEVEL9K_ASDF_SHOW_SYSTEM=false
 typeset -g POWERLEVEL9K_PYENV_SHOW_SYSTEM=false
 typeset -g POWERLEVEL9K_GOENV_SHOW_SYSTEM=false
@@ -87,6 +88,27 @@ function fancy-ctrl-z-with-zvm-init() {
   zvm_bindkey vicmd '^Z' fancy-ctrl-z-with-zvm
 }
 zvm_after_init_commands+=(fancy-ctrl-z-with-zvm-init)
+
+# -----------------------------------------------------------------------------
+# zsh-users/zsh-autosuggestions
+export ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=20
+
+function zsh-autosuggestions-init() {
+  bindkey '^ ' autosuggest-accept
+}
+zvm_after_init_commands+=(zsh-autosuggestions-init)
+
+# -----------------------------------------------------------------------------
+# zsh-users/zsh-history-substring-search
+export HISTORY_SUBSTRING_SEARCH_PREFIXED=1
+
+function zsh-history-substring-search-init() {
+  bindkey '^[[A' history-substring-search-up
+  bindkey '^[[B' history-substring-search-down
+  bindkey '^P' history-substring-search-up
+  bindkey '^N' history-substring-search-down
+}
+zvm_after_init_commands+=(zsh-history-substring-search-init)
 
 # -----------------------------------------------------------------------------
 # zimfw/git
