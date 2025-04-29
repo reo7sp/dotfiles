@@ -5,8 +5,8 @@ zdharma-continuum/fast-syntax-highlighting kind:defer
 # editing
 jeffreytse/zsh-vi-mode
 mdumitru/fancy-ctrl-z
-zsh-users/zsh-history-substring-search
 zsh-users/zsh-autosuggestions
+zsh-users/zsh-history-substring-search
 djui/alias-tips
 
 # aliases & settings
