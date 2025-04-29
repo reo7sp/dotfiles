@@ -14,7 +14,7 @@ agkozak/zsh-z
 reo7sp/zimfw-exa
 reo7sp/zimfw-git
 zuxfoucault/colored-man-pages_mod
-Tarrasch/zsh-autoenv
+reo7sp/zsh-autoenv
 qoomon/zsh-lazyload
 lukechilds/zsh-nvm
 
