@@ -6,19 +6,29 @@ export PATH="$PATH:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
 
-if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
-  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+if [[ -n $SSH_CLIENT || -n $SSH_TTY || -n $SSH_CONNECTION ]]; then
+  export IS_SSH=1
+else
+  export IS_SSH=0
 fi
 
-can-exec() {
-  (( $+commands[$1] ))
-}
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  if [[ $IS_SSH == 0 && $TERM == 'xterm-kitty' ]]; then
+    echo -ne '\e[6 q'   # cursor beam
+    echo -ne '\e]2;~\a' # title "~"
+  fi
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
 
 if uname -a | grep Darwin > /dev/null; then
   export IS_MACOS=1
 else
   export IS_MACOS=0
 fi
+
+can-exec() {
+  (( $+commands[$1] ))
+}
 
 if can-exec brew; then
   eval "$(brew shellenv)"
@@ -173,7 +183,7 @@ alias mv='mv -f'
 alias suz='su -m -c zsh'
 alias sudoz="sudo ZDOTDIR=\$HOME PATH=\$PATH zsh"
 
-if [[ $IS_MACOS -eq 1 ]]; then
+if [[ $IS_MACOS == 1 ]]; then
   alias show-ports='lsof -iTCP -sTCP:LISTEN -n -P'
 else
   alias show-ports='netstat -tulpn'
