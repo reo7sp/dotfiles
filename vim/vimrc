@@ -40,6 +40,8 @@ if has('nvim')
   Plug 'xzbdmw/colorful-menu.nvim'
   Plug 'L3MON4D3/LuaSnip'
   Plug 'rafamadriz/friendly-snippets'
+  Plug 'milanglacier/minuet-ai.nvim'
+  Plug 'olimorris/codecompanion.nvim'
 else
   Plug 'vim-scripts/AutoComplPop'
 endif
@@ -305,8 +307,9 @@ EOF
   nnoremap <C-S> <cmd>lua vim.lsp.buf.signature_help()<cr>
   inoremap <C-S> <cmd>lua vim.lsp.buf.signature_help()<cr>
   nnoremap <nowait> gr <cmd>lua vim.lsp.buf.rename()<cr>
-  nnoremap g: <cmd>lua vim.lsp.buf.code_action()<cr>
   nnoremap gO <nop>
+  nnoremap g:l <cmd>lua vim.lsp.buf.code_action()<cr>
+  vnoremap g:l <cmd>lua vim.lsp.buf.code_action()<cr>
 endfunction
 
 if has('nvim')
@@ -317,14 +320,91 @@ endif
 " saghen/blink.cmp
 function! InitBlink() abort
   lua << EOF
+  require('colorful-menu').setup({})
+
   require('luasnip.loaders.from_vscode').lazy_load()
 
-  require('colorful-menu').setup({})
+  require('minuet').setup({
+    provider = 'openai_fim_compatible',
+    provider_options = {
+      openai_fim_compatible = {
+        name = 'Ollama',
+        end_point = 'http://localhost:11434/v1/completions',
+        api_key = 'TERM',
+        model = 'qwen2.5-coder:1.5b',
+        optional = {
+          max_tokens = 56,
+          top_p = 0.9,
+        },
+      },
+    },
+    n_completions = 1,
+    context_window = 512,
+    request_timeout = 5,
+  })
+
+  require('codecompanion').setup({
+    strategies = {
+      chat = {
+        adapter = 'ollama',
+      },
+      inline = {
+        adapter = 'ollama',
+      },
+      cmd = {
+        adapter = 'ollama',
+      },
+    },
+    adapters = {
+      opts = {
+        show_defaults = false,
+      },
+      ollama = function()
+        return require('codecompanion.adapters').extend('ollama', {
+          schema = {
+            model = {
+              default = 'qwen2.5-coder:1.5b',
+            },
+          },
+        })
+      end,
+    },
+    opts = {
+      language = 'Russian',
+    },
+  })
+  local codecompanion_telescope = require('codecompanion.providers.actions.telescope')
+  local function decorate_picker(method)
+    return function(self, items, opts)
+      opts = vim.tbl_extend('force', opts, require('telescope.themes').get_cursor({
+        layout_config = {
+          height = 15+4,
+        },
+      }))
+      return method(self, items, opts)
+    end
+  end
+  codecompanion_telescope.picker = decorate_picker(codecompanion_telescope.picker)
+
+  vim.keymap.set({ 'n', 'v' }, 'g:c', '<cmd>CodeCompanionActions<cr>', { noremap = true, silent = true })
+  vim.keymap.set({ 'n' }, '<leader>c', '<cmd>CodeCompanionChat Toggle<cr>', { noremap = true, silent = true })
 
   require('blink.cmp').setup({
     keymap = {
       preset = 'super-tab',
       ['<CR>'] = { 'accept', 'fallback' },
+      ['<C-y>'] = require('minuet').make_blink_map(),
+    },
+    sources = {
+      providers = {
+        minuet = {
+          name = 'minuet',
+          module = 'minuet.blink',
+          async = true,
+          timeout_ms = 5000,
+          score_offset = 50,
+        },
+      },
     },
     completion = {
       list = {
@@ -958,6 +1038,7 @@ function! InitTelescope() abort
           'gitsigns',
           'fugitiveblame',
           'flog',
+          'CodeCompanion',
           'Plugins',
           'COMMIT_',
           '-todo$',
@@ -1320,6 +1401,7 @@ endif
 " nvim-lualine/lualine.nvim or vim-airline/vim-airline
 function! InitLualine() abort
   lua << EOF
+  -- git integration
   local function diff_source()
     local gitsigns = vim.b.gitsigns_status_dict
     if gitsigns then
@@ -1331,6 +1413,39 @@ function! InitLualine() abort
     end
   end
 
+  -- codecompanion integration
+  local M = require('lualine.component'):extend()
+  M.processing = false
+  M.spinner_index = 1
+  local spinner_symbols = { '⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏' }
+  local spinner_symbols_len = 10
+
+  function M:init(options)
+    M.super.init(self, options)
+    local group = vim.api.nvim_create_augroup('CodeCompanionHooks', {})
+    vim.api.nvim_create_autocmd({ 'User' }, {
+      pattern = 'CodeCompanionRequest*',
+      group = group,
+      callback = function(request)
+        if request.match == 'CodeCompanionRequestStarted' then
+          self.processing = true
+        elseif request.match == 'CodeCompanionRequestFinished' then
+          self.processing = false
+        end
+      end,
+    })
+  end
+
+  function M:update_status()
+    if self.processing then
+      self.spinner_index = (self.spinner_index % spinner_symbols_len) + 1
+      return spinner_symbols[self.spinner_index]
+    else
+      return nil
+    end
+  end
+
+  -- dynamic width
   local conditions = {
     hide_in_width_first = function()
       return vim.fn.winwidth(0) > 140
@@ -1375,7 +1490,9 @@ function! InitLualine() abort
       lualine_y = {
         { 'filetype', cond = conditions.hide_in_width_middle },
         { 'lsp_status', symbols = { done = '' }, padding = { left = 0, right = 1 }, cond = conditions.hide_in_width_middle },
-        { 'diagnostics', padding = { left = 0, right = 1 }, cond = conditions.hide_in_width_middle },
+        { 'diagnostics', padding = { left = 0, right = 1 }, cond = conditions.hide_in_width_last },
+        { require('minuet.lualine') },
+        { M },
       },
       lualine_z = {
         'location',
