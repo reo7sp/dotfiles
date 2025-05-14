@@ -328,13 +328,33 @@ function! InitBlink() abort
     provider = 'openai_fim_compatible',
     provider_options = {
       openai_fim_compatible = {
-        name = 'Ollama',
+        name = 'llm_local',
         end_point = 'http://localhost:11434/v1/completions',
         api_key = 'TERM',
         model = 'qwen2.5-coder:1.5b',
         optional = {
           max_tokens = 56,
           top_p = 0.9,
+        },
+      },
+    },
+    presets = {
+      llm_corp = {
+        provider = 'openai_fim_compatible',
+        provider_options = {
+          openai_fim_compatible = vim.tbl_extend('force', {
+            name = 'llm_corp',
+            template = {
+              prompt = function(context_before_cursor, context_after_cursor, _)
+                return '<|fim_prefix|>'
+                  .. context_before_cursor
+                  .. '<|fim_suffix|>'
+                  .. context_after_cursor
+                  .. '<|fim_middle|>'
+              end,
+              suffix = false,
+            },
+          }, require('llm_corp_config').minuet),
         },
       },
     },
@@ -346,27 +366,35 @@ function! InitBlink() abort
   require('codecompanion').setup({
     strategies = {
       chat = {
-        adapter = 'ollama',
+        adapter = 'llm_local',
       },
       inline = {
-        adapter = 'ollama',
+        adapter = 'llm_local',
       },
       cmd = {
-        adapter = 'ollama',
+        adapter = 'llm_local',
       },
     },
     adapters = {
       opts = {
         show_defaults = false,
       },
-      ollama = function()
+      llm_local = function()
         return require('codecompanion.adapters').extend('ollama', {
+          name = 'llm_local',
+          formatted_name = 'LLM Local',
           schema = {
             model = {
               default = 'qwen2.5-coder:1.5b',
             },
           },
         })
+      end,
+      llm_corp = function()
+        return require('codecompanion.adapters').extend('openai_compatible', vim.tbl_extend('force', {
+          name = 'llm_corp',
+          formatted_name = 'LLM Corp',
+        }, require('llm_corp_config').codecompanion))
       end,
     },
     opts = {
@@ -386,8 +414,37 @@ function! InitBlink() abort
   end
   codecompanion_telescope.picker = decorate_picker(codecompanion_telescope.picker)
 
+  vim.api.nvim_create_user_command('ChangeLLM', function()
+    local providers = { 'llm_local', 'llm_corp' }
+
+    vim.ui.select(providers, { prompt = 'Provider:' }, function(choice)
+      if choice then
+        local minuet_choice = choice
+        if minuet_choice == 'llm_local' then
+          minuet_choice = 'original'
+        end
+        require('minuet').change_preset(minuet_choice)
+
+        require('codecompanion.config').setup({
+          strategies = {
+            chat = {
+              adapter = choice,
+            },
+            inline = {
+              adapter = choice,
+            },
+            cmd = {
+              adapter = choice,
+            },
+          },
+        })
+      end
+    end)
+  end, {})
+
   vim.keymap.set({ 'n', 'v' }, 'g:c', '<cmd>CodeCompanionActions<cr>', { noremap = true, silent = true })
-  vim.keymap.set({ 'n' }, '<leader>c', '<cmd>CodeCompanionChat Toggle<cr>', { noremap = true, silent = true })
+  vim.keymap.set({ 'n', 'v' }, 'g:C', '<cmd>ChangeLLM<cr>', { noremap = true, silent = true })
+  vim.keymap.set({ 'n' }, '<leader>c', '<cmd>CodeCompanionChat toggle<cr>', { noremap = true, silent = true })
 
   require('blink.cmp').setup({
     keymap = {
@@ -1416,6 +1473,7 @@ function! InitLualine() abort
   -- codecompanion integration
   local M = require('lualine.component'):extend()
   M.processing = false
+  M.adapter = ''
   M.spinner_index = 1
   local spinner_symbols = { '⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏' }
   local spinner_symbols_len = 10
@@ -1429,6 +1487,7 @@ function! InitLualine() abort
       callback = function(request)
         if request.match == 'CodeCompanionRequestStarted' then
           self.processing = true
+          self.adapter = request.data.adapter.name
         elseif request.match == 'CodeCompanionRequestFinished' then
           self.processing = false
         end
@@ -1439,7 +1498,7 @@ function! InitLualine() abort
   function M:update_status()
     if self.processing then
       self.spinner_index = (self.spinner_index % spinner_symbols_len) + 1
-      return spinner_symbols[self.spinner_index]
+      return self.adapter .. ' ' .. spinner_symbols[self.spinner_index]
     else
       return nil
     end
