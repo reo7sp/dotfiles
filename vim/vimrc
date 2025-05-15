@@ -304,12 +304,11 @@ function! InitLSP() abort
 EOF
 
   nnoremap K <cmd>lua vim.lsp.buf.hover()<cr>
-  nnoremap <C-S> <cmd>lua vim.lsp.buf.signature_help()<cr>
   inoremap <C-S> <cmd>lua vim.lsp.buf.signature_help()<cr>
   nnoremap <nowait> gr <cmd>lua vim.lsp.buf.rename()<cr>
-  nnoremap gO <nop>
   nnoremap g:l <cmd>lua vim.lsp.buf.code_action()<cr>
   vnoremap g:l <cmd>lua vim.lsp.buf.code_action()<cr>
+  nnoremap gO <nop>
 endfunction
 
 if has('nvim')
@@ -417,7 +416,7 @@ function! InitBlink() abort
   vim.api.nvim_create_user_command('ChangeLLM', function()
     local providers = { 'llm_local', 'llm_corp' }
 
-    vim.ui.select(providers, { prompt = 'Provider:' }, function(choice)
+    vim.ui.select(providers, { prompt = 'LLM provider:' }, function(choice)
       if choice then
         local minuet_choice = choice
         if minuet_choice == 'llm_local' then
@@ -444,7 +443,7 @@ function! InitBlink() abort
 
   vim.keymap.set({ 'n', 'v' }, 'g:c', '<cmd>CodeCompanionActions<cr>', { noremap = true, silent = true })
   vim.keymap.set({ 'n', 'v' }, 'g:C', '<cmd>ChangeLLM<cr>', { noremap = true, silent = true })
-  vim.keymap.set({ 'n' }, '<leader>c', '<cmd>CodeCompanionChat toggle<cr>', { noremap = true, silent = true })
+  vim.keymap.set('n', '<leader>c', '<cmd>CodeCompanionChat toggle<cr>', { noremap = true, silent = true })
 
   require('blink.cmp').setup({
     keymap = {
@@ -659,16 +658,18 @@ endif
 function! InitProjectNvim() abort
   lua << EOF
   require('project_nvim').setup({
-    scope_chdir = 'tab',
-    silent_chdir = false,
+    detection_methods = {
+      'pattern',
+    },
     patterns = {
       '.git',
       '_darcs',
       '.hg',
       '.bzr',
       '.svn',
-      'package.json',
     },
+    scope_chdir = 'tab',
+    silent_chdir = false,
   })
 EOF
 endfunction
@@ -2332,13 +2333,6 @@ function! InitCsvView() abort
       jump_next_row = { '<Enter>', mode = { 'n', 'v' } },
       jump_prev_row = { '<S-Enter>', mode = { 'n', 'v' } },
     },
-  })
-
-  vim.api.nvim_create_autocmd('FileType', {
-    pattern = {'csv', 'tsv'},
-    callback = function()
-      require('csvview').enable()
-    end,
   })
 EOF
 endfunction
