@@ -85,6 +85,9 @@ if has('nvim')
   Plug 'ahmedkhalf/project.nvim'
 endif
 if has('nvim')
+  Plug 'Shatur/neovim-session-manager'
+endif
+if has('nvim')
   Plug 'nmac427/guess-indent.nvim'
 else
   Plug 'tpope/vim-sleuth'
@@ -676,6 +679,23 @@ endfunction
 
 if has('nvim')
   call InitProjectNvim()
+endif
+
+" -----------------------------------------------------------------------------
+" Shatur/neovim-session-manager
+function! InitSessionManager() abort
+  lua << EOF
+  local config = require('session_manager.config')
+  require('session_manager').setup({
+    autoload_mode = { config.AutoloadMode.Disabled },
+    autosave_only_in_session = true,
+    load_include_current = true,
+  })
+EOF
+endfunction
+
+if has('nvim')
+  call InitSessionManager()
 endif
 
 " -----------------------------------------------------------------------------
