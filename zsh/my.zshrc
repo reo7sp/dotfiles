@@ -389,6 +389,8 @@ fi
 
 # -----------------------------------------------------------------------------
 # fzf
+export FZF_DEFAULT_OPTS='--color=light'
+
 if can-exec fzf; then
   zvm_after_init_commands+=('source <(fzf --zsh 2>/dev/null)')
 fi

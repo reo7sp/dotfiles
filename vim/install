@@ -5,6 +5,25 @@ can-exec() {
   which "$1" 2>/dev/null 1>/dev/null
 }
 
+confirm() {
+  local message=$1
+
+  if [[ $QUICK_INSTALL == 1 ]]; then
+    false
+  else
+    echo -n -e "${BWhite}$message${Color_Off} [y/N] "
+    read response
+    case $response in
+      [yY][eE][sS]|[yY])
+        true
+        ;;
+      *)
+        false
+        ;;
+    esac
+  fi
+}
+
 
 mkdir -p ~/.vim/{bundle,nbundle,backup,tmp,undo,sessions,spell,view} ~/.config/nvim ~/.config/nvim/{lua,after/syntax,after/ftplugin}
 cp vimrc ~/.vimrc

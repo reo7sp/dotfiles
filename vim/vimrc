@@ -162,7 +162,7 @@ endif
 " -----------------------------------------------------------------------------
 " appearance
 if has('nvim')
-  Plug 'rebelot/kanagawa.nvim'
+  Plug 'catppuccin/nvim', {'as': 'catppuccin'}
 else
   Plug 'sainnhe/sonokai'
 end
@@ -255,8 +255,29 @@ if ! has('nvim')
 endif
 
 if has('nvim')
-  lua require('kanagawa').setup({ compile = true, theme = 'dragon' })
-  colorscheme kanagawa-dragon
+  lua << EOF
+  require('catppuccin').setup({
+    integrations = {
+      aerial = true,
+      barbar = true,
+      blink_cmp = true,
+      fidget = true,
+      mason = true,
+      vim_sneak = true,
+      which_key = true,
+      native_lsp = {
+        enabled = true,
+        underlines = {
+          errors = { 'undercurl' },
+          hints = { 'undercurl' },
+          warnings = { 'undercurl' },
+          information = { 'undercurl' },
+        },
+      },
+    }
+  })
+EOF
+  colorscheme catppuccin-latte
 else
   let g:sonokai_enable_italic = 1
   let g:sonokai_float_style = 'dim'
@@ -1391,6 +1412,10 @@ function! InitNvimTree() abort
     end,
   })
 EOF
+
+  highlight! link NvimTreeNormal Normal
+  highlight! link NvimTreeNormalNC NormalNC
+  highlight! link NvimTreeWinSeparator WinSeparator
 endfunction
 
 function! LazyNvimTreeToggle() abort
@@ -1436,6 +1461,8 @@ function! InitAerial() abort
     disable_max_lines = 99999,
   })
 EOF
+
+  highlight! link AerialLine CursorLine
 
   nnoremap <leader>o <cmd>AerialToggle<cr>
 endfunction
@@ -1541,6 +1568,7 @@ function! InitLualine() abort
   local lualine = require('lualine')
   lualine.setup({
     options = {
+      theme = 'catppuccin',
       icons_enabled = false,
       component_separators = { left = '', right = '' },
       section_separators = { left = '', right = '' },
@@ -1566,13 +1594,13 @@ function! InitLualine() abort
       lualine_x = {
         { 'b:gitsigns_head', cond = conditions.hide_in_width_first },
         { 'diff', source = diff_source, padding = { left = 0, right = 1 }, cond = conditions.hide_in_width_middle },
-      },
-      lualine_y = {
         { 'filetype', cond = conditions.hide_in_width_middle },
         { 'lsp_status', symbols = { done = '' }, padding = { left = 0, right = 1 }, cond = conditions.hide_in_width_middle },
         { 'diagnostics', padding = { left = 0, right = 1 }, cond = conditions.hide_in_width_last },
         { require('minuet.lualine') },
         { M },
+      },
+      lualine_y = {
       },
       lualine_z = {
         'location',
@@ -1940,6 +1968,8 @@ function! InitTrouble() abort
   })
 EOF
 
+  highlight! link TroubleNormal Normal
+
   nnoremap [t <cmd>lua require('trouble').prev() require('trouble').jump()<CR>
   nnoremap ]t <cmd>lua require('trouble').next() require('trouble').jump()<CR>
   nnoremap [T <cmd>lua require('trouble').first() require('trouble').jump()<CR>
@@ -2026,6 +2056,7 @@ function! InitVirtColumn() abort
   lua << EOF
   require('virt-column').setup({
     char = '║',
+    highlight = 'IblIndent',
   })
 EOF
 endfunction
