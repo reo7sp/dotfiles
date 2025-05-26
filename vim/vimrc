@@ -50,7 +50,7 @@ if has('nvim')
 else
   Plug 'Raimondi/delimitMate'
 end
-Plug 'alvan/vim-closetag', {'for': ['html', 'htm', 'xml', 'js', 'jsx']}
+Plug 'alvan/vim-closetag', {'for': ['html', 'htm', 'xml', 'js', 'jsx', 'ts', 'tsx']}
 Plug 'wellle/targets.vim'
 if has('nvim')
   Plug 'monaqa/dial.nvim'
@@ -263,6 +263,7 @@ if has('nvim')
       blink_cmp = true,
       fidget = true,
       mason = true,
+      pounce = true,
       vim_sneak = true,
       which_key = true,
       native_lsp = {
@@ -1148,17 +1149,17 @@ function! InitTelescope() abort
         mappings = {
           n = {
             ['<C-k>'] = require('telescope-live-grep-args.actions').quote_prompt(),
-            ['<C-g>'] = require('telescope-live-grep-args.actions').quote_prompt({ postfix = ' -g ' }),
-            ['<C-y>'] = require('telescope-live-grep-args.actions').quote_prompt({ postfix = ' -t ' }),
-            ['<C-i>'] = require('telescope-live-grep-args.actions').quote_prompt({ postfix = ' -u ' }),
             ['<C-f>'] = require('telescope-live-grep-args.actions').quote_prompt({ postfix = ' -F ' }),
+            ['<C-i>'] = require('telescope-live-grep-args.actions').quote_prompt({ postfix = ' -u ' }),
+            ['<C-y>'] = require('telescope-live-grep-args.actions').quote_prompt({ postfix = ' -t ' }),
+            ['<C-g>'] = require('telescope-live-grep-args.actions').quote_prompt({ postfix = ' -g ' }),
           },
           i = {
             ['<C-k>'] = require('telescope-live-grep-args.actions').quote_prompt(),
-            ['<C-g>'] = require('telescope-live-grep-args.actions').quote_prompt({ postfix = ' -g ' }),
-            ['<C-y>'] = require('telescope-live-grep-args.actions').quote_prompt({ postfix = ' -t ' }),
-            ['<C-i>'] = require('telescope-live-grep-args.actions').quote_prompt({ postfix = ' -u ' }),
             ['<C-f>'] = require('telescope-live-grep-args.actions').quote_prompt({ postfix = ' -F ' }),
+            ['<C-i>'] = require('telescope-live-grep-args.actions').quote_prompt({ postfix = ' -u ' }),
+            ['<C-y>'] = require('telescope-live-grep-args.actions').quote_prompt({ postfix = ' -t ' }),
+            ['<C-g>'] = require('telescope-live-grep-args.actions').quote_prompt({ postfix = ' -g ' }),
           },
         },
       },
@@ -1720,8 +1721,8 @@ function! InitBarbar() abort
   })
 EOF
 
-  highlight BufferCurrentMod ctermfg=255 guifg=#c8c093 guibg=#282727
-  highlight BufferInactiveMod ctermfg=255 guifg=#7a8382 guibg=#0d0c0c
+  highlight! link BufferCurrentMod BufferCurrent
+  highlight! link BufferInactiveMod BufferInactive
 
   cnoreabbrev bq BufferClose
   cnoreabbrev bd BufferClose
@@ -1738,8 +1739,8 @@ EOF
 
   nnoremap <C-[> <cmd>BufferPrevious<CR>
   nnoremap <C-]> <cmd>BufferNext<CR>
-  nnoremap <silent> [b <cmd>BufferPrevious<CR>
-  nnoremap <silent> ]b <cmd>BufferNext<CR>
+  nnoremap [b <cmd>BufferPrevious<CR>
+  nnoremap ]b <cmd>BufferNext<CR>
 
   nnoremap <C-1> <cmd>BufferGoto 1<CR>
   nnoremap <C-2> <cmd>BufferGoto 2<CR>
@@ -1755,6 +1756,8 @@ EOF
   cnoreabbrev bdl BufferCloseBuffersLeft
   cnoreabbrev bqr BufferCloseBuffersRight
   cnoreabbrev bdr BufferCloseBuffersRight
+  cnoreabbrev bdp BufferPickDelete
+  cnoreabbrev bqp BufferPickDelete
 
   cnoreabbrev bs BufferOrderByDirectory
 
@@ -1969,6 +1972,7 @@ function! InitTrouble() abort
 EOF
 
   highlight! link TroubleNormal Normal
+  highlight! link TroubleNormalNC Normal
 
   nnoremap [t <cmd>lua require('trouble').prev() require('trouble').jump()<CR>
   nnoremap ]t <cmd>lua require('trouble').next() require('trouble').jump()<CR>

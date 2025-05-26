@@ -1,6 +1,13 @@
 #!/bin/bash
 set -e -o pipefail
 
+key=$1
+if [[ $key == "-q" ]]; then
+  QUICK_INSTALL=1
+else
+  QUICK_INSTALL=0
+fi
+
 can-exec() {
   which "$1" 2>/dev/null 1>/dev/null
 }
