@@ -209,6 +209,10 @@ if has('nvim')
 else
   Plug 'airblade/vim-gitgutter'
 endif
+if has('nvim')
+  Plug 'MunifTanjim/nui.nvim'
+  Plug 'ray-x/guihua.lua'
+endif
 let g:polyglot_disabled = ['sensible', 'autoindent']
 Plug 'sheerun/vim-polyglot'
 if has('nvim')
@@ -221,7 +225,6 @@ if has('nvim')
 endif
 if has('nvim')
   Plug 'reo7sp/go.nvim'
-  Plug 'ray-x/guihua.lua'
 else
   Plug 'johejo/gomod.vim'
 endif
@@ -239,6 +242,15 @@ Plug 'tpope/vim-dispatch'
 Plug 'tpope/vim-eunuch'
 Plug 'tpope/vim-fugitive'
 Plug 'rbong/vim-flog', {'on': ['Flog', 'Flogsplit']}
+if has('nvim')
+  Plug 'sindrets/diffview.nvim'
+endif
+function! BuildGitlabNvim(_) abort
+  lua require('gitlab.server').build(true)
+endfunction
+if has('nvim')
+  Plug 'harrisoncramer/gitlab.nvim', {'do': function('BuildGitlabNvim')}
+endif
 
 call plug#end()
 
@@ -2185,6 +2197,38 @@ if has('nvim')
 endif
 
 " -----------------------------------------------------------------------------
+" ray-x/guihua.lua
+function! InitGuihua() abort
+  lua << EOF
+  require('guihua').setup({
+    maps = {
+      split = '<C-x>',
+    },
+    icons = {
+      syntax = {
+        var = '',
+        method = '',
+        ['function'] = '',
+        ['arrow_function'] = '',
+        parameter = '',
+        associated = '',
+        namespace = '',
+        type = '',
+        field = '',
+        interface = '',
+        module = '',
+        flag = '',
+      },
+    },
+  })
+EOF
+endfunction
+
+if has('nvim')
+  call InitGuihua()
+endif
+
+" -----------------------------------------------------------------------------
 " nvim-treesitter/nvim-treesitter
 function! InitTreesitter() abort
   lua << EOF
@@ -2333,28 +2377,6 @@ function! InitGo() abort
     comment_placeholder = '',
     icons = false,
   })
-
-  require('guihua').setup({
-    maps = {
-      split = '<C-x>',
-    },
-    icons = {
-      syntax = {
-        var = '',
-        method = '',
-        ['function'] = '',
-        ['arrow_function'] = '',
-        parameter = '',
-        associated = '',
-        namespace = '',
-        type = '',
-        field = '',
-        interface = '',
-        module = '',
-        flag = '',
-      },
-    },
-  })
 EOF
 endfunction
 
@@ -2394,6 +2416,50 @@ endfunction
 
 if has('nvim')
   autocmd User csvview.nvim call InitCsvView()
+endif
+
+" -----------------------------------------------------------------------------
+" sindrets/diffview.nvim
+function! InitDiffview() abort
+  lua << EOF
+  require('diffview').setup({
+    enhanced_diff_hl = true,
+    use_icons = false,
+    icons = {
+      folder_closed = '',
+      folder_open = '',
+    },
+    signs = {
+      fold_closed = '',
+      fold_open = '',
+    },
+  })
+EOF
+endfunction
+
+if has('nvim')
+  call InitDiffview()
+endif
+
+" -----------------------------------------------------------------------------
+" harrisoncramer/gitlab.nvim
+function! InitGitlabNvim() abort
+  lua << EOF
+  require('gitlab').setup({
+    keymaps = {
+      global = {
+        disable_all = true,
+      },
+    },
+  })
+EOF
+
+  command! GitlabReview lua require('gitlab').review()
+  command! GitlabChooseMR lua require('gitlab').choose_merge_request()
+endfunction
+
+if has('nvim')
+  call InitGitlabNvim()
 endif
 
 
