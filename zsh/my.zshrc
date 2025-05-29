@@ -367,6 +367,7 @@ aliases-git() {
 # difft
 export DFT_CONTEXT=10
 export DFT_DISPLAY=side-by-side-show-both
+export DFT_GRAPH_LIMIT=99999999
 export DFT_PARSE_ERROR_LIMIT=9999
 
 # -----------------------------------------------------------------------------
