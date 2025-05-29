@@ -2458,8 +2458,13 @@ EOF
   command! GitlabChooseMR lua require('gitlab').choose_merge_request()
 endfunction
 
+function! LazyInitGitlabNvim() abort
+  command! GitlabReview lua vim.call('InitGitlabNvim') require('gitlab').review()
+  command! GitlabChooseMR lua vim.call('InitGitlabNvim') require('gitlab').choose_merge_request()
+endfunction
+
 if has('nvim')
-  call InitGitlabNvim()
+  call LazyInitGitlabNvim()
 endif
 
 
