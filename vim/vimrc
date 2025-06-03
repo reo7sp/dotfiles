@@ -7,7 +7,7 @@ let g:loaded_perl_provider = 0
 let g:loaded_node_provider = 0
 
 let mapleader = " "
-nnoremap <Space> <Nop>
+nnoremap <space> <nop>
 
 
 " =============================================================================
@@ -914,11 +914,12 @@ function! InitTreeSJ() abort
   })
 EOF
 
-  nnoremap gs <cmd>lua require('treesj').toggle()<cr>
+  nnoremap gm <cmd>lua require('treesj').toggle()<cr>
+  nnoremap gM <nop>
 endfunction
 
 function! LazyInitTreeSJ() abort
-  lua vim.keymap.set('n', 'gs', function() vim.call('InitTreeSJ') vim.api.nvim_input('gs') end)
+  lua vim.keymap.set('n', 'gm', function() vim.call('InitTreeSJ') vim.api.nvim_input('gm') end)
 endfunction
 
 if has('nvim')
@@ -1256,6 +1257,7 @@ EOF
   nnoremap gy <cmd>Telescope lsp_type_definitions<cr>
   nnoremap ge <cmd>Telescope lsp_references<cr>
   nnoremap gE <cmd>Telescope hierarchy theme=ivy disable_devicons=true<cr>
+  nnoremap gs <cmd>lua require('telescope-live-grep-args.shortcuts').grep_word_under_cursor()<cr>
   nnoremap <leader>e <cmd>lua require('telescope').extensions.recent_files.pick()<cr>
   nnoremap <leader>E <cmd>Telescope jumplist<cr>
   nnoremap <leader>f <cmd>Telescope find_files<cr>
