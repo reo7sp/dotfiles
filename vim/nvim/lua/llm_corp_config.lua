@@ -1,13 +1,4 @@
 return {
-  minuet = {
-    -- end_point = 'https://TODO/v1/completions',
-    -- api_key = function() return 'TODO' end,
-    -- model = 'qwen2.5-coder-32b',
-    -- optional = {
-    --   max_tokens = 56,
-    --   top_p = 0.9,
-    -- },
-  },
   codecompanion = {
     -- env = {
     --   url = 'https://TODO',
@@ -41,6 +32,15 @@ return {
     --   validate = function(n)
     --     return n > 0, 'Must be greater than 0'
     --   end,
+    -- },
+  },
+  minuet = {
+    -- end_point = 'https://TODO/v1/completions',
+    -- api_key = function() return 'TODO' end,
+    -- model = 'qwen2.5-coder-32b',
+    -- optional = {
+    --   max_tokens = 56,
+    --   top_p = 0.9,
     -- },
   },
 }
