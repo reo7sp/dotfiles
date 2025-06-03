@@ -132,9 +132,6 @@ endif
 " navigation
 Plug 'reo7sp/vim-unimpaired'
 Plug 'justinmk/vim-sneak'
-if has('nvim')
-  Plug 'rlane/pounce.nvim'
-endif
 Plug 'haya14busa/vim-asterisk'
 if has('nvim')
   Plug 'nvim-telescope/telescope.nvim'
@@ -218,7 +215,6 @@ Plug 'sheerun/vim-polyglot'
 if has('nvim')
   Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
   Plug 'nvim-treesitter/nvim-treesitter-textobjects'
-  Plug 'nvim-treesitter/nvim-treesitter-context'
 endif
 if has('nvim')
   Plug 'RRethy/vim-hexokinase', {'do': 'make hexokinase'}
@@ -275,7 +271,6 @@ if has('nvim')
       blink_cmp = true,
       fidget = true,
       mason = true,
-      pounce = true,
       vim_sneak = true,
       which_key = true,
       native_lsp = {
@@ -872,7 +867,7 @@ function! InitUfo() abort
   require('ufo').setup({
     open_fold_hl_timeout = 0,
     provider_selector = function(bufnr, filetype, buftype)
-      return { 'treesitter', 'indent' }
+      return { 'indent' }
     end
   })
 
@@ -1031,24 +1026,6 @@ function! InitSneak() abort
 endfunction
 
 call InitSneak()
-
-" -----------------------------------------------------------------------------
-" rlane/pounce.nvim
-function! InitPounce() abort
-  lua << EOF
-  require('pounce').setup({
-    multi_window = false,
-  })
-EOF
-
-  nmap <c-/> <cmd>Pounce<CR>
-  xmap <c-/> <cmd>Pounce<CR>
-  omap g<c-/> <cmd>Pounce<CR>
-endfunction
-
-if has('nvim')
-  call InitPounce()
-endif
 
 " -----------------------------------------------------------------------------
 " haya14busa/vim-asterisk
@@ -1443,7 +1420,6 @@ function! InitNvimTree() abort
       vim.keymap.set('n', '<c-s>', M.launch_live_grep, opts('Launch Live Grep'))
       vim.keymap.set('n', 's', '<Plug>Sneak_s', opts('Sneak'))
       vim.keymap.set('n', 'S', '<Plug>Sneak_S', opts('Sneak'))
-      vim.keymap.set('n', '<c-/>', function() require('pounce').pounce({}) end, opts('Pounce'))
       vim.keymap.set('n', 'gs', api.node.run.system, opts('Run System'))
     end,
   })
@@ -1495,6 +1471,7 @@ function! InitAerial() abort
     autojump = true,
     show_guides = true,
     disable_max_lines = 99999,
+    disable_max_size = 100 * 1024,
   })
 EOF
 
@@ -1874,7 +1851,7 @@ function! InitBqf() abort
         local ret = true
         local bufname = vim.api.nvim_buf_get_name(bufnr)
         local fsize = vim.fn.getfsize(bufname)
-        if fsize > 1024 * 1024 then
+        if fsize > 100 * 1024 then
           ret = false
         elseif bufname:match('^fugitive://') then
           ret = false
@@ -1930,8 +1907,9 @@ function! InitQuicker() abort
       enabled = true,
       autosave = true,
     },
-    follow = {
-      enabled = true,
+    highlight = {
+      treesitter = false,
+      lsp = false,
     },
     type_icons = {
       E = 'E',
@@ -1958,7 +1936,7 @@ function! InitTrouble() abort
     focus = true,
     auto_refresh = false,
     auto_preview = false,
-    follow = true,
+    follow = false,
     win = {
       position = 'right',
       size = 0.45,
@@ -2288,12 +2266,25 @@ function! InitTreesitter() abort
     auto_install = true,
     highlight = {
       enable = true,
-      disable = {
-        'mermaid',
-        'csv',
-        'tsv',
-        'pascal',
-      },
+      disable = function(lang, buf)
+        local max_filesize = 100 * 1024
+        local ok, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(buf))
+        if ok and stats and stats.size > max_filesize then
+            return true
+        end
+
+        local disable_langs = {
+          'mermaid',
+          'csv',
+          'tsv',
+          'puppet',
+        }
+        for _, s in ipairs(disable_langs) do
+          if s == lang then
+              return true
+          end
+        end
+      end,
     },
     indent = {
       enable = false,
@@ -2357,10 +2348,6 @@ function! InitTreesitter() abort
       },
     },
   })
-
-  require('treesitter-context').setup({
-    max_lines = 1,
-  })
 EOF
 endfunction
 
@@ -2371,6 +2358,7 @@ endif
 " -----------------------------------------------------------------------------
 " RRethy/vim-hexokinase
 function! InitHexokinase() abort
+  let g:Hexokinase_ftEnabled = []
   let g:Hexokinase_highlighters = ['virtual']
 endfunction
 
