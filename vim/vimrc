@@ -839,7 +839,7 @@ EOF
 endfunction
 
 function! LazyInitUndotreeNvim() abort
-  lua vim.keymap.set('n', '<leader>u', function() vim.call('InitUndotreeNvim') vim.api.nvim_input(vim.g.mapleader .. 'u') end)
+  lua vim.keymap.set('n', '<leader>u', function() vim.call('InitUndotreeNvim') vim.api.nvim_input(vim.g.mapleader .. 'u') end, { desc = 'Undotree' })
 endfunction
 
 function! InitUndotreeVim() abort
@@ -914,7 +914,7 @@ EOF
 endfunction
 
 function! LazyInitTreeSJ() abort
-  lua vim.keymap.set('n', 'gm', function() vim.call('InitTreeSJ') vim.api.nvim_input('gm') end)
+  lua vim.keymap.set('n', 'gm', function() vim.call('InitTreeSJ') vim.api.nvim_input('gm') end, { desc = 'Merge statements' })
 endfunction
 
 if has('nvim')
@@ -973,7 +973,7 @@ EOF
 endfunction
 
 function! LazyInitRefactoring() abort
-  lua vim.keymap.set({ 'n', 'x' }, 'gR', function() vim.call('InitRefactoring') vim.api.nvim_input('gR') end)
+  lua vim.keymap.set({ 'n', 'x' }, 'gR', function() vim.call('InitRefactoring') vim.api.nvim_input('gR') end, { desc = 'Refactor' })
 endfunction
 
 if has('nvim')
@@ -1210,9 +1210,9 @@ function! InitTelescope() abort
   local git_commits_previewer = previewers.new_termopen_previewer({
     get_command = function(entry)
       if entry.status == '??' or 'A ' then
-          return { 'git', '-c', 'core.pager=delta', '-c', 'delta.paging=always', 'show', '--no-ext-diff', '--name-only', entry.value }
+          return { 'git', '-c', 'core.pager=delta', '-c', 'delta.paging=always', 'show', '--no-ext-diff', entry.value }
       end
-      return { 'git', '-c', 'core.pager=delta', '-c', 'delta.paging=always', 'show', '--no-ext-diff', '--name-only', entry.value .. '^!' }
+      return { 'git', '-c', 'core.pager=delta', '-c', 'delta.paging=always', 'show', '--no-ext-diff', entry.value .. '^!' }
     end
   })
   M.git_status = function(opts)
@@ -1220,13 +1220,17 @@ function! InitTelescope() abort
       opts.previewer = git_status_previewer
       builtin.git_status(opts)
   end
+  M.git_bcommits = function(opts)
+      opts = opts or {}
+      opts.previewer = git_commits_previewer
+      builtin.git_bcommits(opts)
+  end
   M.git_commits = function(opts)
       opts = opts or {}
       opts.previewer = git_commits_previewer
       builtin.git_commits(opts)
   end
   vim.keymap.set('n', '<leader>ge', M.git_status, { desc = 'Telescope git_status' })
-  vim.keymap.set('n', '<leader>gB', M.git_commits, { desc = 'Telescope git_commits' })
 EOF
 
   nnoremap gd <cmd>Telescope lsp_definitions<cr>
@@ -1435,7 +1439,6 @@ function! LazyNvimTreeToggle() abort
     call InitNvimTree()
     let g:inited_nvim_tree = 1
   endif
-
   NvimTreeToggle
 endfunction
 
@@ -1444,7 +1447,6 @@ function! LazyNvimTreeFocus() abort
     call InitNvimTree()
     let g:inited_nvim_tree = 1
   endif
-
   NvimTreeFocus
 endfunction
 
@@ -1811,6 +1813,7 @@ function! InitWindowPicker() abort
     filter_rules = {
       bo = {
         filetype = {},
+        buftype = {},
       },
     },
   })
@@ -2161,14 +2164,14 @@ function! InitGitSigns() abort
         else
           gitsigns.nav_hunk('next')
         end
-      end)
+      end, { desc = 'Next git hunk' })
       map('n', '[h', function()
         if vim.wo.diff then
           vim.cmd.normal({'[h', bang = true})
         else
           gitsigns.nav_hunk('prev')
         end
-      end)
+      end, { desc = 'Prev git hunk' })
 
       vim.keymap.set({ 'o', 'x' }, 'ih', '<cmd>Gitsigns select_hunk<CR>')
     end
@@ -2239,6 +2242,7 @@ function! InitTreesitter() abort
   require('nvim-treesitter.configs').setup({
     ensure_installed = {
       'c',
+      'cpp',
       'go',
       'python',
       'perl',
@@ -2428,6 +2432,14 @@ endfunction
 if has('nvim')
   autocmd User csvview.nvim call InitCsvView()
 endif
+"
+" -----------------------------------------------------------------------------
+" rbong/vim-flog
+function! InitFlog() abort
+  nnoremap <leader>gc <cmd>Flogsplit<cr>
+endfunction
+
+call InitFlog()
 
 " -----------------------------------------------------------------------------
 " sindrets/diffview.nvim
@@ -2743,6 +2755,17 @@ set noswapfile
 set ignorecase
 set smartcase
 set hlsearch
+
+" https://noahfrederick.com/log/vim-streamlining-grep
+set grepprg=rg\ --vimgrep
+set grepformat=%f:%l:%c:%m
+cnoreabbrev <expr> grep  (getcmdtype() ==# ':' && getcmdline() =~# '^grep')  ? 'silent grep'  : 'grep'
+cnoreabbrev <expr> lgrep (getcmdtype() ==# ':' && getcmdline() =~# '^lgrep') ? 'silent lgrep' : 'lgrep'
+augroup init_quickfix
+  autocmd!
+  autocmd QuickFixCmdPost [^l]* cwindow
+  autocmd QuickFixCmdPost l* lwindow
+augroup END
 
 " -----------------------------------------------------------------------------
 " encoding
