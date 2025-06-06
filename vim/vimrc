@@ -1245,6 +1245,7 @@ EOF
   nnoremap <leader>Ff <cmd>Telescope dir find_files<cr>
   nnoremap <leader>s <cmd>Telescope live_grep_args<cr>
   vnoremap <leader>s <cmd>lua require('telescope-live-grep-args.shortcuts').grep_visual_selection()<cr>
+  vnoremap gs <cmd>lua require('telescope-live-grep-args.shortcuts').grep_visual_selection()<cr>
   nnoremap <leader>Fs <cmd>Telescope dir live_grep<cr>
   nnoremap <leader>b <cmd>Telescope buffers<cr>
   nnoremap <leader>B <cmd>Telescope telescope-tabs list_tabs<cr>
