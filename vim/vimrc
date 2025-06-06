@@ -116,7 +116,7 @@ if has('nvim')
   Plug 'numToStr/Comment.nvim'
   Plug 'JoosepAlviste/nvim-ts-context-commentstring'
 else
-  Plug 'scrooloose/nerdcommenter'
+  Plug 'tpope/vim-commentary'
 endif
 if has('nvim')
   Plug 'Wansmer/treesj'
@@ -883,7 +883,7 @@ if has('nvim')
 end
 
 " -----------------------------------------------------------------------------
-" numToStr/Comment.nvim
+" numToStr/Comment.nvim or tpope/vim-commentary
 function! InitComment() abort
   lua << EOF
   require('ts_context_commentstring').setup({
@@ -2553,10 +2553,12 @@ function! s:empty_message(timer)
   endif
 endfunction
 
-augroup cmd_msg_cls
-  autocmd!
-  autocmd CmdlineLeave : call timer_start(3000, funcref('s:empty_message'))
-augroup END
+if v:version > 704
+  augroup cmd_msg_cls
+    autocmd!
+    autocmd CmdlineLeave : call timer_start(3000, funcref('s:empty_message'))
+  augroup END
+endif
 
 " https://stackoverflow.com/a/51388837/1600438
 if ! has('nvim')
@@ -2695,7 +2697,10 @@ set nowrap
 
 set mouse=a
 
-set shortmess+=aITF
+set shortmess+=aIT
+if v:version > 704
+  set shortmess+=F
+endif
 if has('patch-7.4.314')
   set shortmess+=c
 endif
@@ -2705,6 +2710,10 @@ if has('nvim')
   set titlestring=%{substitute(getcwd(),$HOME,'~','')}\ -\ NVIM
 else
   set titlestring=%{substitute(getcwd(),$HOME,'~','')}\ -\ VIM
+endif
+if ! has('nvim')
+  " https://vi.stackexchange.com/questions/8406/how-to-restore-bash-terminal-title-if-using-set-title-in-vim
+  set titleold=
 endif
 set confirm
 if exists('+signcolumn')
@@ -2726,7 +2735,9 @@ set autoindent
 set copyindent
 set smartindent
 set formatoptions+=cro
-set fixendofline
+if v:version > 704
+  set fixendofline
+endif
 if v:version >= 802
   set nrformats+=unsigned
 endif
@@ -2777,7 +2788,9 @@ set fileformats=unix,dos,mac
 " -----------------------------------------------------------------------------
 " other
 " https://superuser.com/questions/1642954/how-to-start-vim-with-a-clean-jumplist
-autocmd VimEnter * :clearjumps
+if v:version > 704
+  autocmd VimEnter * :clearjumps
+endif
 
 set backupdir=~/.vim/backup
 set directory=~/.vim/tmp
