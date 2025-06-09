@@ -845,7 +845,7 @@ endfunction
 function! InitUndotreeVim() abort
   let g:undotree_DiffAutoOpen = 0
   let g:undotree_SetFocusWhenToggle = 1
-  let g:undotree_SplitWidth = 35
+  let g:undotree_SplitWidth = 30
 
   nnoremap <leader>u <cmd>UndotreeToggle<cr>
 endfunction
@@ -1386,7 +1386,7 @@ function! InitNvimTree() abort
       },
     },
     view = {
-      width = 35,
+      width = 30,
     },
     git = {
       enable = false,
@@ -1408,7 +1408,22 @@ function! InitNvimTree() abort
         quit_on_open = false,
         window_picker = {
           enable = true,
-          picker = require('window-picker').pick_window,
+          picker = function ()
+            return require('window-picker').pick_window({
+              filter_rules = {
+                bo = {
+                  filetype = {
+                    'NvimTree',
+                    'aerial',
+                    'trouble',
+                  },
+                  buftype = {
+                    'terminal',
+                  },
+                },
+              },
+            })
+          end,
         },
       },
     },
@@ -1467,8 +1482,8 @@ function! InitAerial() abort
   require('aerial').setup({
     layout = {
       default_direction = 'left',
-      min_width = 35,
-      width = 35,
+      min_width = 30,
+      width = 30,
     },
     close_on_select = false,
     autojump = true,
@@ -2260,6 +2275,7 @@ function! InitTreesitter() abort
       'sql',
       'json',
       'yaml',
+      'toml',
       'xml',
       'vim',
       'markdown',
