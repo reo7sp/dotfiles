@@ -170,7 +170,6 @@ else
 endif
 if has('nvim')
   Plug 'romgrk/barbar.nvim'
-  Plug 'tiagovla/scope.nvim'
 else
   Plug 'ap/vim-buftabline'
 endif
@@ -929,6 +928,8 @@ function! InitTextCase() abort
     prefix = 'gt',
   })
 EOF
+
+  nnoremap gT <Nop>
 endfunction
 
 if has('nvim')
@@ -1189,7 +1190,10 @@ function! InitTelescope() abort
   require('telescope').load_extension('live_grep_args')
   require('telescope').load_extension('dir')
   require('telescope').load_extension('telescope-tabs')
-  require('telescope-tabs').setup({})
+  require('telescope-tabs').setup({
+    close_tab_shortcut_i = '<M-d>',
+    close_tab_shortcut_n = '<M-d>',
+  })
   require('telescope').load_extension('yank_history')
   require('telescope').load_extension('aerial')
   require('telescope').load_extension('hierarchy')
@@ -1711,8 +1715,6 @@ endif
 " romgrk/barbar.nvim or ap/vim-buftabline
 function! InitBarbar() abort
   lua << EOF
-  require('scope').setup({})
-
   vim.g.barbar_auto_setup = false
   require('barbar').setup({
     animation = false,
@@ -2006,10 +2008,10 @@ EOF
   highlight! link TroubleNormal Normal
   highlight! link TroubleNormalNC Normal
 
-  nnoremap [t <cmd>lua require('trouble').prev() require('trouble').jump()<CR>
-  nnoremap ]t <cmd>lua require('trouble').next() require('trouble').jump()<CR>
-  nnoremap [T <cmd>lua require('trouble').first() require('trouble').jump()<CR>
-  nnoremap ]T <cmd>lua require('trouble').last() require('trouble').jump()<CR>
+  " nnoremap [t <cmd>lua require('trouble').prev() require('trouble').jump()<CR>
+  " nnoremap ]t <cmd>lua require('trouble').next() require('trouble').jump()<CR>
+  " nnoremap [T <cmd>lua require('trouble').first() require('trouble').jump()<CR>
+  " nnoremap ]T <cmd>lua require('trouble').last() require('trouble').jump()<CR>
 endfunction
 
 if has('nvim')
@@ -2672,6 +2674,7 @@ nnoremap <C-w><Backspace> <cmd>vsplit #<cr>
 nnoremap <C-w><C-Backspace> <cmd>vsplit #<cr>
 nnoremap <silent> <C-w>n :vsplit<cr>:enew<cr>
 nnoremap <silent> <C-w><C-n> :vsplit<cr>:enew<cr>
+nnoremap <C-w>t <C-w>s<C-w>T
 
 cnoremap <C-A> <Home>
 cnoremap <C-E> <End>
