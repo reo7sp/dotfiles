@@ -201,7 +201,7 @@ else
 endif
 if has('nvim')
   Plug 'lewis6991/gitsigns.nvim'
-  Plug 'akinsho/git-conflict.nvim'
+  Plug 'akinsho/git-conflict.nvim', {'tag': 'v2.1.0'}
 else
   Plug 'airblade/vim-gitgutter'
 endif
@@ -1102,6 +1102,7 @@ function! InitTelescope() abort
       },
       jumplist = {
         show_line = false,
+        initial_mode = 'insert',
       },
       lsp_definitions = {
         fname_width = 60,
@@ -1156,6 +1157,7 @@ function! InitTelescope() abort
           'COMMIT_',
           '-todo$',
         },
+        initial_mode = 'insert',
       },
       live_grep_args = {
         initial_mode = 'insert',
@@ -1175,6 +1177,9 @@ function! InitTelescope() abort
             ['<C-g>'] = require('telescope-live-grep-args.actions').quote_prompt({ postfix = ' -g ' }),
           },
         },
+      },
+      dir = {
+        initial_mode = 'insert',
       },
       hierarchy = {
         theme = 'ivy',
@@ -1236,6 +1241,18 @@ function! InitTelescope() abort
       builtin.git_commits(opts)
   end
   vim.keymap.set('n', '<leader>ge', M.git_status, { desc = 'Telescope git_status' })
+
+  vim.keymap.set('n', 'gf', function()
+    require('telescope.builtin').find_files({ default_text = vim.fn.expand('<cword>') })
+  end, { noremap = true, silent = true, desc = 'Find files with word under cursor' })
+  vim.keymap.set('v', 'gf', function()
+    vim.cmd('normal! "vy')
+    require('telescope.builtin').find_files({ default_text = vim.fn.getreg('v') })
+  end, { noremap = true, silent = true, desc = 'Find files with selected text' })
+  vim.keymap.set('v', '<leader>f', function()
+    vim.cmd('normal! "vy')
+    require('telescope.builtin').find_files({ default_text = vim.fn.getreg('v') })
+  end, { noremap = true, silent = true, desc = 'Find files with selected text' })
 EOF
 
   nnoremap gd <cmd>Telescope lsp_definitions<cr>
@@ -1525,12 +1542,12 @@ endfunction
 
 function! LazySpectreVisualFromYank() abort
   call plug#load('nvim-spectre')
-  lua require('spectre').open({ search_text = vim.fn.getreg('0') })
+  lua require('spectre').open({ search_text = vim.fn.getreg('v') })
 endfunction
 
 function! LazyInitSpectre() abort
   nnoremap <leader>S <cmd>Spectre<cr>
-  vnoremap <leader>S y<cmd>call LazySpectreVisualFromYank()<cr>
+  vnoremap <leader>S "vy<cmd>call LazySpectreVisualFromYank()<cr>
 endfunction
 
 if has('nvim')
