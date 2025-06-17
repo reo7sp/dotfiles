@@ -7,6 +7,7 @@ let g:loaded_perl_provider = 0
 let g:loaded_node_provider = 0
 
 let mapleader = " "
+let maplocalleader = " "
 nnoremap <space> <nop>
 
 
@@ -153,7 +154,7 @@ if has('nvim')
   Plug 'stevearc/aerial.nvim'
 endif
 if has('nvim')
-  Plug 'nvim-pack/nvim-spectre', {'on': 'Spectre', 'do': './build.sh nvim-oxi'}
+  Plug 'MagicDuck/grug-far.nvim'
 endif
 
 " -----------------------------------------------------------------------------
@@ -1147,7 +1148,7 @@ function! InitTelescope() abort
           'oil',
           'aerial',
           'undotree',
-          'spectre',
+          'Grug',
           'guihua',
           'gitsigns',
           'fugitiveblame',
@@ -1525,34 +1526,29 @@ if has('nvim')
 endif
 
 " -----------------------------------------------------------------------------
-" nvim-pack/nvim-spectre
-function! InitSpectre() abort
+" MagicDuck/grug-far.nvim
+function! InitGrugFar() abort
   lua << EOF
-  require('spectre').setup({
-    is_block_ui_break = true,
-    is_insert_mode = false,
-    default = {
-      replace = {
-        cmd = 'oxi',
-      },
+  require('grug-far').setup({
+    instanceName = 'grug-far',
+    normalModeSearch = true,
+    startInInsertMode = false,
+    transient = true,
+    icons = {
+      enabled = false,
+    },
+    history = {
+      maxHistoryLines = 1000,
     },
   })
 EOF
-endfunction
 
-function! LazySpectreVisualFromYank() abort
-  call plug#load('nvim-spectre')
-  lua require('spectre').open({ search_text = vim.fn.getreg('v') })
-endfunction
-
-function! LazyInitSpectre() abort
-  nnoremap <leader>S <cmd>Spectre<cr>
-  vnoremap <leader>S "vy<cmd>call LazySpectreVisualFromYank()<cr>
+  nnoremap <leader>S <cmd>lua require('grug-far').kill_instance() require('grug-far').open()<cr>
+  vnoremap <leader>S <cmd>lua require('grug-far').kill_instance() require('grug-far').with_visual_selection()<cr>
 endfunction
 
 if has('nvim')
-  autocmd User nvim-spectre call InitSpectre()
-  call LazyInitSpectre()
+  call InitGrugFar()
 endif
 
 " -----------------------------------------------------------------------------
