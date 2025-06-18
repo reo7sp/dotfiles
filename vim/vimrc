@@ -29,11 +29,13 @@ endif
 if has('nvim')
   Plug 'nvim-lua/plenary.nvim'
   Plug 'kevinhwang91/promise-async'
+  Plug 'MunifTanjim/nui.nvim'
+  Plug 'ray-x/guihua.lua'
 endif
 Plug 'tpope/vim-repeat'
 
 " -----------------------------------------------------------------------------
-" editing
+" editor
 if has('nvim')
   Plug 'neovim/nvim-lspconfig'
   Plug 'williamboman/mason.nvim'
@@ -53,6 +55,8 @@ else
   Plug 'Raimondi/delimitMate'
 end
 Plug 'alvan/vim-closetag', {'for': ['html', 'htm', 'xml', 'js', 'jsx', 'ts', 'tsx']}
+Plug 'justinmk/vim-sneak'
+Plug 'haya14busa/vim-asterisk'
 Plug 'wellle/targets.vim'
 if has('nvim')
   Plug 'monaqa/dial.nvim'
@@ -71,24 +75,6 @@ if ! has('nvim')
   Plug 'ConradIrwin/vim-bracketed-paste'
 endif
 Plug 'romainl/vim-cool'
-Plug 'bogado/file-line'
-Plug 'pbrisbin/vim-mkdir'
-if has('nvim')
-  Plug 'okuuva/auto-save.nvim'
-else
-  Plug '907th/vim-auto-save'
-endif
-Plug 'farmergreg/vim-lastplace'
-if has('nvim')
-  Plug 'ahmedkhalf/project.nvim'
-endif
-if ! has('nvim')
-  Plug 'moll/vim-bbye'
-  Plug 'vim-scripts/BufOnly.vim'
-endif
-if has('nvim')
-  Plug 'Shatur/neovim-session-manager'
-endif
 if has('nvim')
   Plug 'nmac427/guess-indent.nvim'
 else
@@ -121,19 +107,50 @@ else
 endif
 if has('nvim')
   Plug 'Wansmer/treesj'
+endif
+if has('nvim')
   Plug 'johmsalas/text-case.nvim'
+endif
+if has('nvim')
   Plug 'echasnovski/mini.align'
+endif
+if has('nvim')
   Plug 'ThePrimeagen/refactoring.nvim'
 endif
 if has('nvim')
   Plug 'stevearc/conform.nvim'
 endif
+if has('nvim')
+  Plug 'lewis6991/gitsigns.nvim'
+  Plug 'akinsho/git-conflict.nvim', {'tag': 'v2.1.0'}
+else
+  Plug 'airblade/vim-gitgutter'
+endif
+
+" -----------------------------------------------------------------------------
+" file management
+Plug 'bogado/file-line'
+Plug 'pbrisbin/vim-mkdir'
+if has('nvim')
+  Plug 'okuuva/auto-save.nvim'
+else
+  Plug '907th/vim-auto-save'
+endif
+Plug 'farmergreg/vim-lastplace'
+if has('nvim')
+  Plug 'ahmedkhalf/project.nvim'
+endif
+if ! has('nvim')
+  Plug 'moll/vim-bbye'
+  Plug 'vim-scripts/BufOnly.vim'
+endif
+if has('nvim')
+  Plug 'Shatur/neovim-session-manager'
+endif
 
 " -----------------------------------------------------------------------------
 " navigation
 Plug 'reo7sp/vim-unimpaired'
-Plug 'justinmk/vim-sneak'
-Plug 'haya14busa/vim-asterisk'
 if has('nvim')
   Plug 'nvim-telescope/telescope.nvim'
   Plug 'nvim-telescope/telescope-fzf-native.nvim', {'do': 'make'}
@@ -200,16 +217,9 @@ else
   Plug 'liuchengxu/vim-which-key'
   Plug 'junegunn/vim-peekaboo'
 endif
-if has('nvim')
-  Plug 'lewis6991/gitsigns.nvim'
-  Plug 'akinsho/git-conflict.nvim', {'tag': 'v2.1.0'}
-else
-  Plug 'airblade/vim-gitgutter'
-endif
-if has('nvim')
-  Plug 'MunifTanjim/nui.nvim'
-  Plug 'ray-x/guihua.lua'
-endif
+
+" -----------------------------------------------------------------------------
+" language specific
 let g:polyglot_disabled = ['sensible', 'autoindent']
 Plug 'sheerun/vim-polyglot'
 if has('nvim')
@@ -226,11 +236,11 @@ else
 endif
 Plug 'Vimjas/vim-python-pep8-indent', {'for': 'python'}
 Plug 'HiPhish/jinja.vim'
-Plug 'rodjek/vim-puppet', {'for': ['pascal', 'puppet']}
-Plug 'fladson/vim-kitty'
 if has('nvim')
   Plug 'hat0uma/csvview.nvim', {'for': ['csv', 'tsv']}
 endif
+Plug 'rodjek/vim-puppet', {'for': ['pascal', 'puppet']}
+Plug 'fladson/vim-kitty'
 
 " -----------------------------------------------------------------------------
 " commands
@@ -296,6 +306,38 @@ endif
 
 " =============================================================================
 " plugin settings
+
+" -----------------------------------------------------------------------------
+" ray-x/guihua.lua
+function! InitGuihua() abort
+  lua << EOF
+  require('guihua').setup({
+    maps = {
+      split = '<C-x>',
+    },
+    icons = {
+      syntax = {
+        var = '',
+        method = '',
+        ['function'] = '',
+        ['arrow_function'] = '',
+        parameter = '',
+        associated = '',
+        namespace = '',
+        type = '',
+        field = '',
+        interface = '',
+        module = '',
+        flag = '',
+      },
+    },
+  })
+EOF
+endfunction
+
+if has('nvim')
+  call InitGuihua()
+endif
 
 " -----------------------------------------------------------------------------
 " williamboman/mason.nvim
@@ -573,6 +615,36 @@ if has('nvim')
 endif
 
 " -----------------------------------------------------------------------------
+" justinmk/vim-sneak
+function! InitSneak() abort
+  let g:sneak#use_ic_scs = 1
+
+  map f <Plug>Sneak_f
+  map F <Plug>Sneak_F
+  map t <Plug>Sneak_t
+  map T <Plug>Sneak_T
+endfunction
+
+call InitSneak()
+
+" -----------------------------------------------------------------------------
+" haya14busa/vim-asterisk
+function! InitAsterisk() abort
+  let g:asterisk#keeppos = 1
+
+  map *   <Plug>(asterisk-*)
+  map #   <Plug>(asterisk-#)
+  map g*  <Plug>(asterisk-g*)
+  map g#  <Plug>(asterisk-g#)
+  map z*  <Plug>(asterisk-z*)
+  map gz* <Plug>(asterisk-gz*)
+  map z#  <Plug>(asterisk-z#)
+  map gz# <Plug>(asterisk-gz#)
+endfunction
+
+call InitAsterisk()
+
+" -----------------------------------------------------------------------------
 " monaqa/dial.nvim
 function! InitDial() abort
   lua << EOF
@@ -652,101 +724,6 @@ if has('nvim')
   call InitSubstitute()
 else
   autocmd BufEnter * call InitSubversive()
-endif
-
-" -----------------------------------------------------------------------------
-" okuuva/auto-save.nvim or 907th/vim-auto-save
-function! InitAutosaveNvim() abort
-  lua << EOF
-  require('auto-save').setup({
-    condition = function(buf)
-      local filetype = vim.fn.getbufvar(buf, '&filetype')
-      if vim.list_contains({ 'oil', 'qf' }, filetype) then
-        return false
-      end
-      return true
-    end
-  })
-EOF
-endfunction
-
-function! InitAutosaveVim() abort
-  let g:auto_save = 1
-  let g:auto_save_silent = 1
-endfunction
-
-if has('nvim')
-  call InitAutosaveNvim()
-else
-  call InitAutosaveVim()
-endif
-
-" -----------------------------------------------------------------------------
-" ahmedkhalf/project.nvim
-function! InitProjectNvim() abort
-  lua << EOF
-  require('project_nvim').setup({
-    detection_methods = {
-      'pattern',
-    },
-    patterns = {
-      '.git',
-      '_darcs',
-      '.hg',
-      '.bzr',
-      '.svn',
-    },
-    scope_chdir = 'tab',
-    silent_chdir = false,
-  })
-EOF
-endfunction
-
-if has('nvim')
-  call InitProjectNvim()
-endif
-
-" -----------------------------------------------------------------------------
-" moll/vim-bbye
-function! InitBbye() abort
-  cnoreabbrev bq Bdelete
-  cnoreabbrev bd Bdelete
-  nnoremap <c-q> <cmd>Bdelete<cr>
-  nnoremap <c-w>Q <cmd>Bdelete<cr>
-endfunction
-
-if ! has('nvim')
-  call InitBbye()
-endif
-
-" -----------------------------------------------------------------------------
-" vim-scripts/BufOnly.vim
-function! InitBufOnly() abort
-  cnoreabbrev bo silent BufOnly
-  cnoreabbrev bon silent BufOnly
-  cnoreabbrev bonly silent BufOnly
-  nnoremap <c-w>O <cmd>BufOnly<cr>
-endfunction
-
-if ! has('nvim')
-  call InitBufOnly()
-endif
-
-" -----------------------------------------------------------------------------
-" Shatur/neovim-session-manager
-function! InitSessionManager() abort
-  lua << EOF
-  local config = require('session_manager.config')
-  require('session_manager').setup({
-    autoload_mode = { config.AutoloadMode.Disabled },
-    autosave_only_in_session = true,
-    load_include_current = true,
-  })
-EOF
-endfunction
-
-if has('nvim')
-  call InitSessionManager()
 endif
 
 " -----------------------------------------------------------------------------
@@ -1018,34 +995,153 @@ if has('nvim')
 endif
 
 " -----------------------------------------------------------------------------
-" justinmk/vim-sneak
-function! InitSneak() abort
-  let g:sneak#use_ic_scs = 1
+" lewis6991/gitsigns.nvim
+function! InitGitSigns() abort
+  lua << EOF
+  require('gitsigns').setup({
+    on_attach = function(bufnr)
+      local gitsigns = require('gitsigns')
+      local function map(mode, l, r, opts)
+        opts = opts or {}
+        opts.buffer = bufnr
+        vim.keymap.set(mode, l, r, opts)
+      end
+      map('n', ']h', function()
+        if vim.wo.diff then
+          vim.cmd.normal({']h', bang = true})
+        else
+          gitsigns.nav_hunk('next')
+        end
+      end, { desc = 'Next git hunk' })
+      map('n', '[h', function()
+        if vim.wo.diff then
+          vim.cmd.normal({'[h', bang = true})
+        else
+          gitsigns.nav_hunk('prev')
+        end
+      end, { desc = 'Prev git hunk' })
 
-  map f <Plug>Sneak_f
-  map F <Plug>Sneak_F
-  map t <Plug>Sneak_t
-  map T <Plug>Sneak_T
+      vim.keymap.set({ 'o', 'x' }, 'ih', '<cmd>Gitsigns select_hunk<CR>')
+    end
+  })
+EOF
+
+  nnoremap <c-w>g <cmd>Gitsigns blame_line<CR>
+  nnoremap <leader>gh <cmd>Gitsigns blame<CR>
 endfunction
 
-call InitSneak()
+if has('nvim')
+  call InitGitSigns()
+endif
 
 " -----------------------------------------------------------------------------
-" haya14busa/vim-asterisk
-function! InitAsterisk() abort
-  let g:asterisk#keeppos = 1
-
-  map *   <Plug>(asterisk-*)
-  map #   <Plug>(asterisk-#)
-  map g*  <Plug>(asterisk-g*)
-  map g#  <Plug>(asterisk-g#)
-  map z*  <Plug>(asterisk-z*)
-  map gz* <Plug>(asterisk-gz*)
-  map z#  <Plug>(asterisk-z#)
-  map gz# <Plug>(asterisk-gz#)
+" kinsho/git-conflict.nvim
+function! InitGitConflict() abort
+  lua << EOF
+  require('git-conflict').setup({
+    disable_diagnostics = true,
+  })
+EOF
 endfunction
 
-call InitAsterisk()
+if has('nvim')
+  call InitGitConflict()
+endif
+
+" -----------------------------------------------------------------------------
+" okuuva/auto-save.nvim or 907th/vim-auto-save
+function! InitAutosaveNvim() abort
+  lua << EOF
+  require('auto-save').setup({
+    condition = function(buf)
+      local filetype = vim.fn.getbufvar(buf, '&filetype')
+      if vim.list_contains({ 'oil', 'qf' }, filetype) then
+        return false
+      end
+      return true
+    end
+  })
+EOF
+endfunction
+
+function! InitAutosaveVim() abort
+  let g:auto_save = 1
+  let g:auto_save_silent = 1
+endfunction
+
+if has('nvim')
+  call InitAutosaveNvim()
+else
+  call InitAutosaveVim()
+endif
+
+" -----------------------------------------------------------------------------
+" ahmedkhalf/project.nvim
+function! InitProjectNvim() abort
+  lua << EOF
+  require('project_nvim').setup({
+    detection_methods = {
+      'pattern',
+    },
+    patterns = {
+      '.git',
+      '_darcs',
+      '.hg',
+      '.bzr',
+      '.svn',
+    },
+    scope_chdir = 'tab',
+    silent_chdir = false,
+  })
+EOF
+endfunction
+
+if has('nvim')
+  call InitProjectNvim()
+endif
+
+" -----------------------------------------------------------------------------
+" moll/vim-bbye
+function! InitBbye() abort
+  cnoreabbrev bq Bdelete
+  cnoreabbrev bd Bdelete
+  nnoremap <c-q> <cmd>Bdelete<cr>
+  nnoremap <c-w>Q <cmd>Bdelete<cr>
+endfunction
+
+if ! has('nvim')
+  call InitBbye()
+endif
+
+" -----------------------------------------------------------------------------
+" vim-scripts/BufOnly.vim
+function! InitBufOnly() abort
+  cnoreabbrev bo silent BufOnly
+  cnoreabbrev bon silent BufOnly
+  cnoreabbrev bonly silent BufOnly
+  nnoremap <c-w>O <cmd>BufOnly<cr>
+endfunction
+
+if ! has('nvim')
+  call InitBufOnly()
+endif
+
+" -----------------------------------------------------------------------------
+" Shatur/neovim-session-manager
+function! InitSessionManager() abort
+  lua << EOF
+  local config = require('session_manager.config')
+  require('session_manager').setup({
+    autoload_mode = { config.AutoloadMode.Disabled },
+    autosave_only_in_session = true,
+    load_include_current = true,
+  })
+EOF
+endfunction
+
+if has('nvim')
+  call InitSessionManager()
+endif
 
 " -----------------------------------------------------------------------------
 " nvim-telescope/telescope.nvim
@@ -2179,92 +2275,6 @@ else
 endif
 
 " -----------------------------------------------------------------------------
-" lewis6991/gitsigns.nvim
-function! InitGitSigns() abort
-  lua << EOF
-  require('gitsigns').setup({
-    on_attach = function(bufnr)
-      local gitsigns = require('gitsigns')
-      local function map(mode, l, r, opts)
-        opts = opts or {}
-        opts.buffer = bufnr
-        vim.keymap.set(mode, l, r, opts)
-      end
-      map('n', ']h', function()
-        if vim.wo.diff then
-          vim.cmd.normal({']h', bang = true})
-        else
-          gitsigns.nav_hunk('next')
-        end
-      end, { desc = 'Next git hunk' })
-      map('n', '[h', function()
-        if vim.wo.diff then
-          vim.cmd.normal({'[h', bang = true})
-        else
-          gitsigns.nav_hunk('prev')
-        end
-      end, { desc = 'Prev git hunk' })
-
-      vim.keymap.set({ 'o', 'x' }, 'ih', '<cmd>Gitsigns select_hunk<CR>')
-    end
-  })
-EOF
-
-  nnoremap <c-w>g <cmd>Gitsigns blame_line<CR>
-  nnoremap <leader>gh <cmd>Gitsigns blame<CR>
-endfunction
-
-if has('nvim')
-  call InitGitSigns()
-endif
-
-" -----------------------------------------------------------------------------
-" kinsho/git-conflict.nvim
-function! InitGitConflict() abort
-  lua << EOF
-  require('git-conflict').setup({
-    disable_diagnostics = true,
-  })
-EOF
-endfunction
-
-if has('nvim')
-  call InitGitConflict()
-endif
-
-" -----------------------------------------------------------------------------
-" ray-x/guihua.lua
-function! InitGuihua() abort
-  lua << EOF
-  require('guihua').setup({
-    maps = {
-      split = '<C-x>',
-    },
-    icons = {
-      syntax = {
-        var = '',
-        method = '',
-        ['function'] = '',
-        ['arrow_function'] = '',
-        parameter = '',
-        associated = '',
-        namespace = '',
-        type = '',
-        field = '',
-        interface = '',
-        module = '',
-        flag = '',
-      },
-    },
-  })
-EOF
-endfunction
-
-if has('nvim')
-  call InitGuihua()
-endif
-
-" -----------------------------------------------------------------------------
 " nvim-treesitter/nvim-treesitter
 function! InitTreesitter() abort
   lua << EOF
@@ -2433,16 +2443,6 @@ if has('nvim')
 endif
 
 " -----------------------------------------------------------------------------
-" rodjek/vim-puppet
-function! BufInitPuppet() abort
-  set ft=puppet
-endfunction
-
-if has('nvim')
-  autocmd BufEnter *.pp call BufInitPuppet()
-endif
-
-" -----------------------------------------------------------------------------
 " hat0uma/csvview.nvim
 function! InitCsvView() abort
   lua << EOF
@@ -2465,7 +2465,17 @@ endfunction
 if has('nvim')
   autocmd User csvview.nvim call InitCsvView()
 endif
-"
+
+" -----------------------------------------------------------------------------
+" rodjek/vim-puppet
+function! BufInitPuppet() abort
+  set ft=puppet
+endfunction
+
+if has('nvim')
+  autocmd BufEnter *.pp call BufInitPuppet()
+endif
+
 " -----------------------------------------------------------------------------
 " rbong/vim-flog
 function! InitFlog() abort
