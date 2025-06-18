@@ -168,6 +168,9 @@ if has('nvim')
   Plug 'nvim-tree/nvim-tree.lua'
 endif
 if has('nvim')
+  Plug 'rgroli/other.nvim'
+endif
+if has('nvim')
   Plug 'stevearc/aerial.nvim'
 endif
 if has('nvim')
@@ -1592,6 +1595,24 @@ endfunction
 
 if has('nvim')
   call LazyInitNvimTree()
+endif
+
+" -----------------------------------------------------------------------------
+" rgroli/other.nvim
+function! InitOther() abort
+  lua << EOF
+  require('other-nvim').setup({
+    mappings = {
+      'c',
+      'golang',
+      'python',
+    },
+  })
+EOF
+endfunction
+
+if has('nvim')
+  call InitOther()
 endif
 
 " -----------------------------------------------------------------------------
