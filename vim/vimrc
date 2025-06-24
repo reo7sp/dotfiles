@@ -1919,8 +1919,6 @@ EOF
   cnoreabbrev bdl BufferCloseBuffersLeft
   cnoreabbrev bqr BufferCloseBuffersRight
   cnoreabbrev bdr BufferCloseBuffersRight
-  cnoreabbrev bdp BufferPickDelete
-  cnoreabbrev bqp BufferPickDelete
 
   cnoreabbrev bs BufferOrderByDirectory
 

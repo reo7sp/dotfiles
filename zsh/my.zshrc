@@ -297,6 +297,14 @@ gcse() {
   gcs --ext-diff "$@"
 }
 
+git-default-branch() {
+  git symbolic-ref refs/remotes/origin/HEAD | cut -f4 -d/
+}
+
+gcom() {
+  gco master "$@"
+}
+
 alias gcss='git rev-parse HEAD'
 
 alias gcp='git cherry-pick'
