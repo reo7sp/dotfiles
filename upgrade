@@ -1,0 +1,27 @@
+#!/bin/bash
+set -e -o pipefail
+
+do_upgrade() {
+  echo "$1:"
+  cd "$1"
+  shift
+  ./upgrade "$@"
+  cd ..
+  echo
+}
+
+
+modules=
+args=
+if [[ ! -z $1 ]]; then
+  modules=$@
+fi
+
+if [[ $modules == "" ]]; then
+  echo "Please specify modules. Available: zsh vim kitty git rg"
+  echo "USAGE: ./upgrade [-q] MODULES"
+fi
+
+for it in $modules; do
+  do_upgrade $it $args
+done

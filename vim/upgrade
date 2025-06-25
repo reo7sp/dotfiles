@@ -1,0 +1,12 @@
+#!/bin/bash
+set -e -o pipefail
+
+can-exec() {
+  which "$1" 2>/dev/null 1>/dev/null
+}
+
+
+vim -e -c "PlugUpdate" -c "qa"
+if can-exec nvim; then
+  nvim -e -c "PlugUpdate" -c "qa"
+fi

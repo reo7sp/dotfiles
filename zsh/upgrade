@@ -1,0 +1,4 @@
+#!/bin/bash
+set -e -o pipefail
+
+zsh -c 'source ~/.antidote/antidote.zsh && antidote update'
