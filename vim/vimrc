@@ -2824,7 +2824,8 @@ set nobackup
 set nowritebackup
 set noswapfile
 if has('nvim')
-  set shada=!,'100,<100,s100,h,:1000
+  set history=1000
+  set shada=!,'1000,<100,s100,h,:1000
 endif
 
 " -----------------------------------------------------------------------------
