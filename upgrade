@@ -14,12 +14,16 @@ do_upgrade() {
 modules=
 args=
 if [[ ! -z $1 ]]; then
+  if [[ $1 == "-q" ]]; then
+    args=$1
+    shift
+  fi
   modules=$@
 fi
 
 if [[ $modules == "" ]]; then
-  echo "Please specify modules. Available: zsh vim kitty git rg"
-  echo "USAGE: ./upgrade [-q] MODULES"
+  echo "Please specify modules. Available: zsh vim"
+  echo "USAGE: ./upgrade MODULES"
 fi
 
 for it in $modules; do
