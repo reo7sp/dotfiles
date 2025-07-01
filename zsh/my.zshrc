@@ -77,6 +77,13 @@ typeset -g POWERLEVEL9K_VIRTUALENV_SHOW_WITH_PYENV=true
 typeset -g POWERLEVEL9K_BACKGROUND_JOBS_VERBOSE=true
 
 # -----------------------------------------------------------------------------
+# jeffreytse/zsh-vi-mode
+function my-zvm-init() {
+  bindkey -M vicmd '^[' undefined-key
+}
+zvm_after_init_commands+=(my-zvm-init)
+
+# -----------------------------------------------------------------------------
 # mdumitru/fancy-ctrl-z
 function fancy-ctrl-z-with-zvm() {
   fancy-ctrl-z
