@@ -210,10 +210,11 @@ if has('nvim')
   Plug 'j-hui/fidget.nvim'
 endif
 if has('nvim')
-  Plug 'rachartier/tiny-inline-diagnostic.nvim'
+  Plug 'chentoast/marks.nvim'
+  Plug 'lewis6991/satellite.nvim'
 endif
 if has('nvim')
-  Plug 'lewis6991/satellite.nvim'
+  Plug 'rachartier/tiny-inline-diagnostic.nvim'
 endif
 if has('nvim')
   Plug 'RRethy/vim-illuminate'
@@ -1073,6 +1074,7 @@ endif
 function! InitAutosaveNvim() abort
   lua << EOF
   require('auto-save').setup({
+    lockmarks = true,
     condition = function(buf)
       local filetype = vim.fn.getbufvar(buf, '&filetype')
       if vim.list_contains({ 'oil', 'qf' }, filetype) then
@@ -2179,17 +2181,33 @@ if has('nvim')
 endif
 
 " -----------------------------------------------------------------------------
-" rachartier/tiny-inline-diagnostic.nvim
-function! InitTinyDiag() abort
+" chentoast/marks.nvim
+function! InitMarks() abort
   lua << EOF
-  require('tiny-inline-diagnostic').setup({})
-
-  vim.diagnostic.config({ virtual_text = false })
+  require('marks').setup({
+    builtin_marks = {
+      "'",
+      '^',
+      '[',
+      '<',
+    },
+    default_mappings = false,
+    mappings = {
+      set = 'm',
+      set_next = 'm,',
+      toggle = 'm;',
+      delete = 'dm',
+      delete_line = 'dm-',
+    },
+  })
 EOF
+
+  highlight! link MarkSignHL SatelliteMark
+  highlight! link MarkSignNumHL SignColumn
 endfunction
 
 if has('nvim')
-  call InitTinyDiag()
+  call InitMarks()
 endif
 
 " -----------------------------------------------------------------------------
@@ -2233,6 +2251,20 @@ endfunction
 
 if has('nvim')
   call InitSatellite()
+endif
+
+" -----------------------------------------------------------------------------
+" rachartier/tiny-inline-diagnostic.nvim
+function! InitTinyDiag() abort
+  lua << EOF
+  require('tiny-inline-diagnostic').setup({})
+
+  vim.diagnostic.config({ virtual_text = false })
+EOF
+endfunction
+
+if has('nvim')
+  call InitTinyDiag()
 endif
 
 " -----------------------------------------------------------------------------
