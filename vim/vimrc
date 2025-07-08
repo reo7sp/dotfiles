@@ -211,6 +211,11 @@ if has('nvim')
 endif
 if has('nvim')
   Plug 'rachartier/tiny-inline-diagnostic.nvim'
+endif
+if has('nvim')
+  Plug 'lewis6991/satellite.nvim'
+endif
+if has('nvim')
   Plug 'RRethy/vim-illuminate'
   Plug 'lukas-reineke/indent-blankline.nvim'
   Plug 'lukas-reineke/virt-column.nvim'
@@ -2185,6 +2190,49 @@ endfunction
 
 if has('nvim')
   call InitTinyDiag()
+endif
+
+" -----------------------------------------------------------------------------
+" lewis6991/satellite.nvim
+function! InitSatellite() abort
+  lua << EOF
+  require('satellite').setup({
+    current_only = true,
+    handlers = {
+      cursor = {
+        enable = false,
+      },
+      diagnostic = {
+        enable = false,
+      },
+    },
+    excluded_filetypes = {
+      'blink-cmp-menu',
+      'dropbar_menu',
+      'dropbar_menu_fzf',
+      'DressingInput',
+      'cmp_docs',
+      'cmp_menu',
+      'noice',
+      'prompt',
+      'TelescopePrompt',
+      'trouble',
+      'NvimTree',
+      'oil',
+      'aerial',
+      'undotree',
+      'fugitiveblame',
+      'diffview',
+    },
+  })
+EOF
+
+  highlight! link SatelliteSearch SatelliteMark
+  highlight! link SatelliteSearchCurrent SatelliteMark
+endfunction
+
+if has('nvim')
+  call InitSatellite()
 endif
 
 " -----------------------------------------------------------------------------
