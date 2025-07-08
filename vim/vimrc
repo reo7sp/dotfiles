@@ -40,6 +40,7 @@ if has('nvim')
   Plug 'neovim/nvim-lspconfig'
   Plug 'williamboman/mason.nvim'
   Plug 'williamboman/mason-lspconfig.nvim'
+  Plug 'RubixDev/mason-update-all'
   Plug 'L3MON4D3/LuaSnip'
   Plug 'rafamadriz/friendly-snippets'
   Plug 'olimorris/codecompanion.nvim'
@@ -238,6 +239,9 @@ else
   Plug 'johejo/gomod.vim'
 endif
 Plug 'Vimjas/vim-python-pep8-indent', {'for': 'python'}
+if has('nvim')
+  Plug 'linux-cultist/venv-selector.nvim', {'tag': 'regexp'}
+endif
 Plug 'HiPhish/jinja.vim'
 if has('nvim')
   Plug 'hat0uma/csvview.nvim', {'for': ['csv', 'tsv']}
@@ -362,6 +366,7 @@ function! InitLSP() abort
       'pyright',
       'perlnavigator',
       'lua_ls',
+      'rust_analyzer',
       'bashls',
       'html',
       'cssls',
@@ -372,6 +377,11 @@ function! InitLSP() abort
       'yamlls',
       'lemminx',
       'dockerls',
+      'docker_compose_language_service',
+      'ansiblels',
+      'puppet',
+      'gh_actions_ls',
+      'gitlab_ci_ls',
     },
     handlers = {
       function(server_name)
@@ -379,6 +389,8 @@ function! InitLSP() abort
       end,
     },
   })
+
+  require('mason-update-all').setup({})
 EOF
 
   nnoremap K <cmd>lua vim.lsp.buf.hover()<cr>
@@ -2304,11 +2316,13 @@ function! InitTreesitter() abort
     ensure_installed = {
       'c',
       'cpp',
+      'cmake',
       'go',
       'python',
       'perl',
       'ruby',
       'lua',
+      'rust',
       'bash',
       'make',
       'html',
@@ -2322,6 +2336,7 @@ function! InitTreesitter() abort
       'yaml',
       'toml',
       'xml',
+      'dockerfile',
       'vim',
       'markdown',
       'diff',
@@ -2459,6 +2474,18 @@ endfunction
 
 if has('nvim')
   call InitGo()
+endif
+
+" -----------------------------------------------------------------------------
+" linux-cultist/venv-selector.nvim
+function! InitPyVenvSelector() abort
+  lua << EOF
+  require('venv-selector').setup({})
+EOF
+endfunction
+
+if has('nvim')
+  call InitPyVenvSelector()
 endif
 
 " -----------------------------------------------------------------------------

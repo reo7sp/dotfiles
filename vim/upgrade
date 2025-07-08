@@ -6,7 +6,8 @@ can-exec() {
 }
 
 
-vim -e -c "PlugUpdate" -c "qa"
+vim -e -c 'PlugUpdate' -c 'qa'
 if can-exec nvim; then
-  nvim -e -c "PlugUpdate" -c "qa"
+  nvim -e -c 'PlugUpdate' -c 'qa'
+  nvim --headless -c 'autocmd User MasonUpdateAllComplete quitall' -c 'MasonUpdateAll'
 fi
