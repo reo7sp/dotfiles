@@ -537,7 +537,7 @@ make-markdown() {
 watch-markdown() {
   make-markdown "$1"
   open "${1%.*}".html
-  fswatch "$1" | while read; do make-markdown "$1" ; done
+  fswatch "$1" | while read; do make-markdown "$1"; done
 }
 
 # -----------------------------------------------------------------------------
@@ -557,13 +557,13 @@ make-plantuml() {
 watch-plantuml-slow() {
   make-plantuml-slow "$1"
   open "${1%.*}".png
-  fswatch "$1" | while read; do make-plantuml-slow "$1" ; done
+  fswatch "$1" | while read; do make-plantuml-slow "$1"; done
 }
 
 watch-plantuml() {
   make-plantuml "$1"
   open "${1%.*}".png
-  fswatch "$1" | while read; do make-plantuml "$1" ; done
+  fswatch "$1" | while read; do make-plantuml "$1"; done
 }
 
 # -----------------------------------------------------------------------------
@@ -575,5 +575,5 @@ make-mermaid() {
 watch-mermaid() {
   make-mermaid "$1"
   open "${1%.*}".png
-  fswatch "$1" | while read; do make-mermaid "$1" ; done
+  fswatch "$1" | while read; do make-mermaid "$1"; done
 }

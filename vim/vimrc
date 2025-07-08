@@ -517,7 +517,7 @@ function! InitLLM() abort
     request_timeout = 5,
   })
 
-  vim.api.nvim_create_user_command('ChangeLLM', function()
+  vim.api.nvim_create_user_command('LLMChoose', function()
     local providers = { 'llm_local', 'llm_corp' }
 
     vim.ui.select(providers, { prompt = 'LLM provider:' }, function(choice)
@@ -548,7 +548,7 @@ EOF
 
   nnoremap g:c <cmd>CodeCompanionActions<cr>
   vnoremap g:c <cmd>CodeCompanionActions<cr>
-  nnoremap g:C <cmd>ChangeLLM<cr>
+  nnoremap g:C <cmd>LLMChoose<cr>
   nnoremap <leader>c <cmd>CodeCompanionChat toggle<cr>
 endfunction
 
@@ -831,6 +831,7 @@ function! InitUndotreeNvim() abort
   require('undotree').setup({
     float_diff = false,
     layout = 'left_left_bottom',
+    position = 'right',
   })
 EOF
 
@@ -842,9 +843,10 @@ function! LazyInitUndotreeNvim() abort
 endfunction
 
 function! InitUndotreeVim() abort
+  let g:undotree_WindowLayout = 3
   let g:undotree_DiffAutoOpen = 0
   let g:undotree_SetFocusWhenToggle = 1
-  let g:undotree_SplitWidth = 30
+  let g:undotree_SplitWidth = 80
 
   nnoremap <leader>u <cmd>UndotreeToggle<cr>
 endfunction
@@ -1048,7 +1050,7 @@ function! InitGitSigns() abort
 EOF
 
   nnoremap <c-w>g <cmd>Gitsigns blame_line<CR>
-  nnoremap <leader>gh <cmd>Gitsigns blame<CR>
+  nnoremap <silent> <leader>gh :Gitsigns blame<CR>:lua vim.defer_fn(function () vim.cmd([[wincmd w]]) end, 200)<CR>
 endfunction
 
 if has('nvim')
@@ -1596,7 +1598,7 @@ function! LazyNvimTreeToggle() abort
     call InitNvimTree()
     let g:inited_nvim_tree = 1
   endif
-  NvimTreeToggle
+  lua require('nvim-tree.api').tree.toggle({ find_file = true, focus = false })
 endfunction
 
 function! LazyNvimTreeFocus() abort
@@ -1654,7 +1656,7 @@ EOF
 
   highlight! link AerialLine CursorLine
 
-  nnoremap <leader>o <cmd>AerialToggle<cr>
+  nnoremap <leader>o <cmd>AerialToggle!<cr>
 endfunction
 
 if has('nvim')
@@ -2202,7 +2204,7 @@ function! InitMarks() abort
   })
 EOF
 
-  highlight! link MarkSignHL SatelliteMark
+  highlight! link MarkSignHL SignColumn
   highlight! link MarkSignNumHL SignColumn
 endfunction
 

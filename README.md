@@ -11,11 +11,11 @@ My config files:
 
 <br>
 
-_How zsh looks:_
+How zsh looks:
 
 ![zsh screenshot](https://i.imgur.com/m7jOpKB.png)
 
-_How vim looks:_
+How vim looks:
 
 ![vim screenshot](https://i.imgur.com/gkvmdvC.png)
 
@@ -24,7 +24,7 @@ _How vim looks:_
 ```sh
 git clone --depth 1 https://github.com/reo7sp/dotfiles
 cd dotfiles
-./install
+./install zsh vim rg
 ```
 
 ## How to install quick
@@ -38,10 +38,13 @@ cd dotfiles
 ## Help
 
 ```sh
-./install [-q] MODULES    — installs dotfiles
+./install [-q] MODULES    # installs dotfiles
 ```
 ```sh
-./update [-q] MODULES     — updates dotfiles
+./update [-q] MODULES     # updates dotfiles
+```
+```sh
+./upgrade [-q] MODULES    # upgrades modules' plugins
 ```
 
 Available modules: `zsh`, `vim`, `kitty`, `git`, `rg`.
