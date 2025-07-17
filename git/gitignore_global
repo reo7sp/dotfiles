@@ -2,3 +2,4 @@
 .DS_Store
 .autoenv.zsh
 .autoenv_leave.zsh
+pyrightconfig.json
