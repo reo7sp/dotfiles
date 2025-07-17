@@ -233,14 +233,20 @@ if can-exec nvim; then
     nvim "$@"
   }
 else
-  if [[ -z $real_vim ]]; then
-    real_vim=$(which vim)
-  fi
+  real_vim=$(which vim)
   vim() {
     lcd
     $real_vim "$@"
   }
 fi
+
+if can-exec v; then
+  real_v=$(which v)
+  vlang() {
+    $real_v "$@"
+  }
+fi
+alias v='vim'
 
 alias edit-vim='vim ~/.vimrc'
 
@@ -265,7 +271,7 @@ alias autoenv-edit-leave='vim .autoenv_leave.zsh'
 
 # -----------------------------------------------------------------------------
 # kitty
-alias edit-kitty="vim ~/.config/kitty/kitty.conf"
+alias edit-kitty='vim ~/.config/kitty/kitty.conf'
 
 # -----------------------------------------------------------------------------
 # ssh
@@ -288,35 +294,17 @@ tm() {
 alias gg='lazygit'
 alias gll='tig'
 
-gwdn() {
-  gwd --name-only "$@"
-}
+alias gwdn='gwd --name-only'
+alias gwde='gwd --ext-diff'
+alias gcsn='gcs --name-only'
+alias gcse='gcs --ext-diff'
+alias gcss='git rev-parse HEAD'
 
-gwde() {
-  gwd --ext-diff "$@"
-}
-
-gcsn() {
-  gcs --name-only "$@"
-}
-
-gcse() {
-  gcs --ext-diff "$@"
-}
+alias gcom='gco master'
 
 git-default-branch() {
   git symbolic-ref refs/remotes/origin/HEAD | cut -f4 -d/
 }
-
-gcom() {
-  gco master "$@"
-}
-
-alias gcss='git rev-parse HEAD'
-
-alias gcp='git cherry-pick'
-alias gcpa='git cherry-pick --abort'
-alias gcpc='git cherry-pick --continue'
 
 gfcd() {
   local repo=$1
@@ -362,6 +350,10 @@ alias gcu='git add -A && git commit --amend --reuse-message HEAD'
 alias gc-wip="git add -A && git commit -m 'wip'"
 alias gc-fix="git add -A && git commit -m 'fix'"
 alias gc-kik="git add -A && git commit -m 'kik'"
+
+alias gcp='git cherry-pick'
+alias gcpa='git cherry-pick --abort'
+alias gcpc='git cherry-pick --continue'
 
 alias gbd='gb -D'
 
@@ -434,6 +426,7 @@ vimf() {
   lcd
   fzf --bind "enter:become($EDITOR {})"
 }
+alias vf='vimf'
 
 tf() {
   lcd
@@ -447,6 +440,12 @@ cdf() {
 cdfm() {
   cd $(find .          -type d -not -path '*/\.*' -print 2> /dev/null | fzf)
 }
+
+# -----------------------------------------------------------------------------
+# ranger
+alias r='ranger'
+
+export HIGHLIGHT_STYLE=bright
 
 # -----------------------------------------------------------------------------
 # sublime text & sublime merge
@@ -500,6 +499,10 @@ alias dc='docker-compose'
 # -----------------------------------------------------------------------------
 # k8s
 alias k='kubectl'
+
+# -----------------------------------------------------------------------------
+# swagger
+alias open-swagger='npx open-swagger-ui --open'
 
 # -----------------------------------------------------------------------------
 # utils
