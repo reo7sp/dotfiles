@@ -1,0 +1,7 @@
+#!/bin/bash
+set -e -o pipefail
+
+
+cp gitignore_global ~/.gitignore_global
+mkdir -p ~/Library/Application\ Support/lazygit
+cp lazygit/config.yml ~/Library/Application\ Support/lazygit/config.yml

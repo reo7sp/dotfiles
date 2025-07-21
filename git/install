@@ -56,7 +56,4 @@ if confirm "Use sublime merge?"; then
   git config --global merge.tool smerge
 fi
 
-mkdir -p ~/Library/Application\ Support/lazygit
-
-cp gitignore_global ~/.gitignore_global
-cp lazygit/config.yml ~/Library/Application\ Support/lazygit/config.yml
+./install-extra
