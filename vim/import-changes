@@ -2,7 +2,7 @@
 set -e -o pipefail
 
 
-cp ~/.vimrc vimrc
+cp ~/.my.vimrc my.vimrc
 mkdir -p nvim; cp ~/.config/nvim/init.vim nvim/init.vim
 cp ~/.ideavimrc ideavimrc
 cp ~/.neovintageousrc neovintageousrc

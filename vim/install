@@ -33,13 +33,19 @@ confirm() {
 
 
 mkdir -p ~/.vim/{bundle,nbundle,backup,tmp,undo,sessions,spell,view} ~/.config/nvim ~/.config/nvim/{lua,after/syntax,after/ftplugin}
-cp vimrc ~/.vimrc
+if [ -f ~/.vimrc ]; then
+  if confirm "Do you want to overwrite ~/.vimrc?"; then
+    cp vimrc ~/.vimrc
+  fi
+else
+  cp vimrc ~/.vimrc
+fi
+cp my.vimrc ~/.my.vimrc
 cp nvim/init.vim ~/.config/nvim/init.vim
 cp nvim/after/syntax/vim.vim ~/.config/nvim/after/syntax/vim.vim
 cp nvim/after/ftplugin/jinja.vim ~/.config/nvim/after/ftplugin/jinja.vim
 cp ideavimrc ~/.ideavimrc
 cp neovintageousrc ~/.neovintageousrc
-
 if [ -f ~/.config/nvim/lua/llm_corp_config.lua ]; then
   if confirm "Do you want to overwrite llm_corp_config.lua?"; then
     cp nvim/lua/llm_corp_config.lua ~/.config/nvim/lua/llm_corp_config.lua

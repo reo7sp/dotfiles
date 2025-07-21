@@ -248,7 +248,8 @@ if can-exec v; then
 fi
 alias v='vim'
 
-alias edit-vim='vim ~/.vimrc'
+alias edit-vim='vim ~/.my.vimrc'
+alias edit-vimrc='vim ~/.vimrc'
 
 time-start-vim() {
   vim --startuptime /tmp/startuptime.log "$@" +qa
