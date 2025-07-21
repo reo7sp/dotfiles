@@ -33,6 +33,7 @@ if has('nvim')
   Plug 'kevinhwang91/promise-async'
   Plug 'MunifTanjim/nui.nvim'
   Plug 'ray-x/guihua.lua'
+  Plug 'echasnovski/mini.icons'
 endif
 Plug 'tpope/vim-repeat'
 
@@ -252,6 +253,9 @@ if has('nvim')
 endif
 Plug 'HiPhish/jinja.vim'
 if has('nvim')
+  Plug 'MeanderingProgrammer/render-markdown.nvim', {'for': ['markdown']}
+endif
+if has('nvim')
   Plug 'hat0uma/csvview.nvim', {'for': ['csv', 'tsv']}
 endif
 Plug 'rodjek/vim-puppet', {'for': ['pascal', 'puppet']}
@@ -352,6 +356,18 @@ endfunction
 
 if has('nvim')
   call InitGuihua()
+endif
+
+" -----------------------------------------------------------------------------
+" echasnovski/mini.icons
+function! InitMiniIcons() abort
+  lua << EOF
+  require('mini.icons').setup()
+EOF
+endfunction
+
+if has('nvim')
+  call InitMiniIcons()
 endif
 
 " -----------------------------------------------------------------------------
@@ -2590,6 +2606,32 @@ endfunction
 
 if has('nvim')
   call InitPyVenvSelector()
+endif
+
+" -----------------------------------------------------------------------------
+" MeanderingProgrammer/render-markdown.nvim
+function! InitRenderMarkdown() abort
+  lua << EOF
+  require('render-markdown').setup({
+    preset = 'obsidian',
+    max_file_size = 0.100,
+    heading = {
+      sign = false,
+      position = 'inline',
+      width = 'block',
+    },
+    code = {
+      sign = false,
+      conceal_delimiters = false,
+      border = 'thin',
+      width = 'block',
+    },
+  })
+EOF
+endfunction
+
+if has('nvim')
+  autocmd User render-markdown.nvim call InitRenderMarkdown()
 endif
 
 " -----------------------------------------------------------------------------
