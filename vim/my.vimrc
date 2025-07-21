@@ -2203,6 +2203,25 @@ function! InitMarks() abort
       delete = 'dm',
       delete_line = 'dm-',
     },
+    excluded_filetypes = {
+      'blink-cmp-menu',
+      'dropbar_menu',
+      'dropbar_menu_fzf',
+      'DressingInput',
+      'cmp_docs',
+      'cmp_menu',
+      'noice',
+      'prompt',
+      'TelescopePrompt',
+      'trouble',
+      'NvimTree',
+      'oil',
+      'aerial',
+      'undotree',
+      'fugitiveblame',
+      'diffview',
+      'qf',
+    },
   })
 EOF
 
@@ -2245,6 +2264,7 @@ function! InitSatellite() abort
       'undotree',
       'fugitiveblame',
       'diffview',
+      'qf',
     },
   })
 EOF
