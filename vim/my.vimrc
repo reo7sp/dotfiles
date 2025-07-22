@@ -33,7 +33,6 @@ if has('nvim')
   Plug 'kevinhwang91/promise-async'
   Plug 'MunifTanjim/nui.nvim'
   Plug 'ray-x/guihua.lua'
-  Plug 'echasnovski/mini.icons'
 endif
 Plug 'tpope/vim-repeat'
 
@@ -359,18 +358,6 @@ if has('nvim')
 endif
 
 " -----------------------------------------------------------------------------
-" echasnovski/mini.icons
-function! InitMiniIcons() abort
-  lua << EOF
-  require('mini.icons').setup()
-EOF
-endfunction
-
-if has('nvim')
-  call InitMiniIcons()
-endif
-
-" -----------------------------------------------------------------------------
 " williamboman/mason.nvim
 function! InitLSP() abort
   lua << EOF
@@ -380,8 +367,16 @@ function! InitLSP() abort
 
   require('mason').setup({})
 
-  local custom = {
-  };
+  local lsp_custom = {
+    gopls = {
+      settings = {
+        gopls = {
+          analyses = {
+          },
+        },
+      },
+    },
+  }
   require('mason-lspconfig').setup({
     ensure_installed = {
       'clangd',
@@ -409,7 +404,7 @@ function! InitLSP() abort
     },
     handlers = {
       function(server_name)
-        require('lspconfig')[server_name].setup(custom[server_name] or {})
+        require('lspconfig')[server_name].setup(lsp_custom[server_name] or {})
       end,
     },
   })
@@ -1664,6 +1659,8 @@ function! InitAerial() abort
       min_width = 30,
       width = 30,
     },
+    nerd_font = false,
+    use_icon_provider = false,
     close_on_select = false,
     autojump = true,
     show_guides = true,
@@ -2623,6 +2620,7 @@ function! InitRenderMarkdown() abort
     code = {
       sign = false,
       conceal_delimiters = false,
+      language = false,
       border = 'thin',
       width = 'block',
     },
@@ -2910,6 +2908,9 @@ cnoreabbrev w!! w !sudo tee % >/dev/null
 cnoreabbrev tabq tabclose
 cnoreabbrev tnew tabnew
 cnoreabbrev tq tabclose
+
+" https://www.reddit.com/r/vim/comments/iir3jt/comment/g4135hw/
+nnoremap ZT :tabclose<cr>
 
 nnoremap <C-Up> <cmd>resize +2<cr>
 nnoremap <C-Down> <cmd>resize -2<cr>
