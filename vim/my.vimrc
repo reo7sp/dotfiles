@@ -2908,9 +2908,8 @@ cnoreabbrev w!! w !sudo tee % >/dev/null
 cnoreabbrev tabq tabclose
 cnoreabbrev tnew tabnew
 cnoreabbrev tq tabclose
-
-" https://www.reddit.com/r/vim/comments/iir3jt/comment/g4135hw/
-nnoremap ZT :tabclose<cr>
+nnoremap ZT <cmd>tabclose<cr>
+nnoremap ZA <cmd>wqa<cr>
 
 nnoremap <C-Up> <cmd>resize +2<cr>
 nnoremap <C-Down> <cmd>resize -2<cr>
