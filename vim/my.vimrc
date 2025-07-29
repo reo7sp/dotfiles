@@ -317,6 +317,7 @@ if has('nvim')
     vim.cmd([[colorscheme catppuccin-mocha]])
   else
     vim.cmd([[colorscheme catppuccin-latte]])
+    vim.cmd([[highlight CursorLine guibg=#dfe4f2]])
   end
 EOF
 else
@@ -3002,8 +3003,8 @@ set nobackup
 set nowritebackup
 set noswapfile
 if has('nvim')
-  set history=1000
-  set shada=!,'1000,<100,s100,h,:1000
+  set history=10000
+  set shada=!,'10000,<100,s100,h,:10000
 endif
 
 " -----------------------------------------------------------------------------
