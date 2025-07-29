@@ -312,8 +312,13 @@ if has('nvim')
       },
     }
   })
+
+  if os.getenv('VIM_COLORS_DARK') == '1' then
+    vim.cmd([[colorscheme catppuccin-mocha]])
+  else
+    vim.cmd([[colorscheme catppuccin-latte]])
+  end
 EOF
-  colorscheme catppuccin-latte
 else
   let g:sonokai_enable_italic = 1
   let g:sonokai_float_style = 'dim'

@@ -261,6 +261,19 @@ profile-start-vim() {
   cat /tmp/profile.log
 }
 
+enable-vim-colors-dark() {
+  echo export VIM_COLORS_DARK=1
+  export VIM_COLORS_DARK=1
+}
+
+enable-vim-colors-light() {
+  echo export VIM_COLORS_DARK=0
+  export VIM_COLORS_DARK=0
+}
+
+alias disable-vim-colors-dark='enable-vim-colors-light'
+alias disable-vim-colors-light='enable-vim-colors-dark'
+
 # -----------------------------------------------------------------------------
 # zsh
 alias edit-zsh='vim ~/.my.zshrc; source ~/.zshrc'

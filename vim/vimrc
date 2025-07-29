@@ -2,7 +2,3 @@ source ~/.my.vimrc
 
 
 " custom
-
-" set background=dark
-" highlight! link MarkSignHL SignColumn
-" highlight! link MarkSignNumHL SignColumn
