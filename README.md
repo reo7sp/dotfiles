@@ -6,6 +6,7 @@ My config files:
 - vim: [vim/my.vimrc](./vim/my.vimrc), [vim/ideavimrc](./vim/ideavimrc), [vim/neovintageousrc](./vim/neovintageousrc).
 - sublime text: [sublime-dotfiles repo](https://github.com/reo7sp/sublime-dotfiles?tab=readme-ov-file#sublime-dotfiles).
 - kitty: [kitty/kitty.conf](./kitty/kitty.conf).
+- ranger: [ranger/rc.conf](./ranger/rc.conf).
 - git: [git/install](./git/install).
 - rg: [rg/ripgreprc](./rg/ripgreprc).
 
@@ -24,7 +25,7 @@ How vim looks:
 ```sh
 git clone --depth 1 https://github.com/reo7sp/dotfiles
 cd dotfiles
-./install zsh vim rg
+./install zsh vim ranger rg
 ```
 
 ## How to install quick
@@ -32,7 +33,7 @@ cd dotfiles
 ```sh
 git clone --depth 1 https://github.com/reo7sp/dotfiles
 cd dotfiles
-./install -q zsh vim rg
+./install -q zsh vim ranger rg
 ```
 
 ## Help
@@ -47,4 +48,4 @@ cd dotfiles
 ./upgrade [-q] MODULES    # upgrades modules' plugins
 ```
 
-Available modules: `zsh`, `vim`, `kitty`, `git`, `rg`.
+Available modules: `zsh`, `vim`, `kitty`, `ranger`, `git`, `rg`.

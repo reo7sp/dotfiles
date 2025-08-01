@@ -1,0 +1,5 @@
+#!/bin/bash
+set -e -o pipefail
+
+
+cp ~/.config/ranger/rc.conf rc.conf

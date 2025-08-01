@@ -22,7 +22,7 @@ if [[ ! -z $1 ]]; then
 fi
 
 if [[ $modules == "" ]]; then
-  echo "Please specify modules. Available: zsh vim kitty git rg"
+  echo "Please specify modules. Available: zsh vim kitty ranger git rg"
   echo "USAGE: ./install [-q] MODULES"
 fi
 
