@@ -3017,6 +3017,15 @@ set breakindent
 set breakindentopt=sbr
 set showbreak=↪
 let g:vimsyn_embed = 'l'
+if has('nvim')
+  set listchars=tab:→\ ,space:·,trail:·,extends:⟩,precedes:⟨,nbsp:␣
+  set nolist
+  augroup ShowWhitespaceInVisual
+    autocmd!
+    autocmd ModeChanged *:[vV␖] set list | lua require('ibl').refresh_all()
+    autocmd ModeChanged [vV␖]:* set nolist | lua require('ibl').refresh_all()
+  augroup END
+endif
 
 " -----------------------------------------------------------------------------
 " editing
