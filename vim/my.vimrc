@@ -1791,22 +1791,70 @@ function! InitLualine() abort
     },
     sections = {
       lualine_a = {
-        { 'mode', fmt = function(str) return str:sub(1, 1) end },
+        {
+          'mode',
+          fmt = function(str) return str:sub(1, 1) end,
+        },
       },
       lualine_b = {
       },
       lualine_c = {
-        { 'filename', path = 1, file_status = false },
-        { 'aerial', depth = 3, sep = ' > ', padding = { left = 0, right = 1 }, cond = conditions.hide_in_width_last },
+        {
+          'filename',
+          path = 1,
+          file_status = false,
+        },
+        {
+          'aerial',
+          depth = 3,
+          sep = ' > ',
+          padding = { left = 0, right = 1 },
+          cond = conditions.hide_in_width_last,
+        },
       },
       lualine_x = {
-        { 'b:gitsigns_head', cond = conditions.hide_in_width_first },
-        { 'diff', source = diff_source, padding = { left = 0, right = 1 }, cond = conditions.hide_in_width_middle },
-        { 'filetype', cond = conditions.hide_in_width_middle },
-        { 'lsp_status', symbols = { done = '' }, padding = { left = 0, right = 1 }, cond = conditions.hide_in_width_middle },
-        { 'diagnostics', padding = { left = 0, right = 1 }, cond = conditions.hide_in_width_last },
-        { require('minuet.lualine') },
-        { M },
+        {
+          'b:gitsigns_head',
+          cond = conditions.hide_in_width_first,
+        },
+        {
+          'diff',
+          source = diff_source,
+          padding = { left = 0, right = 1 },
+          cond = conditions.hide_in_width_middle,
+        },
+        {
+          'filetype',
+          cond = conditions.hide_in_width_middle,
+        },
+        {
+          'lsp_status',
+          symbols = { done = '' },
+          padding = { left = 0, right = 1 },
+          cond = conditions.hide_in_width_middle,
+        },
+        {
+          'diagnostics',
+          padding = { left = 0, right = 1 },
+          cond = conditions.hide_in_width_last,
+        },
+        {
+          function()
+            local shiftwidth = vim.api.nvim_buf_get_option(0, 'shiftwidth')
+            if vim.api.nvim_buf_get_option(0, 'expandtab') then
+              return 'S:sw=' .. shiftwidth
+            else
+              return 'T:ts=' .. vim.api.nvim_buf_get_option(0, 'tabstop')
+            end
+          end,
+          cond = conditions.hide_in_width_middle
+        },
+        {
+          require('minuet.lualine'),
+        },
+        {
+          M,
+        },
       },
       lualine_y = {
       },
@@ -1822,7 +1870,11 @@ function! InitLualine() abort
       lualine_b = {
       },
       lualine_c = {
-        { 'filename', path = 1, file_status = false },
+        {
+          'filename',
+          path = 1,
+          file_status = false,
+        },
       },
       lualine_x = {
         'location',
