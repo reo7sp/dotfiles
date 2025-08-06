@@ -382,6 +382,18 @@ function! InitLSP() abort
         },
       },
     },
+    lua_ls = {
+      settings = {
+        Lua = {
+          diagnostics = {
+            globals = {
+              'vim',
+              'box',
+            },
+          },
+        },
+      },
+    },
   }
   require('mason-lspconfig').setup({
     ensure_installed = {
@@ -1847,7 +1859,7 @@ function! InitLualine() abort
               return 'T:ts=' .. vim.api.nvim_buf_get_option(0, 'tabstop')
             end
           end,
-          cond = conditions.hide_in_width_middle
+          cond = conditions.hide_in_width_last
         },
         {
           require('minuet.lualine'),
