@@ -457,9 +457,11 @@ cdfm() {
 
 # -----------------------------------------------------------------------------
 # ranger
+export HIGHLIGHT_STYLE=bright
+
 alias r='ranger'
 
-export HIGHLIGHT_STYLE=bright
+alias edit-ranger='vim ~/.config/ranger/rc.conf'
 
 # -----------------------------------------------------------------------------
 # sublime text & sublime merge
