@@ -266,6 +266,10 @@ Plug 'tpope/vim-dispatch'
 Plug 'tpope/vim-eunuch'
 Plug 'tpope/vim-fugitive'
 Plug 'rbong/vim-flog', {'on': ['Flog', 'Flogsplit']}
+let g:DiffChar_NullMap = 1
+Plug 'rickhowe/diffchar.vim'
+let g:SpotDiff_NullMap = 1
+Plug 'rickhowe/spotdiff.vim'
 if has('nvim')
   Plug 'sindrets/diffview.nvim'
 endif
