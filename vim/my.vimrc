@@ -2807,7 +2807,7 @@ command YankFilename let @+ = substitute(expand('%'), getcwd() . '/', '', '')
 command YankReference let @+ = join([substitute(expand('%'), getcwd() . '/', '', ''), line('.')], ':')
 
 " -----------------------------------------------------------------------------
-" sublime text & sublime merge integration
+" sublime text integration
 if has('nvim')
   lua << EOF
   vim.api.nvim_create_user_command('Subl',
@@ -2826,7 +2826,13 @@ if has('nvim')
       end,
     }
   )
+EOF
+endif
 
+" -----------------------------------------------------------------------------
+" sublime merge integration
+if has('nvim')
+  lua << EOF
   vim.api.nvim_create_user_command('Smerge',
     function (opts)
       if opts.fargs[1] == 'blame' then
@@ -2842,6 +2848,29 @@ if has('nvim')
       nargs = '?',
       complete = function ()
         return {'dir', 'blame', 'log'}
+      end,
+    }
+  )
+EOF
+endif
+
+" -----------------------------------------------------------------------------
+" cursor integration
+if has('nvim')
+  lua << EOF
+  vim.api.nvim_create_user_command('Cursor',
+    function (opts)
+      if opts.fargs[1] == 'dir' then
+        vim.cmd('!cursor "' .. vim.fn.getcwd() .. '"')
+      else
+        vim.cmd('!cursor "%"')
+      end
+    end,
+    {
+      desc = 'Open in Cursor',
+      nargs = '?',
+      complete = function ()
+        return {'dir'}
       end,
     }
   )

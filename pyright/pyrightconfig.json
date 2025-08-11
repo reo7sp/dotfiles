@@ -1,13 +1,5 @@
 {
     "typeCheckingMode": "basic",
     "enableReachabilityAnalysis": false,
-    "strictParameterNoneValue": false,
-    "reportGeneralTypeIssues": "none",
-    "reportUnknownParameterType": false,
-    "reportUnknownArgumentType": false,
-    "reportUnknownLambdaType": false,
-    "reportUnknownVariableType": false,
-    "reportUnknownMemberType": false,
-    "reportMissingParameterType": false,
-    "reportMissingTypeArgument": false
+    "strictParameterNoneValue": false
 }

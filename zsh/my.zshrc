@@ -363,6 +363,7 @@ alias gcu='git add -A && git commit --amend --reuse-message HEAD'
 
 alias gc-wip="git add -A && git commit -m 'wip'"
 alias gc-fix="git add -A && git commit -m 'fix'"
+alias gc-upd="git add -A && git commit -m 'update'"
 alias gc-kik="git add -A && git commit -m 'kik'"
 
 alias gcp='git cherry-pick'
