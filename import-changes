@@ -10,6 +10,6 @@ do_import() {
 }
 
 
-for it in zsh vim kitty ranger git rg; do
+for it in zsh vim ranger kitty git rg; do
   do_import $it
 done
