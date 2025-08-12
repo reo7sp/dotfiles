@@ -1678,10 +1678,12 @@ function! InitAerial() abort
   lua << EOF
   require('aerial').setup({
     layout = {
+      placement = 'edge',
       default_direction = 'left',
       min_width = 30,
       width = 30,
     },
+    attach_mode = 'global',
     nerd_font = false,
     use_icon_provider = false,
     close_on_select = false,
@@ -2825,7 +2827,7 @@ if has('nvim')
       if opts.fargs[1] == 'dir' then
         vim.cmd('!subl "' .. vim.fn.getcwd() .. '"')
       else
-        vim.cmd('!subl "%"')
+        vim.cmd('!subl "%":' .. vim.fn.line('.'))
       end
     end,
     {
@@ -2873,7 +2875,7 @@ if has('nvim')
       if opts.fargs[1] == 'dir' then
         vim.cmd('!cursor "' .. vim.fn.getcwd() .. '"')
       else
-        vim.cmd('!cursor "%"')
+        vim.cmd('!cursor "' .. vim.fn.getcwd() .. '" -g "' .. vim.fn.expand('%:p') .. '":' .. vim.fn.line('.'))
       end
     end,
     {
