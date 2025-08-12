@@ -226,6 +226,15 @@ aliases-ls() {
 }
 
 # -----------------------------------------------------------------------------
+# zsh
+alias edit-zsh='vim ~/.my.zshrc; source ~/.zshrc'
+alias edit-zsh-plugins='vim ~/.zsh_plugins.txt; source ~/.zshrc'
+alias edit-zshrc='vim ~/.zshrc; source ~/.zshrc'
+
+alias autoenv-edit-enter='vim .autoenv.zsh'
+alias autoenv-edit-leave='vim .autoenv_leave.zsh'
+
+# -----------------------------------------------------------------------------
 # vim
 if can-exec nvim; then
   vim() {
@@ -275,17 +284,22 @@ alias disable-vim-colors-dark='enable-vim-colors-light'
 alias disable-vim-colors-light='enable-vim-colors-dark'
 
 # -----------------------------------------------------------------------------
-# zsh
-alias edit-zsh='vim ~/.my.zshrc; source ~/.zshrc'
-alias edit-zsh-plugins='vim ~/.zsh_plugins.txt; source ~/.zshrc'
-alias edit-zshrc='vim ~/.zshrc; source ~/.zshrc'
+# ranger
+export HIGHLIGHT_STYLE=bright
 
-alias autoenv-edit-enter='vim .autoenv.zsh'
-alias autoenv-edit-leave='vim .autoenv_leave.zsh'
+alias r='ranger'
+
+alias edit-ranger='vim ~/.config/ranger/rc.conf'
 
 # -----------------------------------------------------------------------------
 # kitty
 alias edit-kitty='vim ~/.config/kitty/kitty.conf'
+
+# -----------------------------------------------------------------------------
+# tmux
+tm() {
+  tmux -2 a || tmux -2 new
+}
 
 # -----------------------------------------------------------------------------
 # ssh
@@ -298,10 +312,74 @@ alias copy-ssh='cat ~/.ssh/id_rsa.pub | pbcopy'
 alias show-ssh='cat ~/.ssh/config'
 
 # -----------------------------------------------------------------------------
-# tmux
-tm() {
-  tmux -2 a || tmux -2 new
+# zoxide
+if can-exec zoxide; then
+  zvm_after_init_commands+=('eval "$(zoxide init zsh)"')
+fi
+
+# -----------------------------------------------------------------------------
+# fzf
+export FZF_DEFAULT_OPTS='--color=light'
+
+if can-exec fzf; then
+  zvm_after_init_commands+=('source <(fzf --zsh 2>/dev/null)')
+fi
+
+if can-exec fd; then
+  export FZF_DEFAULT_COMMAND="$FD_BIN --type f --strip-cwd-prefix"
+  export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+fi
+
+alias f='fzf'
+
+catf() {
+  fzf --bind 'enter:become(cat {})'
 }
+
+batf() {
+  fzf --bind 'enter:become(bat {})'
+}
+
+lessf() {
+  fzf --bind 'enter:become(less {})'
+}
+
+vimf() {
+  lcd
+  fzf --bind "enter:become($EDITOR {})"
+}
+alias vf='vimf'
+
+tf() {
+  lcd
+  fzf --bind 'enter:become(subl {})'
+}
+
+cdf() {
+  cd $(find . -depth 5 -type d -not -path '*/\.*' -print 2> /dev/null | fzf)
+}
+
+cdfm() {
+  cd $(find .          -type d -not -path '*/\.*' -print 2> /dev/null | fzf)
+}
+
+# -----------------------------------------------------------------------------
+# rg
+export RIPGREP_CONFIG_PATH="$HOME/.ripgreprc"
+
+alias edit-rg="vim $RIPGREP_CONFIG_PATH"
+
+# -----------------------------------------------------------------------------
+# fd
+export FD_BIN=fd
+
+if can-exec fdfind; then
+  export FD_BIN=fdfind
+
+  fd() {
+    $FD_BIN "$@"
+  }
+fi
 
 # -----------------------------------------------------------------------------
 # git
@@ -393,79 +471,7 @@ export DFT_GRAPH_LIMIT=99999999
 export DFT_PARSE_ERROR_LIMIT=9999
 
 # -----------------------------------------------------------------------------
-# rg
-export RIPGREP_CONFIG_PATH="$HOME/.ripgreprc"
-
-alias edit-rg="vim $RIPGREP_CONFIG_PATH"
-
-# -----------------------------------------------------------------------------
-# fd
-export FD_BIN=fd
-
-if can-exec fdfind; then
-  export FD_BIN=fdfind
-
-  fd() {
-    $FD_BIN "$@"
-  }
-fi
-
-# -----------------------------------------------------------------------------
-# fzf
-export FZF_DEFAULT_OPTS='--color=light'
-
-if can-exec fzf; then
-  zvm_after_init_commands+=('source <(fzf --zsh 2>/dev/null)')
-fi
-
-if can-exec fd; then
-  export FZF_DEFAULT_COMMAND="$FD_BIN --type f --strip-cwd-prefix"
-  export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
-fi
-
-alias f='fzf'
-
-catf() {
-  fzf --bind 'enter:become(cat {})'
-}
-
-batf() {
-  fzf --bind 'enter:become(bat {})'
-}
-
-lessf() {
-  fzf --bind 'enter:become(less {})'
-}
-
-vimf() {
-  lcd
-  fzf --bind "enter:become($EDITOR {})"
-}
-alias vf='vimf'
-
-tf() {
-  lcd
-  fzf --bind 'enter:become(subl {})'
-}
-
-cdf() {
-  cd $(find . -depth 5 -type d -not -path '*/\.*' -print 2> /dev/null | fzf)
-}
-
-cdfm() {
-  cd $(find .          -type d -not -path '*/\.*' -print 2> /dev/null | fzf)
-}
-
-# -----------------------------------------------------------------------------
-# ranger
-export HIGHLIGHT_STYLE=bright
-
-alias r='ranger'
-
-alias edit-ranger='vim ~/.config/ranger/rc.conf'
-
-# -----------------------------------------------------------------------------
-# sublime text & sublime merge
+# sublime text
 t() {
   lcd
   if [[ -z $1 ]]; then
@@ -475,12 +481,25 @@ t() {
   fi
 }
 
+# -----------------------------------------------------------------------------
+# sublime merge
 m() {
   lcd
   if [[ -z $1 ]]; then
     smerge -n .
   else
     smerge -n "$@"
+  fi
+}
+
+# -----------------------------------------------------------------------------
+# cursor
+c() {
+  lcd
+  if [[ -z $1 ]]; then
+    cursor .
+  else
+    cursor "$@"
   fi
 }
 

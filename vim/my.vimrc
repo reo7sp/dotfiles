@@ -252,7 +252,7 @@ if has('nvim')
 endif
 Plug 'HiPhish/jinja.vim'
 if has('nvim')
-  Plug 'MeanderingProgrammer/render-markdown.nvim', {'for': ['markdown']}
+  Plug 'MeanderingProgrammer/render-markdown.nvim'
 endif
 if has('nvim')
   Plug 'hat0uma/csvview.nvim', {'for': ['csv', 'tsv']}
@@ -2686,6 +2686,11 @@ function! InitRenderMarkdown() abort
   lua << EOF
   require('render-markdown').setup({
     preset = 'obsidian',
+    completions = {
+      lsp = {
+        enabled = true,
+      },
+    },
     max_file_size = 0.100,
     heading = {
       sign = false,
@@ -2699,12 +2704,16 @@ function! InitRenderMarkdown() abort
       border = 'thin',
       width = 'block',
     },
+    file_types = {
+      'markdown',
+      'codecompanion',
+    },
   })
 EOF
 endfunction
 
 if has('nvim')
-  autocmd User render-markdown.nvim call InitRenderMarkdown()
+  call InitRenderMarkdown()
 endif
 
 " -----------------------------------------------------------------------------

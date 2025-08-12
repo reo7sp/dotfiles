@@ -2,5 +2,12 @@
 set -e -o pipefail
 
 
-mkdir -p ~/.config/ranger
+mkdir -p ~/.config/ranger ~/.config/ranger/plugins
 cp rc.conf ~/.config/ranger/rc.conf
+
+if [ ! -d "$HOME/.config/ranger/plugins/zoxide" ]; then
+  git clone git@github.com:jchook/ranger-zoxide.git "$HOME/.config/ranger/plugins/zoxide"
+fi
+if [ ! -d "$HOME/.config/ranger/plugins/ranger_fzf_filter" ]; then
+  git clone git@github.com:MuXiu1997/ranger-fzf-filter.git "$HOME/.config/ranger/plugins/ranger_fzf_filter"
+fi
