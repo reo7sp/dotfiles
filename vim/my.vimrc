@@ -484,7 +484,7 @@ function! InitLLM() abort
           formatted_name = 'LLM Local',
           schema = {
             model = {
-              default = 'qwen2.5-coder:1.5b',
+              default = 'qwen2.5-coder:3b',
             },
           },
         })
@@ -520,10 +520,11 @@ function! InitLLM() abort
         name = 'llm_local',
         end_point = 'http://localhost:11434/v1/completions',
         api_key = 'TERM',
-        model = 'qwen2.5-coder:1.5b',
+        model = 'qwen2.5-coder:3b',
         optional = {
-          max_tokens = 56,
+          max_tokens = 96,
           top_p = 0.9,
+          temperature = 0.2,
         },
       },
     },
