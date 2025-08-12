@@ -241,18 +241,22 @@ if can-exec nvim; then
     lcd
     nvim "$@"
   }
-else
-  real_vim=$(which vim)
+elif can-exec vim; then
+  if [[ -z $REAL_VIM ]]; then
+    export REAL_VIM=$(which vim)
+  fi
   vim() {
     lcd
-    $real_vim "$@"
+    $REAL_VIM "$@"
   }
 fi
 
 if can-exec v; then
-  real_v=$(which v)
+  if [[ -z $REAL_V ]]; then
+    export REAL_V=$(which v)
+  fi
   vlang() {
-    $real_v "$@"
+    $REAL_V "$@"
   }
 fi
 alias v='vim'
@@ -312,6 +316,32 @@ alias copy-ssh='cat ~/.ssh/id_rsa.pub | pbcopy'
 alias show-ssh='cat ~/.ssh/config'
 
 # -----------------------------------------------------------------------------
+# fd
+if can-exec fdfind; then
+  if [[ -z $REAL_FD ]]; then
+    export REAL_FD=$(which fdfind)
+  fi
+elif can-exec fd; then
+  if [[ -z $REAL_FD ]]; then
+    export REAL_FD=$(which fd)
+  fi
+fi
+
+export FD_OPTIONS='--hidden'
+
+if [[ -n $REAL_FD ]]; then
+  fd() {
+    $REAL_FD $FD_OPTIONS "$@"
+  }
+fi
+
+# -----------------------------------------------------------------------------
+# rg
+export RIPGREP_CONFIG_PATH="$HOME/.ripgreprc"
+
+alias edit-rg="vim $RIPGREP_CONFIG_PATH"
+
+# -----------------------------------------------------------------------------
 # zoxide
 if can-exec zoxide; then
   zvm_after_init_commands+=('eval "$(zoxide init zsh)"')
@@ -326,7 +356,7 @@ if can-exec fzf; then
 fi
 
 if can-exec fd; then
-  export FZF_DEFAULT_COMMAND="$FD_BIN --type f --strip-cwd-prefix"
+  export FZF_DEFAULT_COMMAND="$REAL_FD $FD_OPTIONS --type f --strip-cwd-prefix"
   export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 fi
 
@@ -362,24 +392,6 @@ cdf() {
 cdfm() {
   cd $(find .          -type d -not -path '*/\.*' -print 2> /dev/null | fzf)
 }
-
-# -----------------------------------------------------------------------------
-# rg
-export RIPGREP_CONFIG_PATH="$HOME/.ripgreprc"
-
-alias edit-rg="vim $RIPGREP_CONFIG_PATH"
-
-# -----------------------------------------------------------------------------
-# fd
-export FD_BIN=fd
-
-if can-exec fdfind; then
-  export FD_BIN=fdfind
-
-  fd() {
-    $FD_BIN "$@"
-  }
-fi
 
 # -----------------------------------------------------------------------------
 # git
