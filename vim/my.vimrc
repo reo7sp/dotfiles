@@ -45,8 +45,9 @@ if has('nvim')
   Plug 'RubixDev/mason-update-all'
   Plug 'L3MON4D3/LuaSnip'
   Plug 'rafamadriz/friendly-snippets'
-  Plug 'olimorris/codecompanion.nvim'
   Plug 'milanglacier/minuet-ai.nvim'
+  Plug 'olimorris/codecompanion.nvim'
+  Plug 'xTacobaco/cursor-agent.nvim'
   Plug 'xzbdmw/colorful-menu.nvim'
   Plug 'saghen/blink.cmp', {'tag': 'v1.1.1'}
 else
@@ -462,57 +463,6 @@ endif
 " olimorris/codecompanion.nvim
 function! InitLLM() abort
   lua << EOF
-  require('codecompanion').setup({
-    strategies = {
-      chat = {
-        adapter = 'llm_local',
-      },
-      inline = {
-        adapter = 'llm_local',
-      },
-      cmd = {
-        adapter = 'llm_local',
-      },
-    },
-    adapters = {
-      opts = {
-        show_defaults = false,
-      },
-      llm_local = function()
-        return require('codecompanion.adapters').extend('ollama', {
-          name = 'llm_local',
-          formatted_name = 'LLM Local',
-          schema = {
-            model = {
-              default = 'qwen2.5-coder:3b',
-            },
-          },
-        })
-      end,
-      llm_corp = function()
-        return require('codecompanion.adapters').extend('openai_compatible', vim.tbl_extend('force', {
-          name = 'llm_corp',
-          formatted_name = 'LLM Corp',
-        }, require('llm_corp_config').codecompanion))
-      end,
-    },
-    opts = {
-      language = 'Russian',
-    },
-  })
-  local codecompanion_telescope = require('codecompanion.providers.actions.telescope')
-  local function decorate_picker(method)
-    return function(self, items, opts)
-      opts = vim.tbl_extend('force', opts, require('telescope.themes').get_cursor({
-        layout_config = {
-          height = 15+4,
-        },
-      }))
-      return method(self, items, opts)
-    end
-  end
-  codecompanion_telescope.picker = decorate_picker(codecompanion_telescope.picker)
-
   require('minuet').setup({
     provider = 'openai_fim_compatible',
     provider_options = {
@@ -520,9 +470,10 @@ function! InitLLM() abort
         name = 'llm_local',
         end_point = 'http://localhost:11434/v1/completions',
         api_key = 'TERM',
-        model = 'qwen2.5-coder:3b',
+        stream = true,
+        model = 'qwen2.5-coder:1.5b',
         optional = {
-          max_tokens = 96,
+          max_tokens = 128,
           top_p = 0.9,
           temperature = 0.2,
         },
@@ -553,39 +504,99 @@ function! InitLLM() abort
     request_timeout = 5,
   })
 
-  vim.api.nvim_create_user_command('LLMChoose', function()
-    local providers = { 'llm_local', 'llm_corp' }
-
-    vim.ui.select(providers, { prompt = 'LLM provider:' }, function(choice)
-      if choice then
-        require('codecompanion.config').setup({
-          strategies = {
-            chat = {
-              adapter = choice,
-            },
-            inline = {
-              adapter = choice,
-            },
-            cmd = {
-              adapter = choice,
+  require('codecompanion').setup({
+    strategies = {
+      chat = {
+        adapter = 'llm_local',
+      },
+      inline = {
+        adapter = 'llm_local',
+      },
+      cmd = {
+        adapter = 'llm_local',
+      },
+    },
+    adapters = {
+      opts = {
+        show_defaults = false,
+      },
+      llm_local = function()
+        return require('codecompanion.adapters').extend('ollama', {
+          name = 'llm_local',
+          formatted_name = 'LLM Local',
+          schema = {
+            model = {
+              default = 'qwen2.5-coder:1.5b',
             },
           },
         })
+      end,
+      llm_corp = function()
+        return require('codecompanion.adapters').extend('openai_compatible', vim.tbl_extend('force', {
+          name = 'llm_corp',
+          formatted_name = 'LLM Corp',
+        }, require('llm_corp_config').codecompanion))
+      end,
+    },
+    opts = {
+      language = 'Russian',
+    },
+  })
+  local codecompanion_telescope = require('codecompanion.providers.actions.telescope')
+  local function decorate_picker(method)
+    return function(self, items, opts)
+      opts = vim.tbl_extend('force', opts, require('telescope.themes').get_cursor({
+        layout_config = {
+          height = 15+4,
+        },
+      }))
+      return method(self, items, opts)
+    end
+  end
+  codecompanion_telescope.picker = decorate_picker(codecompanion_telescope.picker)
 
-        local minuet_choice = choice
-        if minuet_choice == 'llm_local' then
-          minuet_choice = 'original'
-        end
-        require('minuet').change_preset(minuet_choice)
-      end
-    end)
-  end, {})
+  require('cursor-agent').setup({
+  })
+
+  vim.api.nvim_create_user_command('LLMChoose', function(opts)
+    local choice = opts.fargs[1]
+    local providers = { llm_local = true, llm_corp = true }
+    if not choice or not providers[choice] then
+      vim.notify('Usage: :LLMChoose [llm_local|llm_corp]', vim.log.levels.ERROR)
+      return
+    end
+
+    local minuet_choice = choice
+    if minuet_choice == 'llm_local' then
+      minuet_choice = 'original'
+    end
+    require('minuet').change_preset(minuet_choice)
+
+    require('codecompanion.config').setup({
+      strategies = {
+        chat = {
+          adapter = choice,
+        },
+        inline = {
+          adapter = choice,
+        },
+        cmd = {
+          adapter = choice,
+        },
+      },
+    })
+  end, {
+    nargs = 1,
+    complete = function()
+      return { 'llm_local', 'llm_corp' }
+    end,
+    desc = 'Choose LLM provider',
+  })
 EOF
 
   nnoremap g:c <cmd>CodeCompanionActions<cr>
   vnoremap g:c <cmd>CodeCompanionActions<cr>
   nnoremap g:C <cmd>LLMChoose<cr>
-  nnoremap <leader>c <cmd>CodeCompanionChat toggle<cr>
 endfunction
 
 if has('nvim')
@@ -2818,6 +2829,14 @@ endif
 command YankFilename let @+ = substitute(expand('%'), getcwd() . '/', '', '')
 command YankReference let @+ = join([substitute(expand('%'), getcwd() . '/', '', ''), line('.')], ':')
 
+function! s:YankReferenceRange(line_start, line_end) abort
+  let l:start = min([a:line_start, a:line_end])
+  let l:end = max([a:line_start, a:line_end])
+  let l:file = substitute(expand('%'), getcwd() . '/', '', '')
+  let @+ = printf('%s:%d-%d', l:file, l:start, l:end)
+endfunction
+command -range YankReferenceRange call <SID>YankReferenceRange(<line1>, <line2>)
+
 " -----------------------------------------------------------------------------
 " sublime text integration
 if has('nvim')
@@ -2875,7 +2894,11 @@ if has('nvim')
       if opts.fargs[1] == 'dir' then
         vim.cmd('!cursor "' .. vim.fn.getcwd() .. '"')
       else
-        vim.cmd('!cursor "' .. vim.fn.getcwd() .. '" -g "' .. vim.fn.expand('%:p') .. '":' .. vim.fn.line('.'))
+        local dir = vim.fn.getcwd()
+        if dir == (vim.loop.os_homedir or vim.uv.os_homedir)() then
+          dir = ''
+        end
+        vim.cmd('!cursor "' .. dir .. '" -g "' .. vim.fn.expand('%:p') .. '":' .. vim.fn.line('.'))
       end
     end,
     {
