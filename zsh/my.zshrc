@@ -515,6 +515,8 @@ c() {
   fi
 }
 
+alias cc='cursor-agent'
+
 # -----------------------------------------------------------------------------
 # go
 export GOTESTSUM_FORMAT=testdox
