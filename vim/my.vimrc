@@ -2261,10 +2261,10 @@ EOF
   highlight! link TroubleNormal Normal
   highlight! link TroubleNormalNC Normal
 
-  " nnoremap [t <cmd>lua require('trouble').prev() require('trouble').jump()<CR>
-  " nnoremap ]t <cmd>lua require('trouble').next() require('trouble').jump()<CR>
-  " nnoremap [T <cmd>lua require('trouble').first() require('trouble').jump()<CR>
-  " nnoremap ]T <cmd>lua require('trouble').last() require('trouble').jump()<CR>
+  nnoremap [t <cmd>lua require('trouble').prev() require('trouble').jump()<CR>
+  nnoremap ]t <cmd>lua require('trouble').next() require('trouble').jump()<CR>
+  nnoremap [T <cmd>lua require('trouble').first() require('trouble').jump()<CR>
+  nnoremap ]T <cmd>lua require('trouble').last() require('trouble').jump()<CR>
 endfunction
 
 if has('nvim')
