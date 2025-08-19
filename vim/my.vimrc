@@ -46,7 +46,6 @@ if has('nvim')
   Plug 'L3MON4D3/LuaSnip'
   Plug 'rafamadriz/friendly-snippets'
   Plug 'milanglacier/minuet-ai.nvim'
-  Plug 'olimorris/codecompanion.nvim'
   Plug 'xTacobaco/cursor-agent.nvim'
   Plug 'xzbdmw/colorful-menu.nvim'
   Plug 'saghen/blink.cmp', {'tag': 'v1.1.1'}
@@ -438,8 +437,8 @@ EOF
   nnoremap K <cmd>lua vim.lsp.buf.hover()<cr>
   inoremap <C-S> <cmd>lua vim.lsp.buf.signature_help()<cr>
   nnoremap <nowait> gr <cmd>lua vim.lsp.buf.rename()<cr>
-  nnoremap g:l <cmd>lua vim.lsp.buf.code_action()<cr>
-  vnoremap g:l <cmd>lua vim.lsp.buf.code_action()<cr>
+  nnoremap g: <cmd>lua vim.lsp.buf.code_action()<cr>
+  vnoremap g: <cmd>lua vim.lsp.buf.code_action()<cr>
   nnoremap gO <nop>
 endfunction
 
@@ -460,7 +459,7 @@ if has('nvim')
 endif
 
 " -----------------------------------------------------------------------------
-" olimorris/codecompanion.nvim
+" milanglacier/minuet-ai.nvim, xTacobaco/cursor-agent.nvim
 function! InitLLM() abort
   lua << EOF
   require('minuet').setup({
@@ -471,9 +470,9 @@ function! InitLLM() abort
         end_point = 'http://localhost:11434/v1/completions',
         api_key = 'TERM',
         stream = true,
-        model = 'qwen2.5-coder:1.5b',
+        model = 'qwen2.5-coder:3b',
         optional = {
-          max_tokens = 128,
+          max_tokens = 64,
           top_p = 0.9,
           temperature = 0.2,
         },
@@ -481,81 +480,17 @@ function! InitLLM() abort
     },
     presets = {
       llm_corp = {
-        provider = 'openai_fim_compatible',
+        provider = 'openai_compatible',
         provider_options = {
-          openai_fim_compatible = vim.tbl_extend('force', {
+          openai_compatible = vim.tbl_extend('force', {
             name = 'llm_corp',
-            template = {
-              prompt = function(context_before_cursor, context_after_cursor, _)
-                return '<|fim_prefix|>'
-                  .. context_before_cursor
-                  .. '<|fim_suffix|>'
-                  .. context_after_cursor
-                  .. '<|fim_middle|>'
-              end,
-              suffix = false,
-            },
           }, require('llm_corp_config').minuet),
         },
       },
     },
     n_completions = 1,
-    context_window = 512,
+    context_window = 256,
     request_timeout = 5,
-  })
-
-  require('codecompanion').setup({
-    strategies = {
-      chat = {
-        adapter = 'llm_local',
-      },
-      inline = {
-        adapter = 'llm_local',
-      },
-      cmd = {
-        adapter = 'llm_local',
-      },
-    },
-    adapters = {
-      opts = {
-        show_defaults = false,
-      },
-      llm_local = function()
-        return require('codecompanion.adapters').extend('ollama', {
-          name = 'llm_local',
-          formatted_name = 'LLM Local',
-          schema = {
-            model = {
-              default = 'qwen2.5-coder:1.5b',
-            },
-          },
-        })
-      end,
-      llm_corp = function()
-        return require('codecompanion.adapters').extend('openai_compatible', vim.tbl_extend('force', {
-          name = 'llm_corp',
-          formatted_name = 'LLM Corp',
-        }, require('llm_corp_config').codecompanion))
-      end,
-    },
-    opts = {
-      language = 'Russian',
-    },
-  })
-  local codecompanion_telescope = require('codecompanion.providers.actions.telescope')
-  local function decorate_picker(method)
-    return function(self, items, opts)
-      opts = vim.tbl_extend('force', opts, require('telescope.themes').get_cursor({
-        layout_config = {
-          height = 15+4,
-        },
-      }))
-      return method(self, items, opts)
-    end
-  end
-  codecompanion_telescope.picker = decorate_picker(codecompanion_telescope.picker)
-
-  require('cursor-agent').setup({
   })
 
   vim.api.nvim_create_user_command('LLMChoose', function(opts)
@@ -571,20 +506,6 @@ function! InitLLM() abort
       minuet_choice = 'original'
     end
     require('minuet').change_preset(minuet_choice)
-
-    require('codecompanion.config').setup({
-      strategies = {
-        chat = {
-          adapter = choice,
-        },
-        inline = {
-          adapter = choice,
-        },
-        cmd = {
-          adapter = choice,
-        },
-      },
-    })
   end, {
     nargs = 1,
     complete = function()
@@ -592,11 +513,15 @@ function! InitLLM() abort
     end,
     desc = 'Choose LLM provider',
   })
+
+  if os.getenv('VIM_LLM_CORP') == '1' then
+    require('minuet').change_preset('llm_corp')
+  end
+
+  require('cursor-agent').setup({
+  })
 EOF
 
-  nnoremap g:c <cmd>CodeCompanionActions<cr>
-  vnoremap g:c <cmd>CodeCompanionActions<cr>
-  nnoremap g:C <cmd>LLMChoose<cr>
 endfunction
 
 if has('nvim')

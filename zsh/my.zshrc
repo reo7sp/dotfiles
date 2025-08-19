@@ -275,17 +275,26 @@ profile-start-vim() {
 }
 
 enable-vim-colors-dark() {
-  echo export VIM_COLORS_DARK=1
   export VIM_COLORS_DARK=1
 }
 
 enable-vim-colors-light() {
-  echo export VIM_COLORS_DARK=0
   export VIM_COLORS_DARK=0
 }
 
 alias disable-vim-colors-dark='enable-vim-colors-light'
 alias disable-vim-colors-light='enable-vim-colors-dark'
+
+enable-vim-llm-corp() {
+  export VIM_LLM_CORP=1
+}
+
+enable-vim-llm-local() {
+  export VIM_LLM_CORP=0
+}
+
+alias disable-vim-llm-corp='enable-vim-llm-local'
+alias disable-vim-llm-local='enable-vim-llm-corp'
 
 # -----------------------------------------------------------------------------
 # ranger
