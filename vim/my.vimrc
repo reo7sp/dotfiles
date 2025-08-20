@@ -31,6 +31,7 @@ endif
 if has('nvim')
   Plug 'nvim-lua/plenary.nvim'
   Plug 'kevinhwang91/promise-async'
+  Plug 'kkharji/sqlite.lua'
   Plug 'MunifTanjim/nui.nvim'
   Plug 'ray-x/guihua.lua'
 endif
@@ -749,7 +750,7 @@ function! InitYanky() abort
   lua << EOF
   require('yanky').setup({
     ring = {
-      storage = 'memory',
+      storage = 'sqlite',
     },
     system_clipboard = {
       sync_with_ring = false,
@@ -3072,6 +3073,13 @@ set noswapfile
 if has('nvim')
   set history=10000
   set shada=!,'10000,<100,s100,h,:10000
+
+  " https://vi.stackexchange.com/a/24564
+  augroup SHADA
+    autocmd!
+    autocmd FocusGained * lua vim.defer_fn(function() vim.cmd('silent! rshada') end, 100)
+    autocmd FocusLost,TextYankPost,VimLeavePre * silent! wshada
+  augroup END
 endif
 
 " -----------------------------------------------------------------------------
