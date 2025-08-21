@@ -1397,19 +1397,14 @@ function! InitOil() abort
   end
 
   function M.launch_telescope(func_name, opts)
-    local bufnr = vim.api.nvim_get_current_buf()
-    local entry = require('oil').get_cursor_entry()
-    if not entry then
-      return
-    end
-    local is_folder = entry.type == 'directory'
-    require('oil.util').get_edit_path(bufnr, entry, function(normalized_url)
-      local basedir = is_folder and normalized_url:gsub('oil://', '') or vim.fn.fnamemodify(normalized_url, ':h')
+    local basedir = require('oil').get_current_dir()
+    if basedir then
+      basedir = basedir:gsub('oil://', '')
       opts = opts or {}
       opts.cwd = basedir
       opts.search_dirs = { basedir }
       require('telescope.builtin')[func_name](opts)
-    end)
+    end
   end
 
   require('oil').setup({
