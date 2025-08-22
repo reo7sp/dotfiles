@@ -322,7 +322,7 @@ if has('nvim')
     vim.cmd([[colorscheme catppuccin-mocha]])
   else
     vim.cmd([[colorscheme catppuccin-latte]])
-    vim.cmd([[highlight CursorLine guibg=#dfe4f2]])
+    vim.cmd([[highlight CursorLine guibg=#e4e4e4]])
   end
 EOF
 else
@@ -1727,7 +1727,7 @@ function! InitLualine() abort
   local lualine = require('lualine')
   lualine.setup({
     options = {
-      theme = 'catppuccin',
+      theme = 'tomorrow',
       icons_enabled = false,
       component_separators = { left = '', right = '' },
       section_separators = { left = '', right = '' },
