@@ -1,2 +1,11 @@
 os:
-  shellFunctionsFile: ~/Library/Caches/antidote/https-COLON--SLASH--SLASH-github.com-SLASH-reo7sp-SLASH-zimfw-git/init.zsh
+  shellFunctionsFile: ~/Library/Application\ Support/lazygit/shell.sh
+
+git:
+  paging:
+    colorArg: always
+    pager: delta --light --paging=never
+
+gui:
+  commandLogSize: 4
+  border: single

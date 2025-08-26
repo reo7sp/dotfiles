@@ -4,3 +4,4 @@ set -e -o pipefail
 
 cp ~/.gitignore_global gitignore_global
 cp ~/Library/Application\ Support/lazygit/config.yml lazygit/config.yml
+cp ~/Library/Application\ Support/lazygit/shell.sh lazygit/shell.sh

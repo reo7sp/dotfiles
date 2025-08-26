@@ -56,4 +56,5 @@ if confirm "Use sublime merge?"; then
   git config --global merge.tool smerge
 fi
 
-./install-extra
+./install-gitignore
+./install-lazygit

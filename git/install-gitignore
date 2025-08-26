@@ -1,0 +1,5 @@
+#!/bin/bash
+set -e -o pipefail
+
+
+cp gitignore_global ~/.gitignore_global
