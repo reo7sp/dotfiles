@@ -47,7 +47,6 @@ if has('nvim')
   Plug 'L3MON4D3/LuaSnip'
   Plug 'rafamadriz/friendly-snippets'
   Plug 'milanglacier/minuet-ai.nvim'
-  Plug 'xTacobaco/cursor-agent.nvim'
   Plug 'xzbdmw/colorful-menu.nvim'
   Plug 'saghen/blink.cmp', {'tag': 'v1.1.1'}
 else
@@ -460,7 +459,7 @@ if has('nvim')
 endif
 
 " -----------------------------------------------------------------------------
-" milanglacier/minuet-ai.nvim, xTacobaco/cursor-agent.nvim
+" milanglacier/minuet-ai.nvim
 function! InitLLM() abort
   lua << EOF
   require('minuet').setup({
@@ -518,9 +517,6 @@ function! InitLLM() abort
   if os.getenv('VIM_LLM_CORP') == '1' then
     require('minuet').change_preset('llm_corp')
   end
-
-  require('cursor-agent').setup({
-  })
 EOF
 
 endfunction
