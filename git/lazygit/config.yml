@@ -7,5 +7,5 @@ git:
     pager: delta --light --paging=never
 
 gui:
-  commandLogSize: 4
+  commandLogSize: 3
   border: single

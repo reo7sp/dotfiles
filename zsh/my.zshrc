@@ -484,12 +484,18 @@ aliases-git() {
   cat $(antidote path reo7sp/zimfw-git)/init.zsh
 }
 
+alias edit-lazygit='vim ~/Library/Application\ Support/lazygit/config.yml'
+
 # -----------------------------------------------------------------------------
 # difft
 export DFT_CONTEXT=10
 export DFT_DISPLAY=side-by-side-show-both
 export DFT_GRAPH_LIMIT=99999999
 export DFT_PARSE_ERROR_LIMIT=9999
+
+# -----------------------------------------------------------------------------
+# bat
+export BAT_PAGING=never
 
 # -----------------------------------------------------------------------------
 # sublime text
@@ -573,6 +579,10 @@ random-string() {
 alias timestamp='date +%s'
 
 alias is-ip-in-net='python3 -c "import sys; from ipaddress import ip_address, ip_network; print(ip_address(sys.argv[1]) in ip_network(sys.argv[2]))"'
+
+strip-whitespace() {
+  xargs -n1 gsed -i 's/[ \t]*$//'
+}
 
 # -----------------------------------------------------------------------------
 # encode / decode
