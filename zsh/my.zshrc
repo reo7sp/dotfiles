@@ -122,6 +122,27 @@ zvm_after_init_commands+=(zsh-history-substring-search-init)
 export PATH="$(antidote path reo7sp/zimfw-git)/functions:$PATH"
 
 # -----------------------------------------------------------------------------
+# junegunn/fzf-git.sh
+function fzf-git-bindkeys() {
+  zvm_bindkey viins "^P" up-line-or-beginning-search
+  zvm_bindkey viins "^N" down-line-or-beginning-search
+  for o in files branches tags remotes hashes stashes lreflogs each_ref; do
+    eval "zvm_bindkey viins '^g^${o[1]}' fzf-git-$o-widget"
+    eval "zvm_bindkey viins '^g${o[1]}' fzf-git-$o-widget"
+  done
+}
+function fzf-git-lazy-bindkeys() {
+  for o in files branches tags remotes hashes stashes lreflogs each_ref; do
+    eval "zvm_bindkey vicmd '^g^${o[1]}' fzf-git-$o-widget"
+    eval "zvm_bindkey vicmd '^g${o[1]}' fzf-git-$o-widget"
+    eval "zvm_bindkey visual '^g^${o[1]}' fzf-git-$o-widget"
+    eval "zvm_bindkey visual '^g${o[1]}' fzf-git-$o-widget"
+  done
+}
+zvm_after_init_commands+=(fzf-git-bindkeys)
+zvm_after_init_commands+=(fzf-git-lazy-bindkeys)
+
+# -----------------------------------------------------------------------------
 # belak/zsh-utils path:completion
 compstyle prezto
 
@@ -169,6 +190,7 @@ WORDCHARS=${WORDCHARS/|}
 WORDCHARS=${WORDCHARS/-}
 zmodload zsh/complist
 bindkey -M menuselect '^[[Z' reverse-menu-complete # shift-tab
+
 function my-bindkeys() {
   bindkey '^B' backward-word
   bindkey '^F' forward-word
@@ -402,6 +424,10 @@ cdfm() {
   cd $(find .          -type d -not -path '*/\.*' -print 2> /dev/null | fzf)
 }
 
+_fzf_git_fzf () {
+  fzf $FZF_DEFAULT_OPTS --height 50% --tmux 90%,70% --layout reverse --multi --min-height 20+ --border --no-separator --header-border horizontal --border-label-pos 2 --color 'label:blue' --preview-window 'right,50%' --preview-border line --bind 'ctrl-/:change-preview-window(down,50%|hidden|)' "$@"
+}
+
 # -----------------------------------------------------------------------------
 # git
 alias gg='lazygit'
@@ -414,6 +440,10 @@ alias gcse='gcs --ext-diff'
 alias gcss='git rev-parse HEAD'
 
 alias gcom='gco master'
+
+gcoi() {
+  _fzf_git_branches --no-multi | xargs git checkout
+}
 
 git-default-branch() {
   git symbolic-ref refs/remotes/origin/HEAD | cut -f4 -d/
