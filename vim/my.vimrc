@@ -1,6 +1,3 @@
-" vim: ft=vim
-
-set nocompatible
 let g:loaded_netrwPlugin = 1
 let g:loaded_netrw = 1
 let g:loaded_python3_provider = 0
@@ -94,11 +91,7 @@ if has('nvim')
 else
   Plug 'maxbrunsfeld/vim-yankstack'
 endif
-if has('nvim')
-  Plug 'jiaoshijie/undotree', {'as': 'undotree.nvim'}
-else
-  Plug 'mbbill/undotree', {'on': 'UndotreeToggle'}
-endif
+Plug 'mbbill/undotree', {'on': 'UndotreeToggle'}
 if has('nvim')
   Plug 'kevinhwang91/nvim-ufo'
 endif
@@ -216,12 +209,12 @@ if has('nvim')
   Plug 'lewis6991/satellite.nvim'
 endif
 if has('nvim')
-  Plug 'rachartier/tiny-inline-diagnostic.nvim'
-endif
-if has('nvim')
   Plug 'RRethy/vim-illuminate'
   Plug 'lukas-reineke/indent-blankline.nvim'
   Plug 'lukas-reineke/virt-column.nvim'
+endif
+if has('nvim')
+  Plug 'rachartier/tiny-inline-diagnostic.nvim'
 endif
 if has('nvim')
   Plug 'folke/which-key.nvim'
@@ -247,9 +240,6 @@ else
   Plug 'johejo/gomod.vim'
 endif
 Plug 'Vimjas/vim-python-pep8-indent', {'for': 'python'}
-if has('nvim')
-  Plug 'linux-cultist/venv-selector.nvim', {'tag': 'regexp'}
-endif
 Plug 'HiPhish/jinja.vim'
 if has('nvim')
   Plug 'MeanderingProgrammer/render-markdown.nvim'
@@ -262,8 +252,8 @@ Plug 'fladson/vim-kitty'
 
 " -----------------------------------------------------------------------------
 " commands
-Plug 'tpope/vim-dispatch'
 Plug 'tpope/vim-eunuch'
+Plug 'tpope/vim-dispatch'
 Plug 'tpope/vim-fugitive'
 Plug 'rbong/vim-flog', {'on': ['Flog', 'Flogsplit']}
 let g:DiffChar_NullMap = 1
@@ -495,6 +485,7 @@ function! InitLLM() abort
 
   vim.api.nvim_create_user_command('LLMChoose', function(opts)
     local choice = opts.fargs[1]
+
     local providers = { llm_local = true, llm_corp = true }
     if not choice or not providers[choice] then
       vim.notify('Usage: :LLMChoose [llm_local|llm_corp]', vim.log.levels.ERROR)
@@ -794,37 +785,16 @@ else
 endif
 
 " -----------------------------------------------------------------------------
-" jiaoshijie/undotree or mbbill/undotree
-function! InitUndotreeNvim() abort
-  lua << EOF
-  require('undotree').setup({
-    float_diff = false,
-    layout = 'left_left_bottom',
-    position = 'right',
-  })
-EOF
-
-  nnoremap <leader>u <cmd>lua require('undotree').toggle()<cr>
-endfunction
-
-function! LazyInitUndotreeNvim() abort
-  lua vim.keymap.set('n', '<leader>u', function() vim.call('InitUndotreeNvim') vim.api.nvim_input(vim.g.mapleader .. 'u') end, { desc = 'Undotree' })
-endfunction
-
-function! InitUndotreeVim() abort
+" mbbill/undotree
+function! InitUndotree() abort
   let g:undotree_WindowLayout = 3
-  let g:undotree_DiffAutoOpen = 0
   let g:undotree_SetFocusWhenToggle = 1
   let g:undotree_SplitWidth = 80
 
   nnoremap <leader>u <cmd>UndotreeToggle<cr>
 endfunction
 
-if has('nvim')
-  call LazyInitUndotreeNvim()
-else
-  call InitUndotreeVim()
-endif
+call InitUndotree()
 
 " -----------------------------------------------------------------------------
 " kevinhwang91/nvim-ufo
@@ -1027,7 +997,7 @@ if has('nvim')
 endif
 
 " -----------------------------------------------------------------------------
-" kinsho/git-conflict.nvim
+" akinsho/git-conflict.nvim
 function! InitGitConflict() abort
   lua << EOF
   require('git-conflict').setup({
@@ -1673,40 +1643,6 @@ function! InitLualine() abort
     end
   end
 
-  -- codecompanion integration
-  local M = require('lualine.component'):extend()
-  M.processing = false
-  M.adapter = ''
-  M.spinner_index = 1
-  local spinner_symbols = { '⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏' }
-  local spinner_symbols_len = 10
-
-  function M:init(options)
-    M.super.init(self, options)
-    local group = vim.api.nvim_create_augroup('CodeCompanionHooks', {})
-    vim.api.nvim_create_autocmd({ 'User' }, {
-      pattern = 'CodeCompanionRequest*',
-      group = group,
-      callback = function(request)
-        if request.match == 'CodeCompanionRequestStarted' then
-          self.processing = true
-          self.adapter = request.data.adapter.name
-        elseif request.match == 'CodeCompanionRequestFinished' then
-          self.processing = false
-        end
-      end,
-    })
-  end
-
-  function M:update_status()
-    if self.processing then
-      self.spinner_index = (self.spinner_index % spinner_symbols_len) + 1
-      return self.adapter .. ' ' .. spinner_symbols[self.spinner_index]
-    else
-      return nil
-    end
-  end
-
   -- dynamic width
   local conditions = {
     hide_in_width_first = function()
@@ -1798,9 +1734,6 @@ function! InitLualine() abort
         },
         {
           require('minuet.lualine'),
-        },
-        {
-          M,
         },
       },
       lualine_y = {
@@ -2297,20 +2230,6 @@ if has('nvim')
 endif
 
 " -----------------------------------------------------------------------------
-" rachartier/tiny-inline-diagnostic.nvim
-function! InitTinyDiag() abort
-  lua << EOF
-  require('tiny-inline-diagnostic').setup({})
-
-  vim.diagnostic.config({ virtual_text = false })
-EOF
-endfunction
-
-if has('nvim')
-  call InitTinyDiag()
-endif
-
-" -----------------------------------------------------------------------------
 " RRethy/vim-illuminate
 function! InitIlluminate() abort
   lua << EOF
@@ -2365,6 +2284,20 @@ endfunction
 
 if has('nvim')
   call InitVirtColumn()
+endif
+
+" -----------------------------------------------------------------------------
+" rachartier/tiny-inline-diagnostic.nvim
+function! InitTinyDiag() abort
+  lua << EOF
+  require('tiny-inline-diagnostic').setup({})
+
+  vim.diagnostic.config({ virtual_text = false })
+EOF
+endfunction
+
+if has('nvim')
+  call InitTinyDiag()
 endif
 
 " -----------------------------------------------------------------------------
@@ -2597,18 +2530,6 @@ endfunction
 
 if has('nvim')
   call InitGo()
-endif
-
-" -----------------------------------------------------------------------------
-" linux-cultist/venv-selector.nvim
-function! InitPyVenvSelector() abort
-  lua << EOF
-  require('venv-selector').setup({})
-EOF
-endfunction
-
-if has('nvim')
-  call InitPyVenvSelector()
 endif
 
 " -----------------------------------------------------------------------------
@@ -3099,11 +3020,6 @@ set fileformats=unix,dos,mac
 
 " -----------------------------------------------------------------------------
 " other
-" https://superuser.com/questions/1642954/how-to-start-vim-with-a-clean-jumplist
-if v:version > 704
-  autocmd VimEnter * :clearjumps
-endif
-
 set backupdir=~/.vim/backup
 set directory=~/.vim/tmp
 set undodir=~/.vim/undo
