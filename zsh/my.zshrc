@@ -644,8 +644,12 @@ watch-markdown() {
 
 # -----------------------------------------------------------------------------
 # plantuml
-plantuml-server() {
-  docker run -d --name plantuml --restart always -p 18080:8080 plantuml/plantuml-server:jetty
+plantuml-server-start() {
+  docker run -d --rm --name plantuml -p 18080:8080 plantuml/plantuml-server:jetty
+}
+
+plantuml-server-stop() {
+  docker stop plantuml
 }
 
 make-plantuml-slow() {
@@ -668,6 +672,14 @@ watch-plantuml() {
   fswatch "$1" | while read; do make-plantuml "$1"; done
 }
 
+plantuml-editor-start() {
+  docker run -d --rm --name plantuml-editor -p 18081:8080 hakenadu/plantuml-editor
+}
+
+plantuml-editor-stop() {
+  docker stop plantuml-editor
+}
+
 # -----------------------------------------------------------------------------
 # mermaid
 make-mermaid() {
@@ -678,4 +690,12 @@ watch-mermaid() {
   make-mermaid "$1"
   open "${1%.*}".png
   fswatch "$1" | while read; do make-mermaid "$1"; done
+}
+
+mermaid-editor-start() {
+  docker run -d --rm --name mermaid-editor -p 18082:8080 ghcr.io/mermaid-js/mermaid-live-editor
+}
+
+mermaid-editor-stop() {
+  docker stop mermaid-editor
 }
