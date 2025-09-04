@@ -178,12 +178,13 @@ endif
 if has('nvim')
   Plug 'catppuccin/nvim', {'as': 'catppuccin'}
 else
-  Plug 'sainnhe/sonokai'
+  Plug 'rakr/vim-one'
 end
 if has('nvim')
   Plug 'nvim-lualine/lualine.nvim'
 else
   Plug 'vim-airline/vim-airline'
+  Plug 'vim-airline/vim-airline-themes'
 endif
 if has('nvim')
   Plug 'romgrk/barbar.nvim'
@@ -315,10 +316,9 @@ if has('nvim')
   end
 EOF
 else
-  let g:sonokai_enable_italic = 1
-  let g:sonokai_float_style = 'dim'
-  let g:airline_theme = 'sonokai'
-  colorscheme sonokai
+  set background=light
+  let g:airline_theme='sol'
+  colorscheme one
 endif
 
 
@@ -1774,6 +1774,7 @@ function! InitAirline() abort
   if !exists('g:airline_symbols')
     let g:airline_symbols = {}
   endif
+  let g:airline_powerline_fonts = 0
   let g:airline_symbols.branch = '⎇'
   let g:airline_symbols.paste = 'ρ'
   let g:airline_symbols.readonly = '∥'
@@ -2763,10 +2764,21 @@ function! s:empty_message(timer)
   endif
 endfunction
 
-if v:version > 704
+let s:clear_msg_timer = -1
+
+function! s:clear_message_after(ms) abort
+  if s:clear_msg_timer != -1
+    call timer_stop(s:clear_msg_timer)
+  endif
+  let s:clear_msg_timer = timer_start(a:ms, funcref('s:empty_message'))
+endfunction
+
+if has('nvim')
   augroup cmd_msg_cls
     autocmd!
-    autocmd CmdlineLeave : call timer_start(3000, funcref('s:empty_message'))
+    autocmd CmdlineLeave : call s:clear_message_after(3000)
+    autocmd TextYankPost * call s:clear_message_after(3000)
+    autocmd TextChanged,TextChangedI * call s:clear_message_after(3000)
   augroup END
 endif
 
