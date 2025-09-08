@@ -440,6 +440,8 @@ alias gcse='gcs --ext-diff'
 alias gcss='git rev-parse HEAD'
 
 alias gcom='gco master'
+alias gcomm='gco origin/master'
+alias gcoh='gco HEAD'
 
 gcoi() {
   _fzf_git_branches --no-multi | xargs git checkout
