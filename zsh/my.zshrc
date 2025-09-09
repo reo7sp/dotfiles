@@ -512,6 +512,106 @@ alias gfm-all="find . -maxdepth 1 -type d | xargs -n1 -t -I{} git -C '{}' pull"
 alias gfr-all="find . -maxdepth 1 -type d | xargs -n1 -t -I{} git -C '{}' pull --rebase"
 alias gb-all="find . -maxdepth 1 -type d | xargs -n1 -t -I{} git -C '{}' branch"
 
+git-fix-macos() {
+  # 1) Очищаем существующие fetch правила
+  echo "🔧 Очищаю существующие fetch правила..."
+  git config --unset-all remote.origin.fetch 2>/dev/null || true
+  git config --add remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*"
+  git config --add remote.origin.fetch "+refs/tags/*:refs/tags/*"
+
+  # 2) Получаем список удаленных ссылок
+  echo "📡 Получаю список удаленных ссылок..."
+  remote_heads=$(git ls-remote --heads origin)
+  remote_tags=$(git ls-remote --tags --refs origin)
+
+  # 3) Анализирую ветки
+  echo "🌿 Анализирую ветки..."
+  branch_dups=$(echo "$remote_heads" | awk '/refs\/heads\// {print $2}' \
+    | sed 's#refs/heads/##' | awk '{print tolower($0)}' | sort | uniq -d)
+
+  if [ -n "$branch_dups" ]; then
+    count=0
+    total=$(echo "$branch_dups" | wc -l)
+    echo "$branch_dups" | while read -r dup; do
+      count=$((count + 1))
+      echo "[$count/$total] Обрабатываю конфликт имён веток: $dup"
+
+      variants=$(echo "$remote_heads" | awk -v d="$dup" '/refs\/heads\// {
+        name = $2; gsub(/refs\/heads\//, "", name);
+        if (tolower(name) == d) print name
+      }')
+
+      canonical=""
+      for v in ${(f)variants}; do
+        if [ "$v" = "$dup" ]; then
+          canonical="$v"
+          break
+        fi
+      done
+      if [ -z "$canonical" ]; then
+        canonical="${variants%%$'\n'*}"
+      fi
+
+      echo "  ✅ Оставляю: $canonical"
+      for v in ${(f)variants}; do
+        if [ "$v" != "$canonical" ]; then
+          echo "  ❌ Исключаю: $v"
+          git config --add remote.origin.fetch "^refs/heads/$v"
+        fi
+      done
+    done
+  fi
+
+  # 4) Анализирую теги
+  echo "🏷️  Анализирую теги..."
+  tag_dups=$(echo "$remote_tags" | awk '/refs\/tags\// {print $2}' \
+    | sed 's#refs/tags/##' \
+    | awk '{print tolower($0)}' | sort | uniq -d)
+
+  if [ -n "$tag_dups" ]; then
+    count=0
+    total=$(echo "$tag_dups" | wc -l)
+    echo "$tag_dups" | while read -r dup; do
+      count=$((count + 1))
+      echo "[$count/$total] Обрабатываю конфликт имён тегов: $dup"
+
+      variants=$(echo "$remote_tags" | awk -v d="$dup" '/refs\/tags\// {
+        name = $2; gsub(/refs\/tags\//, "", name);
+        if (tolower(name) == d) print name
+      }')
+
+      canonical=""
+      for v in ${(f)variants}; do
+        if [ "$v" = "$dup" ]; then
+          canonical="$v"
+          break
+        fi
+      done
+      if [ -z "$canonical" ]; then
+        canonical="${variants%%$'\n'*}"
+      fi
+
+      echo "  ✅ Оставляю тег: $canonical"
+      for v in ${(f)variants}; do
+        if [ "$v" != "$canonical" ]; then
+          echo "  ❌ Исключаю тег: $v"
+          git config --add remote.origin.fetch "^refs/tags/$v"
+        fi
+      done
+    done
+  fi
+
+  # 5) Очищаю локальные ссылки
+  echo "🧹 Очищаю локальные ссылки..."
+  rm -f .git/packed-refs.lock .git/refs/remotes/origin/*.lock .git/refs/tags/*.lock
+  rm -rf .git/refs/remotes/origin .git/refs/tags 2>/dev/null || true
+  mkdir -p .git/refs/remotes/origin .git/refs/tags
+
+  # 6) Выполняю fetch
+  echo "📥 Выполняю fetch..."
+  git fetch --prune origin
+}
+
 aliases-git() {
   cat $(antidote path reo7sp/zimfw-git)/init.zsh
 }
