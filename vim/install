@@ -46,12 +46,12 @@ cp nvim/after/syntax/vim.vim ~/.config/nvim/after/syntax/vim.vim
 cp nvim/after/ftplugin/jinja.vim ~/.config/nvim/after/ftplugin/jinja.vim
 cp ideavimrc ~/.ideavimrc
 cp neovintageousrc ~/.neovintageousrc
-if [ -f ~/.config/nvim/lua/llm_corp_config.lua ]; then
-  if confirm "Do you want to overwrite llm_corp_config.lua?"; then
-    cp nvim/lua/llm_corp_config.lua ~/.config/nvim/lua/llm_corp_config.lua
+if [ -f ~/.config/nvim/lua/minuet_llm_remote_config.lua ]; then
+  if confirm "Do you want to overwrite minuet_llm_remote_config.lua?"; then
+    cp minuet_llm_remote_config.lua ~/.config/nvim/lua/minuet_llm_remote_config.lua
   fi
 else
-  cp nvim/lua/llm_corp_config.lua ~/.config/nvim/lua/llm_corp_config.lua
+  cp minuet_llm_remote_config.lua ~/.config/nvim/lua/minuet_llm_remote_config.lua
 fi
 
 if [ ! -f ~/.vim/autoload/plug.vim ]; then

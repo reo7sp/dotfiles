@@ -285,6 +285,7 @@ alias v='vim'
 
 alias edit-vim='vim ~/.my.vimrc'
 alias edit-vimrc='vim ~/.vimrc'
+alias edit-vim-minuet-llm-remote='vim ~/.config/nvim/lua/minuet_llm_remote_config.lua'
 
 time-start-vim() {
   vim --startuptime /tmp/startuptime.log "$@" +qa
@@ -306,17 +307,6 @@ enable-vim-colors-light() {
 
 alias disable-vim-colors-dark='enable-vim-colors-light'
 alias disable-vim-colors-light='enable-vim-colors-dark'
-
-enable-vim-llm-corp() {
-  export VIM_LLM_CORP=1
-}
-
-enable-vim-llm-local() {
-  export VIM_LLM_CORP=0
-}
-
-alias disable-vim-llm-corp='enable-vim-llm-local'
-alias disable-vim-llm-local='enable-vim-llm-corp'
 
 # -----------------------------------------------------------------------------
 # ranger
@@ -563,7 +553,7 @@ git-fix-macos() {
   fi
 
   # 4) Анализирую теги
-  echo "🏷️  Анализирую теги..."
+  echo "🏷️ Анализирую теги..."
   tag_dups=$(echo "$remote_tags" | awk '/refs\/tags\// {print $2}' \
     | sed 's#refs/tags/##' \
     | awk '{print tolower($0)}' | sort | uniq -d)

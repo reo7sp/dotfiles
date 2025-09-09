@@ -452,62 +452,65 @@ endif
 " milanglacier/minuet-ai.nvim
 function! InitLLM() abort
   lua << EOF
+  local preset_configs = {
+    ['local'] = {
+      provider = 'openai_fim_compatible',
+      provider_options = {
+        openai_fim_compatible = {
+          name = 'local',
+          end_point = 'http://localhost:11434/v1/completions',
+          api_key = 'TERM',
+          stream = true,
+          model = 'qwen2.5-coder:3b',
+          optional = {
+            max_tokens = 64,
+            top_p = 0.9,
+            temperature = 0.2,
+          },
+        },
+      },
+    },
+    remote = {
+      provider = 'openai_compatible',
+      provider_options = {
+        openai_compatible = vim.tbl_extend('force', {
+          name = 'remote',
+        }, require('minuet_llm_remote_config')),
+      },
+    },
+  }
   require('minuet').setup({
-    provider = 'openai_fim_compatible',
-    provider_options = {
-      openai_fim_compatible = {
-        name = 'llm_local',
-        end_point = 'http://localhost:11434/v1/completions',
-        api_key = 'TERM',
-        stream = true,
-        model = 'qwen2.5-coder:3b',
-        optional = {
-          max_tokens = 64,
-          top_p = 0.9,
-          temperature = 0.2,
-        },
-      },
-    },
-    presets = {
-      llm_corp = {
-        provider = 'openai_compatible',
-        provider_options = {
-          openai_compatible = vim.tbl_extend('force', {
-            name = 'llm_corp',
-          }, require('llm_corp_config').minuet),
-        },
-      },
-    },
+    presets = preset_configs,
     n_completions = 1,
-    context_window = 256,
+    add_single_line_entry = false,
+    context_window = 512,
     request_timeout = 5,
   })
 
+  local default_preset = 'local'
+  if preset_configs['remote'] 
+      and preset_configs['remote']['provider_options']
+      and preset_configs['remote']['provider_options']['openai_compatible']
+      and preset_configs['remote']['provider_options']['openai_compatible']['end_point'] then
+    default_preset = 'remote'
+  end
+  require('minuet').config = vim.tbl_deep_extend('force', require('minuet').config, preset_configs[default_preset])
+
   vim.api.nvim_create_user_command('LLMChoose', function(opts)
     local choice = opts.fargs[1]
-
-    local providers = { llm_local = true, llm_corp = true }
-    if not choice or not providers[choice] then
-      vim.notify('Usage: :LLMChoose [llm_local|llm_corp]', vim.log.levels.ERROR)
+    if not choice then
+      vim.notify('Usage: :LLMChoose [local|remote]', vim.log.levels.ERROR)
       return
     end
 
-    local minuet_choice = choice
-    if minuet_choice == 'llm_local' then
-      minuet_choice = 'original'
-    end
-    require('minuet').change_preset(minuet_choice)
+    require('minuet').change_preset(choice)
   end, {
     nargs = 1,
     complete = function()
-      return { 'llm_local', 'llm_corp' }
+      return { 'local', 'remote' }
     end,
     desc = 'Choose LLM provider',
   })
-
-  if os.getenv('VIM_LLM_CORP') == '1' then
-    require('minuet').change_preset('llm_corp')
-  end
 EOF
 
 endfunction
@@ -526,7 +529,7 @@ function! InitBlink() abort
     keymap = {
       preset = 'super-tab',
       ['<CR>'] = { 'accept', 'fallback' },
-      ['<C-y>'] = require('minuet').make_blink_map(),
+      ['<C-S-space>'] = require('minuet').make_blink_map(),
     },
     sources = {
       providers = {
