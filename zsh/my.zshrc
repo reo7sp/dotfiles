@@ -425,9 +425,12 @@ alias gll='tig'
 
 alias gwdn='gwd --name-only'
 alias gwde='gwd --ext-diff'
+alias gwdd='DELTA_FEATURES=+side-by-side gwd'
 alias gcsn='gcs --name-only'
 alias gcse='gcs --ext-diff'
+alias gcsd='DELTA_FEATURES=+side-by-side gcs'
 alias gcss='git rev-parse HEAD'
+alias gcst='git show --no-patch'
 
 alias gcom='gco master'
 alias gcomm='gco origin/master'
