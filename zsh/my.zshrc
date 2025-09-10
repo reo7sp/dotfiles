@@ -204,7 +204,7 @@ zvm_after_init_commands+=(my-bindkeys)
 # -----------------------------------------------------------------------------
 # general
 alias le='less'
-
+alias o='open'
 alias w='which'
 alias h='history'
 
@@ -222,6 +222,15 @@ new-tmp() {
 }
 
 alias grep='grep --color=auto'
+alias fgrep='fgrep --color=auto'
+alias egrep='egrep --color=auto'
+alias rgrep='rgrep --color=auto'
+alias zgrep='zgrep --color=auto'
+alias zfgrep='zfgrep --color=auto'
+alias zegrep='zegrep --color=auto'
+alias bzgrep='bzgrep --color=auto'
+alias bzfgrep='bzfgrep --color=auto'
+alias bzegrep='bzegrep --color=auto'
 
 if can-exec colordiff; then
   alias diff='colordiff'
@@ -354,6 +363,9 @@ if [[ -n $REAL_FD ]]; then
   fd() {
     $REAL_FD $FD_OPTIONS "$@"
   }
+  fdg() {
+    $REAL_FD "$@"
+  }
 fi
 
 # -----------------------------------------------------------------------------
@@ -426,11 +438,11 @@ alias gll='tig'
 alias gwdn='gwd --name-only'
 alias gwde='gwd --ext-diff'
 alias gwdd='DELTA_FEATURES=+side-by-side gwd'
-alias gcsn='gcs --name-only'
+alias gcsn='gcs --name-only --pretty=""'
 alias gcse='gcs --ext-diff'
 alias gcsd='DELTA_FEATURES=+side-by-side gcs'
 alias gcss='git rev-parse HEAD'
-alias gcst='git show --no-patch'
+alias gcsj='git show --no-patch'
 
 alias gcom='gco master'
 alias gcomm='gco origin/master'

@@ -465,7 +465,6 @@ function! InitLLM() abort
           optional = {
             max_tokens = 64,
             top_p = 0.9,
-            temperature = 0.2,
           },
         },
       },
@@ -482,7 +481,6 @@ function! InitLLM() abort
   require('minuet').setup({
     presets = preset_configs,
     n_completions = 1,
-    add_single_line_entry = false,
     context_window = 512,
     request_timeout = 5,
   })
@@ -1865,24 +1863,12 @@ EOF
   highlight! link BufferCurrentMod BufferCurrent
   highlight! link BufferInactiveMod BufferInactive
 
-  cnoreabbrev bq BufferClose
-  cnoreabbrev bd BufferClose
-  nnoremap <c-q> <cmd>BufferClose<cr>
-  nnoremap <c-w>Q <cmd>BufferClose<cr>
-
-  cnoreabbrev bo BufferCloseAllButCurrentOrPinned
-  cnoreabbrev bon BufferCloseAllButCurrentOrPinned
-  cnoreabbrev bonly BufferCloseAllButCurrentOrPinned
-  nnoremap <c-w>O <cmd>BufferCloseAllButCurrentOrPinned<cr>
-
-  cnoreabbrev bpin BufferPin
-  cnoreabbrev bpi BufferPin
-
+  nnoremap <C-Tab> <cmd>BufferNext<CR>
+  nnoremap <C-S-Tab> <cmd>BufferPrevious<CR>
   nnoremap <C-[> <cmd>BufferPrevious<CR>
   nnoremap <C-]> <cmd>BufferNext<CR>
   nnoremap [b <cmd>BufferPrevious<CR>
   nnoremap ]b <cmd>BufferNext<CR>
-
   nnoremap <C-1> <cmd>BufferGoto 1<CR>
   nnoremap <C-2> <cmd>BufferGoto 2<CR>
   nnoremap <C-3> <cmd>BufferGoto 3<CR>
@@ -1893,21 +1879,33 @@ EOF
   nnoremap <C-8> <cmd>BufferGoto 8<CR>
   nnoremap <C-9> <cmd>BufferLast<CR>
 
+  cnoreabbrev bq BufferClose
+  cnoreabbrev bd BufferClose
+  nnoremap <c-q> <cmd>BufferClose<cr>
+  nnoremap <c-w>Q <cmd>BufferClose<cr>
+  cnoreabbrev bo BufferCloseAllButCurrentOrPinned
+  cnoreabbrev bon BufferCloseAllButCurrentOrPinned
+  cnoreabbrev bonly BufferCloseAllButCurrentOrPinned
+  nnoremap <c-w>O <cmd>BufferCloseAllButCurrentOrPinned<cr>
   cnoreabbrev bql BufferCloseBuffersLeft
   cnoreabbrev bdl BufferCloseBuffersLeft
   cnoreabbrev bqr BufferCloseBuffersRight
   cnoreabbrev bdr BufferCloseBuffersRight
 
-  cnoreabbrev bs BufferOrderByDirectory
-
   nnoremap <C-,> <cmd>BufferMovePrevious<CR>
   nnoremap <C-.> <cmd>BufferMoveNext<CR>
+
+  cnoreabbrev bpin BufferPin
+  cnoreabbrev bpi BufferPin
+
+  cnoreabbrev bs BufferOrderByDirectory
 endfunction
 
 function! InitBuftablineVim() abort
+  nnoremap <C-Tab> <cmd>bn<CR>
+  nnoremap <C-S-Tab> <cmd>bp<CR>
   nnoremap <C-[> <cmd>bp<CR>
   nnoremap <C-]> <cmd>bn<CR>
-
   nnoremap <C-1> <Plug>BufTabLine.Go(1)
   nnoremap <C-2> <Plug>BufTabLine.Go(2)
   nnoremap <C-3> <Plug>BufTabLine.Go(3)
@@ -1960,7 +1958,7 @@ function! InitWinshift() abort
   })
 EOF
 
-  nnoremap <c-w>x <cmd>WinShift swap<cr>
+  nnoremap <C-w>x <cmd>WinShift swap<cr>
 endfunction
 
 if has('nvim')
