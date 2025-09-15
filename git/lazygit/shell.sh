@@ -182,13 +182,18 @@ gwX() { git rm -rf "$@"; }
 # my aliases
 gll() { tig "$@"; }
 
+gwdd() { DELTA_FEATURES=+side-by-side gwd "$@"; }
+gwdt() { gwd --ext-diff "$@"; }
 gwdn() { gwd --name-only "$@"; }
-gwde() { gwd --ext-diff "$@"; }
-gcsn() { gcs --name-only "$@"; }
-gcse() { gcs --ext-diff "$@"; }
+gcsd() { DELTA_FEATURES=+side-by-side gcs "$@"; }
+gcst() { gcs --ext-diff "$@"; }
+gcsn() { gcs --name-only --pretty="" "$@"; }
 gcss() { git rev-parse HEAD "$@"; }
+gcsj() { git show --no-patch "$@"; }
 
 gcom() { gco master "$@"; }
+gcomm() { gco origin/master "$@"; }
+gcoh() { gco HEAD "$@"; }
 
 gcu() { git add -A && git commit --amend --reuse-message HEAD "$@"; }
 

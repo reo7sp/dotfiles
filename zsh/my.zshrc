@@ -435,12 +435,12 @@ _fzf_git_fzf () {
 alias gg='lazygit'
 alias gll='tig'
 
-alias gwdn='gwd --name-only'
-alias gwde='gwd --ext-diff'
 alias gwdd='DELTA_FEATURES=+side-by-side gwd'
-alias gcsn='gcs --name-only --pretty=""'
-alias gcse='gcs --ext-diff'
+alias gwdt='gwd --ext-diff'
+alias gwdn='gwd --name-only'
 alias gcsd='DELTA_FEATURES=+side-by-side gcs'
+alias gcst='gcs --ext-diff'
+alias gcsn='gcs --name-only --pretty=""'
 alias gcss='git rev-parse HEAD'
 alias gcsj='git show --no-patch'
 
@@ -622,6 +622,11 @@ aliases-git() {
 }
 
 alias edit-lazygit='vim ~/Library/Application\ Support/lazygit/config.yml'
+alias edit-lazygit-sh='vim ~/Library/Application\ Support/lazygit/shell.sh'
+
+# -----------------------------------------------------------------------------
+# delta
+alias deltad='DELTA_FEATURES=+side-by-side delta'
 
 # -----------------------------------------------------------------------------
 # difft
