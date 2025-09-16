@@ -103,6 +103,8 @@ else
 endif
 if has('nvim')
   Plug 'Wansmer/treesj'
+else
+  Plug 'AndrewRadev/splitjoin.vim'
 endif
 if has('nvim')
   Plug 'johmsalas/text-case.nvim'
@@ -116,6 +118,7 @@ endif
 if has('nvim')
   Plug 'stevearc/conform.nvim'
 endif
+Plug 'chrisbra/NrrwRgn'
 if has('nvim')
   Plug 'lewis6991/gitsigns.nvim'
   Plug 'akinsho/git-conflict.nvim', {'tag': 'v2.1.0'}
@@ -841,7 +844,7 @@ if has('nvim')
 end
 
 " -----------------------------------------------------------------------------
-" Wansmer/treesj
+" Wansmer/treesj or AndrewRadev/splitjoin.vim
 function! InitTreeSJ() abort
   lua << EOF
   require('treesj').setup({
@@ -858,8 +861,17 @@ function! LazyInitTreeSJ() abort
   lua vim.keymap.set('n', 'gm', function() vim.call('InitTreeSJ') vim.api.nvim_input('gm') end, { desc = 'Merge statements' })
 endfunction
 
+function! InitSplitJoin() abort
+  let g:splitjoin_split_mapping = ''
+  let g:splitjoin_join_mapping = ''
+
+  nnoremap gm <cmd>SplitjoinSplit<cr>
+endfunction
+
 if has('nvim')
   call LazyInitTreeSJ()
+else
+  call InitSplitJoin()
 endif
 
 " -----------------------------------------------------------------------------
