@@ -185,6 +185,10 @@ gll() { tig "$@"; }
 gwdd() { DELTA_FEATURES=+side-by-side gwd "$@"; }
 gwdt() { gwd --ext-diff "$@"; }
 gwdn() { gwd --name-only "$@"; }
+gwdh() { gwd HEAD "$@"; }
+gwddh() { gwdd HEAD "$@"; }
+gwdth() { gwdt HEAD "$@"; }
+gwdnh() { gwdn HEAD "$@"; }
 gcsd() { DELTA_FEATURES=+side-by-side gcs "$@"; }
 gcst() { gcs --ext-diff "$@"; }
 gcsn() { gcs --name-only --pretty="" "$@"; }
