@@ -483,9 +483,12 @@ function! InitLLM() abort
   }
   require('minuet').setup({
     presets = preset_configs,
+    blink = {
+      enable_auto_complete = false,
+    },
     n_completions = 1,
-    context_window = 512,
-    request_timeout = 5,
+    context_window = 1024,
+    request_timeout = 3,
   })
 
   local default_preset = 'local'
@@ -496,22 +499,6 @@ function! InitLLM() abort
     default_preset = 'remote'
   end
   require('minuet').config = vim.tbl_deep_extend('force', require('minuet').config, preset_configs[default_preset])
-
-  vim.api.nvim_create_user_command('LLMChoose', function(opts)
-    local choice = opts.fargs[1]
-    if not choice then
-      vim.notify('Usage: :LLMChoose [local|remote]', vim.log.levels.ERROR)
-      return
-    end
-
-    require('minuet').change_preset(choice)
-  end, {
-    nargs = 1,
-    complete = function()
-      return { 'local', 'remote' }
-    end,
-    desc = 'Choose LLM provider',
-  })
 EOF
 
 endfunction
@@ -533,19 +520,26 @@ function! InitBlink() abort
       ['<C-S-space>'] = require('minuet').make_blink_map(),
     },
     sources = {
+      default = { 'lsp', 'path', 'buffer', 'snippets', 'minuet' },
       providers = {
         minuet = {
           name = 'minuet',
           module = 'minuet.blink',
           async = true,
-          timeout_ms = 5000,
+          timeout_ms = 3000,
           score_offset = 50,
         },
       },
     },
+    snippets = {
+      preset = 'luasnip',
+    },
     completion = {
+      trigger = {
+        prefetch_on_insert = false,
+      },
       list = {
-        max_items = 50,
+        max_items = 25,
       },
       menu = {
         draw = {
@@ -563,9 +557,6 @@ function! InitBlink() abort
         },
       },
     },
-    snippets = {
-      preset = 'luasnip',
-    },
     signature = {
       enabled = true,
     },
@@ -582,6 +573,7 @@ function! InitBlink() abort
       },
     },
   })
+
 EOF
 endfunction
 
