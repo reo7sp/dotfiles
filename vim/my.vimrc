@@ -501,6 +501,7 @@ function! InitLLM() abort
   require('minuet').config = vim.tbl_deep_extend('force', require('minuet').config, preset_configs[default_preset])
 EOF
 
+  nnoremap <leader>= <cmd>lua if require('minuet').config['blink'].enable_auto_complete then vim.cmd([[Minuet blink disable]]) else vim.cmd([[Minuet blink enable]]) end<cr>
 endfunction
 
 if has('nvim')

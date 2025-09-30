@@ -419,11 +419,7 @@ tf() {
 }
 
 cdf() {
-  cd $(find . -depth 5 -type d -not -path '*/\.*' -print 2> /dev/null | fzf)
-}
-
-cdfm() {
-  cd $(find .          -type d -not -path '*/\.*' -print 2> /dev/null | fzf)
+  cd "$(find . -type d -not -path '*/\.*' -print 2> /dev/null | fzf)"
 }
 
 _fzf_git_fzf () {
@@ -447,6 +443,7 @@ alias gcst='gcs --ext-diff'
 alias gcsn='gcs --name-only --pretty=""'
 alias gcss='git rev-parse HEAD'
 alias gcsj='git show --no-patch'
+alias gcsc='git show --stat'
 
 alias gcom='gco master'
 alias gcomm='gco origin/master'

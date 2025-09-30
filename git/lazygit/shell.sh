@@ -194,6 +194,7 @@ gcst() { gcs --ext-diff "$@"; }
 gcsn() { gcs --name-only --pretty="" "$@"; }
 gcss() { git rev-parse HEAD "$@"; }
 gcsj() { git show --no-patch "$@"; }
+gcsc() { git show --stat "$@"; }
 
 gcom() { gco master "$@"; }
 gcomm() { gco origin/master "$@"; }
