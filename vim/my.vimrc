@@ -55,21 +55,10 @@ else
   Plug 'Raimondi/delimitMate'
 end
 Plug 'alvan/vim-closetag', {'for': ['html', 'htm', 'xml', 'js', 'jsx', 'ts', 'tsx']}
-Plug 'justinmk/vim-sneak'
 Plug 'haya14busa/vim-asterisk'
 Plug 'wellle/targets.vim'
 if has('nvim')
   Plug 'monaqa/dial.nvim'
-endif
-if has('nvim')
-  Plug 'kylechui/nvim-surround'
-else
-  Plug 'tpope/vim-surround'
-endif
-if has('nvim')
-  Plug 'gbprod/substitute.nvim'
-else
-  Plug 'svermeulen/vim-subversive'
 endif
 if ! has('nvim')
   Plug 'ConradIrwin/vim-bracketed-paste'
@@ -86,6 +75,17 @@ else
   Plug 'thirtythreeforty/lessspace.vim'
 endif
 Plug 'ntpeters/vim-better-whitespace'
+Plug 'justinmk/vim-sneak'
+if has('nvim')
+  Plug 'kylechui/nvim-surround'
+else
+  Plug 'tpope/vim-surround'
+endif
+if has('nvim')
+  Plug 'gbprod/substitute.nvim'
+else
+  Plug 'svermeulen/vim-subversive'
+endif
 if has('nvim')
   Plug 'gbprod/yanky.nvim'
 else
@@ -124,6 +124,57 @@ if has('nvim')
   Plug 'akinsho/git-conflict.nvim', {'tag': 'v2.1.0'}
 else
   Plug 'airblade/vim-gitgutter'
+endif
+
+" -----------------------------------------------------------------------------
+" appearance
+if has('nvim')
+  Plug 'catppuccin/nvim', {'as': 'catppuccin'}
+else
+  Plug 'rakr/vim-one'
+end
+if has('nvim')
+  Plug 'nvim-lualine/lualine.nvim'
+else
+  Plug 'vim-airline/vim-airline'
+  Plug 'vim-airline/vim-airline-themes'
+endif
+if has('nvim')
+  Plug 'romgrk/barbar.nvim'
+else
+  Plug 'ap/vim-buftabline'
+endif
+if has('nvim')
+  Plug 's1n7ax/nvim-window-picker'
+  Plug 'sindrets/winshift.nvim'
+endif
+if has('nvim')
+  Plug 'kevinhwang91/nvim-bqf'
+  Plug 'stevearc/quicker.nvim'
+endif
+if has('nvim')
+  Plug 'folke/trouble.nvim'
+endif
+if has('nvim')
+  Plug 'chentoast/marks.nvim'
+  Plug 'lewis6991/satellite.nvim'
+endif
+if has('nvim')
+  Plug 'RRethy/vim-illuminate'
+  Plug 'lukas-reineke/indent-blankline.nvim'
+  Plug 'lukas-reineke/virt-column.nvim'
+endif
+if has('nvim')
+  Plug 'rachartier/tiny-inline-diagnostic.nvim'
+endif
+if has('nvim')
+  Plug 'j-hui/fidget.nvim'
+endif
+if has('nvim')
+  Plug 'folke/which-key.nvim'
+else
+  Plug 'liuchengxu/vim-which-key'
+  Plug 'junegunn/vim-peekaboo'
 endif
 
 " -----------------------------------------------------------------------------
@@ -174,57 +225,6 @@ if has('nvim')
 endif
 if has('nvim')
   Plug 'MagicDuck/grug-far.nvim'
-endif
-
-" -----------------------------------------------------------------------------
-" appearance
-if has('nvim')
-  Plug 'catppuccin/nvim', {'as': 'catppuccin'}
-else
-  Plug 'rakr/vim-one'
-end
-if has('nvim')
-  Plug 'nvim-lualine/lualine.nvim'
-else
-  Plug 'vim-airline/vim-airline'
-  Plug 'vim-airline/vim-airline-themes'
-endif
-if has('nvim')
-  Plug 'romgrk/barbar.nvim'
-else
-  Plug 'ap/vim-buftabline'
-endif
-if has('nvim')
-  Plug 's1n7ax/nvim-window-picker'
-  Plug 'sindrets/winshift.nvim'
-endif
-if has('nvim')
-  Plug 'kevinhwang91/nvim-bqf'
-  Plug 'stevearc/quicker.nvim'
-endif
-if has('nvim')
-  Plug 'folke/trouble.nvim'
-endif
-if has('nvim')
-  Plug 'j-hui/fidget.nvim'
-endif
-if has('nvim')
-  Plug 'chentoast/marks.nvim'
-  Plug 'lewis6991/satellite.nvim'
-endif
-if has('nvim')
-  Plug 'RRethy/vim-illuminate'
-  Plug 'lukas-reineke/indent-blankline.nvim'
-  Plug 'lukas-reineke/virt-column.nvim'
-endif
-if has('nvim')
-  Plug 'rachartier/tiny-inline-diagnostic.nvim'
-endif
-if has('nvim')
-  Plug 'folke/which-key.nvim'
-else
-  Plug 'liuchengxu/vim-which-key'
-  Plug 'junegunn/vim-peekaboo'
 endif
 
 " -----------------------------------------------------------------------------
@@ -593,19 +593,6 @@ if has('nvim')
 endif
 
 " -----------------------------------------------------------------------------
-" justinmk/vim-sneak
-function! InitSneak() abort
-  let g:sneak#use_ic_scs = 1
-
-  map f <Plug>Sneak_f
-  map F <Plug>Sneak_F
-  map t <Plug>Sneak_t
-  map T <Plug>Sneak_T
-endfunction
-
-call InitSneak()
-
-" -----------------------------------------------------------------------------
 " haya14busa/vim-asterisk
 function! InitAsterisk() abort
   let g:asterisk#keeppos = 1
@@ -662,6 +649,43 @@ if has('nvim')
 endif
 
 " -----------------------------------------------------------------------------
+" nmac427/guess-indent.nvim
+function! InitGuessIndent() abort
+  lua require('guess-indent').setup({})
+endfunction
+
+if has('nvim')
+  call InitGuessIndent()
+endif
+
+" -----------------------------------------------------------------------------
+" ntpeters/vim-better-whitespace
+function! InitBetterWhitespace() abort
+  let g:better_whitespace_enabled = 0
+  let g:better_whitespace_operator = ''
+  let g:strip_max_file_size = 99999
+  let g:strip_whitespace_confirm = 0
+
+  nnoremap ]w <cmd>NextTrailingWhitespace<CR>
+  nnoremap [w <cmd>PrevTrailingWhitespace<CR>
+endfunction
+
+call InitBetterWhitespace()
+
+" -----------------------------------------------------------------------------
+" justinmk/vim-sneak
+function! InitSneak() abort
+  let g:sneak#use_ic_scs = 1
+
+  map f <Plug>Sneak_f
+  map F <Plug>Sneak_F
+  map t <Plug>Sneak_t
+  map T <Plug>Sneak_T
+endfunction
+
+call InitSneak()
+
+" -----------------------------------------------------------------------------
 " kylechui/nvim-surround
 function! InitNvimSurround() abort
   lua << EOF
@@ -703,30 +727,6 @@ if has('nvim')
 else
   autocmd BufEnter * call InitSubversive()
 endif
-
-" -----------------------------------------------------------------------------
-" nmac427/guess-indent.nvim
-function! InitGuessIndent() abort
-  lua require('guess-indent').setup({})
-endfunction
-
-if has('nvim')
-  call InitGuessIndent()
-endif
-
-" -----------------------------------------------------------------------------
-" ntpeters/vim-better-whitespace
-function! InitBetterWhitespace() abort
-  let g:better_whitespace_enabled = 0
-  let g:better_whitespace_operator = ''
-  let g:strip_max_file_size = 99999
-  let g:strip_whitespace_confirm = 0
-
-  nnoremap ]w <cmd>NextTrailingWhitespace<CR>
-  nnoremap [w <cmd>PrevTrailingWhitespace<CR>
-endfunction
-
-call InitBetterWhitespace()
 
 " -----------------------------------------------------------------------------
 " gbprod/yanky.nvim or maxbrunsfeld/vim-yankstack
@@ -1014,6 +1014,741 @@ endfunction
 
 if has('nvim')
   call InitGitConflict()
+endif
+
+" -----------------------------------------------------------------------------
+" nvim-lualine/lualine.nvim or vim-airline/vim-airline
+function! InitLualine() abort
+  lua << EOF
+  -- git integration
+  local function diff_source()
+    local gitsigns = vim.b.gitsigns_status_dict
+    if gitsigns then
+      return {
+        added = gitsigns.added,
+        modified = gitsigns.changed,
+        removed = gitsigns.removed,
+      }
+    end
+  end
+
+  -- dynamic width
+  local conditions = {
+    hide_in_width_first = function()
+      return vim.fn.winwidth(0) > 140
+    end,
+    hide_in_width_middle = function()
+      return vim.fn.winwidth(0) > 120
+    end,
+    hide_in_width_last = function()
+      return vim.fn.winwidth(0) > 80
+    end,
+  }
+
+  local lualine = require('lualine')
+  lualine.setup({
+    options = {
+      theme = 'tomorrow',
+      icons_enabled = false,
+      component_separators = { left = '', right = '' },
+      section_separators = { left = '', right = '' },
+    },
+    extensions = {
+      'nvim-tree',
+      'oil',
+      'aerial',
+      'quickfix',
+      'trouble',
+      'fugitive',
+    },
+    sections = {
+      lualine_a = {
+        {
+          'mode',
+          fmt = function(str) return str:sub(1, 1) end,
+        },
+      },
+      lualine_b = {
+      },
+      lualine_c = {
+        {
+          'filename',
+          path = 1,
+          file_status = false,
+        },
+        {
+          'aerial',
+          depth = 3,
+          sep = ' > ',
+          padding = { left = 0, right = 1 },
+          cond = conditions.hide_in_width_last,
+        },
+      },
+      lualine_x = {
+        {
+          'b:gitsigns_head',
+          cond = conditions.hide_in_width_first,
+        },
+        {
+          'diff',
+          source = diff_source,
+          padding = { left = 0, right = 1 },
+          cond = conditions.hide_in_width_middle,
+        },
+        {
+          'filetype',
+          cond = conditions.hide_in_width_middle,
+        },
+        {
+          'lsp_status',
+          symbols = { done = '' },
+          padding = { left = 0, right = 1 },
+          cond = conditions.hide_in_width_middle,
+        },
+        {
+          'diagnostics',
+          padding = { left = 0, right = 1 },
+          cond = conditions.hide_in_width_last,
+        },
+        {
+          function()
+            local shiftwidth = vim.api.nvim_buf_get_option(0, 'shiftwidth')
+            if vim.api.nvim_buf_get_option(0, 'expandtab') then
+              return 'S:sw=' .. shiftwidth
+            else
+              return 'T:ts=' .. vim.api.nvim_buf_get_option(0, 'tabstop')
+            end
+          end,
+          cond = conditions.hide_in_width_last
+        },
+        {
+          require('minuet.lualine'),
+        },
+      },
+      lualine_y = {
+      },
+      lualine_z = {
+        'location',
+        'searchcount',
+        'selectioncount',
+      },
+    },
+    inactive_sections = {
+      lualine_a = {
+      },
+      lualine_b = {
+      },
+      lualine_c = {
+        {
+          'filename',
+          path = 1,
+          file_status = false,
+        },
+      },
+      lualine_x = {
+        'location',
+      },
+      lualine_y = {
+      },
+      lualine_z = {
+      },
+    },
+  })
+EOF
+
+  set noruler
+endfunction
+
+function! InitAirline() abort
+  if !exists('g:airline_symbols')
+    let g:airline_symbols = {}
+  endif
+  let g:airline_powerline_fonts = 0
+  let g:airline_symbols.branch = '⎇'
+  let g:airline_symbols.paste = 'ρ'
+  let g:airline_symbols.readonly = '∥'
+  let g:airline_symbols.whitespace = 'Ξ'
+  let g:airline_symbols.linenr = ''
+  let g:airline_symbols.maxlinenr = ''
+  let g:airline_symbols.colnr = ':'
+
+  let g:airline_skip_empty_sections = 1
+  autocmd User AirlineAfterInit :let g:airline_section_y = ''
+  autocmd User AirlineAfterInit :let g:airline_section_z = airline#section#create(['linenr', 'colnr'])
+
+  let g:airline#extensions#whitespace#enabled = 0
+
+  let g:airline_mode_map = {
+    \ '__'     : '-',
+    \ 'c'      : 'C',
+    \ 'i'      : 'I',
+    \ 'ic'     : 'I',
+    \ 'ix'     : 'I',
+    \ 'n'      : 'N',
+    \ 'multi'  : 'M',
+    \ 'ni'     : 'N',
+    \ 'no'     : 'N',
+    \ 'R'      : 'R',
+    \ 'Rv'     : 'R',
+    \ 's'      : 'S',
+    \ 'S'      : 'S',
+    \ '␓'      : 'S',
+    \ 't'      : 'T',
+    \ 'v'      : 'V',
+    \ 'V'      : 'V',
+    \ '␖'      : 'V',
+    \ }
+endfunction
+
+if has('nvim')
+  call InitLualine()
+else
+  call InitAirline()
+endif
+
+" -----------------------------------------------------------------------------
+" romgrk/barbar.nvim or ap/vim-buftabline
+function! InitBarbar() abort
+  lua << EOF
+  vim.g.barbar_auto_setup = false
+  require('barbar').setup({
+    animation = false,
+    icons = {
+      buffer_index = true,
+      button = false,
+      filetype = {
+        enabled = false,
+      },
+      gitsigns = {
+        enabled = false,
+      },
+      separator = {
+        right = ' ',
+      },
+      inactive = {
+        separator = {
+          right = ' ',
+        },
+      },
+      modified = {
+        button = '',
+      },
+      pinned = {
+        filename = true,
+        separator = {
+          right = ' ★ ',
+        },
+      },
+      separator_at_end = false,
+    },
+    minimum_padding = 0,
+    maximum_padding = 0,
+    sidebar_filetypes = {},
+    no_name_title = '[No Name]',
+  })
+EOF
+
+  highlight! link BufferCurrentMod BufferCurrent
+  highlight! link BufferInactiveMod BufferInactive
+
+  nnoremap <C-Tab> <cmd>BufferNext<CR>
+  nnoremap <C-S-Tab> <cmd>BufferPrevious<CR>
+  nnoremap <C-[> <cmd>BufferPrevious<CR>
+  nnoremap <C-]> <cmd>BufferNext<CR>
+  nnoremap [b <cmd>BufferPrevious<CR>
+  nnoremap ]b <cmd>BufferNext<CR>
+  nnoremap <C-1> <cmd>BufferGoto 1<CR>
+  nnoremap <C-2> <cmd>BufferGoto 2<CR>
+  nnoremap <C-3> <cmd>BufferGoto 3<CR>
+  nnoremap <C-4> <cmd>BufferGoto 4<CR>
+  nnoremap <C-5> <cmd>BufferGoto 5<CR>
+  nnoremap <C-6> <cmd>BufferGoto 6<CR>
+  nnoremap <C-7> <cmd>BufferGoto 7<CR>
+  nnoremap <C-8> <cmd>BufferGoto 8<CR>
+  nnoremap <C-9> <cmd>BufferLast<CR>
+
+  cnoreabbrev bq BufferClose
+  cnoreabbrev bd BufferClose
+  nnoremap <c-q> <cmd>BufferClose<cr>
+  nnoremap <c-w>Q <cmd>BufferClose<cr>
+  cnoreabbrev bo BufferCloseAllButCurrentOrPinned
+  cnoreabbrev bon BufferCloseAllButCurrentOrPinned
+  cnoreabbrev bonly BufferCloseAllButCurrentOrPinned
+  nnoremap <c-w>O <cmd>BufferCloseAllButCurrentOrPinned<cr>
+  cnoreabbrev bql BufferCloseBuffersLeft
+  cnoreabbrev bdl BufferCloseBuffersLeft
+  cnoreabbrev bqr BufferCloseBuffersRight
+  cnoreabbrev bdr BufferCloseBuffersRight
+
+  nnoremap <C-,> <cmd>BufferMovePrevious<CR>
+  nnoremap <C-.> <cmd>BufferMoveNext<CR>
+
+  cnoreabbrev bpin BufferPin
+  cnoreabbrev bpi BufferPin
+
+  cnoreabbrev bs BufferOrderByDirectory
+endfunction
+
+function! InitBuftablineVim() abort
+  nnoremap <C-Tab> <cmd>bn<CR>
+  nnoremap <C-S-Tab> <cmd>bp<CR>
+  nnoremap <C-[> <cmd>bp<CR>
+  nnoremap <C-]> <cmd>bn<CR>
+  nnoremap <C-1> <Plug>BufTabLine.Go(1)
+  nnoremap <C-2> <Plug>BufTabLine.Go(2)
+  nnoremap <C-3> <Plug>BufTabLine.Go(3)
+  nnoremap <C-4> <Plug>BufTabLine.Go(4)
+  nnoremap <C-5> <Plug>BufTabLine.Go(5)
+  nnoremap <C-6> <Plug>BufTabLine.Go(6)
+  nnoremap <C-7> <Plug>BufTabLine.Go(7)
+  nnoremap <C-8> <Plug>BufTabLine.Go(8)
+  nnoremap <C-9> <Plug>BufTabLine.Go(-1)
+endfunction
+
+if has('nvim')
+  call InitBarbar()
+else
+  call InitBuftablineVim()
+endif
+
+" -----------------------------------------------------------------------------
+" s1n7ax/nvim-window-picker
+function! InitWindowPicker() abort
+  lua << EOF
+  require('window-picker').setup({
+    hint = 'floating-big-letter',
+    picker_config = {
+      handle_mouse_click = true,
+    },
+    show_prompt = false,
+    filter_rules = {
+      bo = {
+        filetype = {},
+        buftype = {},
+      },
+    },
+  })
+EOF
+
+  nnoremap <c-w><c-w> <cmd>lua vim.api.nvim_set_current_win(require('window-picker').pick_window() or vim.api.nvim_get_current_win())<cr>
+endfunction
+
+if has('nvim')
+  call InitWindowPicker()
+endif
+
+" -----------------------------------------------------------------------------
+" sindrets/winshift.nvim
+function! InitWinshift() abort
+  lua << EOF
+  require('winshift').setup({
+    window_picker = require('window-picker').pick_window,
+  })
+EOF
+
+  nnoremap <C-w>x <cmd>WinShift swap<cr>
+endfunction
+
+if has('nvim')
+  call InitWinshift()
+endif
+
+" -----------------------------------------------------------------------------
+" kevinhwang91/nvim-bqf
+function! InitBqf() abort
+  lua << EOF
+  require('bqf').setup({
+    preview = {
+      auto_preview = false,
+      winblend = 0,
+      should_preview_cb = function(bufnr, qwinid)
+        local ret = true
+        local bufname = vim.api.nvim_buf_get_name(bufnr)
+        local fsize = vim.fn.getfsize(bufname)
+        if fsize > 100 * 1024 then
+          ret = false
+        elseif bufname:match('^fugitive://') then
+          ret = false
+        end
+        return ret
+      end,
+    },
+    func_map = {
+      tab = '',
+      tabb = '',
+      tabc = '',
+      prevfile = '',
+      nextfile = '',
+      pscrollup = '<c-u>',
+      pscrolldown = '<c-d>',
+      ptoggleauto = '<c-p>',
+    },
+  })
+
+  vim.api.nvim_create_autocmd('BufRead', {
+    callback = function(ev)
+      if vim.bo[ev.buf].buftype == 'quickfix' then
+        vim.schedule(function()
+          vim.keymap.set('n', '<c-t>', function()
+            vim.cmd([[cclose]])
+            vim.cmd([[Trouble qflist open]])
+          end, { buffer = ev.buf })
+
+          vim.keymap.set('n', 'zx', function()
+            require('quicker').refresh()
+          end, { buffer = ev.buf })
+
+          vim.keymap.set('n', 'q', function()
+            vim.cmd('cclose')
+          end, { buffer = ev.buf })
+        end)
+      end
+    end,
+  })
+EOF
+endfunction
+
+if has('nvim')
+  call InitBqf()
+endif
+
+" -----------------------------------------------------------------------------
+" stevearc/quicker.nvim
+function! InitQuicker() abort
+  lua << EOF
+  require('quicker').setup({
+    edit = {
+      enabled = true,
+      autosave = true,
+    },
+    highlight = {
+      treesitter = false,
+      lsp = false,
+    },
+    type_icons = {
+      E = 'E',
+      W = 'W',
+      I = 'I',
+      N = 'N',
+      H = 'H',
+    },
+  })
+EOF
+
+  nnoremap <leader>q <cmd>lua require('quicker').toggle({focus = true})<CR>
+endfunction
+
+if has('nvim')
+  call InitQuicker()
+endif
+
+" -----------------------------------------------------------------------------
+" folke/trouble.nvim
+function! InitTrouble() abort
+  lua << EOF
+  require('trouble').setup({
+    focus = true,
+    auto_refresh = false,
+    auto_preview = false,
+    follow = false,
+    win = {
+      position = 'right',
+      size = 0.45,
+    },
+    keys = {
+      ['<c-x>'] = 'jump_split',
+      ['<c-s>'] = false,
+    },
+    icons = {
+      indent = {
+        fold_open     = '  ',
+        fold_closed   = '│ ',
+      },
+      folder_closed   = '',
+      folder_open     = '',
+      kinds = {
+        Array         = '',
+        Boolean       = '',
+        Class         = '',
+        Constant      = '',
+        Constructor   = '',
+        Enum          = '',
+        EnumMember    = '',
+        Event         = '',
+        Field         = '',
+        File          = '',
+        Function      = '',
+        Interface     = '',
+        Key           = '',
+        Method        = '',
+        Module        = '',
+        Namespace     = '',
+        Null          = '',
+        Number        = '',
+        Object        = '',
+        Operator      = '',
+        Package       = '',
+        Property      = '',
+        String        = '',
+        Struct        = '',
+        TypeParameter = '',
+        Variable      = '',
+      },
+    },
+  })
+EOF
+
+  highlight! link TroubleNormal Normal
+  highlight! link TroubleNormalNC Normal
+
+  nnoremap <leader>T <cmd>lua require('trouble').toggle()<CR>
+  nnoremap [t <cmd>lua require('trouble').prev() require('trouble').jump()<CR>
+  nnoremap ]t <cmd>lua require('trouble').next() require('trouble').jump()<CR>
+  nnoremap [T <cmd>lua require('trouble').first() require('trouble').jump()<CR>
+  nnoremap ]T <cmd>lua require('trouble').last() require('trouble').jump()<CR>
+endfunction
+
+if has('nvim')
+  call InitTrouble()
+endif
+
+" -----------------------------------------------------------------------------
+" chentoast/marks.nvim
+function! InitMarks() abort
+  lua << EOF
+  require('marks').setup({
+    builtin_marks = {
+      "'",
+      '^',
+      '[',
+      '<',
+    },
+    default_mappings = false,
+    mappings = {
+      set = 'm',
+      set_next = 'm,',
+      toggle = 'm;',
+      delete = 'dm',
+      delete_line = 'dm-',
+    },
+    excluded_filetypes = {
+      'blink-cmp-menu',
+      'dropbar_menu',
+      'dropbar_menu_fzf',
+      'DressingInput',
+      'cmp_docs',
+      'cmp_menu',
+      'noice',
+      'prompt',
+      'TelescopePrompt',
+      'trouble',
+      'NvimTree',
+      'oil',
+      'aerial',
+      'undotree',
+      'fugitiveblame',
+      'diffview',
+      'qf',
+    },
+  })
+EOF
+
+  highlight! link MarkSignHL SignColumn
+  highlight! link MarkSignNumHL SignColumn
+endfunction
+
+if has('nvim')
+  call InitMarks()
+endif
+
+" -----------------------------------------------------------------------------
+" lewis6991/satellite.nvim
+function! InitSatellite() abort
+  lua << EOF
+  require('satellite').setup({
+    current_only = true,
+    handlers = {
+      cursor = {
+        enable = false,
+      },
+      diagnostic = {
+        enable = false,
+      },
+    },
+    excluded_filetypes = {
+      'blink-cmp-menu',
+      'dropbar_menu',
+      'dropbar_menu_fzf',
+      'DressingInput',
+      'cmp_docs',
+      'cmp_menu',
+      'noice',
+      'prompt',
+      'TelescopePrompt',
+      'trouble',
+      'NvimTree',
+      'oil',
+      'aerial',
+      'undotree',
+      'fugitiveblame',
+      'diffview',
+      'qf',
+    },
+  })
+EOF
+
+  highlight! link SatelliteSearch SatelliteMark
+  highlight! link SatelliteSearchCurrent SatelliteMark
+endfunction
+
+if has('nvim')
+  call InitSatellite()
+endif
+
+" -----------------------------------------------------------------------------
+" RRethy/vim-illuminate
+function! InitIlluminate() abort
+  lua << EOF
+  require('illuminate').configure({
+    disable_keymaps = true,
+    filetypes_denylist = {
+      'TelescopePrompt',
+      'trouble',
+      'NvimTree',
+      'oil',
+      'aerial',
+      'undotree',
+      'fugitiveblame',
+    },
+  })
+EOF
+endfunction
+
+if has('nvim')
+  call InitIlluminate()
+endif
+
+" -----------------------------------------------------------------------------
+" lukas-reineke/indent-blankline.nvim
+function! InitIndentBlankline() abort
+  lua << EOF
+  require('ibl').setup({
+    indent = {
+      char = '▏',
+    },
+    scope = {
+      enabled = false,
+    },
+  })
+EOF
+endfunction
+
+if has('nvim')
+  call InitIndentBlankline()
+endif
+
+" -----------------------------------------------------------------------------
+" lukas-reineke/virt-column.nvim
+function! InitVirtColumn() abort
+  lua << EOF
+  require('virt-column').setup({
+    char = '║',
+    highlight = 'IblIndent',
+  })
+EOF
+endfunction
+
+if has('nvim')
+  call InitVirtColumn()
+endif
+
+" -----------------------------------------------------------------------------
+" rachartier/tiny-inline-diagnostic.nvim
+function! InitTinyDiag() abort
+  lua << EOF
+  require('tiny-inline-diagnostic').setup({})
+
+  vim.diagnostic.config({ virtual_text = false })
+EOF
+endfunction
+
+if has('nvim')
+  call InitTinyDiag()
+endif
+
+" -----------------------------------------------------------------------------
+" j-hui/fidget.nvim
+function! InitFidget() abort
+  lua << EOF
+  require('fidget').setup({})
+
+  vim.notify = require('fidget').notify
+EOF
+endfunction
+
+if has('nvim')
+  call InitFidget()
+endif
+
+" -----------------------------------------------------------------------------
+" folke/which-key.nvim or liuchengxu/vim-which-key
+function! InitWhichKeyNvim() abort
+  lua << EOF
+  require('which-key').setup({
+    preset = 'helix',
+    win = {
+      width = 80,
+    },
+    delay = function(ctx)
+      return ctx.plugin and 0 or 500
+    end,
+    icons = {
+      mappings = false,
+      keys = {
+        Up = '<Up>',
+        Down = '<Down>',
+        Left = '<Left>',
+        Right = '<Right>',
+        C = '<C>',
+        M = '<M>',
+        D = '<D>',
+        S = '<S>',
+        CR = '<CR>',
+        Esc = '<Esc>',
+        ScrollWheelDown = '<ScrollWheelDown>',
+        ScrollWheelUp = '<ScrollWheelUp>',
+        NL = '<NL>',
+        BS = '<BS>',
+        Space = '<Space>',
+        Tab = '<Tab>',
+        F1 = '<F1>',
+        F2 = '<F2>',
+        F3 = '<F3>',
+        F4 = '<F4>',
+        F5 = '<F5>',
+        F6 = '<F6>',
+        F7 = '<F7>',
+        F8 = '<F8>',
+        F9 = '<F9>',
+        F10 = '<F10>',
+        F11 = '<F11>',
+        F12 = '<F12>',
+      },
+    },
+  })
+EOF
+
+  nnoremap <leader>? <cmd>WhichKey<cr>
+endfunction
+
+function! InitWhichKeyVim() abort
+  nnoremap <leader>? :WhichKey
+endfunction
+
+if has('nvim')
+  call InitWhichKeyNvim()
+else
+  call InitWhichKeyVim()
 endif
 
 " -----------------------------------------------------------------------------
@@ -1631,741 +2366,6 @@ endfunction
 
 if has('nvim')
   call InitGrugFar()
-endif
-
-" -----------------------------------------------------------------------------
-" nvim-lualine/lualine.nvim or vim-airline/vim-airline
-function! InitLualine() abort
-  lua << EOF
-  -- git integration
-  local function diff_source()
-    local gitsigns = vim.b.gitsigns_status_dict
-    if gitsigns then
-      return {
-        added = gitsigns.added,
-        modified = gitsigns.changed,
-        removed = gitsigns.removed,
-      }
-    end
-  end
-
-  -- dynamic width
-  local conditions = {
-    hide_in_width_first = function()
-      return vim.fn.winwidth(0) > 140
-    end,
-    hide_in_width_middle = function()
-      return vim.fn.winwidth(0) > 120
-    end,
-    hide_in_width_last = function()
-      return vim.fn.winwidth(0) > 80
-    end,
-  }
-
-  local lualine = require('lualine')
-  lualine.setup({
-    options = {
-      theme = 'tomorrow',
-      icons_enabled = false,
-      component_separators = { left = '', right = '' },
-      section_separators = { left = '', right = '' },
-    },
-    extensions = {
-      'nvim-tree',
-      'oil',
-      'aerial',
-      'quickfix',
-      'trouble',
-      'fugitive',
-    },
-    sections = {
-      lualine_a = {
-        {
-          'mode',
-          fmt = function(str) return str:sub(1, 1) end,
-        },
-      },
-      lualine_b = {
-      },
-      lualine_c = {
-        {
-          'filename',
-          path = 1,
-          file_status = false,
-        },
-        {
-          'aerial',
-          depth = 3,
-          sep = ' > ',
-          padding = { left = 0, right = 1 },
-          cond = conditions.hide_in_width_last,
-        },
-      },
-      lualine_x = {
-        {
-          'b:gitsigns_head',
-          cond = conditions.hide_in_width_first,
-        },
-        {
-          'diff',
-          source = diff_source,
-          padding = { left = 0, right = 1 },
-          cond = conditions.hide_in_width_middle,
-        },
-        {
-          'filetype',
-          cond = conditions.hide_in_width_middle,
-        },
-        {
-          'lsp_status',
-          symbols = { done = '' },
-          padding = { left = 0, right = 1 },
-          cond = conditions.hide_in_width_middle,
-        },
-        {
-          'diagnostics',
-          padding = { left = 0, right = 1 },
-          cond = conditions.hide_in_width_last,
-        },
-        {
-          function()
-            local shiftwidth = vim.api.nvim_buf_get_option(0, 'shiftwidth')
-            if vim.api.nvim_buf_get_option(0, 'expandtab') then
-              return 'S:sw=' .. shiftwidth
-            else
-              return 'T:ts=' .. vim.api.nvim_buf_get_option(0, 'tabstop')
-            end
-          end,
-          cond = conditions.hide_in_width_last
-        },
-        {
-          require('minuet.lualine'),
-        },
-      },
-      lualine_y = {
-      },
-      lualine_z = {
-        'location',
-        'searchcount',
-        'selectioncount',
-      },
-    },
-    inactive_sections = {
-      lualine_a = {
-      },
-      lualine_b = {
-      },
-      lualine_c = {
-        {
-          'filename',
-          path = 1,
-          file_status = false,
-        },
-      },
-      lualine_x = {
-        'location',
-      },
-      lualine_y = {
-      },
-      lualine_z = {
-      },
-    },
-  })
-EOF
-
-  set noruler
-endfunction
-
-function! InitAirline() abort
-  if !exists('g:airline_symbols')
-    let g:airline_symbols = {}
-  endif
-  let g:airline_powerline_fonts = 0
-  let g:airline_symbols.branch = '⎇'
-  let g:airline_symbols.paste = 'ρ'
-  let g:airline_symbols.readonly = '∥'
-  let g:airline_symbols.whitespace = 'Ξ'
-  let g:airline_symbols.linenr = ''
-  let g:airline_symbols.maxlinenr = ''
-  let g:airline_symbols.colnr = ':'
-
-  let g:airline_skip_empty_sections = 1
-  autocmd User AirlineAfterInit :let g:airline_section_y = ''
-  autocmd User AirlineAfterInit :let g:airline_section_z = airline#section#create(['linenr', 'colnr'])
-
-  let g:airline#extensions#whitespace#enabled = 0
-
-  let g:airline_mode_map = {
-    \ '__'     : '-',
-    \ 'c'      : 'C',
-    \ 'i'      : 'I',
-    \ 'ic'     : 'I',
-    \ 'ix'     : 'I',
-    \ 'n'      : 'N',
-    \ 'multi'  : 'M',
-    \ 'ni'     : 'N',
-    \ 'no'     : 'N',
-    \ 'R'      : 'R',
-    \ 'Rv'     : 'R',
-    \ 's'      : 'S',
-    \ 'S'      : 'S',
-    \ '␓'      : 'S',
-    \ 't'      : 'T',
-    \ 'v'      : 'V',
-    \ 'V'      : 'V',
-    \ '␖'      : 'V',
-    \ }
-endfunction
-
-if has('nvim')
-  call InitLualine()
-else
-  call InitAirline()
-endif
-
-" -----------------------------------------------------------------------------
-" romgrk/barbar.nvim or ap/vim-buftabline
-function! InitBarbar() abort
-  lua << EOF
-  vim.g.barbar_auto_setup = false
-  require('barbar').setup({
-    animation = false,
-    icons = {
-      buffer_index = true,
-      button = false,
-      filetype = {
-        enabled = false,
-      },
-      gitsigns = {
-        enabled = false,
-      },
-      separator = {
-        right = ' ',
-      },
-      inactive = {
-        separator = {
-          right = ' ',
-        },
-      },
-      modified = {
-        button = '',
-      },
-      pinned = {
-        filename = true,
-        separator = {
-          right = ' ★ ',
-        },
-      },
-      separator_at_end = false,
-    },
-    minimum_padding = 0,
-    maximum_padding = 0,
-    sidebar_filetypes = {},
-    no_name_title = '[No Name]',
-  })
-EOF
-
-  highlight! link BufferCurrentMod BufferCurrent
-  highlight! link BufferInactiveMod BufferInactive
-
-  nnoremap <C-Tab> <cmd>BufferNext<CR>
-  nnoremap <C-S-Tab> <cmd>BufferPrevious<CR>
-  nnoremap <C-[> <cmd>BufferPrevious<CR>
-  nnoremap <C-]> <cmd>BufferNext<CR>
-  nnoremap [b <cmd>BufferPrevious<CR>
-  nnoremap ]b <cmd>BufferNext<CR>
-  nnoremap <C-1> <cmd>BufferGoto 1<CR>
-  nnoremap <C-2> <cmd>BufferGoto 2<CR>
-  nnoremap <C-3> <cmd>BufferGoto 3<CR>
-  nnoremap <C-4> <cmd>BufferGoto 4<CR>
-  nnoremap <C-5> <cmd>BufferGoto 5<CR>
-  nnoremap <C-6> <cmd>BufferGoto 6<CR>
-  nnoremap <C-7> <cmd>BufferGoto 7<CR>
-  nnoremap <C-8> <cmd>BufferGoto 8<CR>
-  nnoremap <C-9> <cmd>BufferLast<CR>
-
-  cnoreabbrev bq BufferClose
-  cnoreabbrev bd BufferClose
-  nnoremap <c-q> <cmd>BufferClose<cr>
-  nnoremap <c-w>Q <cmd>BufferClose<cr>
-  cnoreabbrev bo BufferCloseAllButCurrentOrPinned
-  cnoreabbrev bon BufferCloseAllButCurrentOrPinned
-  cnoreabbrev bonly BufferCloseAllButCurrentOrPinned
-  nnoremap <c-w>O <cmd>BufferCloseAllButCurrentOrPinned<cr>
-  cnoreabbrev bql BufferCloseBuffersLeft
-  cnoreabbrev bdl BufferCloseBuffersLeft
-  cnoreabbrev bqr BufferCloseBuffersRight
-  cnoreabbrev bdr BufferCloseBuffersRight
-
-  nnoremap <C-,> <cmd>BufferMovePrevious<CR>
-  nnoremap <C-.> <cmd>BufferMoveNext<CR>
-
-  cnoreabbrev bpin BufferPin
-  cnoreabbrev bpi BufferPin
-
-  cnoreabbrev bs BufferOrderByDirectory
-endfunction
-
-function! InitBuftablineVim() abort
-  nnoremap <C-Tab> <cmd>bn<CR>
-  nnoremap <C-S-Tab> <cmd>bp<CR>
-  nnoremap <C-[> <cmd>bp<CR>
-  nnoremap <C-]> <cmd>bn<CR>
-  nnoremap <C-1> <Plug>BufTabLine.Go(1)
-  nnoremap <C-2> <Plug>BufTabLine.Go(2)
-  nnoremap <C-3> <Plug>BufTabLine.Go(3)
-  nnoremap <C-4> <Plug>BufTabLine.Go(4)
-  nnoremap <C-5> <Plug>BufTabLine.Go(5)
-  nnoremap <C-6> <Plug>BufTabLine.Go(6)
-  nnoremap <C-7> <Plug>BufTabLine.Go(7)
-  nnoremap <C-8> <Plug>BufTabLine.Go(8)
-  nnoremap <C-9> <Plug>BufTabLine.Go(-1)
-endfunction
-
-if has('nvim')
-  call InitBarbar()
-else
-  call InitBuftablineVim()
-endif
-
-" -----------------------------------------------------------------------------
-" s1n7ax/nvim-window-picker
-function! InitWindowPicker() abort
-  lua << EOF
-  require('window-picker').setup({
-    hint = 'floating-big-letter',
-    picker_config = {
-      handle_mouse_click = true,
-    },
-    show_prompt = false,
-    filter_rules = {
-      bo = {
-        filetype = {},
-        buftype = {},
-      },
-    },
-  })
-EOF
-
-  nnoremap <c-w><c-w> <cmd>lua vim.api.nvim_set_current_win(require('window-picker').pick_window() or vim.api.nvim_get_current_win())<cr>
-endfunction
-
-if has('nvim')
-  call InitWindowPicker()
-endif
-
-" -----------------------------------------------------------------------------
-" sindrets/winshift.nvim
-function! InitWinshift() abort
-  lua << EOF
-  require('winshift').setup({
-    window_picker = require('window-picker').pick_window,
-  })
-EOF
-
-  nnoremap <C-w>x <cmd>WinShift swap<cr>
-endfunction
-
-if has('nvim')
-  call InitWinshift()
-endif
-
-" -----------------------------------------------------------------------------
-" kevinhwang91/nvim-bqf
-function! InitBqf() abort
-  lua << EOF
-  require('bqf').setup({
-    preview = {
-      auto_preview = false,
-      winblend = 0,
-      should_preview_cb = function(bufnr, qwinid)
-        local ret = true
-        local bufname = vim.api.nvim_buf_get_name(bufnr)
-        local fsize = vim.fn.getfsize(bufname)
-        if fsize > 100 * 1024 then
-          ret = false
-        elseif bufname:match('^fugitive://') then
-          ret = false
-        end
-        return ret
-      end,
-    },
-    func_map = {
-      tab = '',
-      tabb = '',
-      tabc = '',
-      prevfile = '',
-      nextfile = '',
-      pscrollup = '<c-u>',
-      pscrolldown = '<c-d>',
-      ptoggleauto = '<c-p>',
-    },
-  })
-
-  vim.api.nvim_create_autocmd('BufRead', {
-    callback = function(ev)
-      if vim.bo[ev.buf].buftype == 'quickfix' then
-        vim.schedule(function()
-          vim.keymap.set('n', '<c-t>', function()
-            vim.cmd([[cclose]])
-            vim.cmd([[Trouble qflist open]])
-          end, { buffer = ev.buf })
-
-          vim.keymap.set('n', 'zx', function()
-            require('quicker').refresh()
-          end, { buffer = ev.buf })
-
-          vim.keymap.set('n', 'q', function()
-            vim.cmd('cclose')
-          end, { buffer = ev.buf })
-        end)
-      end
-    end,
-  })
-EOF
-endfunction
-
-if has('nvim')
-  call InitBqf()
-endif
-
-" -----------------------------------------------------------------------------
-" stevearc/quicker.nvim
-function! InitQuicker() abort
-  lua << EOF
-  require('quicker').setup({
-    edit = {
-      enabled = true,
-      autosave = true,
-    },
-    highlight = {
-      treesitter = false,
-      lsp = false,
-    },
-    type_icons = {
-      E = 'E',
-      W = 'W',
-      I = 'I',
-      N = 'N',
-      H = 'H',
-    },
-  })
-EOF
-
-  nnoremap <leader>q <cmd>lua require('quicker').toggle({focus = true})<CR>
-endfunction
-
-if has('nvim')
-  call InitQuicker()
-endif
-
-" -----------------------------------------------------------------------------
-" folke/trouble.nvim
-function! InitTrouble() abort
-  lua << EOF
-  require('trouble').setup({
-    focus = true,
-    auto_refresh = false,
-    auto_preview = false,
-    follow = false,
-    win = {
-      position = 'right',
-      size = 0.45,
-    },
-    keys = {
-      ['<c-x>'] = 'jump_split',
-      ['<c-s>'] = false,
-    },
-    icons = {
-      indent = {
-        fold_open     = '  ',
-        fold_closed   = '│ ',
-      },
-      folder_closed   = '',
-      folder_open     = '',
-      kinds = {
-        Array         = '',
-        Boolean       = '',
-        Class         = '',
-        Constant      = '',
-        Constructor   = '',
-        Enum          = '',
-        EnumMember    = '',
-        Event         = '',
-        Field         = '',
-        File          = '',
-        Function      = '',
-        Interface     = '',
-        Key           = '',
-        Method        = '',
-        Module        = '',
-        Namespace     = '',
-        Null          = '',
-        Number        = '',
-        Object        = '',
-        Operator      = '',
-        Package       = '',
-        Property      = '',
-        String        = '',
-        Struct        = '',
-        TypeParameter = '',
-        Variable      = '',
-      },
-    },
-  })
-EOF
-
-  highlight! link TroubleNormal Normal
-  highlight! link TroubleNormalNC Normal
-
-  nnoremap <leader>T <cmd>lua require('trouble').toggle()<CR>
-  nnoremap [t <cmd>lua require('trouble').prev() require('trouble').jump()<CR>
-  nnoremap ]t <cmd>lua require('trouble').next() require('trouble').jump()<CR>
-  nnoremap [T <cmd>lua require('trouble').first() require('trouble').jump()<CR>
-  nnoremap ]T <cmd>lua require('trouble').last() require('trouble').jump()<CR>
-endfunction
-
-if has('nvim')
-  call InitTrouble()
-endif
-
-" -----------------------------------------------------------------------------
-" j-hui/fidget.nvim
-function! InitFidget() abort
-  lua << EOF
-  require('fidget').setup({})
-
-  vim.notify = require('fidget').notify
-EOF
-endfunction
-
-if has('nvim')
-  call InitFidget()
-endif
-
-" -----------------------------------------------------------------------------
-" chentoast/marks.nvim
-function! InitMarks() abort
-  lua << EOF
-  require('marks').setup({
-    builtin_marks = {
-      "'",
-      '^',
-      '[',
-      '<',
-    },
-    default_mappings = false,
-    mappings = {
-      set = 'm',
-      set_next = 'm,',
-      toggle = 'm;',
-      delete = 'dm',
-      delete_line = 'dm-',
-    },
-    excluded_filetypes = {
-      'blink-cmp-menu',
-      'dropbar_menu',
-      'dropbar_menu_fzf',
-      'DressingInput',
-      'cmp_docs',
-      'cmp_menu',
-      'noice',
-      'prompt',
-      'TelescopePrompt',
-      'trouble',
-      'NvimTree',
-      'oil',
-      'aerial',
-      'undotree',
-      'fugitiveblame',
-      'diffview',
-      'qf',
-    },
-  })
-EOF
-
-  highlight! link MarkSignHL SignColumn
-  highlight! link MarkSignNumHL SignColumn
-endfunction
-
-if has('nvim')
-  call InitMarks()
-endif
-
-" -----------------------------------------------------------------------------
-" lewis6991/satellite.nvim
-function! InitSatellite() abort
-  lua << EOF
-  require('satellite').setup({
-    current_only = true,
-    handlers = {
-      cursor = {
-        enable = false,
-      },
-      diagnostic = {
-        enable = false,
-      },
-    },
-    excluded_filetypes = {
-      'blink-cmp-menu',
-      'dropbar_menu',
-      'dropbar_menu_fzf',
-      'DressingInput',
-      'cmp_docs',
-      'cmp_menu',
-      'noice',
-      'prompt',
-      'TelescopePrompt',
-      'trouble',
-      'NvimTree',
-      'oil',
-      'aerial',
-      'undotree',
-      'fugitiveblame',
-      'diffview',
-      'qf',
-    },
-  })
-EOF
-
-  highlight! link SatelliteSearch SatelliteMark
-  highlight! link SatelliteSearchCurrent SatelliteMark
-endfunction
-
-if has('nvim')
-  call InitSatellite()
-endif
-
-" -----------------------------------------------------------------------------
-" RRethy/vim-illuminate
-function! InitIlluminate() abort
-  lua << EOF
-  require('illuminate').configure({
-    disable_keymaps = true,
-    filetypes_denylist = {
-      'TelescopePrompt',
-      'trouble',
-      'NvimTree',
-      'oil',
-      'aerial',
-      'undotree',
-      'fugitiveblame',
-    },
-  })
-EOF
-endfunction
-
-if has('nvim')
-  call InitIlluminate()
-endif
-
-" -----------------------------------------------------------------------------
-" lukas-reineke/indent-blankline.nvim
-function! InitIndentBlankline() abort
-  lua << EOF
-  require('ibl').setup({
-    indent = {
-      char = '▏',
-    },
-    scope = {
-      enabled = false,
-    },
-  })
-EOF
-endfunction
-
-if has('nvim')
-  call InitIndentBlankline()
-endif
-
-" -----------------------------------------------------------------------------
-" lukas-reineke/virt-column.nvim
-function! InitVirtColumn() abort
-  lua << EOF
-  require('virt-column').setup({
-    char = '║',
-    highlight = 'IblIndent',
-  })
-EOF
-endfunction
-
-if has('nvim')
-  call InitVirtColumn()
-endif
-
-" -----------------------------------------------------------------------------
-" rachartier/tiny-inline-diagnostic.nvim
-function! InitTinyDiag() abort
-  lua << EOF
-  require('tiny-inline-diagnostic').setup({})
-
-  vim.diagnostic.config({ virtual_text = false })
-EOF
-endfunction
-
-if has('nvim')
-  call InitTinyDiag()
-endif
-
-" -----------------------------------------------------------------------------
-" folke/which-key.nvim or liuchengxu/vim-which-key
-function! InitWhichKeyNvim() abort
-  lua << EOF
-  require('which-key').setup({
-    preset = 'helix',
-    win = {
-      width = 80,
-    },
-    delay = function(ctx)
-      return ctx.plugin and 0 or 500
-    end,
-    icons = {
-      mappings = false,
-      keys = {
-        Up = '<Up>',
-        Down = '<Down>',
-        Left = '<Left>',
-        Right = '<Right>',
-        C = '<C>',
-        M = '<M>',
-        D = '<D>',
-        S = '<S>',
-        CR = '<CR>',
-        Esc = '<Esc>',
-        ScrollWheelDown = '<ScrollWheelDown>',
-        ScrollWheelUp = '<ScrollWheelUp>',
-        NL = '<NL>',
-        BS = '<BS>',
-        Space = '<Space>',
-        Tab = '<Tab>',
-        F1 = '<F1>',
-        F2 = '<F2>',
-        F3 = '<F3>',
-        F4 = '<F4>',
-        F5 = '<F5>',
-        F6 = '<F6>',
-        F7 = '<F7>',
-        F8 = '<F8>',
-        F9 = '<F9>',
-        F10 = '<F10>',
-        F11 = '<F11>',
-        F12 = '<F12>',
-      },
-    },
-  })
-EOF
-
-  nnoremap <leader>? <cmd>WhichKey<cr>
-endfunction
-
-function! InitWhichKeyVim() abort
-  nnoremap <leader>? :WhichKey
-endfunction
-
-if has('nvim')
-  call InitWhichKeyNvim()
-else
-  call InitWhichKeyVim()
 endif
 
 " -----------------------------------------------------------------------------
