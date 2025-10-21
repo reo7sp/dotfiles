@@ -1680,7 +1680,13 @@ endif
 " j-hui/fidget.nvim
 function! InitFidget() abort
   lua << EOF
-  require('fidget').setup({})
+  require('fidget').setup({
+    notification = {
+      view = {
+        stack_upwards = false,
+      },
+    },
+  })
 
   vim.notify = require('fidget').notify
 EOF
@@ -1916,7 +1922,7 @@ function! InitTelescope() abort
       },
       lsp_references = {
         fname_width = 60,
-        include_current_line = true,
+        include_current_line = false,
       },
       lsp_dynamic_workspace_symbols = {
         fname_width = 60,

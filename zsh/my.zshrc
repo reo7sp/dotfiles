@@ -2,7 +2,7 @@
 
 # =============================================================================
 # env
-export PATH="$HOME/.local/bin:$PATH:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+export PATH="$HOME/bin:$HOME/.local/bin:$PATH:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
 
@@ -34,6 +34,9 @@ if can-exec brew; then
   eval "$(brew shellenv)"
 fi
 
+export PYENV_ROOT="$HOME/.pyenv"
+export PATH="$PYENV_ROOT/bin:$PATH"
+
 if can-exec nvim; then
   export EDITOR='nvim'
 else
@@ -44,11 +47,6 @@ fi
 # =============================================================================
 # plugins
 source "$HOME/.antidote/antidote.zsh"
-
-export PYENV_ROOT="$HOME/.pyenv"
-export PATH="$PYENV_ROOT/bin:$PATH"
-export NVM_DIR="$HOME/.nvm"
-export NVM_LAZY_LOAD=true
 
 antidote load
 
@@ -676,6 +674,20 @@ c() {
 alias cc='cursor-agent'
 
 # -----------------------------------------------------------------------------
+# claude code
+if can-exec claude; then
+  if [[ -z $REAL_CLAUDE ]]; then
+    export REAL_CLAUDE=$(which claude)
+  fi
+fi
+
+if [[ -n $REAL_CLAUDE ]]; then
+  claude() {
+    http_proxy=http://127.0.0.1:1087 https_proxy=http://127.0.0.1:1087 HTTP_PROXY=http://127.0.0.1:1087 HTTPS_PROXY=http://127.0.0.1:1087 $REAL_CLAUDE "$@"
+  }
+fi
+
+# -----------------------------------------------------------------------------
 # go
 export GOTESTSUM_FORMAT=testdox
 
@@ -696,6 +708,25 @@ alias p2='python2'
 alias pp='python3 -m ptpython || ptpython'
 alias pp-install='pip3 install ptpython --break-system-packages'
 alias jn='jupyter notebook'
+
+# -----------------------------------------------------------------------------
+# nodejs
+export NVM_DIR="$HOME/.nvm"
+
+load_nvm() {
+  if [[ -z "$NVM_LOADED" ]]; then
+    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+    [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+    export NVM_LOADED=1
+  fi
+}
+
+nvm() { load_nvm; nvm "$@"; }
+npm() { load_nvm; npm "$@"; }
+yarn() { load_nvm; yarn "$@"; }
+pnpm() { load_nvm; pnpm "$@"; }
+node() { load_nvm; node "$@"; }
+npx() { load_nvm; npx "$@"; }
 
 # -----------------------------------------------------------------------------
 # docker
@@ -724,7 +755,7 @@ alias timestamp='date +%s'
 alias is-ip-in-net='python3 -c "import sys; from ipaddress import ip_address, ip_network; print(ip_address(sys.argv[1]) in ip_network(sys.argv[2]))"'
 
 strip-whitespace() {
-  xargs -n1 gsed -i 's/[ \t]*$//'
+  gsed -i 's/[ \t]*$//' "$@"
 }
 
 # -----------------------------------------------------------------------------

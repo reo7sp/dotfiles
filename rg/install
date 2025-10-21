@@ -3,3 +3,4 @@ set -e -o pipefail
 
 
 cp ripgreprc ~/.ripgreprc
+cp rgignore ~/.rgignore
