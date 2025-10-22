@@ -1885,7 +1885,6 @@ function! InitTelescope() abort
     pickers = {
       find_files = {
         hidden = true,
-        initial_mode = 'insert',
         mappings = {
           n = {
             ['<C-i>'] = function () require('telescope.builtin').find_files({ no_ignore = true }) end,
@@ -1894,9 +1893,6 @@ function! InitTelescope() abort
             ['<C-i>'] = function () require('telescope.builtin').find_files({ no_ignore = true }) end,
           },
         },
-      },
-      live_grep = {
-        initial_mode = 'insert',
       },
       buffers = {
         show_all_buffers = false,
@@ -1909,7 +1905,6 @@ function! InitTelescope() abort
       },
       jumplist = {
         show_line = false,
-        initial_mode = 'insert',
       },
       lsp_definitions = {
         fname_width = 60,
@@ -1927,10 +1922,6 @@ function! InitTelescope() abort
       lsp_dynamic_workspace_symbols = {
         fname_width = 60,
         ignore_symbols = { 'variable', 'field' },
-        initial_mode = 'insert',
-      },
-      commands = {
-        initial_mode = 'insert',
       },
     },
     extensions = {
@@ -1964,10 +1955,8 @@ function! InitTelescope() abort
           'COMMIT_',
           '-todo$',
         },
-        initial_mode = 'insert',
       },
       live_grep_args = {
-        initial_mode = 'insert',
         mappings = {
           n = {
             ['<C-k>'] = require('telescope-live-grep-args.actions').quote_prompt(),
@@ -1984,9 +1973,6 @@ function! InitTelescope() abort
             ['<C-g>'] = require('telescope-live-grep-args.actions').quote_prompt({ postfix = ' -g ' }),
           },
         },
-      },
-      dir = {
-        initial_mode = 'insert',
       },
       hierarchy = {
         theme = 'ivy',
@@ -2079,7 +2065,7 @@ EOF
   nnoremap <leader>b <cmd>Telescope buffers<cr>
   nnoremap <leader>B <cmd>Telescope telescope-tabs list_tabs<cr>
   nnoremap <leader>y <cmd>Telescope yank_history<cr>
-  nnoremap <leader>k <cmd>Telescope aerial initial_mode=insert<cr>
+  nnoremap <leader>k <cmd>Telescope aerial<cr>
   nnoremap <leader>K <cmd>Telescope lsp_dynamic_workspace_symbols<cr>
   nnoremap <leader>d <cmd>Telescope diagnostics bufnr=0<CR>
   nnoremap <leader>D <cmd>Telescope diagnostics<CR>
