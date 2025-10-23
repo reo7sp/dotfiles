@@ -1365,7 +1365,7 @@ function! InitBqf() abort
         local ret = true
         local bufname = vim.api.nvim_buf_get_name(bufnr)
         local fsize = vim.fn.getfsize(bufname)
-        if fsize > 100 * 1024 then
+        if fsize > 1000 * 1024 then
           ret = false
         elseif bufname:match('^fugitive://') then
           ret = false
@@ -2321,7 +2321,7 @@ function! InitAerial() abort
     autojump = true,
     show_guides = true,
     disable_max_lines = 99999,
-    disable_max_size = 100 * 1024,
+    disable_max_size = 1000 * 1024,
   })
 EOF
 
@@ -2403,7 +2403,7 @@ function! InitTreesitter() abort
     highlight = {
       enable = true,
       disable = function(lang, buf)
-        local max_filesize = 100 * 1024
+        local max_filesize = 1000 * 1024
         local ok, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(buf))
         if ok and stats and stats.size > max_filesize then
             return true
@@ -2542,7 +2542,7 @@ function! InitRenderMarkdown() abort
         enabled = true,
       },
     },
-    max_file_size = 0.100,
+    max_file_size = 1,
     heading = {
       sign = false,
       position = 'inline',

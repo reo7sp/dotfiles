@@ -290,6 +290,11 @@ if can-exec v; then
 fi
 alias v='vim'
 
+xargs-vim() {
+  vim -q -
+}
+alias xargs-v='xargs-vim'
+
 alias edit-vim='vim ~/.my.vimrc'
 alias edit-vimrc='vim ~/.vimrc'
 alias edit-vim-minuet-llm-remote='vim ~/.config/nvim/lua/minuet_llm_remote_config.lua'
