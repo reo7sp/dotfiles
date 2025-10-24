@@ -37,6 +37,8 @@ fi
 export PYENV_ROOT="$HOME/.pyenv"
 export PATH="$PYENV_ROOT/bin:$PATH"
 
+export PATH="$HOME/bin:$HOME/.local/bin:$PATH"
+
 if can-exec nvim; then
   export EDITOR='nvim'
 else
@@ -258,6 +260,7 @@ aliases-ls() {
 # zsh
 alias edit-zsh='vim ~/.my.zshrc; source ~/.zshrc'
 alias edit-zsh-plugins='vim ~/.zsh_plugins.txt; source ~/.zshrc'
+alias edit-zsh-p10k='vim ~/.p10k.zsh; source ~/.zshrc'
 alias edit-zshrc='vim ~/.zshrc; source ~/.zshrc'
 
 alias autoenv-edit-enter='vim .autoenv.zsh'
@@ -666,20 +669,21 @@ m() {
 }
 
 # -----------------------------------------------------------------------------
-# cursor
-c() {
-  lcd
-  if [[ -z $1 ]]; then
-    cursor .
-  else
-    cursor "$@"
+# codex
+if can-exec codex; then
+  if [[ -z $REAL_CODEX ]]; then
+    export REAL_CODEX=$(which codex)
   fi
-}
+fi
 
-alias cc='cursor-agent'
+if [[ -n $REAL_CODEX ]]; then
+  codex() {
+    http_proxy=http://127.0.0.1:1087 https_proxy=http://127.0.0.1:1087 HTTP_PROXY=http://127.0.0.1:1087 HTTPS_PROXY=http://127.0.0.1:1087 $REAL_CODEX "$@"
+  }
+fi
 
 # -----------------------------------------------------------------------------
-# claude code
+# claude
 if can-exec claude; then
   if [[ -z $REAL_CLAUDE ]]; then
     export REAL_CLAUDE=$(which claude)

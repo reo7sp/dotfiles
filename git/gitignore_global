@@ -5,3 +5,4 @@
 .idea
 .vscode
 pyrightconfig.json
+.claude
