@@ -678,7 +678,7 @@ fi
 
 if [[ -n $REAL_CODEX ]]; then
   codex() {
-    http_proxy=http://127.0.0.1:1087 https_proxy=http://127.0.0.1:1087 HTTP_PROXY=http://127.0.0.1:1087 HTTPS_PROXY=http://127.0.0.1:1087 $REAL_CODEX "$@"
+    ALL_PROXY=socks5h://127.0.0.1:1086 $REAL_CODEX "$@"
   }
 fi
 
@@ -692,7 +692,7 @@ fi
 
 if [[ -n $REAL_CLAUDE ]]; then
   claude() {
-    http_proxy=http://127.0.0.1:1087 https_proxy=http://127.0.0.1:1087 HTTP_PROXY=http://127.0.0.1:1087 HTTPS_PROXY=http://127.0.0.1:1087 $REAL_CLAUDE "$@"
+    ALL_PROXY=socks5h://127.0.0.1:1086 $REAL_CLAUDE "$@"
   }
 fi
 
