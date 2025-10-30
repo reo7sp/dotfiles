@@ -210,6 +210,7 @@ if has('nvim')
   Plug 'princejoogie/dir-telescope.nvim'
   Plug 'LukasPietzschmann/telescope-tabs'
   Plug 'jmacadie/telescope-hierarchy.nvim'
+  Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 endif
 if has('nvim')
   Plug 'stevearc/oil.nvim'
@@ -492,7 +493,7 @@ function! InitLLM() abort
   })
 
   local default_preset = 'local'
-  if preset_configs['remote'] 
+  if preset_configs['remote']
       and preset_configs['remote']['provider_options']
       and preset_configs['remote']['provider_options']['openai_compatible']
       and preset_configs['remote']['provider_options']['openai_compatible']['end_point'] then
@@ -1377,8 +1378,8 @@ function! InitBqf() abort
       tab = '',
       tabb = '',
       tabc = '',
-      prevfile = '',
-      nextfile = '',
+      prevfile = 'K',
+      nextfile = 'J',
       pscrollup = '<c-u>',
       pscrolldown = '<c-d>',
       ptoggleauto = '<c-p>',
@@ -1422,7 +1423,7 @@ function! InitQuicker() abort
       autosave = true,
     },
     highlight = {
-      treesitter = false,
+      treesitter = true,
       lsp = false,
     },
     type_icons = {
@@ -1496,16 +1497,49 @@ function! InitTrouble() abort
       },
     },
   })
+
+  local function qf_next()
+    if require('trouble').is_open() then
+      require('trouble').next({ skip_groups = true, jump = true })
+    else
+      vim.cmd('cnext')
+    end
+  end
+
+  local function qf_prev()
+    if require('trouble').is_open() then
+      require('trouble').previous({ skip_groups = true, jump = true })
+    else
+      vim.cmd('cprev')
+    end
+  end
+
+  local function qf_first()
+    if require('trouble').is_open() then
+      require('trouble').first({ jump = true })
+    else
+      vim.cmd('cfirst')
+    end
+  end
+
+  local function qf_last()
+    if require('trouble').is_open() then
+      require('trouble').last({ jump = true })
+    else
+      vim.cmd('clast')
+    end
+  end
+
+  vim.keymap.set('n', ']q', qf_next, {silent = true, desc = 'Next (Trouble/QF)'})
+  vim.keymap.set('n', '[q', qf_prev, {silent = true, desc = 'Prev (Trouble/QF)'})
+  vim.keymap.set('n', '[Q', qf_first, { silent = true, desc = 'First (Trouble/QF)' })
+  vim.keymap.set('n', ']Q', qf_last, { silent = true, desc = 'Last (Trouble/QF)' })
 EOF
 
   highlight! link TroubleNormal Normal
   highlight! link TroubleNormalNC Normal
 
   nnoremap <leader>T <cmd>lua require('trouble').toggle()<CR>
-  nnoremap [t <cmd>lua require('trouble').prev() require('trouble').jump()<CR>
-  nnoremap ]t <cmd>lua require('trouble').next() require('trouble').jump()<CR>
-  nnoremap [T <cmd>lua require('trouble').first() require('trouble').jump()<CR>
-  nnoremap ]T <cmd>lua require('trouble').last() require('trouble').jump()<CR>
 endfunction
 
 if has('nvim')
