@@ -1908,7 +1908,7 @@ function! InitTelescope() abort
           ['<C-p>'] = require('telescope.actions.layout').toggle_preview,
         },
       },
-      initial_mode = 'normal',
+      initial_mode = 'insert',
       disable_devicons = true,
       dynamic_preview_title = true,
       set_env = {
@@ -2099,7 +2099,7 @@ EOF
   nnoremap <leader>b <cmd>Telescope buffers<cr>
   nnoremap <leader>B <cmd>Telescope telescope-tabs list_tabs<cr>
   nnoremap <leader>y <cmd>Telescope yank_history<cr>
-  nnoremap <leader>k <cmd>Telescope aerial<cr>
+  nnoremap <leader>k <cmd>Telescope aerial initial_mode=insert<cr>
   nnoremap <leader>K <cmd>Telescope lsp_dynamic_workspace_symbols<cr>
   nnoremap <leader>d <cmd>Telescope diagnostics bufnr=0<CR>
   nnoremap <leader>D <cmd>Telescope diagnostics<CR>
