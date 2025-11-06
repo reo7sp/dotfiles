@@ -1453,8 +1453,7 @@ function! InitTrouble() abort
     auto_preview = false,
     follow = false,
     win = {
-      position = 'right',
-      size = 0.45,
+      position = 'bottom',
     },
     keys = {
       ['<c-x>'] = 'jump_split',
@@ -2915,7 +2914,6 @@ cnoremap <C-A> <Home>
 cnoremap <C-E> <End>
 cnoremap <C-F> <C-right>
 cnoremap <C-B> <C-left>
-
 inoremap <A-left> <C-left>
 inoremap <A-right> <C-right>
 cnoremap <A-left> <C-left>
@@ -2932,6 +2930,10 @@ cnoreabbrev tq tabclose
 nnoremap ZT <cmd>tabclose<cr>
 nnoremap ZA <cmd>wqa<cr>
 
+nnoremap <C-h> <C-w>h
+nnoremap <C-j> <C-w>j
+nnoremap <C-k> <C-w>k
+nnoremap <C-l> <C-w>l
 nnoremap <C-Up> <cmd>resize +2<cr>
 nnoremap <C-Down> <cmd>resize -2<cr>
 nnoremap <C-Right> <cmd>vertical resize +2<cr>

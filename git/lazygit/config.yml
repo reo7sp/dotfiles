@@ -1,11 +1,9 @@
 os:
   shellFunctionsFile: ~/Library/Application\ Support/lazygit/shell.sh
-
 git:
-  paging:
-    colorArg: always
-    pager: delta --light --paging=never
-
+  pagers:
+    - colorArg: always
+      pager: delta --light --paging=never
 gui:
   commandLogSize: 3
   border: single
