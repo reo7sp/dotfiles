@@ -4,6 +4,7 @@
 .autoenv_leave.zsh
 .idea
 .vscode
+compile_commands.json
 pyrightconfig.json
 AGENTS.md
 .claude

@@ -730,12 +730,12 @@ load_nvm() {
   fi
 }
 
-nvm() { load_nvm; nvm "$@"; }
-npm() { load_nvm; npm "$@"; }
-yarn() { load_nvm; yarn "$@"; }
-pnpm() { load_nvm; pnpm "$@"; }
-node() { load_nvm; node "$@"; }
-npx() { load_nvm; npx "$@"; }
+nvm() { load_nvm; command nvm "$@"; }
+npm() { load_nvm; command npm "$@"; }
+yarn() { load_nvm; command yarn "$@"; }
+pnpm() { load_nvm; command pnpm "$@"; }
+node() { load_nvm; command node "$@"; }
+npx() { load_nvm; command npx "$@"; }
 
 # -----------------------------------------------------------------------------
 # docker

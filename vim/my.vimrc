@@ -257,8 +257,14 @@ Plug 'fladson/vim-kitty'
 
 " -----------------------------------------------------------------------------
 " commands
+if has('nvim')
+  Plug 'akinsho/toggleterm.nvim'
+endif
 Plug 'tpope/vim-eunuch'
 Plug 'tpope/vim-dispatch'
+if has('nvim')
+  Plug 'stevearc/overseer.nvim'
+endif
 Plug 'tpope/vim-fugitive'
 Plug 'rbong/vim-flog', {'on': ['Flog', 'Flogsplit']}
 let g:DiffChar_NullMap = 1
@@ -296,8 +302,24 @@ if has('nvim')
       aerial = true,
       barbar = true,
       blink_cmp = true,
+      diffview = true,
       fidget = true,
+      gitsigns = true,
+      grug_far = true,
       mason = true,
+      nvim_surround = true,
+      ufo = true,
+      window_picker = true,
+      overseer = true,
+      render_markdown = true,
+      telescope = {
+        enabled = true,
+      },
+      lsp_trouble = true,
+      illuminate = {
+        enabled = true,
+        lsp = false
+      },
       vim_sneak = true,
       which_key = true,
       native_lsp = {
@@ -372,10 +394,19 @@ function! InitLSP() abort
   require('mason').setup({})
 
   local lsp_custom = {
+    clangd = {
+      cmd = {
+        'clangd',
+        '--background-index',
+        '--clang-tidy',
+        '--completion-style=detailed',
+      },
+    },
     gopls = {
       settings = {
         gopls = {
           analyses = {
+            useany = false,
           },
         },
       },
@@ -935,6 +966,12 @@ function! InitConform() abort
   lua << EOF
   require('conform').setup({
     formatters_by_ft = {
+      c = {
+        'clang_format',
+      },
+      cpp = {
+        'clang_format',
+      },
       go = {
         'goimports',
         'gofmt',
@@ -943,11 +980,53 @@ function! InitConform() abort
         'isort',
         'black',
       },
+      lua = {
+        'stylua',
+      },
+      html = {
+        'prettier',
+      },
+      css = {
+        'prettier',
+      },
+      javascript = {
+        'prettier',
+      },
+      typescript = {
+        'prettier',
+      },
+      tsx = {
+        'prettier',
+      },
+      jsx = {
+        'prettier',
+      },
+      sh = {
+        'shfmt',
+      },
+      json = {
+        'jq',
+      },
+      yaml = {
+        'yamlfmt',
+      },
     },
     default_format_opts = {
       lsp_format = 'fallback',
     },
   })
+
+  vim.api.nvim_create_user_command('Format', function(args)
+    local range = nil
+    if args.count ~= -1 then
+      local end_line = vim.api.nvim_buf_get_lines(0, args.line2 - 1, args.line2, true)[1]
+      range = {
+        start = { args.line1, 0 },
+        ['end'] = { args.line2, end_line:len() },
+      }
+    end
+    require('conform').format({ async = true, lsp_format = 'fallback', range = range })
+  end, { range = true })
 
   vim.api.nvim_create_autocmd('FileType', {
     callback = function(args)
@@ -1715,6 +1794,9 @@ function! InitFidget() abort
   lua << EOF
   require('fidget').setup({
     notification = {
+      window = {
+        winblend = 0,
+      },
       view = {
         stack_upwards = false,
       },
@@ -2324,11 +2406,38 @@ function! InitOther() abort
   lua << EOF
   require('other-nvim').setup({
     mappings = {
+      -- h -> c
+      {
+        pattern = "(.+)/include/(.+)%.h$",
+        target  = "%1/src/%2.c",
+        context = "c",
+      },
+      -- c -> h
+      {
+        pattern = "(.+)/src/(.+)%.c$",
+        target  = "%1/include/%2.h",
+        context = "c",
+      },
+      -- h -> cpp
+      {
+        pattern = "(.+)/include/(.+)%.h$",
+        target  = "%1/src/%2.cpp",
+        context = "c",
+      },
+      -- cpp -> h
+      {
+        pattern = "(.+)/src/(.+)%.cpp$",
+        target  = "%1/include/%2.h",
+        context = "c",
+      },
+
       'c',
       'golang',
       'python',
+      'rust',
     },
   })
+  vim.keymap.set('n', '<leader>a', '<cmd>Other<CR>')
 EOF
 endfunction
 
@@ -2635,6 +2744,49 @@ if has('nvim')
 endif
 
 " -----------------------------------------------------------------------------
+" akinsho/toggleterm.nvim
+function! InitToggleterm() abort
+  lua << EOF
+  require('toggleterm').setup({
+    open_mapping = [[<c-\><c-\>]],
+    autochdir = true,
+    shade_terminals = false,
+  })
+
+  function _G.set_terminal_keymaps()
+    local opts = {buffer = 0}
+    vim.keymap.set('t', '<C-h>', [[<Cmd>wincmd h<CR>]], opts)
+    vim.keymap.set('t', '<C-j>', [[<Cmd>wincmd j<CR>]], opts)
+    vim.keymap.set('t', '<C-k>', [[<Cmd>wincmd k<CR>]], opts)
+    vim.keymap.set('t', '<C-l>', [[<Cmd>wincmd l<CR>]], opts)
+    vim.keymap.set('t', '<C-w>', [[<C-\><C-n><C-w>]], opts)
+  end
+  vim.cmd('autocmd! TermOpen term://* lua set_terminal_keymaps()')
+EOF
+endfunction
+
+if has('nvim')
+  call InitToggleterm()
+endif
+
+" -----------------------------------------------------------------------------
+" stevearc/overseer.nvim
+function! InitOverseer() abort
+  lua << EOF
+  require('overseer').setup({
+    strategy = {
+      'toggleterm',
+      use_shell = true,
+    }
+  })
+EOF
+endfunction
+
+if has('nvim')
+  call InitOverseer()
+endif
+
+" -----------------------------------------------------------------------------
 " rbong/vim-flog
 function! InitFlog() abort
   nnoremap <leader>gc <cmd>Flogsplit<cr>
@@ -2925,8 +3077,10 @@ cnoreabbrev Qa qa
 cnoreabbrev Wqa wqa
 cnoreabbrev w!! w !sudo tee % >/dev/null
 cnoreabbrev tabq tabclose
-cnoreabbrev tnew tabnew
 cnoreabbrev tq tabclose
+cnoreabbrev tonly tabonly
+cnoreabbrev ton tabonly
+cnoreabbrev tnew tabnew
 nnoremap ZT <cmd>tabclose<cr>
 nnoremap ZA <cmd>wqa<cr>
 
