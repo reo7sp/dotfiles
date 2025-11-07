@@ -77,6 +77,9 @@ endif
 Plug 'ntpeters/vim-better-whitespace'
 Plug 'justinmk/vim-sneak'
 if has('nvim')
+  Plug 'ysmb-wtsg/in-and-out.nvim'
+endif
+if has('nvim')
   Plug 'kylechui/nvim-surround'
 else
   Plug 'tpope/vim-surround'
@@ -114,6 +117,9 @@ if has('nvim')
 endif
 if has('nvim')
   Plug 'ThePrimeagen/refactoring.nvim'
+endif
+if has('nvim')
+  Plug 'danymat/neogen'
 endif
 if has('nvim')
   Plug 'stevearc/conform.nvim'
@@ -163,6 +169,7 @@ if has('nvim')
   Plug 'RRethy/vim-illuminate'
   Plug 'lukas-reineke/indent-blankline.nvim'
   Plug 'lukas-reineke/virt-column.nvim'
+  Plug 'sitiom/nvim-numbertoggle'
 endif
 if has('nvim')
   Plug 'rachartier/tiny-inline-diagnostic.nvim'
@@ -210,6 +217,7 @@ if has('nvim')
   Plug 'princejoogie/dir-telescope.nvim'
   Plug 'LukasPietzschmann/telescope-tabs'
   Plug 'jmacadie/telescope-hierarchy.nvim'
+  Plug 'piersolenski/import.nvim'
   Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 endif
 if has('nvim')
@@ -718,6 +726,16 @@ endfunction
 call InitSneak()
 
 " -----------------------------------------------------------------------------
+" ysmb-wtsg/in-and-out.nvim
+function! InitInOut() abort
+  inoremap <C-CR> <cmd>lua require('in-and-out').in_and_out()<cr>
+endfunction
+
+if has('nvim')
+  call InitInOut()
+endif
+
+" -----------------------------------------------------------------------------
 " kylechui/nvim-surround
 function! InitNvimSurround() abort
   lua << EOF
@@ -958,6 +976,18 @@ endfunction
 
 if has('nvim')
   call LazyInitRefactoring()
+endif
+
+" -----------------------------------------------------------------------------
+" danymat/neogen
+function! InitNeogen() abort
+  lua << EOF
+  require('neogen').setup({})
+EOF
+endfunction
+
+if has('nvim')
+  call InitNeogen()
 endif
 
 " -----------------------------------------------------------------------------
@@ -2161,6 +2191,10 @@ function! InitTelescope() abort
     vim.cmd('normal! "vy')
     require('telescope.builtin').find_files({ default_text = vim.fn.getreg('v') })
   end, { noremap = true, silent = true, desc = 'Find files with selected text' })
+
+  require('import').setup({
+    picker = 'telescope',
+  })
 EOF
 
   nnoremap gd <cmd>Telescope lsp_definitions<cr>
@@ -2186,6 +2220,7 @@ EOF
   nnoremap <leader>D <cmd>Telescope diagnostics<CR>
   nnoremap <leader>Q <cmd>Telescope quickfixhistory<cr>
   nnoremap <leader>gb <cmd>Telescope git_branches<cr>
+  nnoremap <leader>i <cmd>Import<cr>
   nnoremap <leader>' <cmd>Telescope marks<cr>
   nnoremap <leader>` <cmd>Telescope marks<cr>
   nnoremap <leader>" <cmd>Telescope registers<cr>
