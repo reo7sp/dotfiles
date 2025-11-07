@@ -274,13 +274,13 @@ if has('nvim')
   Plug 'stevearc/overseer.nvim'
 endif
 Plug 'tpope/vim-fugitive'
-Plug 'rbong/vim-flog', {'on': ['Flog', 'Flogsplit']}
 let g:DiffChar_NullMap = 1
 Plug 'rickhowe/diffchar.vim'
 let g:SpotDiff_NullMap = 1
 Plug 'rickhowe/spotdiff.vim'
 if has('nvim')
   Plug 'sindrets/diffview.nvim'
+  Plug 'kdheepak/lazygit.nvim'
 endif
 function! BuildGitlabNvim(_) abort
   lua require('gitlab.server').build(true)
@@ -2822,14 +2822,6 @@ if has('nvim')
 endif
 
 " -----------------------------------------------------------------------------
-" rbong/vim-flog
-function! InitFlog() abort
-  nnoremap <leader>gc <cmd>Flogsplit<cr>
-endfunction
-
-call InitFlog()
-
-" -----------------------------------------------------------------------------
 " sindrets/diffview.nvim
 function! InitDiffview() abort
   lua << EOF
@@ -2846,10 +2838,25 @@ function! InitDiffview() abort
     },
   })
 EOF
+
+  nnoremap <leader>gd <cmd>DiffviewOpen<cr>
+  nnoremap <leader>gD <cmd>DiffviewFileHistory %<cr>
 endfunction
 
 if has('nvim')
   call InitDiffview()
+endif
+
+" -----------------------------------------------------------------------------
+" kdheepak/lazygit.nvim
+function! InitLazyGit() abort
+  let g:lazygit_floating_window_use_plenary = 0
+
+  nnoremap <leader>gg <cmd>LazyGit<cr>
+endfunction
+
+if has('nvim')
+  call InitLazyGit()
 endif
 
 " -----------------------------------------------------------------------------
