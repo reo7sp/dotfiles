@@ -1273,6 +1273,9 @@ function! InitLualine() abort
   }) do
     vim.api.nvim_set_hl(0, grp, { bg = bg, fg = fg })
   end
+
+  vim.o.fillchars = "vert:┃"
+  vim.api.nvim_set_hl(0, 'WinSeparator', { fg = bg, bold = true })
 EOF
 
   set noruler
@@ -1449,7 +1452,7 @@ function! InitWindowPicker() abort
   })
 EOF
 
-  nnoremap <c-w><c-w> <cmd>lua vim.api.nvim_set_current_win(require('window-picker').pick_window() or vim.api.nvim_get_current_win())<cr>
+  nnoremap <c-w>w <cmd>lua vim.api.nvim_set_current_win(require('window-picker').pick_window() or vim.api.nvim_get_current_win())<cr>
 endfunction
 
 if has('nvim')
@@ -1580,7 +1583,7 @@ function! InitTrouble() abort
     icons = {
       indent = {
         fold_open     = '  ',
-        fold_closed   = '│ ',
+        fold_closed   = '  ',
       },
       folder_closed   = '',
       folder_open     = '',
@@ -1655,6 +1658,9 @@ EOF
 
   highlight! link TroubleNormal Normal
   highlight! link TroubleNormalNC Normal
+  highlight! link TroubleIndent IblIndent
+  highlight! link TroubleIndentFoldClosed IblIndent
+  highlight! link TroubleIndentFoldOpen IblIndent
 
   nnoremap <leader>T <cmd>lua require('trouble').toggle()<CR>
 endfunction
@@ -1803,7 +1809,7 @@ endif
 function! InitVirtColumn() abort
   lua << EOF
   require('virt-column').setup({
-    char = '║',
+    char = '╎',
     highlight = 'IblIndent',
   })
 EOF
@@ -2012,7 +2018,7 @@ endif
 function! InitTelescope() abort
   lua << EOF
   require('telescope').setup({
-    defaults = vim.tbl_extend('force', require('telescope.themes').get_ivy(), {
+    defaults = {
       mappings = {
         n = {
           ['q'] = require('telescope.actions').close,
@@ -2029,13 +2035,14 @@ function! InitTelescope() abort
         },
       },
       initial_mode = 'insert',
+      sorting_strategy = 'ascending',
       disable_devicons = true,
       dynamic_preview_title = true,
       set_env = {
         LESS = '',
         DELTA_PAGER = 'less',
       },
-    }),
+    },
     pickers = {
       find_files = {
         hidden = true,
@@ -2129,7 +2136,6 @@ function! InitTelescope() abort
         },
       },
       hierarchy = {
-        theme = 'ivy',
         disable_devicons = true,
       },
       aerial = {
@@ -2210,7 +2216,7 @@ EOF
   nnoremap gD <cmd>Telescope lsp_implementations<cr>
   nnoremap gy <cmd>Telescope lsp_type_definitions<cr>
   nnoremap ge <cmd>Telescope lsp_references<cr>
-  nnoremap gE <cmd>Telescope hierarchy theme=ivy disable_devicons=true<cr>
+  nnoremap gE <cmd>Telescope hierarchy disable_devicons=true<cr>
   nnoremap gs <cmd>lua require('telescope-live-grep-args.shortcuts').grep_word_under_cursor()<cr>
   nnoremap <leader>e <cmd>lua require('telescope').extensions.recent_files.pick()<cr>
   nnoremap <leader>E <cmd>Telescope jumplist<cr>
@@ -2417,6 +2423,8 @@ EOF
   highlight! link NvimTreeNormal Normal
   highlight! link NvimTreeNormalNC NormalNC
   highlight! link NvimTreeWinSeparator WinSeparator
+  highlight! link NvimTreeWinSeparator WinSeparator
+  highlight! link NvimTreeIndentMarker IblIndent
 endfunction
 
 function! LazyNvimTreeToggle() abort
@@ -2512,6 +2520,7 @@ function! InitAerial() abort
 EOF
 
   highlight! link AerialLine CursorLine
+  highlight! link AerialGuide IblIndent
 
   nnoremap <leader>o <cmd>AerialToggle!<cr>
 endfunction
@@ -2846,6 +2855,14 @@ function! InitDiffview() abort
       fold_open = '',
     },
   })
+
+  vim.api.nvim_create_autocmd('FileType', {
+    pattern = 'DiffviewFile',
+    callback = function()
+      vim.keymap.set('n', ']h', ']c', { buffer = true, silent = true })
+      vim.keymap.set('n', '[h', '[c', { buffer = true, silent = true })
+    end,
+  })
 EOF
 
   nnoremap <leader>gd <cmd>DiffviewOpen<cr>
@@ -2859,7 +2876,7 @@ endif
 " -----------------------------------------------------------------------------
 " kdheepak/lazygit.nvim
 function! InitLazyGit() abort
-  let g:lazygit_floating_window_use_plenary = 0
+  let g:lazygit_floating_window_use_plenary = 1
 
   nnoremap <leader>gg <cmd>LazyGit<cr>
 endfunction
@@ -3182,6 +3199,7 @@ cnoreabbrev tabq tabclose
 cnoreabbrev tq tabclose
 cnoreabbrev tonly tabonly
 cnoreabbrev ton tabonly
+cnoreabbrev to tabonly
 cnoreabbrev tnew tabnew
 nnoremap ZT <cmd>tabclose<cr>
 nnoremap ZA <cmd>wqa<cr>
