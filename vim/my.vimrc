@@ -3033,57 +3033,6 @@ if has('nvim')
   augroup END
 endif
 
-" close empty buffers
-if has('nvim')
-  lua << EOF
-  local grp = vim.api.nvim_create_augroup("ClosePrevEmptyOnContent", { clear = true })
-
-  vim.api.nvim_create_autocmd("BufLeave", {
-    group = grp,
-    callback = function()
-      vim.w._prev_buf = vim.api.nvim_get_current_buf()
-    end,
-  })
-
-  vim.api.nvim_create_autocmd("BufEnter", {
-    group = grp,
-    callback = function()
-      local cur = vim.api.nvim_get_current_buf()
-      local prev = vim.w._prev_buf
-      if not prev or not vim.api.nvim_buf_is_valid(prev) or prev == cur then return end
-
-      local cur_lines = vim.api.nvim_buf_line_count(cur)
-      local cur_first = (vim.api.nvim_buf_get_lines(cur, 0, 1, false)[1] or "")
-      local cur_has_content = (cur_lines > 1) or (cur_first ~= "")
-
-      if not cur_has_content then
-        return
-      end
-
-      local prev_name = vim.fn.bufname(prev)
-      local prev_bt = vim.bo[prev].buftype
-      local prev_mod = vim.bo[prev].modified
-      local prev_lines = vim.api.nvim_buf_line_count(prev)
-      local prev_first = (vim.api.nvim_buf_get_lines(prev, 0, 1, false)[1] or "")
-      local prev_really_empty = (prev_lines == 1 and prev_first == "")
-
-      if prev_name == "" and prev_bt == "" and not prev_mod and prev_really_empty then
-        local shown_somewhere = false
-        for _, win in ipairs(vim.api.nvim_list_wins()) do
-          if vim.api.nvim_win_get_buf(win) == prev and win ~= vim.api.nvim_get_current_win() then
-            shown_somewhere = true
-            break
-          end
-        end
-        if not shown_somewhere then
-          vim.cmd("silent! bd " .. prev)
-        end
-      end
-    end,
-  })
-EOF
-endif
-
 " https://stackoverflow.com/a/51388837/1600438
 if ! has('nvim')
   nnoremap <esc>^[ <esc>^[
