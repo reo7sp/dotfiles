@@ -45,7 +45,7 @@ if has('nvim')
   Plug 'rafamadriz/friendly-snippets'
   Plug 'milanglacier/minuet-ai.nvim'
   Plug 'xzbdmw/colorful-menu.nvim'
-  Plug 'saghen/blink.cmp', {'tag': 'v1.1.1'}
+  Plug 'saghen/blink.cmp', {'tag': 'v1.*'}
 else
   Plug 'vim-scripts/AutoComplPop'
 endif
@@ -127,7 +127,7 @@ endif
 Plug 'chrisbra/NrrwRgn'
 if has('nvim')
   Plug 'lewis6991/gitsigns.nvim'
-  Plug 'akinsho/git-conflict.nvim', {'tag': 'v2.1.0'}
+  Plug 'akinsho/git-conflict.nvim', {'tag': '*'}
 else
   Plug 'airblade/vim-gitgutter'
 endif
@@ -274,9 +274,9 @@ if has('nvim')
   Plug 'stevearc/overseer.nvim'
 endif
 Plug 'tpope/vim-fugitive'
-let g:DiffChar_NullMap = 1
+let g:DiffCharDoMapping = 0
 Plug 'rickhowe/diffchar.vim'
-let g:SpotDiff_NullMap = 1
+let g:VDiffDoMapping = 0
 Plug 'rickhowe/spotdiff.vim'
 if has('nvim')
   Plug 'sindrets/diffview.nvim'
@@ -3252,15 +3252,15 @@ set nobackup
 set nowritebackup
 set noswapfile
 if has('nvim')
-  set history=10000
-  set shada=!,'10000,<100,s100,h,:10000
+  set history=1000
+  set shada=s100,!,h,<100,:1000,'10000
 
   " https://vi.stackexchange.com/a/24564
-  augroup SHADA
-    autocmd!
-    autocmd FocusGained * lua vim.defer_fn(function() vim.cmd('silent! rshada') end, 100)
-    autocmd FocusLost,TextYankPost,VimLeavePre * silent! wshada
-  augroup END
+  " augroup SHADA
+  "   autocmd!
+  "   autocmd FocusGained * lua vim.defer_fn(function() vim.cmd('silent! rshada') end, 100)
+  "   autocmd FocusLost,TextYankPost,VimLeavePre * silent! wshada
+  " augroup END
 endif
 
 " -----------------------------------------------------------------------------
