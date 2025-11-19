@@ -1731,6 +1731,9 @@ function! InitSatellite() abort
       diagnostic = {
         enable = false,
       },
+      gitsigns = {
+        enable = false,
+      },
     },
     excluded_filetypes = {
       'blink-cmp-menu',
@@ -3256,11 +3259,12 @@ if has('nvim')
   set shada=s100,!,h,<100,:1000,'10000
 
   " https://vi.stackexchange.com/a/24564
-  " augroup SHADA
-  "   autocmd!
-  "   autocmd FocusGained * lua vim.defer_fn(function() vim.cmd('silent! rshada') end, 100)
-  "   autocmd FocusLost,TextYankPost,VimLeavePre * silent! wshada
-  " augroup END
+  augroup SHADA
+    autocmd!
+    " autocmd FocusGained * lua vim.defer_fn(function() vim.cmd('silent! rshada') end, 100)
+    " autocmd FocusLost,TextYankPost,VimLeavePre * silent! wshada
+    autocmd FocusLost,VimLeavePre * silent! wshada
+  augroup END
 endif
 
 " -----------------------------------------------------------------------------
