@@ -80,6 +80,9 @@ if has('nvim')
   Plug 'ysmb-wtsg/in-and-out.nvim'
 endif
 if has('nvim')
+  Plug 'keaising/im-select.nvim'
+endif
+if has('nvim')
   Plug 'kylechui/nvim-surround'
 else
   Plug 'tpope/vim-surround'
@@ -733,6 +736,18 @@ endfunction
 
 if has('nvim')
   call InitInOut()
+endif
+
+" -----------------------------------------------------------------------------
+" keaising/im-select.nvim
+function! InitImSelect() abort
+  lua << EOF
+  require('im_select').setup({})
+EOF
+endfunction
+
+if has('nvim')
+  call InitImSelect()
 endif
 
 " -----------------------------------------------------------------------------
