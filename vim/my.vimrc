@@ -198,9 +198,6 @@ else
   Plug '907th/vim-auto-save'
 endif
 Plug 'farmergreg/vim-lastplace'
-if has('nvim')
-  Plug 'ahmedkhalf/project.nvim'
-endif
 if ! has('nvim')
   Plug 'moll/vim-bbye'
   Plug 'vim-scripts/BufOnly.vim'
@@ -223,6 +220,7 @@ if has('nvim')
   Plug 'jmacadie/telescope-hierarchy.nvim'
   Plug 'piersolenski/import.nvim'
   Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+  Plug 'ibhagwan/fzf-lua'
 endif
 if has('nvim')
   Plug 'stevearc/oil.nvim'
@@ -316,6 +314,7 @@ if has('nvim')
       blink_cmp = true,
       diffview = true,
       fidget = true,
+      fzf = true,
       gitsigns = true,
       grug_far = true,
       mason = true,
@@ -1989,31 +1988,6 @@ else
 endif
 
 " -----------------------------------------------------------------------------
-" ahmedkhalf/project.nvim
-function! InitProjectNvim() abort
-  lua << EOF
-  require('project_nvim').setup({
-    detection_methods = {
-      'pattern',
-    },
-    patterns = {
-      '.git',
-      '_darcs',
-      '.hg',
-      '.bzr',
-      '.svn',
-    },
-    scope_chdir = 'tab',
-    silent_chdir = false,
-  })
-EOF
-endfunction
-
-if has('nvim')
-  call InitProjectNvim()
-endif
-
-" -----------------------------------------------------------------------------
 " moll/vim-bbye
 function! InitBbye() abort
   cnoreabbrev bq Bdelete
@@ -2287,6 +2261,26 @@ endfunction
 
 if has('nvim')
   call InitTelescope()
+endif
+
+" -----------------------------------------------------------------------------
+" ibhagwan/fzf-lua
+function! InitFzfLua() abort
+  lua << EOF
+  require('fzf-lua').setup({
+    { 'telescope', 'fzf-native' },
+    fzf_opts = {
+      ['--layout'] = 'reverse',
+    },
+    winopts = {
+      backdrop = 100,
+    }
+  })
+EOF
+endfunction
+
+if has('nvim')
+  call InitFzfLua()
 endif
 
 " -----------------------------------------------------------------------------
