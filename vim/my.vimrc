@@ -44,6 +44,7 @@ if has('nvim')
   Plug 'L3MON4D3/LuaSnip'
   Plug 'rafamadriz/friendly-snippets'
   Plug 'milanglacier/minuet-ai.nvim'
+  Plug 'folke/sidekick.nvim'
   Plug 'xzbdmw/colorful-menu.nvim'
   Plug 'saghen/blink.cmp', {'tag': 'v1.*'}
 else
@@ -549,6 +550,30 @@ endfunction
 
 if has('nvim')
   call InitLLM()
+endif
+
+" -----------------------------------------------------------------------------
+" folke/sidekick.nvim
+function! InitSidekick() abort
+  lua << EOF
+  require('sidekick').setup({
+    nes = {
+      enabled = false,
+    },
+    cli = {
+      picker = 'telescope',
+    },
+  })
+EOF
+
+  highlight! link SidekickChat Normal
+
+  nnoremap <leader>c <cmd>Sidekick cli toggle<CR>
+  vnoremap <leader>c <cmd>lua require('sidekick.cli').send({ msg = '{file}: ```{selection}```' })<cr>
+endfunction
+
+if has('nvim')
+  call InitSidekick()
 endif
 
 " -----------------------------------------------------------------------------
@@ -3226,11 +3251,11 @@ let g:vimsyn_embed = 'l'
 if has('nvim')
   set listchars=tab:→\ ,space:·,trail:·,extends:⟩,precedes:⟨,nbsp:␣
   set nolist
-  augroup ShowWhitespaceInVisual
-    autocmd!
-    autocmd ModeChanged *:[vV␖] set list | lua require('ibl').refresh_all()
-    autocmd ModeChanged [vV␖]:* set nolist | lua require('ibl').refresh_all()
-  augroup END
+  " augroup ShowWhitespaceInVisual
+  "   autocmd!
+  "   autocmd ModeChanged *:[vV␖] set list | lua require('ibl').refresh_all()
+  "   autocmd ModeChanged [vV␖]:* set nolist | lua require('ibl').refresh_all()
+  " augroup END
 endif
 
 " -----------------------------------------------------------------------------
