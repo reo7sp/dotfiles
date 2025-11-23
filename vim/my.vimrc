@@ -258,6 +258,7 @@ Plug 'Vimjas/vim-python-pep8-indent', {'for': 'python'}
 Plug 'HiPhish/jinja.vim'
 if has('nvim')
   Plug 'MeanderingProgrammer/render-markdown.nvim'
+  Plug '3rd/image.nvim'
 endif
 if has('nvim')
   Plug 'hat0uma/csvview.nvim', {'for': ['csv', 'tsv']}
@@ -2797,6 +2798,28 @@ endfunction
 
 if has('nvim')
   call InitRenderMarkdown()
+endif
+
+" -----------------------------------------------------------------------------
+" 3rd/image.nvim
+function! InitImage() abort
+  lua << EOF
+  require('image').setup({
+    max_width = 40,
+    integrations = {
+      markdown = {
+        only_render_image_at_cursor = true,
+        only_render_image_at_cursor_mode = 'inline',
+        clear_in_insert_mode = true,
+        download_remote_images = false,
+      },
+    },
+  })
+EOF
+endfunction
+
+if has('nvim')
+  call InitImage()
 endif
 
 " -----------------------------------------------------------------------------
