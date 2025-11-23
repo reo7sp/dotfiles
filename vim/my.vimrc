@@ -3252,6 +3252,8 @@ if has('nvim')
   " augroup END
 endif
 
+autocmd FileType markdown setlocal wrap linebreak
+
 " -----------------------------------------------------------------------------
 " editing
 set shiftwidth=4
