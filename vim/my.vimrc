@@ -66,6 +66,9 @@ if ! has('nvim')
 endif
 Plug 'romainl/vim-cool'
 if has('nvim')
+  Plug 'keaising/im-select.nvim'
+endif
+if has('nvim')
   Plug 'nmac427/guess-indent.nvim'
 else
   Plug 'tpope/vim-sleuth'
@@ -78,12 +81,6 @@ endif
 Plug 'ntpeters/vim-better-whitespace'
 Plug 'justinmk/vim-sneak'
 if has('nvim')
-  Plug 'ysmb-wtsg/in-and-out.nvim'
-endif
-if has('nvim')
-  Plug 'keaising/im-select.nvim'
-endif
-if has('nvim')
   Plug 'kylechui/nvim-surround'
 else
   Plug 'tpope/vim-surround'
@@ -92,6 +89,9 @@ if has('nvim')
   Plug 'gbprod/substitute.nvim'
 else
   Plug 'svermeulen/vim-subversive'
+endif
+if has('nvim')
+  Plug 'ysmb-wtsg/in-and-out.nvim'
 endif
 if has('nvim')
   Plug 'gbprod/yanky.nvim'
@@ -283,12 +283,6 @@ Plug 'rickhowe/spotdiff.vim'
 if has('nvim')
   Plug 'sindrets/diffview.nvim'
   Plug 'kdheepak/lazygit.nvim'
-endif
-function! BuildGitlabNvim(_) abort
-  lua require('gitlab.server').build(true)
-endfunction
-if has('nvim')
-  Plug 'harrisoncramer/gitlab.nvim', {'do': function('BuildGitlabNvim')}
 endif
 
 call plug#end()
@@ -716,6 +710,18 @@ if has('nvim')
 endif
 
 " -----------------------------------------------------------------------------
+" keaising/im-select.nvim
+function! InitImSelect() abort
+  lua << EOF
+  require('im_select').setup({})
+EOF
+endfunction
+
+if has('nvim')
+  call InitImSelect()
+endif
+
+" -----------------------------------------------------------------------------
 " nmac427/guess-indent.nvim
 function! InitGuessIndent() abort
   lua require('guess-indent').setup({})
@@ -751,28 +757,6 @@ function! InitSneak() abort
 endfunction
 
 call InitSneak()
-
-" -----------------------------------------------------------------------------
-" ysmb-wtsg/in-and-out.nvim
-function! InitInOut() abort
-  inoremap <C-CR> <cmd>lua require('in-and-out').in_and_out()<cr>
-endfunction
-
-if has('nvim')
-  call InitInOut()
-endif
-
-" -----------------------------------------------------------------------------
-" keaising/im-select.nvim
-function! InitImSelect() abort
-  lua << EOF
-  require('im_select').setup({})
-EOF
-endfunction
-
-if has('nvim')
-  call InitImSelect()
-endif
 
 " -----------------------------------------------------------------------------
 " kylechui/nvim-surround
@@ -815,6 +799,16 @@ if has('nvim')
   call InitSubstitute()
 else
   autocmd BufEnter * call InitSubversive()
+endif
+
+" -----------------------------------------------------------------------------
+" ysmb-wtsg/in-and-out.nvim
+function! InitInOut() abort
+  inoremap <C-CR> <cmd>lua require('in-and-out').in_and_out()<cr>
+endfunction
+
+if has('nvim')
+  call InitInOut()
 endif
 
 " -----------------------------------------------------------------------------
@@ -2920,32 +2914,6 @@ endfunction
 
 if has('nvim')
   call InitLazyGit()
-endif
-
-" -----------------------------------------------------------------------------
-" harrisoncramer/gitlab.nvim
-function! InitGitlabNvim() abort
-  lua << EOF
-  require('gitlab').setup({
-    keymaps = {
-      global = {
-        disable_all = true,
-      },
-    },
-  })
-EOF
-
-  command! GitlabReview lua require('gitlab').review()
-  command! GitlabChooseMR lua require('gitlab').choose_merge_request()
-endfunction
-
-function! LazyInitGitlabNvim() abort
-  command! GitlabReview lua vim.call('InitGitlabNvim') require('gitlab').review()
-  command! GitlabChooseMR lua vim.call('InitGitlabNvim') require('gitlab').choose_merge_request()
-endfunction
-
-if has('nvim')
-  call LazyInitGitlabNvim()
 endif
 
 
