@@ -123,12 +123,12 @@ if has('nvim')
   Plug 'ThePrimeagen/refactoring.nvim'
 endif
 if has('nvim')
-  Plug 'danymat/neogen'
+  Plug 'danymat/neogen', {'on': 'Neogen'}
 endif
 if has('nvim')
   Plug 'stevearc/conform.nvim'
 endif
-Plug 'chrisbra/NrrwRgn'
+Plug 'chrisbra/NrrwRgn', {'on': ['NR', 'NRP', 'NRM', 'NW', 'NRV', 'NUD', 'NRN', 'NRS', 'NRMulti']}
 if has('nvim')
   Plug 'lewis6991/gitsigns.nvim'
   Plug 'akinsho/git-conflict.nvim', {'tag': '*'}
@@ -220,7 +220,6 @@ if has('nvim')
   Plug 'jmacadie/telescope-hierarchy.nvim'
   Plug 'piersolenski/import.nvim'
   Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
-  Plug 'ibhagwan/fzf-lua'
 endif
 if has('nvim')
   Plug 'stevearc/oil.nvim'
@@ -240,8 +239,10 @@ endif
 
 " -----------------------------------------------------------------------------
 " language specific
-let g:polyglot_disabled = ['sensible', 'autoindent']
-Plug 'sheerun/vim-polyglot'
+if ! has('nvim')
+  let g:polyglot_disabled = ['sensible', 'autoindent']
+  Plug 'sheerun/vim-polyglot'
+endif
 if has('nvim')
   Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
   Plug 'nvim-treesitter/nvim-treesitter-textobjects'
@@ -273,7 +274,7 @@ endif
 Plug 'tpope/vim-eunuch'
 Plug 'tpope/vim-dispatch'
 if has('nvim')
-  Plug 'stevearc/overseer.nvim'
+  Plug 'stevearc/overseer.nvim', {'on': ['OverseerOpen', 'OverseerClose', 'OverseerToggle', 'OverseerRun', 'OverseerBuild', 'OverseerQuickAction', 'OverseerTaskAction', 'OverseerClearCache', 'OverseerLoadBundle', 'OverseerSaveBundle', 'OverseerDeleteBundle', 'OverseerRunCmd']}
 endif
 Plug 'tpope/vim-fugitive'
 let g:DiffCharDoMapping = 0
@@ -308,7 +309,6 @@ if has('nvim')
       blink_cmp = true,
       diffview = true,
       fidget = true,
-      fzf = true,
       gitsigns = true,
       grug_far = true,
       mason = true,
@@ -385,7 +385,7 @@ EOF
 endfunction
 
 if has('nvim')
-  call InitGuihua()
+  autocmd FileType go ++once call InitGuihua()
 endif
 
 " -----------------------------------------------------------------------------
@@ -473,7 +473,7 @@ EOF
 endfunction
 
 if has('nvim')
-  call InitLSP()
+  autocmd InsertEnter,FileType * ++once call InitLSP()
 endif
 
 " -----------------------------------------------------------------------------
@@ -485,7 +485,7 @@ EOF
 endfunction
 
 if has('nvim')
-  call InitSnip()
+  autocmd InsertEnter * ++once call InitSnip()
 endif
 
 " -----------------------------------------------------------------------------
@@ -542,7 +542,7 @@ EOF
 endfunction
 
 if has('nvim')
-  call InitLLM()
+  autocmd InsertEnter * ++once call InitLLM()
 endif
 
 " -----------------------------------------------------------------------------
@@ -565,8 +565,23 @@ EOF
   vnoremap <leader>c <cmd>lua require('sidekick.cli').send({ msg = '{file}: ```{selection}```' })<cr>
 endfunction
 
-if has('nvim')
+function! LazySidekickCliToggle() abort
   call InitSidekick()
+  Sidekick cli toggle
+endfunction
+
+function! LazySidekickCliSendVisual() abort
+  call InitSidekick()
+  lua require('sidekick.cli').send({ msg = '{file}: ```{selection}```' })
+endfunction
+
+function! LazyInitSidekick() abort
+  nnoremap <leader>c <cmd>call LazySidekickCliToggle()<CR>
+  vnoremap <leader>c <cmd>call LazySidekickCliSendVisual()<cr>
+endfunction
+
+if has('nvim')
+  call LazyInitSidekick()
 endif
 
 " -----------------------------------------------------------------------------
@@ -640,7 +655,7 @@ EOF
 endfunction
 
 if has('nvim')
-  call InitBlink()
+  autocmd InsertEnter * ++once call InitBlink()
 endif
 
 " -----------------------------------------------------------------------------
@@ -650,7 +665,7 @@ function! InitAutopairs() abort
 endfunction
 
 if has('nvim')
-  call InitAutopairs()
+  autocmd InsertEnter * ++once call InitAutopairs()
 endif
 
 " -----------------------------------------------------------------------------
@@ -706,7 +721,7 @@ EOF
 endfunction
 
 if has('nvim')
-  call InitDial()
+  autocmd VimEnter * ++once lua vim.defer_fn(function() vim.call('InitDial') end, 100)
 endif
 
 " -----------------------------------------------------------------------------
@@ -718,7 +733,7 @@ EOF
 endfunction
 
 if has('nvim')
-  call InitImSelect()
+  autocmd InsertEnter * ++once call InitImSelect()
 endif
 
 " -----------------------------------------------------------------------------
@@ -769,7 +784,7 @@ EOF
 endfunction
 
 if has('nvim')
-  call InitNvimSurround()
+  autocmd VimEnter * ++once lua vim.defer_fn(function() vim.call('InitNvimSurround') end, 100)
 endif
 
 " -----------------------------------------------------------------------------
@@ -796,7 +811,7 @@ function! InitSubversive() abort
 endfunction
 
 if has('nvim')
-  call InitSubstitute()
+  autocmd VimEnter * ++once lua vim.defer_fn(function() vim.call('InitSubstitute') end, 100)
 else
   autocmd BufEnter * call InitSubversive()
 endif
@@ -916,7 +931,7 @@ EOF
 endfunction
 
 if has('nvim')
-  call InitComment()
+  autocmd VimEnter * ++once lua vim.defer_fn(function() vim.call('InitComment') end, 100)
 end
 
 " -----------------------------------------------------------------------------
@@ -963,7 +978,7 @@ EOF
 endfunction
 
 if has('nvim')
-  call InitTextCase()
+  autocmd VimEnter * ++once lua vim.defer_fn(function() vim.call('InitTextCase') end, 100)
 endif
 
 " -----------------------------------------------------------------------------
@@ -980,7 +995,7 @@ EOF
 endfunction
 
 if has('nvim')
-  call InitMiniAlign()
+  autocmd VimEnter * ++once lua vim.defer_fn(function() vim.call('InitMiniAlign') end, 100)
 endif
 
 " -----------------------------------------------------------------------------
@@ -1020,7 +1035,7 @@ EOF
 endfunction
 
 if has('nvim')
-  call InitNeogen()
+  autocmd User neogen call InitNeogen()
 endif
 
 " -----------------------------------------------------------------------------
@@ -1102,7 +1117,7 @@ EOF
 endfunction
 
 if has('nvim')
-  call InitConform()
+  autocmd VimEnter * ++once lua vim.defer_fn(function() vim.call('InitConform') end, 100)
 endif
 
 " -----------------------------------------------------------------------------
@@ -1156,7 +1171,7 @@ EOF
 endfunction
 
 if has('nvim')
-  call InitGitConflict()
+  autocmd FileType * ++once call InitGitConflict()
 endif
 
 " -----------------------------------------------------------------------------
@@ -1564,7 +1579,7 @@ EOF
 endfunction
 
 if has('nvim')
-  call InitBqf()
+  autocmd QuickFixCmdPre * ++once call InitBqf()
 endif
 
 " -----------------------------------------------------------------------------
@@ -1593,8 +1608,18 @@ EOF
   nnoremap <leader>q <cmd>lua require('quicker').toggle({focus = true})<CR>
 endfunction
 
+function! LazyInitQuicker() abort
+  lua << EOF
+  vim.keymap.set('n', '<leader>q', function()
+    vim.call('InitQuicker')
+    require('quicker').toggle({focus = true})
+  end)
+EOF
+endfunction
+
 if has('nvim')
-  call InitQuicker()
+  autocmd QuickFixCmdPre * ++once call InitQuicker()
+  call LazyInitQuicker()
 endif
 
 " -----------------------------------------------------------------------------
@@ -1699,7 +1724,7 @@ EOF
 endfunction
 
 if has('nvim')
-  call InitTrouble()
+  autocmd VimEnter * ++once lua vim.defer_fn(function() vim.call('InitTrouble') end, 100)
 endif
 
 " -----------------------------------------------------------------------------
@@ -1875,9 +1900,6 @@ function! InitFidget() abort
   lua << EOF
   require('fidget').setup({
     notification = {
-      window = {
-        winblend = 0,
-      },
       view = {
         stack_upwards = false,
       },
@@ -2123,6 +2145,7 @@ function! InitTelescope() abort
           'fugitiveblame',
           'flog',
           'CodeCompanion',
+          'NrrwRgn',
           'Plugins',
           'COMMIT_',
           '-todo$',
@@ -2255,26 +2278,6 @@ endfunction
 
 if has('nvim')
   call InitTelescope()
-endif
-
-" -----------------------------------------------------------------------------
-" ibhagwan/fzf-lua
-function! InitFzfLua() abort
-  lua << EOF
-  require('fzf-lua').setup({
-    { 'telescope', 'fzf-native' },
-    fzf_opts = {
-      ['--layout'] = 'reverse',
-    },
-    winopts = {
-      backdrop = 100,
-    }
-  })
-EOF
-endfunction
-
-if has('nvim')
-  call InitFzfLua()
 endif
 
 " -----------------------------------------------------------------------------
@@ -2520,12 +2523,22 @@ function! InitOther() abort
       'rust',
     },
   })
-  vim.keymap.set('n', '<leader>a', '<cmd>Other<CR>')
 EOF
+
+  nnoremap <leader>a <cmd>Other<CR>
+endfunction
+
+function! LazyOther() abort
+  call InitOther()
+  Other
+endfunction
+
+function! LazyInitOther() abort
+  nnoremap <leader>a <cmd>call LazyOther()<CR>
 endfunction
 
 if has('nvim')
-  call InitOther()
+  call LazyInitOther()
 endif
 
 " -----------------------------------------------------------------------------
@@ -2582,8 +2595,13 @@ EOF
   vnoremap <leader>S <cmd>lua require('grug-far').kill_instance() require('grug-far').with_visual_selection()<cr>
 endfunction
 
+function! LazyInitGrugFar() abort
+  nnoremap <leader>S <cmd>call InitGrugFar()<cr><cmd>lua require('grug-far').open()<cr>
+  vnoremap <leader>S <cmd>call InitGrugFar()<cr><cmd>lua require('grug-far').with_visual_selection()<cr>
+endfunction
+
 if has('nvim')
-  call InitGrugFar()
+  call LazyInitGrugFar()
 endif
 
 " -----------------------------------------------------------------------------
@@ -2714,7 +2732,7 @@ EOF
 endfunction
 
 if has('nvim')
-  call InitTreesitter()
+  autocmd FileType * ++once call InitTreesitter()
 endif
 
 " -----------------------------------------------------------------------------
@@ -2754,7 +2772,7 @@ EOF
 endfunction
 
 if has('nvim')
-  call InitGo()
+  autocmd FileType go ++once call InitGo()
 endif
 
 " -----------------------------------------------------------------------------
@@ -2790,7 +2808,7 @@ EOF
 endfunction
 
 if has('nvim')
-  call InitRenderMarkdown()
+  autocmd FileType markdown,codecompanion ++once call InitRenderMarkdown()
 endif
 
 " -----------------------------------------------------------------------------
@@ -2850,7 +2868,7 @@ EOF
 endfunction
 
 if has('nvim')
-  call InitToggleterm()
+  autocmd VimEnter * ++once lua vim.defer_fn(function() vim.call('InitToggleterm') end, 100)
 endif
 
 " -----------------------------------------------------------------------------
@@ -2867,7 +2885,7 @@ EOF
 endfunction
 
 if has('nvim')
-  call InitOverseer()
+  autocmd User overseer.nvim call InitOverseer()
 endif
 
 " -----------------------------------------------------------------------------
@@ -2900,8 +2918,23 @@ EOF
   nnoremap <leader>gD <cmd>DiffviewFileHistory %<cr>
 endfunction
 
-if has('nvim')
+function! LazyDiffviewOpen() abort
   call InitDiffview()
+  DiffviewOpen
+endfunction
+
+function! LazyDiffviewFileHistory() abort
+  call InitDiffview()
+  DiffviewFileHistory %
+endfunction
+
+function! LazyInitDiffview() abort
+  nnoremap <leader>gd <cmd>call LazyDiffviewOpen()<CR>
+  nnoremap <leader>gD <cmd>call LazyDiffviewFileHistory()<CR>
+endfunction
+
+if has('nvim')
+  call LazyInitDiffview()
 endif
 
 " -----------------------------------------------------------------------------
@@ -3049,8 +3082,22 @@ nnoremap <silent> <expr> j v:count ? (v:count > 5 ? "m'" . v:count : '') . 'j' :
 nnoremap <silent> <expr> k v:count ? (v:count > 5 ? "m'" . v:count : '') . 'k' : 'gk'
 
 " https://superuser.com/a/836924/2151180
-nnoremap <silent> } :<C-u>execute "keepjumps norm! " . v:count1 . "}"<CR>
-nnoremap <silent> { :<C-u>execute "keepjumps norm! " . v:count1 . "{"<CR>
+if has('nvim')
+  lua << EOF
+  vim.keymap.set('n', '}', function()
+    local count = vim.v.count1
+    vim.cmd('keepjumps normal! ' .. count .. '}')
+  end, { silent = true })
+
+  vim.keymap.set('n', '{', function()
+    local count = vim.v.count1
+    vim.cmd('keepjumps normal! ' .. count .. '{')
+  end, { silent = true })
+EOF
+else
+  nnoremap <silent> } :<C-u>execute "keepjumps norm! " . v:count1 . "}"<CR>
+  nnoremap <silent> { :<C-u>execute "keepjumps norm! " . v:count1 . "{"<CR>
+endif
 
 " https://www.reddit.com/r/neovim/comments/sf0hmc/im_really_proud_of_this_mapping_i_came_up_with/
 nnoremap c. /\V\C<C-r>"<CR>cgn<C-a><Esc>
@@ -3184,6 +3231,8 @@ set nowrap
 
 set mouse=a
 
+set timeoutlen=300
+set ttimeoutlen=10
 set shortmess+=aIT
 if v:version > 704
   set shortmess+=F
