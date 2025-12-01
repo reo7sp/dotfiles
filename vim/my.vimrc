@@ -239,10 +239,8 @@ endif
 
 " -----------------------------------------------------------------------------
 " language specific
-if ! has('nvim')
-  let g:polyglot_disabled = ['sensible', 'autoindent']
-  Plug 'sheerun/vim-polyglot'
-endif
+let g:polyglot_disabled = ['sensible', 'autoindent']
+Plug 'sheerun/vim-polyglot'
 if has('nvim')
   Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
   Plug 'nvim-treesitter/nvim-treesitter-textobjects'
@@ -562,7 +560,7 @@ EOF
   highlight! link SidekickChat Normal
 
   nnoremap <leader>c <cmd>Sidekick cli toggle<CR>
-  vnoremap <leader>c <cmd>lua require('sidekick.cli').send({ msg = '{file}: ```{selection}```' })<cr>
+  vnoremap <leader>c <cmd>lua require('sidekick.cli').send({ msg = '{file}: ```{selection}```' })<CR>
 endfunction
 
 function! LazySidekickCliToggle() abort
@@ -577,7 +575,7 @@ endfunction
 
 function! LazyInitSidekick() abort
   nnoremap <leader>c <cmd>call LazySidekickCliToggle()<CR>
-  vnoremap <leader>c <cmd>call LazySidekickCliSendVisual()<cr>
+  vnoremap <leader>c <cmd>call LazySidekickCliSendVisual()<CR>
 endfunction
 
 if has('nvim')
@@ -1888,6 +1886,8 @@ function! InitTinyDiag() abort
 
   vim.diagnostic.config({ virtual_text = false })
 EOF
+
+  highlight link TinyInlineDiagnosticVirtualTextArrow CursorLine
 endfunction
 
 if has('nvim')

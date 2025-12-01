@@ -435,7 +435,6 @@ _fzf_git_fzf () {
 # -----------------------------------------------------------------------------
 # git
 alias gg='lazygit'
-alias gll='tig'
 
 alias gwdd='DELTA_FEATURES=+side-by-side gwd'
 alias gwdt='gwd --ext-diff'
@@ -733,7 +732,6 @@ load_nvm() {
 nvm() { load_nvm; command nvm "$@"; }
 npm() { load_nvm; command npm "$@"; }
 yarn() { load_nvm; command yarn "$@"; }
-pnpm() { load_nvm; command pnpm "$@"; }
 node() { load_nvm; command node "$@"; }
 npx() { load_nvm; command npx "$@"; }
 
@@ -750,7 +748,9 @@ alias k='kubectl'
 
 # -----------------------------------------------------------------------------
 # swagger
-alias open-swagger='npx open-swagger-ui --open'
+open-swagger-ui() { load_nvm; command open-swagger-ui "$@"; }
+
+alias open-swagger='open-swagger-ui --open'
 
 # -----------------------------------------------------------------------------
 # utils
