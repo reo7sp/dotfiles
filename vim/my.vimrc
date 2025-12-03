@@ -2040,6 +2040,8 @@ function! InitSessionManager() abort
     load_include_current = true,
   })
 EOF
+
+  nnoremap <leader>z <cmd>SessionManager<cr>
 endfunction
 
 if has('nvim')
@@ -2274,6 +2276,7 @@ EOF
   nnoremap <leader>` <cmd>Telescope marks<cr>
   nnoremap <leader>" <cmd>Telescope registers<cr>
   nnoremap <leader>. <cmd>Telescope resume<cr>
+  nnoremap <leader>/ <cmd>lua require('telescope.builtin').current_buffer_fuzzy_find()<cr>
 endfunction
 
 if has('nvim')
