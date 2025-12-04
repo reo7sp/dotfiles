@@ -166,6 +166,9 @@ if has('nvim')
   Plug 'folke/trouble.nvim'
 endif
 if has('nvim')
+  Plug 'folke/todo-comments.nvim'
+endif
+if has('nvim')
   Plug 'chentoast/marks.nvim'
   Plug 'lewis6991/satellite.nvim'
 endif
@@ -1723,6 +1726,35 @@ endfunction
 
 if has('nvim')
   autocmd VimEnter * ++once lua vim.defer_fn(function() vim.call('InitTrouble') end, 100)
+endif
+
+" -----------------------------------------------------------------------------
+" folke/todo-comments.nvim
+function! InitTodo() abort
+  lua << EOF
+  require('todo-comments').setup({
+    signs = false,
+    keywords = {
+      FIX = { icon = '' },
+      TODO = { icon = '' },
+      HACK = { icon = '' },
+      WARN = { icon = '' },
+      PERF = { icon = '' },
+      NOTE = { icon = '' },
+      TEST = { icon = '' },
+    },
+    highlight = {
+      comments_only = false,
+      after = 'empty',
+    },
+  })
+EOF
+
+  nnoremap <leader>n <cmd>TodoTelescope<CR>
+endfunction
+
+if has('nvim')
+  call InitTodo()
 endif
 
 " -----------------------------------------------------------------------------
