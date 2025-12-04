@@ -1,6 +1,7 @@
 # prompt
 romkatv/powerlevel10k
 zdharma-continuum/fast-syntax-highlighting kind:defer
+catppuccin/zsh-fsh kind:path
 
 # editing
 jeffreytse/zsh-vi-mode

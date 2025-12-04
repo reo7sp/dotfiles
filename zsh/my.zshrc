@@ -77,6 +77,15 @@ typeset -g POWERLEVEL9K_VIRTUALENV_SHOW_WITH_PYENV=true
 typeset -g POWERLEVEL9K_BACKGROUND_JOBS_VERBOSE=true
 
 # -----------------------------------------------------------------------------
+# catppuccin/zsh-fsh
+FSTHEME_DIR="$HOME/.config/fsh"
+if [[ ! -f "$FSTHEME_DIR/catppuccin-latte.ini" ]]; then
+  mkdir -p "$FSTHEME_DIR"
+  CATPPUCCIN_BUNDLE="$(antidote path catppuccin/zsh-fsh)/themes"
+  ln -sf "$CATPPUCCIN_BUNDLE"/catppuccin-*.ini "$FSTHEME_DIR"/
+fi
+
+# -----------------------------------------------------------------------------
 # jeffreytse/zsh-vi-mode
 function my-zvm-init() {
   bindkey -M vicmd '^[' undefined-key
