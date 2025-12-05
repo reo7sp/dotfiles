@@ -1424,8 +1424,6 @@ EOF
 
   nnoremap <C-Tab> <cmd>BufferNext<CR>
   nnoremap <C-S-Tab> <cmd>BufferPrevious<CR>
-  nnoremap <C-[> <cmd>BufferPrevious<CR>
-  nnoremap <C-]> <cmd>BufferNext<CR>
   nnoremap [b <cmd>BufferPrevious<CR>
   nnoremap ]b <cmd>BufferNext<CR>
   nnoremap <C-1> <cmd>BufferGoto 1<CR>
@@ -1463,8 +1461,6 @@ endfunction
 function! InitBuftablineVim() abort
   nnoremap <C-Tab> <cmd>bn<CR>
   nnoremap <C-S-Tab> <cmd>bp<CR>
-  nnoremap <C-[> <cmd>bp<CR>
-  nnoremap <C-]> <cmd>bn<CR>
   nnoremap <C-1> <Plug>BufTabLine.Go(1)
   nnoremap <C-2> <Plug>BufTabLine.Go(2)
   nnoremap <C-3> <Plug>BufTabLine.Go(3)
@@ -1502,6 +1498,7 @@ function! InitWindowPicker() abort
 EOF
 
   nnoremap <c-w>w <cmd>lua vim.api.nvim_set_current_win(require('window-picker').pick_window() or vim.api.nvim_get_current_win())<cr>
+  nnoremap <c-w><c-w> <cmd>lua vim.api.nvim_set_current_win(require('window-picker').pick_window() or vim.api.nvim_get_current_win())<cr>
 endfunction
 
 if has('nvim')
@@ -1517,7 +1514,7 @@ function! InitWinshift() abort
   })
 EOF
 
-  nnoremap <C-w>x <cmd>WinShift swap<cr>
+  nnoremap <c-w>x <cmd>WinShift swap<cr>
 endfunction
 
 if has('nvim')
@@ -3110,7 +3107,6 @@ endif
 if ! has('nvim')
   nnoremap <esc>^[ <esc>^[
 endif
-nunmap <esc>
 
 " https://bluz71.github.io/2021/09/10/vim-tips-revisited.html#smarter-j-and-k-navigation
 nnoremap <silent> <expr> j v:count ? (v:count > 5 ? "m'" . v:count : '') . 'j' : 'gj'
@@ -3244,6 +3240,8 @@ nnoremap <C-h> <C-w>h
 nnoremap <C-j> <C-w>j
 nnoremap <C-k> <C-w>k
 nnoremap <C-l> <C-w>l
+nnoremap <C-[> <C-w>w
+nnoremap <C-]> <C-w>W
 nnoremap <C-Up> <cmd>resize +2<cr>
 nnoremap <C-Down> <cmd>resize -2<cr>
 nnoremap <C-Right> <cmd>vertical resize +2<cr>
