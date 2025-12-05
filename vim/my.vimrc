@@ -81,6 +81,9 @@ endif
 Plug 'ntpeters/vim-better-whitespace'
 Plug 'justinmk/vim-sneak'
 if has('nvim')
+  Plug 'rlane/pounce.nvim'
+endif
+if has('nvim')
   Plug 'kylechui/nvim-surround'
 else
   Plug 'tpope/vim-surround'
@@ -562,8 +565,8 @@ EOF
 
   highlight! link SidekickChat Normal
 
-  nnoremap <leader>c <cmd>Sidekick cli toggle<CR>
-  vnoremap <leader>c <cmd>lua require('sidekick.cli').send({ msg = '{file}: ```{selection}```' })<CR>
+  nnoremap <leader>c <cmd>lua require('sidekick.cli').send({ msg = '{file}: ' })<CR>
+  vnoremap <leader>c <cmd>lua require('sidekick.cli').send({ msg = '{file}: ```{selection}``` ' })<CR>
 endfunction
 
 function! LazySidekickCliToggle() abort
@@ -773,6 +776,22 @@ function! InitSneak() abort
 endfunction
 
 call InitSneak()
+
+" -----------------------------------------------------------------------------
+" rlane/pounce.nvim
+function! InitPounce() abort
+  lua << EOF
+  require('pounce').setup({
+    accept_best_key = '<space>',
+  })
+
+  vim.keymap.set({ 'n', 'x', 'o' }, '<leader><leader>', function() require('pounce').pounce({}) end)
+EOF
+endfunction
+
+if has('nvim')
+  autocmd VimEnter * ++once lua vim.defer_fn(function() vim.call('InitPounce') end, 100)
+endif
 
 " -----------------------------------------------------------------------------
 " kylechui/nvim-surround
@@ -1091,6 +1110,7 @@ function! InitConform() abort
       },
     },
     default_format_opts = {
+      timeout_ms = 10000,
       lsp_format = 'fallback',
     },
   })
