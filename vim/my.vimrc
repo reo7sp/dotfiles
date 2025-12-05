@@ -81,6 +81,9 @@ endif
 Plug 'ntpeters/vim-better-whitespace'
 Plug 'justinmk/vim-sneak'
 if has('nvim')
+  Plug 'rlane/pounce.nvim'
+endif
+if has('nvim')
   Plug 'kylechui/nvim-surround'
 else
   Plug 'tpope/vim-surround'
@@ -562,8 +565,8 @@ EOF
 
   highlight! link SidekickChat Normal
 
-  nnoremap <leader>c <cmd>Sidekick cli toggle<CR>
-  vnoremap <leader>c <cmd>lua require('sidekick.cli').send({ msg = '{file}: ```{selection}```' })<CR>
+  nnoremap <leader>c <cmd>lua require('sidekick.cli').send({ msg = '{file}: ' })<CR>
+  vnoremap <leader>c <cmd>lua require('sidekick.cli').send({ msg = '{file}: ```{selection}``` ' })<CR>
 endfunction
 
 function! LazySidekickCliToggle() abort
@@ -773,6 +776,22 @@ function! InitSneak() abort
 endfunction
 
 call InitSneak()
+
+" -----------------------------------------------------------------------------
+" rlane/pounce.nvim
+function! InitPounce() abort
+  lua << EOF
+  require('pounce').setup({
+    accept_best_key = '<space>',
+  })
+
+  vim.keymap.set({ 'n', 'x', 'o' }, '<leader><leader>', function() require('pounce').pounce({}) end)
+EOF
+endfunction
+
+if has('nvim')
+  autocmd VimEnter * ++once lua vim.defer_fn(function() vim.call('InitPounce') end, 100)
+endif
 
 " -----------------------------------------------------------------------------
 " kylechui/nvim-surround
@@ -1091,6 +1110,7 @@ function! InitConform() abort
       },
     },
     default_format_opts = {
+      timeout_ms = 10000,
       lsp_format = 'fallback',
     },
   })
@@ -1497,7 +1517,6 @@ function! InitWindowPicker() abort
   })
 EOF
 
-  nnoremap <c-w>w <cmd>lua vim.api.nvim_set_current_win(require('window-picker').pick_window() or vim.api.nvim_get_current_win())<cr>
   nnoremap <c-w><c-w> <cmd>lua vim.api.nvim_set_current_win(require('window-picker').pick_window() or vim.api.nvim_get_current_win())<cr>
 endfunction
 
@@ -2477,6 +2496,7 @@ function! InitNvimTree() abort
 
       api.config.mappings.default_on_attach(bufnr)
 
+      vim.keymap.del('n', '<C-]>', { buffer = bufnr })
       vim.keymap.set('n', '<c-f>', M.launch_find_files, opts('Launch Find Files'))
       vim.keymap.set('n', '<c-s>', M.launch_live_grep, opts('Launch Live Grep'))
       vim.keymap.set('n', 's', '<Plug>Sneak_s', opts('Sneak'))
@@ -3240,8 +3260,9 @@ nnoremap <C-h> <C-w>h
 nnoremap <C-j> <C-w>j
 nnoremap <C-k> <C-w>k
 nnoremap <C-l> <C-w>l
-nnoremap <C-[> <C-w>w
-nnoremap <C-]> <C-w>W
+" nnoremap <C-[> <C-w>W
+nnoremap <C-ϧ> <C-w>W
+nnoremap <C-]> <C-w>w
 nnoremap <C-Up> <cmd>resize +2<cr>
 nnoremap <C-Down> <cmd>resize -2<cr>
 nnoremap <C-Right> <cmd>vertical resize +2<cr>
