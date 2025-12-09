@@ -209,7 +209,7 @@ if ! has('nvim')
   Plug 'vim-scripts/BufOnly.vim'
 endif
 if has('nvim')
-  Plug 'Shatur/neovim-session-manager'
+  Plug 'rmagatti/auto-session'
 endif
 
 " -----------------------------------------------------------------------------
@@ -2078,22 +2078,25 @@ if ! has('nvim')
 endif
 
 " -----------------------------------------------------------------------------
-" Shatur/neovim-session-manager
-function! InitSessionManager() abort
+" rmagatti/auto-session
+function! InitAutoSession() abort
   lua << EOF
-  local config = require('session_manager.config')
-  require('session_manager').setup({
-    autoload_mode = { config.AutoloadMode.Disabled },
-    autosave_only_in_session = true,
-    load_include_current = true,
+  require('auto-session').setup({
+    auto_create = false,
+    auto_restore = false,
+    git_use_branch_name = true,
   })
 EOF
 
-  nnoremap <leader>z <cmd>SessionManager<cr>
+  set sessionoptions+=winpos,terminal,folds
+
+  nnoremap <leader>zz <cmd>AutoSession search<cr>
+  nnoremap <leader>zw <cmd>AutoSession save<cr>
+  nnoremap <leader>zd <cmd>AutoSession delete<cr>
 endfunction
 
 if has('nvim')
-  call InitSessionManager()
+  call InitAutoSession()
 endif
 
 " -----------------------------------------------------------------------------
