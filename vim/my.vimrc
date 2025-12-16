@@ -1144,8 +1144,15 @@ endif
 " -----------------------------------------------------------------------------
 " lewis6991/gitsigns.nvim
 function! InitGitSigns() abort
+  nnoremap gh <nop>
+  vnoremap gh <nop>
+  nnoremap gH <nop>
+  vnoremap gH <nop>
+
   lua << EOF
   require('gitsigns').setup({
+    sign_priority = 100,
+    trouble = false,
     on_attach = function(bufnr)
       local gitsigns = require('gitsigns')
       local function map(mode, l, r, opts)
@@ -1168,13 +1175,24 @@ function! InitGitSigns() abort
         end
       end, { desc = 'Prev git hunk' })
 
-      vim.keymap.set({ 'o', 'x' }, 'ih', '<cmd>Gitsigns select_hunk<CR>')
+      map({ 'o', 'x' }, 'ih', '<cmd>Gitsigns select_hunk<CR>')
+
+      map('n', 'gh', require('gitsigns').stage_hunk, { desc = 'Stage/unstage git hunk' })
+      map('v', 'gh', function()
+        require('gitsigns').stage_hunk({ vim.fn.line('.'), vim.fn.line('v') })
+      end, { desc = 'Stage/unstage git hunk' })
+
+      map('n', 'gH', require('gitsigns').reset_hunk, { desc = 'Discard git hunk' })
+      map('v', 'gH', function()
+        require('gitsigns').reset_hunk({ vim.fn.line('.'), vim.fn.line('v') })
+      end, { desc = 'Discard git hunk' })
     end
   })
 EOF
 
   nnoremap <c-w>g <cmd>Gitsigns blame_line<CR>
   nnoremap <silent> <leader>gh :Gitsigns blame<CR>:lua vim.defer_fn(function () vim.cmd([[wincmd w]]) end, 200)<CR>
+  nnoremap <leader>gq <cmd>:Gitsign setqflist target=all<CR>
 endfunction
 
 if has('nvim')
@@ -1596,7 +1614,7 @@ EOF
 endfunction
 
 if has('nvim')
-  autocmd QuickFixCmdPre * ++once call InitBqf()
+  call InitBqf()
 endif
 
 " -----------------------------------------------------------------------------
@@ -1625,18 +1643,8 @@ EOF
   nnoremap <leader>q <cmd>lua require('quicker').toggle({focus = true})<CR>
 endfunction
 
-function! LazyInitQuicker() abort
-  lua << EOF
-  vim.keymap.set('n', '<leader>q', function()
-    vim.call('InitQuicker')
-    require('quicker').toggle({focus = true})
-  end)
-EOF
-endfunction
-
 if has('nvim')
-  autocmd QuickFixCmdPre * ++once call InitQuicker()
-  call LazyInitQuicker()
+  call InitQuicker()
 endif
 
 " -----------------------------------------------------------------------------
@@ -1778,12 +1786,7 @@ endif
 function! InitMarks() abort
   lua << EOF
   require('marks').setup({
-    builtin_marks = {
-      "'",
-      '^',
-      '[',
-      '<',
-    },
+    builtin_marks = { },
     default_mappings = false,
     mappings = {
       set = 'm',
@@ -3310,7 +3313,11 @@ if ! has('nvim')
 endif
 set confirm
 if exists('+signcolumn')
-  set signcolumn=yes
+  if has('nvim')
+    set signcolumn=yes:2
+  else
+    set signcolumn=yes
+  endif
 endif
 set breakindent
 set breakindentopt=sbr
