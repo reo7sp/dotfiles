@@ -5,6 +5,7 @@
 export PATH="$HOME/bin:$HOME/.local/bin:$PATH:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
+export SHELL_SESSIONS_DISABLE=1
 
 if [[ -n $SSH_CLIENT || -n $SSH_TTY || -n $SSH_CONNECTION ]]; then
   export IS_SSH=1

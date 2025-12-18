@@ -248,8 +248,8 @@ endif
 let g:polyglot_disabled = ['sensible', 'autoindent']
 Plug 'sheerun/vim-polyglot'
 if has('nvim')
-  Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
-  Plug 'nvim-treesitter/nvim-treesitter-textobjects'
+  Plug 'nvim-treesitter/nvim-treesitter', {'branch': 'master', 'do': ':TSUpdate'}
+  Plug 'nvim-treesitter/nvim-treesitter-textobjects', {'branch': 'master'}
 endif
 if has('nvim')
   Plug 'RRethy/vim-hexokinase', {'do': 'make hexokinase'}
