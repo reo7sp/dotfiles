@@ -2093,9 +2093,10 @@ EOF
 
   set sessionoptions+=winpos,terminal,folds
 
-  nnoremap <leader>zz <cmd>AutoSession search<cr>
+  nnoremap <leader>zz <cmd>AutoSession restore<cr>
   nnoremap <leader>zw <cmd>AutoSession save<cr>
   nnoremap <leader>zd <cmd>AutoSession delete<cr>
+  nnoremap <leader>zD <cmd>AutoSession deletePicker<cr>
 endfunction
 
 if has('nvim')
