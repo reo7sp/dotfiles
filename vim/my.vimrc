@@ -598,7 +598,7 @@ function! InitBlink() abort
     keymap = {
       preset = 'super-tab',
       ['<CR>'] = { 'accept', 'fallback' },
-      ['<C-S-space>'] = require('minuet').make_blink_map(),
+      ['<C-y>'] = require('minuet').make_blink_map(),
     },
     sources = {
       default = { 'lsp', 'path', 'buffer', 'snippets', 'minuet' },
