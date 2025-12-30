@@ -44,6 +44,6 @@ cp zsh_plugins.txt ~/.zsh_plugins.txt
 cp p10k.zsh ~/.p10k.zsh
 mkdir -p ~/.config/fsh
 cp overlay.ini ~/.config/fsh/overlay.ini
-zsh -c 'source ~/.antidote/antidote.zsh && eval "$(antidote bundle zdharma-continuum/fast-syntax-highlighting)" && fast-theme -r && fast-theme XDG:catppuccin-latte'
+zsh -c 'source ~/.antidote/antidote.zsh && eval "$(antidote bundle zdharma-continuum/fast-syntax-highlighting)" && fast-theme -r && fast-theme XDG:catppuccin-latte' || true
 mkdir -p ~/bin
 cp bin/strip-whitespace ~/bin/strip-whitespace
