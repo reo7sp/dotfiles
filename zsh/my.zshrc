@@ -2,7 +2,18 @@
 
 # =============================================================================
 # env
-export PATH="$HOME/bin:$HOME/.local/bin:$PATH:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+export PATH="\
+$HOME/bin:\
+$HOME/.local/bin:\
+$PATH:\
+/Applications/Sublime Text.app/Contents/SharedSupport/bin:\
+/Applications/Sublime Merge.app/Contents/SharedSupport/bin:\
+/usr/local/sbin:\
+/usr/local/bin:\
+/usr/sbin:\
+/usr/bin:\
+/sbin:\
+/bin"
 export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
 export SHELL_SESSIONS_DISABLE=1
