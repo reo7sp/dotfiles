@@ -17,6 +17,7 @@ reo7sp/fzf-git.sh
 zuxfoucault/colored-man-pages_mod
 reo7sp/zsh-autoenv
 qoomon/zsh-lazyload
+lukechilds/zsh-nvm
 
 # completion
 zsh-users/zsh-completions kind:fpath path:src

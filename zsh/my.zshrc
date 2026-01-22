@@ -60,6 +60,11 @@ fi
 
 # =============================================================================
 # plugins
+export NVM_DIR="$HOME/.nvm"
+export NVM_LAZY_LOAD=true
+export NVM_LAZY_LOAD_EXTRA_COMMANDS=('open-swagger-ui')
+export NVM_COMPLETION=true
+
 source "$HOME/.antidote/antidote.zsh"
 
 antidote load
@@ -739,24 +744,6 @@ alias pp-install='pip3 install ptpython --break-system-packages'
 alias jn='jupyter notebook'
 
 # -----------------------------------------------------------------------------
-# nodejs
-export NVM_DIR="$HOME/.nvm"
-
-load_nvm() {
-  if [[ -z "$NVM_LOADED" ]]; then
-    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-    [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
-    export NVM_LOADED=1
-  fi
-}
-
-nvm() { load_nvm; command nvm "$@"; }
-npm() { load_nvm; command npm "$@"; }
-yarn() { load_nvm; command yarn "$@"; }
-node() { load_nvm; command node "$@"; }
-npx() { load_nvm; command npx "$@"; }
-
-# -----------------------------------------------------------------------------
 # docker
 export DOCKER_BUILDKIT=1
 
@@ -769,8 +756,6 @@ alias k='kubectl'
 
 # -----------------------------------------------------------------------------
 # swagger
-open-swagger-ui() { load_nvm; command open-swagger-ui "$@"; }
-
 alias open-swagger='open-swagger-ui --open'
 
 # -----------------------------------------------------------------------------
