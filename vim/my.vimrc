@@ -229,6 +229,9 @@ if has('nvim')
 endif
 if has('nvim')
   Plug 'stevearc/oil.nvim'
+  Plug 'benomahony/oil-git.nvim'
+else
+  Plug 'tpope/vim-vinegar'
 endif
 if has('nvim')
   Plug 'nvim-tree/nvim-tree.lua'
@@ -2367,6 +2370,12 @@ function! InitOil() abort
     view_options = {
       show_hidden = true,
     },
+    watch_for_changes = true,
+    git = {
+      add = function(path) return true end,
+      mv = function(src_path, dest_path) return true end,
+      rm = function(path) return true end,
+    },
     keymaps = {
       ['q'] = { 'actions.close', mode = 'n' },
       ['<C-x>'] = { 'actions.select', opts = { horizontal = true } },
@@ -2375,6 +2384,17 @@ function! InitOil() abort
       ['<C-f>'] = { callback = function() M.launch_find_files() end, desc = 'Launch Find Files' },
       ['<C-s>'] = { callback = function() M.launch_live_grep() end, desc = 'Launch Live Grep' },
     },
+  })
+
+  local palette = require('catppuccin.palettes').get_palette()
+  require('oil-git').setup({
+    highlights = {
+      OilGitAdded     = { fg = palette.green },
+      OilGitModified  = { fg = palette.yellow },
+      OilGitRenamed   = { fg = palette.mauve },
+      OilGitUntracked = { fg = palette.blue },
+      OilGitIgnored   = { fg = palette.overlay1 },
+    }
   })
 EOF
 
