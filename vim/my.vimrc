@@ -156,6 +156,7 @@ else
 endif
 if has('nvim')
   Plug 'romgrk/barbar.nvim'
+  Plug 'kwkarlwang/bufjump.nvim'
 else
   Plug 'ap/vim-buftabline'
 endif
@@ -1519,6 +1520,21 @@ if has('nvim')
   call InitBarbar()
 else
   call InitBuftablineVim()
+endif
+
+" -----------------------------------------------------------------------------
+" kwkarlwang/bufjump.nvim
+function! InitBufJump() abort
+  lua << EOF
+  require('bufjump').setup({
+    forward_key = '<M-i>',
+    backward_key = '<M-o>',
+  })
+EOF
+endfunction
+
+if has('nvim')
+  call InitBufJump()
 endif
 
 " -----------------------------------------------------------------------------
@@ -3038,6 +3054,8 @@ endif
 " yank file line reference
 command YankFilename let @+ = substitute(expand('%'), getcwd() . '/', '', '')
 command YankReference let @+ = join([substitute(expand('%'), getcwd() . '/', '', ''), line('.')], ':')
+command YankAbsFilename let @+ = expand('%:p')
+command YankAbsReference let @+ = expand('%:p') . ':' . line('.')
 
 function! s:YankReferenceRange(line_start, line_end) abort
   let l:start = min([a:line_start, a:line_end])
