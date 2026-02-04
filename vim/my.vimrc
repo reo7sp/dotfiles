@@ -2388,7 +2388,7 @@ function! InitOil() abort
     view_options = {
       show_hidden = true,
     },
-    watch_for_changes = true,
+    watch_for_changes = false,
     git = {
       add = function(path) return true end,
       mv = function(src_path, dest_path) return true end,

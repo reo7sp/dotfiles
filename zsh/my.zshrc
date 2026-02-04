@@ -545,8 +545,8 @@ gbdr() {
   echo "$@" | xargs -n1 -P0 git push origin --delete
 }
 
-alias gfm-all="find . -maxdepth 1 -type d | xargs -n1 -t -I{} git -C '{}' pull"
-alias gfr-all="find . -maxdepth 1 -type d | xargs -n1 -t -I{} git -C '{}' pull --rebase"
+alias gfm-all='find . -maxdepth 1 -type d ! -name . | sort -R | while read -r d; do echo "$d:"; git -C "$d" pull; sleep 2; done'
+alias gfr-all='find . -maxdepth 1 -type d ! -name . | sort -R | while read -r d; do echo "$d:"; git -C "$d" pull --rebase; sleep 2; done'
 alias gb-all="find . -maxdepth 1 -type d | xargs -n1 -t -I{} git -C '{}' branch"
 
 git-fix-macos() {
