@@ -3178,6 +3178,8 @@ endif
 " https://bluz71.github.io/2021/09/10/vim-tips-revisited.html#smarter-j-and-k-navigation
 nnoremap <silent> <expr> j v:count ? (v:count > 5 ? "m'" . v:count : '') . 'j' : 'gj'
 nnoremap <silent> <expr> k v:count ? (v:count > 5 ? "m'" . v:count : '') . 'k' : 'gk'
+nnoremap gj j
+nnoremap gk k
 
 " https://superuser.com/a/836924/2151180
 if has('nvim')
