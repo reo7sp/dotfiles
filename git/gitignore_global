@@ -2,6 +2,7 @@
 .DS_Store
 .autoenv.zsh
 .autoenv_leave.zsh
+.envrc
 .idea
 .vscode
 compile_commands.json

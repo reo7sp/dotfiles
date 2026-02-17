@@ -243,7 +243,7 @@ if has('nvim')
   Plug 'rgroli/other.nvim'
 endif
 if has('nvim')
-  Plug 'stevearc/aerial.nvim'
+  Plug 'stevearc/aerial.nvim', {'tag': 'v3.0.0'}
 endif
 if has('nvim')
   Plug 'MagicDuck/grug-far.nvim'

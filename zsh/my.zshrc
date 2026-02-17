@@ -284,13 +284,20 @@ aliases-ls() {
 
 # -----------------------------------------------------------------------------
 # zsh
+alias autoenv-edit-enter='vim .autoenv.zsh'
+alias autoenv-edit-leave='vim .autoenv_leave.zsh'
+
+if can-exec direnv; then
+  eval "$(direnv hook zsh)"
+fi
+
+alias direnv-edit='vim .envrc'
+alias envrc-edit='vim .envrc'
+
 alias edit-zsh='vim ~/.my.zshrc; source ~/.zshrc'
 alias edit-zsh-plugins='vim ~/.zsh_plugins.txt; source ~/.zshrc'
 alias edit-zsh-p10k='vim ~/.p10k.zsh; source ~/.zshrc'
 alias edit-zshrc='vim ~/.zshrc; source ~/.zshrc'
-
-alias autoenv-edit-enter='vim .autoenv.zsh'
-alias autoenv-edit-leave='vim .autoenv_leave.zsh'
 
 # -----------------------------------------------------------------------------
 # vim
@@ -324,6 +331,17 @@ xargs-vim() {
 }
 alias xargs-v='xargs-vim'
 
+enable-vim-colors-dark() {
+  export VIM_COLORS_DARK=1
+}
+
+enable-vim-colors-light() {
+  export VIM_COLORS_DARK=0
+}
+
+alias disable-vim-colors-dark='enable-vim-colors-light'
+alias disable-vim-colors-light='enable-vim-colors-dark'
+
 alias edit-vim='vim ~/.my.vimrc'
 alias edit-vimrc='vim ~/.vimrc'
 alias edit-vim-minuet-llm-remote='vim ~/.config/nvim/lua/minuet_llm_remote_config.lua'
@@ -337,17 +355,6 @@ profile-start-vim() {
   vim --cmd 'profile start /tmp/profile.log' --cmd 'profile func *' --cmd 'profile file *' -c 'profdel func *' -c 'profdel file *' "$@" -c 'qa!'
   cat /tmp/profile.log
 }
-
-enable-vim-colors-dark() {
-  export VIM_COLORS_DARK=1
-}
-
-enable-vim-colors-light() {
-  export VIM_COLORS_DARK=0
-}
-
-alias disable-vim-colors-dark='enable-vim-colors-light'
-alias disable-vim-colors-light='enable-vim-colors-dark'
 
 # -----------------------------------------------------------------------------
 # ranger
