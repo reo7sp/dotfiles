@@ -349,12 +349,8 @@ if has('nvim')
     }
   })
 
-  if os.getenv('VIM_COLORS_DARK') == '1' then
-    vim.cmd([[colorscheme catppuccin-mocha]])
-  else
-    vim.cmd([[colorscheme catppuccin-latte]])
-    vim.cmd([[highlight CursorLine guibg=#e4e4e4]])
-  end
+  vim.cmd([[colorscheme catppuccin-latte]])
+  vim.cmd([[highlight CursorLine guibg=#e4e4e4]])
 EOF
 else
   set background=light

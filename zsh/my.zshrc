@@ -331,17 +331,6 @@ xargs-vim() {
 }
 alias xargs-v='xargs-vim'
 
-enable-vim-colors-dark() {
-  export VIM_COLORS_DARK=1
-}
-
-enable-vim-colors-light() {
-  export VIM_COLORS_DARK=0
-}
-
-alias disable-vim-colors-dark='enable-vim-colors-light'
-alias disable-vim-colors-light='enable-vim-colors-dark'
-
 alias edit-vim='vim ~/.my.vimrc'
 alias edit-vimrc='vim ~/.vimrc'
 alias edit-vim-minuet-llm-remote='vim ~/.config/nvim/lua/minuet_llm_remote_config.lua'
