@@ -44,7 +44,18 @@ cp zsh_plugins.txt ~/.zsh_plugins.txt
 cp p10k.zsh ~/.p10k.zsh
 mkdir -p ~/.config/fsh
 cp overlay.ini ~/.config/fsh/overlay.ini
-zsh -c 'source ~/.antidote/antidote.zsh && eval "$(antidote bundle zdharma-continuum/fast-syntax-highlighting)" && fast-theme -r && fast-theme XDG:catppuccin-latte' || true
+zsh -c '
+  source ~/.antidote/antidote.zsh
+  eval "$(antidote bundle catppuccin/zsh-fsh kind:path)" >/dev/null 2>&1
+  FSTHEME_DIR="$HOME/.config/fsh"
+  CATPPUCCIN_BUNDLE="$(antidote path catppuccin/zsh-fsh 2>/dev/null)/themes"
+  if [[ -n "$CATPPUCCIN_BUNDLE" && -d "$CATPPUCCIN_BUNDLE" ]]; then
+    mkdir -p "$FSTHEME_DIR"
+    ln -sf "$CATPPUCCIN_BUNDLE"/catppuccin-*.ini "$FSTHEME_DIR"/
+  fi
+  eval "$(antidote bundle zdharma-continuum/fast-syntax-highlighting)" >/dev/null 2>&1
+  fast-theme -r 2>/dev/null; fast-theme XDG:catppuccin-latte 2>/dev/null
+' || true
 mkdir -p ~/bin
 cp bin/strip-whitespace ~/bin/strip-whitespace
 mkdir -p ~/.config/direnv
