@@ -274,6 +274,7 @@ if has('nvim')
   Plug 'hat0uma/csvview.nvim', {'for': ['csv', 'tsv']}
 endif
 Plug 'rodjek/vim-puppet', {'for': ['pascal', 'puppet']}
+Plug 'vmware-archive/salt-vim'
 Plug 'fladson/vim-kitty'
 
 " -----------------------------------------------------------------------------
