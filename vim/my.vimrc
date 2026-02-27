@@ -1178,6 +1178,13 @@ function! InitGitSigns() abort
         end
       end, { desc = 'Prev git hunk' })
 
+      map('n', ']H', function()
+        gitsigns.next_hunk({ staged = true })
+      end, { desc = 'Next staged hunk' })
+      map('n', '[H', function()
+        gitsigns.prev_hunk({ staged = true })
+      end, { desc = 'Prev staged hunk' })
+
       map({ 'o', 'x' }, 'ih', '<cmd>Gitsigns select_hunk<CR>')
 
       map('n', 'gh', require('gitsigns').stage_hunk, { desc = 'Stage/unstage git hunk' })
