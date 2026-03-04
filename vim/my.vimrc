@@ -3184,6 +3184,8 @@ nnoremap <silent> <expr> j v:count ? (v:count > 5 ? "m'" . v:count : '') . 'j' :
 nnoremap <silent> <expr> k v:count ? (v:count > 5 ? "m'" . v:count : '') . 'k' : 'gk'
 nnoremap gj j
 nnoremap gk k
+nnoremap <down> gj
+nnoremap <up> gk
 
 " https://superuser.com/a/836924/2151180
 if has('nvim')
@@ -3206,6 +3208,9 @@ endif
 " https://www.reddit.com/r/neovim/comments/sf0hmc/im_really_proud_of_this_mapping_i_came_up_with/
 nnoremap c. /\V\C<C-r>"<CR>cgn<C-a><Esc>
 nnoremap d. /\V\C<C-r>"<CR>dgn
+
+" https://www.reddit.com/r/vim/comments/rctvgk/a_lesser_known_built_in_feature_you_use_regularly/
+nnoremap gV `[v`]
 
 " https://vim.fandom.com/wiki/Comfortable_handling_of_registers
 nnoremap [+ <cmd>let @"=@+<CR>
