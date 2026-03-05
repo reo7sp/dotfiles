@@ -2580,7 +2580,6 @@ endfunction
 
 function! LazyInitNvimTree() abort
   nnoremap <leader>t <cmd>call LazyNvimTreeToggle()<CR>
-  nnoremap _ <cmd>call LazyNvimTreeFocus()<CR>
 endfunction
 
 if has('nvim')
@@ -3257,6 +3256,20 @@ vmap +>P "+>P
 vmap +<P "+<P
 vmap +=p "+=p
 vmap +=P "+=P
+
+nmap _c "_c
+nmap _C "_C
+nmap _d "_d
+nmap _D "_D
+nmap _x "_x
+nmap _X "_X
+
+vmap _c "_c
+vmap _C "_C
+vmap _d "_d
+vmap _D "_D
+vmap _x "_x
+vmap _X "_X
 
 " https://gist.github.com/romainl/d2ad868afd7520519057475bd8e9db0c
 function! Format(type, ...)

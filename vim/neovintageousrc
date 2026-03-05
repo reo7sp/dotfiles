@@ -45,6 +45,18 @@ vmap +>P "+>P
 vmap +<P "+<P
 vmap +=p "+=p
 vmap +=P "+=P
+nmap _c "_c
+nmap _C "_C
+nmap _d "_d
+nmap _D "_D
+nmap _x "_x
+nmap _X "_X
+vmap _c "_c
+vmap _C "_C
+vmap _d "_d
+vmap _D "_D
+vmap _x "_x
+vmap _X "_X
 
 nnoremap <C-h> <C-w>h
 nnoremap <C-j> <C-w>j
