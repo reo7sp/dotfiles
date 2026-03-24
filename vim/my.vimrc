@@ -232,7 +232,7 @@ if has('nvim')
 endif
 if has('nvim')
   Plug 'stevearc/oil.nvim'
-  Plug 'benomahony/oil-git.nvim'
+  Plug 'malewicz1337/oil-git.nvim'
 else
   Plug 'tpope/vim-vinegar'
 endif
@@ -785,7 +785,6 @@ call InitSneak()
 function! InitPounce() abort
   lua << EOF
   require('pounce').setup({
-    accept_best_key = '<space>',
   })
 
   vim.keymap.set({ 'n', 'x', 'o' }, '<leader><leader>', function() require('pounce').pounce({}) end)
@@ -1179,10 +1178,10 @@ function! InitGitSigns() abort
       end, { desc = 'Prev git hunk' })
 
       map('n', ']H', function()
-        gitsigns.next_hunk({ staged = true })
+        require('gitsigns').nav_hunk('next', { target = 'staged' })
       end, { desc = 'Next staged hunk' })
       map('n', '[H', function()
-        gitsigns.prev_hunk({ staged = true })
+        require('gitsigns').nav_hunk('prev', { target = 'staged' })
       end, { desc = 'Prev staged hunk' })
 
       map({ 'o', 'x' }, 'ih', '<cmd>Gitsigns select_hunk<CR>')
@@ -1560,7 +1559,8 @@ function! InitWindowPicker() abort
   })
 EOF
 
-  nnoremap <c-w><c-w> <cmd>lua vim.api.nvim_set_current_win(require('window-picker').pick_window() or vim.api.nvim_get_current_win())<cr>
+  nnoremap <c-w>e <cmd>lua vim.api.nvim_set_current_win(require('window-picker').pick_window() or vim.api.nvim_get_current_win())<cr>
+  nnoremap <c-w><c-e> <cmd>lua vim.api.nvim_set_current_win(require('window-picker').pick_window() or vim.api.nvim_get_current_win())<cr>
 endfunction
 
 if has('nvim')
@@ -2614,6 +2614,18 @@ function! InitOther() abort
       {
         pattern = "(.+)/src/(.+)%.cpp$",
         target  = "%1/include/%2.h",
+        context = "c",
+      },
+      -- hpp -> cpp
+      {
+        pattern = "(.+)/include/(.+)%.hpp$",
+        target  = "%1/src/%2.cpp",
+        context = "c",
+      },
+      -- cpp -> hpp
+      {
+        pattern = "(.+)/src/(.+)%.cpp$",
+        target  = "%1/include/%2.hpp",
         context = "c",
       },
 
