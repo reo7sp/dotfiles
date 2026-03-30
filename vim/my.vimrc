@@ -728,7 +728,7 @@ EOF
 endfunction
 
 if has('nvim')
-  autocmd VimEnter * ++once lua vim.defer_fn(function() vim.call('InitDial') end, 100)
+  autocmd VimEnter * ++once call InitDial()
 endif
 
 " -----------------------------------------------------------------------------
@@ -750,7 +750,7 @@ function! InitGuessIndent() abort
 endfunction
 
 if has('nvim')
-  call InitGuessIndent()
+  autocmd VimEnter * ++once call InitGuessIndent()
 endif
 
 " -----------------------------------------------------------------------------
@@ -792,7 +792,7 @@ EOF
 endfunction
 
 if has('nvim')
-  autocmd VimEnter * ++once lua vim.defer_fn(function() vim.call('InitPounce') end, 100)
+  autocmd VimEnter * ++once call InitPounce()
 endif
 
 " -----------------------------------------------------------------------------
@@ -806,7 +806,7 @@ EOF
 endfunction
 
 if has('nvim')
-  autocmd VimEnter * ++once lua vim.defer_fn(function() vim.call('InitNvimSurround') end, 100)
+  autocmd VimEnter * ++once call InitNvimSurround()
 endif
 
 " -----------------------------------------------------------------------------
@@ -833,7 +833,7 @@ function! InitSubversive() abort
 endfunction
 
 if has('nvim')
-  autocmd VimEnter * ++once lua vim.defer_fn(function() vim.call('InitSubstitute') end, 100)
+  autocmd VimEnter * ++once call InitSubstitute()
 else
   autocmd BufEnter * call InitSubversive()
 endif
@@ -845,7 +845,7 @@ function! InitInOut() abort
 endfunction
 
 if has('nvim')
-  call InitInOut()
+  autocmd InsertEnter * ++once call InitInOut()
 endif
 
 " -----------------------------------------------------------------------------
@@ -896,7 +896,7 @@ function! InitYankStack() abort
 endfunction
 
 if has('nvim')
-  call InitYanky()
+  autocmd VimEnter * ++once call InitYanky()
 else
   call InitYankStack()
 endif
@@ -936,16 +936,13 @@ EOF
 endfunction
 
 if has('nvim')
-  call InitUfo()
+  autocmd VimEnter * ++once call InitUfo()
 end
 
 " -----------------------------------------------------------------------------
 " numToStr/Comment.nvim or tpope/vim-commentary
 function! InitComment() abort
   lua << EOF
-  require('ts_context_commentstring').setup({
-    enable_autocmd = false,
-  })
   require('Comment').setup({
     pre_hook = require('ts_context_commentstring.integrations.comment_nvim').create_pre_hook(),
   })
@@ -953,7 +950,7 @@ EOF
 endfunction
 
 if has('nvim')
-  call InitComment()
+  autocmd VimEnter * ++once call InitComment()
 end
 
 " -----------------------------------------------------------------------------
@@ -1000,7 +997,7 @@ EOF
 endfunction
 
 if has('nvim')
-  autocmd VimEnter * ++once lua vim.defer_fn(function() vim.call('InitTextCase') end, 100)
+  autocmd VimEnter * ++once call InitTextCase()
 endif
 
 " -----------------------------------------------------------------------------
@@ -1017,7 +1014,7 @@ EOF
 endfunction
 
 if has('nvim')
-  autocmd VimEnter * ++once lua vim.defer_fn(function() vim.call('InitMiniAlign') end, 100)
+  autocmd VimEnter * ++once call InitMiniAlign()
 endif
 
 " -----------------------------------------------------------------------------
@@ -1140,7 +1137,7 @@ EOF
 endfunction
 
 if has('nvim')
-  autocmd VimEnter * ++once lua vim.defer_fn(function() vim.call('InitConform') end, 100)
+  autocmd VimEnter * ++once call InitConform()
 endif
 
 " -----------------------------------------------------------------------------
@@ -1205,7 +1202,7 @@ EOF
 endfunction
 
 if has('nvim')
-  call InitGitSigns()
+  autocmd VimEnter * ++once call InitGitSigns()
 endif
 
 " -----------------------------------------------------------------------------
@@ -1219,7 +1216,7 @@ EOF
 endfunction
 
 if has('nvim')
-  autocmd FileType * ++once call InitGitConflict()
+  autocmd VimEnter * ++once call InitGitConflict()
 endif
 
 " -----------------------------------------------------------------------------
@@ -1537,7 +1534,7 @@ EOF
 endfunction
 
 if has('nvim')
-  call InitBufJump()
+  autocmd VimEnter * ++once call InitBufJump()
 endif
 
 " -----------------------------------------------------------------------------
@@ -1564,7 +1561,7 @@ EOF
 endfunction
 
 if has('nvim')
-  call InitWindowPicker()
+  autocmd VimEnter * ++once call InitWindowPicker()
 endif
 
 " -----------------------------------------------------------------------------
@@ -1580,7 +1577,7 @@ EOF
 endfunction
 
 if has('nvim')
-  call InitWinshift()
+  autocmd VimEnter * ++once call InitWinshift()
 endif
 
 " -----------------------------------------------------------------------------
@@ -1639,7 +1636,7 @@ EOF
 endfunction
 
 if has('nvim')
-  call InitBqf()
+  autocmd VimEnter * ++once call InitBqf()
 endif
 
 " -----------------------------------------------------------------------------
@@ -1669,7 +1666,7 @@ EOF
 endfunction
 
 if has('nvim')
-  call InitQuicker()
+  autocmd VimEnter * ++once call InitQuicker()
 endif
 
 " -----------------------------------------------------------------------------
@@ -1774,7 +1771,7 @@ EOF
 endfunction
 
 if has('nvim')
-  autocmd VimEnter * ++once lua vim.defer_fn(function() vim.call('InitTrouble') end, 100)
+  autocmd VimEnter * ++once call InitTrouble()
 endif
 
 " -----------------------------------------------------------------------------
@@ -1803,7 +1800,7 @@ EOF
 endfunction
 
 if has('nvim')
-  call InitTodo()
+  autocmd VimEnter * ++once call InitTodo()
 endif
 
 " -----------------------------------------------------------------------------
@@ -1847,7 +1844,7 @@ EOF
 endfunction
 
 if has('nvim')
-  call InitMarks()
+  autocmd VimEnter * ++once call InitMarks()
 endif
 
 " -----------------------------------------------------------------------------
@@ -1894,7 +1891,7 @@ EOF
 endfunction
 
 if has('nvim')
-  call InitSatellite()
+  autocmd VimEnter * ++once call InitSatellite()
 endif
 
 " -----------------------------------------------------------------------------
@@ -1917,7 +1914,7 @@ EOF
 endfunction
 
 if has('nvim')
-  call InitIlluminate()
+  autocmd VimEnter * ++once call InitIlluminate()
 endif
 
 " -----------------------------------------------------------------------------
@@ -1936,7 +1933,7 @@ EOF
 endfunction
 
 if has('nvim')
-  call InitIndentBlankline()
+  autocmd VimEnter * ++once call InitIndentBlankline()
 endif
 
 " -----------------------------------------------------------------------------
@@ -1951,7 +1948,7 @@ EOF
 endfunction
 
 if has('nvim')
-  call InitVirtColumn()
+  autocmd VimEnter * ++once call InitVirtColumn()
 endif
 
 " -----------------------------------------------------------------------------
@@ -1967,7 +1964,7 @@ EOF
 endfunction
 
 if has('nvim')
-  call InitTinyDiag()
+  autocmd VimEnter * ++once call InitTinyDiag()
 endif
 
 " -----------------------------------------------------------------------------
@@ -1987,7 +1984,7 @@ EOF
 endfunction
 
 if has('nvim')
-  call InitFidget()
+  autocmd VimEnter * ++once call InitFidget()
 endif
 
 " -----------------------------------------------------------------------------
@@ -2046,7 +2043,7 @@ function! InitWhichKeyVim() abort
 endfunction
 
 if has('nvim')
-  call InitWhichKeyNvim()
+  autocmd VimEnter * ++once call InitWhichKeyNvim()
 else
   call InitWhichKeyVim()
 endif
@@ -2074,7 +2071,7 @@ function! InitAutosaveVim() abort
 endfunction
 
 if has('nvim')
-  call InitAutosaveNvim()
+  autocmd VimEnter * ++once call InitAutosaveNvim()
 else
   call InitAutosaveVim()
 endif
@@ -2125,7 +2122,7 @@ EOF
 endfunction
 
 if has('nvim')
-  call InitAutoSession()
+  autocmd VimEnter * ++once call InitAutoSession()
 endif
 
 " -----------------------------------------------------------------------------
@@ -2360,7 +2357,7 @@ EOF
 endfunction
 
 if has('nvim')
-  call InitTelescope()
+  autocmd VimEnter * ++once call InitTelescope()
 endif
 
 " -----------------------------------------------------------------------------
@@ -2424,7 +2421,7 @@ EOF
 endfunction
 
 if has('nvim')
-  call InitOil()
+  autocmd VimEnter * ++once call InitOil()
 endif
 
 " -----------------------------------------------------------------------------
@@ -2682,7 +2679,7 @@ EOF
 endfunction
 
 if has('nvim')
-  call InitAerial()
+  autocmd VimEnter * ++once call InitAerial()
 endif
 
 " -----------------------------------------------------------------------------
@@ -2783,6 +2780,10 @@ function! InitTreesitter() abort
       vim.treesitter.start(args.buf)
     end,
   })
+
+  require('ts_context_commentstring').setup({
+    enable_autocmd = false,
+  })
 EOF
 endfunction
 
@@ -2840,7 +2841,7 @@ EOF
 endfunction
 
 if has('nvim')
-  autocmd FileType * ++once call InitTreesitterTextobjects()
+  autocmd VimEnter * ++once call InitTreesitterTextobjects()
 endif
 
 " -----------------------------------------------------------------------------
@@ -2851,7 +2852,7 @@ function! InitHexokinase() abort
 endfunction
 
 if has('nvim')
-  call InitHexokinase()
+  autocmd VimEnter * ++once call InitHexokinase()
 endif
 
 " -----------------------------------------------------------------------------
@@ -2976,7 +2977,7 @@ EOF
 endfunction
 
 if has('nvim')
-  autocmd VimEnter * ++once lua vim.defer_fn(function() vim.call('InitToggleterm') end, 100)
+  autocmd VimEnter * ++once call InitToggleterm()
 endif
 
 " -----------------------------------------------------------------------------
@@ -3054,7 +3055,7 @@ function! InitLazyGit() abort
 endfunction
 
 if has('nvim')
-  call InitLazyGit()
+  autocmd VimEnter * ++once call InitLazyGit()
 endif
 
 
