@@ -243,7 +243,7 @@ if has('nvim')
   Plug 'rgroli/other.nvim'
 endif
 if has('nvim')
-  Plug 'stevearc/aerial.nvim', {'tag': 'v3.0.0'}
+  Plug 'stevearc/aerial.nvim', {'tag': '*'}
 endif
 if has('nvim')
   Plug 'MagicDuck/grug-far.nvim'
@@ -254,8 +254,8 @@ endif
 let g:polyglot_disabled = ['sensible', 'autoindent']
 Plug 'sheerun/vim-polyglot'
 if has('nvim')
-  Plug 'nvim-treesitter/nvim-treesitter', {'branch': 'master', 'do': ':TSUpdate'}
-  Plug 'nvim-treesitter/nvim-treesitter-textobjects', {'branch': 'master'}
+  Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+  Plug 'nvim-treesitter/nvim-treesitter-textobjects'
 endif
 if has('nvim')
   Plug 'RRethy/vim-hexokinase', {'do': 'make hexokinase'}
@@ -953,7 +953,7 @@ EOF
 endfunction
 
 if has('nvim')
-  autocmd VimEnter * ++once lua vim.defer_fn(function() vim.call('InitComment') end, 100)
+  call InitComment()
 end
 
 " -----------------------------------------------------------------------------
@@ -2720,131 +2720,127 @@ endif
 " nvim-treesitter/nvim-treesitter
 function! InitTreesitter() abort
   lua << EOF
-  -- https://github.com/neovim/neovim/issues/32660
-  vim.g._ts_force_sync_parsing = true
+  require('nvim-treesitter').setup({
+    install_dir = vim.fn.stdpath('data') .. '/site',
+  })
+  local langs = {
+    'c',
+    'cpp',
+    'cmake',
+    'go',
+    'python',
+    'perl',
+    'ruby',
+    'lua',
+    'rust',
+    'bash',
+    'make',
+    'html',
+    'css',
+    'javascript',
+    'typescript',
+    'tsx',
+    'jinja',
+    'sql',
+    'json',
+    'yaml',
+    'toml',
+    'xml',
+    'dockerfile',
+    'vim',
+    'markdown',
+    'diff',
+    'gitcommit',
+    'git_rebase',
+  }
+  require('nvim-treesitter').install(langs)
 
-  require('nvim-treesitter.configs').setup({
-    ensure_installed = {
-      'c',
-      'cpp',
-      'cmake',
-      'go',
-      'python',
-      'perl',
-      'ruby',
-      'lua',
-      'rust',
-      'bash',
-      'make',
-      'html',
-      'css',
-      'javascript',
-      'typescript',
-      'tsx',
-      'jinja',
-      'sql',
-      'json',
-      'yaml',
-      'toml',
-      'xml',
-      'dockerfile',
-      'vim',
-      'markdown',
-      'diff',
-      'gitcommit',
-      'git_rebase',
-    },
-    sync_install = false,
-    auto_install = true,
-    highlight = {
-      enable = true,
-      disable = function(lang, buf)
-        local max_filesize = 1000 * 1024
-        local ok, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(buf))
-        if ok and stats and stats.size > max_filesize then
-            return true
-        end
+  local allowed_langs = {}
+  for _, lang in ipairs(langs) do
+    allowed_langs[lang] = true
+  end
+  vim.api.nvim_create_autocmd('FileType', {
+    callback = function(args)
+      local filetype = vim.bo[args.buf].filetype
+      local lang = vim.treesitter.language.get_lang(filetype) or filetype
 
-        local disable_langs = {
-          'mermaid',
-          'csv',
-          'tsv',
-          'puppet',
-        }
-        for _, s in ipairs(disable_langs) do
-          if s == lang then
-              return true
-          end
-        end
-      end,
-    },
-    indent = {
-      enable = false,
-    },
-    textobjects = {
-      select = {
-        enable = true,
-        lookahead = true,
-        keymaps = {
-          ['aa'] = { query = '@parameter.outer', desc = 'Select outer part of a parameter/argument' },
-          ['ia'] = { query = '@parameter.inner', desc = 'Select inner part of a parameter/argument' },
-          ['ai'] = { query = '@conditional.outer', desc = 'Select outer part of a conditional' },
-          ['ii'] = { query = '@conditional.inner', desc = 'Select inner part of a conditional' },
-          ['al'] = { query = '@loop.outer', desc = 'Select outer part of a loop' },
-          ['il'] = { query = '@loop.inner', desc = 'Select inner part of a loop' },
-          ['af'] = { query = '@call.outer', desc = 'Select outer part of a function call' },
-          ['if'] = { query = '@call.inner', desc = 'Select inner part of a function call' },
-          ['am'] = { query = '@function.outer', desc = 'Select outer part of a method/function definition' },
-          ['im'] = { query = '@function.inner', desc = 'Select inner part of a method/function definition' },
-          ['ac'] = { query = '@class.outer', desc = 'Select outer part of a class' },
-          ['ic'] = { query = '@class.inner', desc = 'Select inner part of a class' },
-        },
-      },
-      swap = {
-        enable = true,
-        swap_next = {
-          ['cm'] = '@parameter.inner',
-        },
-      },
-      move = {
-        enable = true,
-        set_jumps = true,
-        goto_next_start = {
-          [']f'] = { query = '@call.outer', desc = 'Next function call start' },
-          [']m'] = { query = '@function.outer', desc = 'Next method/function def start' },
-          [']c'] = { query = '@class.outer', desc = 'Next class start' },
-          [']i'] = { query = '@conditional.outer', desc = 'Next conditional start' },
-          [']l'] = { query = '@loop.outer', desc = 'Next loop start' },
-        },
-        goto_next_end = {
-          [']F'] = { query = '@call.outer', desc = 'Next function call end' },
-          [']M'] = { query = '@function.outer', desc = 'Next method/function def end' },
-          [']C'] = { query = '@class.outer', desc = 'Next class end' },
-          [']I'] = { query = '@conditional.outer', desc = 'Next conditional end' },
-          [']L'] = { query = '@loop.outer', desc = 'Next loop end' },
-        },
-        goto_previous_start = {
-          ['[f'] = { query = '@call.outer', desc = 'Prev function call start' },
-          ['[m'] = { query = '@function.outer', desc = 'Prev method/function def start' },
-          ['[c'] = { query = '@class.outer', desc = 'Prev class start' },
-          ['[i'] = { query = '@conditional.outer', desc = 'Prev conditional start' },
-          ['[l'] = { query = '@loop.outer', desc = 'Prev loop start' },
-        },
-        goto_previous_end = {
-          ['[F'] = { query = '@call.outer', desc = 'Prev function call end' },
-          ['[M'] = { query = '@function.outer', desc = 'Prev method/function def end' },
-          ['[C'] = { query = '@class.outer', desc = 'Prev class end' },
-          ['[I'] = { query = '@conditional.outer', desc = 'Prev conditional end' },
-          ['[L'] = { query = '@loop.outer', desc = 'Prev loop end' },
-        },
-      },
-    },
+      if not allowed_langs[lang] then
+        return
+      end
+
+      local max_filesize = 1000 * 1024
+      local name = vim.api.nvim_buf_get_name(args.buf)
+      local ok, stats = pcall(vim.uv.fs_stat, name)
+      if ok and stats and stats.size > max_filesize then
+        return
+      end
+
+      local has_parser = pcall(vim.treesitter.query.get, lang, 'highlights')
+      if not has_parser then
+        return
+      end
+
+      vim.treesitter.start(args.buf)
+    end,
   })
 EOF
 endfunction
 
 if has('nvim')
-  autocmd FileType * ++once call InitTreesitter()
+  call InitTreesitter()
+endif
+
+" -----------------------------------------------------------------------------
+" nvim-treesitter/nvim-treesitter-textobjects
+function! InitTreesitterTextobjects() abort
+  lua << EOF
+  require('nvim-treesitter-textobjects').setup({
+    select = {
+      lookahead = true,
+    },
+    move = {
+      set_jumps = true,
+    },
+  })
+
+  vim.keymap.set({ 'x', 'o' }, 'aa', function() require('nvim-treesitter-textobjects.select').select_textobject('@parameter.outer', 'textobjects') end, { desc = 'Select outer part of a parameter/argument' })
+  vim.keymap.set({ 'x', 'o' }, 'ia', function() require('nvim-treesitter-textobjects.select').select_textobject('@parameter.inner', 'textobjects') end, { desc = 'Select inner part of a parameter/argument' })
+  vim.keymap.set({ 'x', 'o' }, 'ai', function() require('nvim-treesitter-textobjects.select').select_textobject('@conditional.outer', 'textobjects') end, { desc = 'Select outer part of a conditional' })
+  vim.keymap.set({ 'x', 'o' }, 'ii', function() require('nvim-treesitter-textobjects.select').select_textobject('@conditional.inner', 'textobjects') end, { desc = 'Select inner part of a conditional' })
+  vim.keymap.set({ 'x', 'o' }, 'al', function() require('nvim-treesitter-textobjects.select').select_textobject('@loop.outer', 'textobjects') end, { desc = 'Select outer part of a loop' })
+  vim.keymap.set({ 'x', 'o' }, 'il', function() require('nvim-treesitter-textobjects.select').select_textobject('@loop.inner', 'textobjects') end, { desc = 'Select inner part of a loop' })
+  vim.keymap.set({ 'x', 'o' }, 'af', function() require('nvim-treesitter-textobjects.select').select_textobject('@call.outer', 'textobjects') end, { desc = 'Select outer part of a function call' })
+  vim.keymap.set({ 'x', 'o' }, 'if', function() require('nvim-treesitter-textobjects.select').select_textobject('@call.inner', 'textobjects') end, { desc = 'Select inner part of a function call' })
+  vim.keymap.set({ 'x', 'o' }, 'am', function() require('nvim-treesitter-textobjects.select').select_textobject('@function.outer', 'textobjects') end, { desc = 'Select outer part of a method/function definition' })
+  vim.keymap.set({ 'x', 'o' }, 'im', function() require('nvim-treesitter-textobjects.select').select_textobject('@function.inner', 'textobjects') end, { desc = 'Select inner part of a method/function definition' })
+  vim.keymap.set({ 'x', 'o' }, 'ac', function() require('nvim-treesitter-textobjects.select').select_textobject('@class.outer', 'textobjects') end, { desc = 'Select outer part of a class' })
+  vim.keymap.set({ 'x', 'o' }, 'ic', function() require('nvim-treesitter-textobjects.select').select_textobject('@class.inner', 'textobjects') end, { desc = 'Select inner part of a class' })
+  vim.keymap.set('n', 'cm', function() require('nvim-treesitter-textobjects.swap').swap_next('@parameter.inner') end)
+  vim.keymap.set({ 'n', 'x', 'o' }, ']f', function() require('nvim-treesitter-textobjects.move').goto_next_start('@call.outer', 'textobjects') end, { desc = 'Next function call start' })
+  vim.keymap.set({ 'n', 'x', 'o' }, ']m', function() require('nvim-treesitter-textobjects.move').goto_next_start('@function.outer', 'textobjects') end, { desc = 'Next method/function def start' })
+  vim.keymap.set({ 'n', 'x', 'o' }, ']c', function() require('nvim-treesitter-textobjects.move').goto_next_start('@class.outer', 'textobjects') end, { desc = 'Next class start' })
+  vim.keymap.set({ 'n', 'x', 'o' }, ']i', function() require('nvim-treesitter-textobjects.move').goto_next_start('@conditional.outer', 'textobjects') end, { desc = 'Next conditional start' })
+  vim.keymap.set({ 'n', 'x', 'o' }, ']l', function() require('nvim-treesitter-textobjects.move').goto_next_start('@loop.outer', 'textobjects') end, { desc = 'Next loop start' })
+  vim.keymap.set({ 'n', 'x', 'o' }, ']F', function() require('nvim-treesitter-textobjects.move').goto_next_end('@call.outer', 'textobjects') end, { desc = 'Next function call end' })
+  vim.keymap.set({ 'n', 'x', 'o' }, ']M', function() require('nvim-treesitter-textobjects.move').goto_next_end('@function.outer', 'textobjects') end, { desc = 'Next method/function def end' })
+  vim.keymap.set({ 'n', 'x', 'o' }, ']C', function() require('nvim-treesitter-textobjects.move').goto_next_end('@class.outer', 'textobjects') end, { desc = 'Next class end' })
+  vim.keymap.set({ 'n', 'x', 'o' }, ']I', function() require('nvim-treesitter-textobjects.move').goto_next_end('@conditional.outer', 'textobjects') end, { desc = 'Next conditional end' })
+  vim.keymap.set({ 'n', 'x', 'o' }, ']L', function() require('nvim-treesitter-textobjects.move').goto_next_end('@loop.outer', 'textobjects') end, { desc = 'Next loop end' })
+  vim.keymap.set({ 'n', 'x', 'o' }, '[f', function() require('nvim-treesitter-textobjects.move').goto_previous_start('@call.outer', 'textobjects') end, { desc = 'Prev function call start' })
+  vim.keymap.set({ 'n', 'x', 'o' }, '[m', function() require('nvim-treesitter-textobjects.move').goto_previous_start('@function.outer', 'textobjects') end, { desc = 'Prev method/function def start' })
+  vim.keymap.set({ 'n', 'x', 'o' }, '[c', function() require('nvim-treesitter-textobjects.move').goto_previous_start('@class.outer', 'textobjects') end, { desc = 'Prev class start' })
+  vim.keymap.set({ 'n', 'x', 'o' }, '[i', function() require('nvim-treesitter-textobjects.move').goto_previous_start('@conditional.outer', 'textobjects') end, { desc = 'Prev conditional start' })
+  vim.keymap.set({ 'n', 'x', 'o' }, '[l', function() require('nvim-treesitter-textobjects.move').goto_previous_start('@loop.outer', 'textobjects') end, { desc = 'Prev loop start' })
+  vim.keymap.set({ 'n', 'x', 'o' }, '[F', function() require('nvim-treesitter-textobjects.move').goto_previous_end('@call.outer', 'textobjects') end, { desc = 'Prev function call end' })
+  vim.keymap.set({ 'n', 'x', 'o' }, '[M', function() require('nvim-treesitter-textobjects.move').goto_previous_end('@function.outer', 'textobjects') end, { desc = 'Prev method/function def end' })
+  vim.keymap.set({ 'n', 'x', 'o' }, '[C', function() require('nvim-treesitter-textobjects.move').goto_previous_end('@class.outer', 'textobjects') end, { desc = 'Prev class end' })
+  vim.keymap.set({ 'n', 'x', 'o' }, '[I', function() require('nvim-treesitter-textobjects.move').goto_previous_end('@conditional.outer', 'textobjects') end, { desc = 'Prev conditional end' })
+  vim.keymap.set({ 'n', 'x', 'o' }, '[L', function() require('nvim-treesitter-textobjects.move').goto_previous_end('@loop.outer', 'textobjects') end, { desc = 'Prev loop end' })
+EOF
+endfunction
+
+if has('nvim')
+  autocmd FileType * ++once call InitTreesitterTextobjects()
 endif
 
 " -----------------------------------------------------------------------------
@@ -2875,7 +2871,7 @@ function! InitGo() abort
     dap_debug_keymap = false,
     dap_debug_vt = false,
     lsp_gofumpt = false,
-    luasnip = true,
+    luasnip = false,
     tag_options = '',
     comment_placeholder = '',
     icons = false,
