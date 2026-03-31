@@ -294,7 +294,7 @@ let g:VDiffDoMapping = 0
 Plug 'rickhowe/spotdiff.vim'
 if has('nvim')
   Plug 'sindrets/diffview.nvim'
-  Plug 'kdheepak/lazygit.nvim'
+  Plug 'NeogitOrg/neogit'
 endif
 
 call plug#end()
@@ -319,6 +319,7 @@ if has('nvim')
       barbar = true,
       blink_cmp = true,
       diffview = true,
+      neogit = true,
       fidget = true,
       gitsigns = true,
       grug_far = true,
@@ -1198,7 +1199,6 @@ EOF
 
   nnoremap <c-w>g <cmd>Gitsigns blame_line<CR>
   nnoremap <silent> <leader>gh :Gitsigns blame<CR>:lua vim.defer_fn(function () vim.cmd([[wincmd w]]) end, 200)<CR>
-  nnoremap <leader>gq <cmd>:Gitsign setqflist target=all<CR>
 endfunction
 
 if has('nvim')
@@ -3012,6 +3012,13 @@ function! InitDiffview() abort
       fold_closed = '',
       fold_open = '',
     },
+    hooks = {
+      diff_buf_win_enter = function(bufnr, winid, ctx)
+        -- Turn off cursor line for diffview windows because of bg conflict
+        -- https://github.com/neovim/neovim/issues/9800
+        vim.wo[winid].culopt = 'number'
+      end,
+    },
   })
 
   vim.api.nvim_create_autocmd('FileType', {
@@ -3027,35 +3034,27 @@ EOF
   nnoremap <leader>gD <cmd>DiffviewFileHistory %<cr>
 endfunction
 
-function! LazyDiffviewOpen() abort
-  call InitDiffview()
-  DiffviewOpen
-endfunction
-
-function! LazyDiffviewFileHistory() abort
-  call InitDiffview()
-  DiffviewFileHistory %
-endfunction
-
-function! LazyInitDiffview() abort
-  nnoremap <leader>gd <cmd>call LazyDiffviewOpen()<CR>
-  nnoremap <leader>gD <cmd>call LazyDiffviewFileHistory()<CR>
-endfunction
-
 if has('nvim')
-  call LazyInitDiffview()
+  autocmd VimEnter * ++once call InitDiffview()
 endif
 
 " -----------------------------------------------------------------------------
-" kdheepak/lazygit.nvim
-function! InitLazyGit() abort
-  let g:lazygit_floating_window_use_plenary = 1
+" NeogitOrg/neogit
+function! InitNeogit() abort
+  lua << EOF
+  require('neogit').setup({
+    integrations = {
+      diffview = true,
+      telescope = true,
+    },
+  })
+EOF
 
-  nnoremap <leader>gg <cmd>LazyGit<cr>
+  nnoremap <leader>gg <cmd>Neogit<cr>
 endfunction
 
 if has('nvim')
-  autocmd VimEnter * ++once call InitLazyGit()
+  autocmd VimEnter * ++once call InitNeogit()
 endif
 
 
