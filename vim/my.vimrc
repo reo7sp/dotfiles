@@ -293,8 +293,9 @@ Plug 'rickhowe/diffchar.vim'
 let g:VDiffDoMapping = 0
 Plug 'rickhowe/spotdiff.vim'
 if has('nvim')
-  Plug 'sindrets/diffview.nvim'
   Plug 'NeogitOrg/neogit'
+  Plug 'kdheepak/lazygit.nvim'
+  Plug 'esmuellert/codediff.nvim'
 endif
 
 call plug#end()
@@ -318,7 +319,6 @@ if has('nvim')
       aerial = true,
       barbar = true,
       blink_cmp = true,
-      diffview = true,
       neogit = true,
       fidget = true,
       gitsigns = true,
@@ -1992,10 +1992,6 @@ endif
 function! InitWhichKeyNvim() abort
   lua << EOF
   require('which-key').setup({
-    preset = 'helix',
-    win = {
-      width = 80,
-    },
     delay = function(ctx)
       return ctx.plugin and 0 or 500
     end,
@@ -2998,54 +2994,14 @@ if has('nvim')
 endif
 
 " -----------------------------------------------------------------------------
-" sindrets/diffview.nvim
-function! InitDiffview() abort
-  lua << EOF
-  require('diffview').setup({
-    enhanced_diff_hl = true,
-    use_icons = false,
-    icons = {
-      folder_closed = '',
-      folder_open = '',
-    },
-    signs = {
-      fold_closed = '',
-      fold_open = '',
-    },
-    hooks = {
-      diff_buf_win_enter = function(bufnr, winid, ctx)
-        -- Turn off cursor line for diffview windows because of bg conflict
-        -- https://github.com/neovim/neovim/issues/9800
-        vim.wo[winid].culopt = 'number'
-      end,
-    },
-  })
-
-  vim.api.nvim_create_autocmd('FileType', {
-    pattern = 'DiffviewFile',
-    callback = function()
-      vim.keymap.set('n', ']h', ']c', { buffer = true, silent = true })
-      vim.keymap.set('n', '[h', '[c', { buffer = true, silent = true })
-    end,
-  })
-EOF
-
-  nnoremap <leader>gd <cmd>DiffviewOpen<cr>
-  nnoremap <leader>gD <cmd>DiffviewFileHistory %<cr>
-endfunction
-
-if has('nvim')
-  autocmd VimEnter * ++once call InitDiffview()
-endif
-
-" -----------------------------------------------------------------------------
 " NeogitOrg/neogit
 function! InitNeogit() abort
   lua << EOF
   require('neogit').setup({
+    graph_style = 'unicode',
     integrations = {
-      diffview = true,
       telescope = true,
+      codediff = true,
     },
   })
 EOF
@@ -3055,6 +3011,49 @@ endfunction
 
 if has('nvim')
   autocmd VimEnter * ++once call InitNeogit()
+endif
+
+" -----------------------------------------------------------------------------
+" kdheepak/lazygit.nvim
+function! InitLazyGit() abort
+  let g:lazygit_floating_window_use_plenary = 1
+
+  nnoremap <leader>gG <cmd>LazyGit<cr>
+endfunction
+
+if has('nvim')
+  autocmd VimEnter * ++once call InitLazyGit()
+endif
+
+" -----------------------------------------------------------------------------
+" esmuellert/codediff.nvim
+function! InitCodeDiff() abort
+  lua << EOF
+  require('codediff').setup({
+    explorer = {
+      view_mode = 'tree',
+      focus_on_select = true,
+      icons = {
+        folder_closed = '',
+        folder_open = '',
+      },
+    },
+    keymaps = {
+      view = {
+        next_hunk = ']h',
+        prev_hunk = '[h',
+      }
+    }
+  })
+EOF
+
+  nnoremap <leader>gd <cmd>CodeDiff<cr>
+  nnoremap <leader>gD <cmd>CodeDiff history<cr>
+  vnoremap <leader>gD <cmd>CodeDiff history<cr>
+endfunction
+
+if has('nvim')
+  autocmd VimEnter * ++once call InitCodeDiff()
 endif
 
 
@@ -3435,6 +3434,7 @@ set updatetime=300
 
 set splitright
 set splitbelow
+set diffopt+=vertical
 
 set hidden
 set autoread
