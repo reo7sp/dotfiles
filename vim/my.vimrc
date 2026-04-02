@@ -1499,7 +1499,11 @@ EOF
   cnoreabbrev bpin BufferPin
   cnoreabbrev bpi BufferPin
 
-  cnoreabbrev bs BufferOrderByDirectory
+  cnoreabbrev bss BufferOrderByName
+  cnoreabbrev bsn BufferOrderByName
+  cnoreabbrev bsd BufferOrderByDirectory
+  cnoreabbrev bsl BufferOrderByLanguage
+  cnoreabbrev bsw BufferOrderByWindowNumber
 endfunction
 
 function! InitBuftablineVim() abort
@@ -1992,9 +1996,14 @@ endif
 function! InitWhichKeyNvim() abort
   lua << EOF
   require('which-key').setup({
+    preset = 'helix',
     delay = function(ctx)
       return ctx.plugin and 0 or 500
     end,
+    win = {
+      no_overlap = false,
+      width = 80,
+    },
     icons = {
       mappings = false,
       keys = {
@@ -3032,7 +3041,6 @@ function! InitCodeDiff() abort
   require('codediff').setup({
     explorer = {
       view_mode = 'tree',
-      focus_on_select = true,
       icons = {
         folder_closed = '',
         folder_open = '',
