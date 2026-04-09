@@ -1198,6 +1198,7 @@ function! InitGitSigns() abort
 EOF
 
   nnoremap <c-w>g <cmd>Gitsigns blame_line<CR>
+  nnoremap <c-w><c-g> <cmd>Gitsigns blame_line<CR>
   nnoremap <silent> <leader>gh :Gitsigns blame<CR>:lua vim.defer_fn(function () vim.cmd([[wincmd w]]) end, 200)<CR>
 endfunction
 
@@ -1578,6 +1579,7 @@ function! InitWinshift() abort
 EOF
 
   nnoremap <c-w>x <cmd>WinShift swap<cr>
+  nnoremap <c-w><c-x> <cmd>WinShift swap<cr>
 endfunction
 
 if has('nvim')
@@ -1798,6 +1800,9 @@ function! InitTodo() abort
       after = 'empty',
     },
   })
+
+  vim.keymap.set('n', ']n', function() require('todo-comments').jump_next() end, { desc = 'Next todo comment' })
+  vim.keymap.set('n', '[n', function() require('todo-comments').jump_prev() end, { desc = 'Previous todo comment' })
 EOF
 
   nnoremap <leader>n <cmd>TodoTelescope<CR>
@@ -3318,6 +3323,7 @@ nnoremap <C-w><C-Backspace> <cmd>vsplit #<cr>
 nnoremap <silent> <C-w>n :vsplit<cr>:enew<cr>
 nnoremap <silent> <C-w><C-n> :vsplit<cr>:enew<cr>
 nnoremap <C-w>t <C-w>s<C-w>T
+nnoremap <C-w><C-t> <C-w>s<C-w>T
 
 cnoremap <C-A> <Home>
 cnoremap <C-E> <End>
