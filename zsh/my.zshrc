@@ -690,6 +690,23 @@ m() {
 }
 
 # -----------------------------------------------------------------------------
+# cursor-agent
+if can-exec cursor-agent; then
+  if [[ -z $REAL_CURSOR_AGENT ]]; then
+    export REAL_CURSOR_AGENT=$(which cursor-agent)
+  fi
+fi
+
+if [[ -n $REAL_CURSOR_AGENT ]]; then
+  cursor-agent() {
+    ALL_PROXY=socks5h://127.0.0.1:1086 $REAL_CURSOR_AGENT "$@"
+  }
+  agent() {
+    ALL_PROXY=socks5h://127.0.0.1:1086 $REAL_CURSOR_AGENT "$@"
+  }
+fi
+
+# -----------------------------------------------------------------------------
 # codex
 if can-exec codex; then
   if [[ -z $REAL_CODEX ]]; then

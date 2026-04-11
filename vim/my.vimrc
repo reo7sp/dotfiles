@@ -183,9 +183,11 @@ if has('nvim')
   Plug 'lukas-reineke/indent-blankline.nvim'
   Plug 'lukas-reineke/virt-column.nvim'
   Plug 'sitiom/nvim-numbertoggle'
+  Plug 'mawkler/hml.nvim'
 endif
 if has('nvim')
   Plug 'rachartier/tiny-inline-diagnostic.nvim'
+  Plug 'rachartier/tiny-code-action.nvim'
 endif
 if has('nvim')
   Plug 'j-hui/fidget.nvim'
@@ -258,7 +260,7 @@ if has('nvim')
   Plug 'nvim-treesitter/nvim-treesitter-textobjects'
 endif
 if has('nvim')
-  Plug 'RRethy/vim-hexokinase', {'do': 'make hexokinase'}
+  Plug 'catgoose/nvim-colorizer.lua'
 endif
 if has('nvim')
   Plug 'reo7sp/go.nvim'
@@ -475,8 +477,6 @@ EOF
   nnoremap K <cmd>lua vim.lsp.buf.hover()<cr>
   inoremap <C-S> <cmd>lua vim.lsp.buf.signature_help()<cr>
   nnoremap <nowait> gr <cmd>lua vim.lsp.buf.rename()<cr>
-  nnoremap g: <cmd>lua vim.lsp.buf.code_action()<cr>
-  vnoremap g: <cmd>lua vim.lsp.buf.code_action()<cr>
   nnoremap gO <nop>
 endfunction
 
@@ -1467,8 +1467,9 @@ EOF
   highlight! link BufferCurrentMod BufferCurrent
   highlight! link BufferInactiveMod BufferInactive
 
-  nnoremap <C-Tab> <cmd>BufferNext<CR>
-  nnoremap <C-S-Tab> <cmd>BufferPrevious<CR>
+  nnoremap <C-Tab> <cmd>BufferPick<CR>
+  nnoremap <C-S-Tab> <cmd>BufferPickDelete<CR>
+
   nnoremap [b <cmd>BufferPrevious<CR>
   nnoremap ]b <cmd>BufferNext<CR>
   nnoremap <C-1> <cmd>BufferGoto 1<CR>
@@ -1961,6 +1962,18 @@ if has('nvim')
 endif
 
 " -----------------------------------------------------------------------------
+" mawkler/hml.nvim
+function! InitHML() abort
+  lua << EOF
+  require('hml').setup()
+EOF
+endfunction
+
+if has('nvim')
+  autocmd VimEnter * ++once call InitHML()
+endif
+
+" -----------------------------------------------------------------------------
 " rachartier/tiny-inline-diagnostic.nvim
 function! InitTinyDiag() abort
   lua << EOF
@@ -1974,6 +1987,34 @@ endfunction
 
 if has('nvim')
   autocmd VimEnter * ++once call InitTinyDiag()
+endif
+
+" -----------------------------------------------------------------------------
+" rachartier/tiny-code-action.nvim
+function! InitTinyAct() abort
+  lua << EOF
+  require('tiny-code-action').setup({
+    signs = {
+      quickfix = { "", { link = "DiagnosticWarning" } },
+      others = { "", { link = "DiagnosticWarning" } },
+      refactor = { "", { link = "DiagnosticInfo" } },
+      ["refactor.move"] = { "", { link = "DiagnosticInfo" } },
+      ["refactor.extract"] = { "", { link = "DiagnosticError" } },
+      ["source.organizeImports"] = { "", { link = "DiagnosticWarning" } },
+      ["source.fixAll"] = { "", { link = "DiagnosticError" } },
+      ["source"] = { "", { link = "DiagnosticError" } },
+      ["rename"] = { "", { link = "DiagnosticWarning" } },
+      ["codeAction"] = { "", { link = "DiagnosticWarning" } },
+    },
+  })
+EOF
+
+  nnoremap g: <cmd>lua require('tiny-code-action').code_action()<cr>
+  vnoremap g: <cmd>lua require('tiny-code-action').code_action()<cr>
+endfunction
+
+if has('nvim')
+  autocmd VimEnter * ++once call InitTinyAct()
 endif
 
 " -----------------------------------------------------------------------------
@@ -2855,14 +2896,19 @@ if has('nvim')
 endif
 
 " -----------------------------------------------------------------------------
-" RRethy/vim-hexokinase
-function! InitHexokinase() abort
-  let g:Hexokinase_ftEnabled = []
-  let g:Hexokinase_highlighters = ['virtual']
+" catgoose/nvim-colorizer.lua
+function! InitColorizer() abort
+  lua << EOF
+  require('colorizer').setup({
+    display = {
+      mode = 'virtualtext',
+    },
+  })
+EOF
 endfunction
 
 if has('nvim')
-  autocmd VimEnter * ++once call InitHexokinase()
+  autocmd BufReadPre * ++once call InitColorizer()
 endif
 
 " -----------------------------------------------------------------------------
@@ -3339,12 +3385,16 @@ cnoreabbrev Q q
 cnoreabbrev Qa qa
 cnoreabbrev Wqa wqa
 cnoreabbrev w!! w !sudo tee % >/dev/null
+cnoreabbrev tabbreak tabe %
+cnoreabbrev tabb tabe %
+cnoreabbrev tb tabe %
 cnoreabbrev tabq tabclose
 cnoreabbrev tq tabclose
 cnoreabbrev tonly tabonly
 cnoreabbrev ton tabonly
 cnoreabbrev to tabonly
 cnoreabbrev tnew tabnew
+cnoreabbrev te tabe
 nnoremap ZT <cmd>tabclose<cr>
 nnoremap ZA <cmd>wqa<cr>
 
@@ -3359,6 +3409,8 @@ nnoremap <C-Up> <cmd>resize +2<cr>
 nnoremap <C-Down> <cmd>resize -2<cr>
 nnoremap <C-Right> <cmd>vertical resize +2<cr>
 nnoremap <C-Left> <cmd>vertical resize -2<cr>
+
+cnoremap <silent> <c-q> <esc>:vimgrep /<C-r>//j %<cr>:copen<cr>
 
 
 " =============================================================================
