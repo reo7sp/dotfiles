@@ -1,3 +1,5 @@
+" vim: set sw=2:
+
 let g:loaded_python3_provider = 0
 let g:loaded_ruby_provider = 0
 let g:loaded_perl_provider = 0
@@ -156,6 +158,8 @@ else
 endif
 if has('nvim')
   Plug 'romgrk/barbar.nvim'
+  Plug 'leath-dub/snipe.nvim'
+  Plug 'reo7sp/snipe-marks.nvim'
   Plug 'kwkarlwang/bufjump.nvim'
 else
   Plug 'ap/vim-buftabline'
@@ -1467,9 +1471,6 @@ EOF
   highlight! link BufferCurrentMod BufferCurrent
   highlight! link BufferInactiveMod BufferInactive
 
-  nnoremap <C-Tab> <cmd>BufferPick<CR>
-  nnoremap <C-S-Tab> <cmd>BufferPickDelete<CR>
-
   nnoremap [b <cmd>BufferPrevious<CR>
   nnoremap ]b <cmd>BufferNext<CR>
   nnoremap <C-1> <cmd>BufferGoto 1<CR>
@@ -1526,6 +1527,54 @@ if has('nvim')
   call InitBarbar()
 else
   call InitBuftablineVim()
+endif
+
+" -----------------------------------------------------------------------------
+" leath-dub/snipe.nvim
+function! InitSnipe() abort
+  lua << EOF
+  require('snipe').setup({
+    ui = {
+      preselect_current = true,
+      open_win_override = {
+        border = 'rounded',
+      },
+    },
+    navigate = {
+      leader = ' ',
+    },
+    sort = function(buffers)
+      local index_of = require('barbar.utils.list').index_of
+      local state = require('barbar.state')
+      local barbar_buffers = state.buffers or {}
+      table.sort(buffers, function(a, b)
+        local ai = index_of(barbar_buffers, a.id) or math.huge
+        local bi = index_of(barbar_buffers, b.id) or math.huge
+        if ai == bi then
+          return a.id < b.id
+        end
+        return ai < bi
+      end)
+      return buffers
+    end,
+  })
+EOF
+
+  nnoremap <C-Tab> <cmd>lua require('snipe').open_buffer_menu()<CR>
+endfunction
+
+if has('nvim')
+  autocmd VimEnter * ++once call InitSnipe()
+endif
+
+" -----------------------------------------------------------------------------
+" nicholasxjy/snipe-marks.nvim
+function! InitSnipeMarks() abort
+  nnoremap <C-S-Tab> <cmd>lua require('snipe-marks').open_marks_menu('all')<CR>
+endfunction
+
+if has('nvim')
+  autocmd VimEnter * ++once call InitSnipeMarks()
 endif
 
 " -----------------------------------------------------------------------------
@@ -2400,6 +2449,7 @@ EOF
   nnoremap <leader>Q <cmd>Telescope quickfixhistory<cr>
   nnoremap <leader>gb <cmd>Telescope git_branches<cr>
   nnoremap <leader>i <cmd>Import<cr>
+  nnoremap <leader>m <cmd>Telescope marks<cr>
   nnoremap <leader>' <cmd>Telescope marks<cr>
   nnoremap <leader>` <cmd>Telescope marks<cr>
   nnoremap <leader>" <cmd>Telescope registers<cr>
