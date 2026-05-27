@@ -3,6 +3,7 @@ set -e -o pipefail
 
 
 cp ~/.my.vimrc my.vimrc
+mkdir -p lua; cp ~/.vim/lua/async.lua lua/async.lua
 mkdir -p nvim; cp ~/.config/nvim/init.vim nvim/init.vim
 cp ~/.ideavimrc ideavimrc
 cp ~/.neovintageousrc neovintageousrc

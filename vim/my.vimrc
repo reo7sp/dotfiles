@@ -31,6 +31,7 @@ if ! has('nvim')
 endif
 if has('nvim')
   Plug 'nvim-lua/plenary.nvim'
+  Plug 'lewis6991/async.nvim'
   Plug 'kevinhwang91/promise-async'
   Plug 'kkharji/sqlite.lua'
   Plug 'MunifTanjim/nui.nvim'
@@ -422,6 +423,9 @@ function! InitLSP() abort
       },
     },
     gopls = {
+      cmd = {
+        vim.fn.expand('~/.vim/bin/custom-gopls'),
+      },
       settings = {
         gopls = {
           analyses = {
@@ -443,6 +447,9 @@ function! InitLSP() abort
       },
     },
   }
+  for server_name, config in pairs(lsp_custom) do
+    vim.lsp.config(server_name, config)
+  end
   require('mason-lspconfig').setup({
     ensure_installed = {
       'clangd',
@@ -467,11 +474,6 @@ function! InitLSP() abort
       'puppet',
       'gh_actions_ls',
       'gitlab_ci_ls',
-    },
-    handlers = {
-      function(server_name)
-        require('lspconfig')[server_name].setup(lsp_custom[server_name] or {})
-      end,
     },
   })
 
@@ -1027,17 +1029,9 @@ endif
 function! InitRefactoring() abort
   lua << EOF
   require('refactoring').setup({})
-  require('telescope').load_extension('refactoring')
 
   vim.keymap.set({ 'n', 'x' }, 'gR', function()
-    require('telescope').extensions.refactoring.refactors(
-      vim.tbl_extend('force', require('telescope.themes').get_cursor({
-        layout_config = {
-          height = 15+4,
-        },
-      }), {
-      })
-    )
+    require('refactoring').select_refactor()
   end, { desc = 'Refactor' })
 EOF
 endfunction
@@ -1846,7 +1840,7 @@ function! InitTodo() abort
       TEST = { icon = '' },
     },
     highlight = {
-      comments_only = false,
+      comments_only = true,
       after = 'empty',
     },
   })
@@ -3226,6 +3220,33 @@ if has('nvim')
       nargs = '?',
       complete = function ()
         return {'dir', 'blame', 'log'}
+      end,
+    }
+  )
+EOF
+endif
+
+" -----------------------------------------------------------------------------
+" vscode integration
+if has('nvim')
+  lua << EOF
+  vim.api.nvim_create_user_command('Code',
+    function (opts)
+      if opts.fargs[1] == 'dir' then
+        vim.cmd('!code "' .. vim.fn.getcwd() .. '"')
+      else
+        local dir = vim.fn.getcwd()
+        if dir == (vim.loop.os_homedir or vim.uv.os_homedir)() then
+          dir = ''
+        end
+        vim.cmd('!code "' .. dir .. '" -g "' .. vim.fn.expand('%:p') .. '":' .. vim.fn.line('.'))
+      end
+    end,
+    {
+      desc = 'Open in VS Code',
+      nargs = '?',
+      complete = function ()
+        return {'dir'}
       end,
     }
   )

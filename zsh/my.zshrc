@@ -746,6 +746,10 @@ if can-exec python3 && ! can-exec python; then
   }
 fi
 
+alias pip='python -m pip'
+alias pip2='python2 -m pip'
+alias pip3='python3 -m pip'
+
 if can-exec pyenv; then
   lazyload pyenv -- 'eval "$(pyenv init -)"'
 fi
