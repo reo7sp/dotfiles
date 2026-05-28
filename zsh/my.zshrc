@@ -46,11 +46,6 @@ if can-exec brew; then
   eval "$(brew shellenv)"
 fi
 
-export PYENV_ROOT="$HOME/.pyenv"
-export PATH="$PYENV_ROOT/bin:$PATH"
-
-export PATH="$HOME/bin:$HOME/.local/bin:$PATH"
-
 if can-exec nvim; then
   export EDITOR='nvim'
 else
@@ -60,6 +55,9 @@ fi
 
 # =============================================================================
 # plugins
+export PYENV_ROOT="$HOME/.pyenv"
+export PATH="$PYENV_ROOT/bin:$PATH"
+
 export NVM_DIR="$HOME/.nvm"
 export NVM_LAZY_LOAD=true
 export NVM_LAZY_LOAD_EXTRA_COMMANDS=('open-swagger-ui')
@@ -331,9 +329,12 @@ xargs-vim() {
 }
 alias xargs-v='xargs-vim'
 
-alias edit-vim='vim ~/.my.vimrc'
-alias edit-vimrc='vim ~/.vimrc'
-alias edit-vim-minuet-llm-remote='vim ~/.config/nvim/lua/minuet_llm_remote_config.lua'
+alias edit-vim='nvim ~/.config/nvim/init.lua'
+alias edit-vim-plugins='nvim ~/.config/nvim/lua/plugins.lua'
+alias edit-vim-commands='nvim ~/.config/nvim/lua/commands.lua'
+alias edit-vim-settings='nvim ~/.config/nvim/lua/settings.lua'
+alias edit-vim-custom-plugins='nvim ~/.config/nvim/lua/plugins/custom.lua'
+alias edit-vim-custom-minuet-llm='vim ~/.config/nvim/lua/configs/custom_minuet_llm.lua'
 
 time-start-vim() {
   vim --startuptime /tmp/startuptime.log "$@" +qa

@@ -32,43 +32,49 @@ confirm() {
 }
 
 
-mkdir -p ~/.vim/{bundle,nbundle,backup,tmp,undo,sessions,spell,view,lua,bin} ~/.config/nvim ~/.config/nvim/{lua,after/syntax,after/ftplugin}
-if [ -f ~/.vimrc ]; then
-  if confirm "Do you want to overwrite ~/.vimrc?"; then
-    cp vimrc ~/.vimrc
+mkdir -p ~/.config/nvim/{lua/plugins,lua/fixes,lua/configs,after/syntax,after/ftplugin,bin}
+cp nvim/init.lua ~/.config/nvim/init.lua
+cp nvim/lazy-lock.json ~/.config/nvim/lazy-lock.json
+cp nvim/lua/plugins.lua ~/.config/nvim/lua/plugins.lua
+cp nvim/lua/plugins/appearance.lua ~/.config/nvim/lua/plugins/appearance.lua
+cp nvim/lua/plugins/commands.lua ~/.config/nvim/lua/plugins/commands.lua
+cp nvim/lua/plugins/editor.lua ~/.config/nvim/lua/plugins/editor.lua
+cp nvim/lua/plugins/file_management.lua ~/.config/nvim/lua/plugins/file_management.lua
+cp nvim/lua/plugins/general.lua ~/.config/nvim/lua/plugins/general.lua
+cp nvim/lua/plugins/languages.lua ~/.config/nvim/lua/plugins/languages.lua
+cp nvim/lua/plugins/navigation.lua ~/.config/nvim/lua/plugins/navigation.lua
+if [ -f ~/.config/nvim/lua/plugins/custom.lua ]; then
+  if confirm "Do you want to overwrite ~/.config/nvim/lua/plugins/custom.lua?"; then
+    cp nvim/lua/plugins/custom.lua ~/.config/nvim/lua/plugins/custom.lua
   fi
 else
-  cp vimrc ~/.vimrc
+  cp nvim/lua/plugins/custom.lua ~/.config/nvim/lua/plugins/custom.lua
 fi
-cp my.vimrc ~/.my.vimrc
-cp lua/async.lua ~/.vim/lua/async.lua
-if [ -f ~/.vim/bin/custom-gopls ]; then
-  if confirm "Do you want to overwrite ~/.vim/bin/custom-gopls?"; then
-    cp bin/custom-gopls ~/.vim/bin/custom-gopls
-    chmod +x ~/.vim/bin/custom-gopls
-  fi
-else
-  cp bin/custom-gopls ~/.vim/bin/custom-gopls
-  chmod +x ~/.vim/bin/custom-gopls
-fi
-cp nvim/init.vim ~/.config/nvim/init.vim
+cp nvim/lua/fixes/async.lua ~/.config/nvim/lua/fixes/async.lua
+cp nvim/lua/commands.lua ~/.config/nvim/lua/commands.lua
+cp nvim/lua/settings.lua ~/.config/nvim/lua/settings.lua
 cp nvim/after/syntax/vim.vim ~/.config/nvim/after/syntax/vim.vim
 cp nvim/after/ftplugin/jinja.vim ~/.config/nvim/after/ftplugin/jinja.vim
 cp ideavimrc ~/.ideavimrc
+cp vscodevimrc ~/.vscodevimrc
 cp neovintageousrc ~/.neovintageousrc
-if [ -f ~/.config/nvim/lua/minuet_llm_remote_config.lua ]; then
-  if confirm "Do you want to overwrite minuet_llm_remote_config.lua?"; then
-    cp minuet_llm_remote_config.lua ~/.config/nvim/lua/minuet_llm_remote_config.lua
+if [ -f ~/.config/nvim/bin/custom-gopls ]; then
+  if confirm "Do you want to overwrite ~/.config/nvim/bin/custom-gopls?"; then
+    cp nvim/bin/custom-gopls ~/.config/nvim/bin/custom-gopls
+    chmod +x ~/.config/nvim/bin/custom-gopls
   fi
 else
-  cp minuet_llm_remote_config.lua ~/.config/nvim/lua/minuet_llm_remote_config.lua
+  cp nvim/bin/custom-gopls ~/.config/nvim/bin/custom-gopls
+  chmod +x ~/.config/nvim/bin/custom-gopls
+fi
+if [ -f ~/.config/nvim/lua/configs/custom_minuet_llm.lua ]; then
+  if confirm "Do you want to overwrite custom_minuet_llm.lua?"; then
+    cp nvim/lua/configs/custom_minuet_llm.lua ~/.config/nvim/lua/configs/custom_minuet_llm.lua
+  fi
+else
+  cp nvim/lua/configs/custom_minuet_llm.lua ~/.config/nvim/lua/configs/custom_minuet_llm.lua
 fi
 
-if [ ! -f ~/.vim/autoload/plug.vim ]; then
-  curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-fi
-
-vim -e -c "PlugInstall" -c "qa"
 if can-exec nvim; then
-  nvim -e -c "PlugInstall" -c "qa"
+  nvim --headless "+Lazy! install" +qa
 fi

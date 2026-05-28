@@ -1,4 +1,4 @@
-local promise_async = dofile(vim.fn.expand("~/.vim/nbundle/promise-async/lua/async.lua"))
+local promise_async = dofile(vim.fn.stdpath("data") .. "/lazy/promise-async/lua/async.lua")
 local structured_async = require("async.nvim")
 
 local mt = getmetatable(promise_async) or {}

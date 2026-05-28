@@ -2,8 +2,21 @@
 set -e -o pipefail
 
 
-cp ~/.my.vimrc my.vimrc
-mkdir -p lua; cp ~/.vim/lua/async.lua lua/async.lua
-mkdir -p nvim; cp ~/.config/nvim/init.vim nvim/init.vim
+cp ~/.config/nvim/init.lua nvim/init.lua
+cp ~/.config/nvim/lazy-lock.json nvim/lazy-lock.json
+cp ~/.config/nvim/lua/plugins.lua nvim/lua/plugins.lua
+cp ~/.config/nvim/lua/plugins/appearance.lua nvim/lua/plugins/appearance.lua
+cp ~/.config/nvim/lua/plugins/commands.lua nvim/lua/plugins/commands.lua
+cp ~/.config/nvim/lua/plugins/editor.lua nvim/lua/plugins/editor.lua
+cp ~/.config/nvim/lua/plugins/file_management.lua nvim/lua/plugins/file_management.lua
+cp ~/.config/nvim/lua/plugins/general.lua nvim/lua/plugins/general.lua
+cp ~/.config/nvim/lua/plugins/languages.lua nvim/lua/plugins/languages.lua
+cp ~/.config/nvim/lua/plugins/navigation.lua nvim/lua/plugins/navigation.lua
+cp ~/.config/nvim/lua/fixes/async.lua nvim/lua/fixes/async.lua
+cp ~/.config/nvim/lua/commands.lua nvim/lua/commands.lua
+cp ~/.config/nvim/lua/settings.lua nvim/lua/settings.lua
+cp ~/.config/nvim/after/syntax/vim.vim nvim/after/syntax/vim.vim
+cp ~/.config/nvim/after/ftplugin/jinja.vim nvim/after/ftplugin/jinja.vim
 cp ~/.ideavimrc ideavimrc
+cp ~/.vscodevimrc vscodevimrc
 cp ~/.neovintageousrc neovintageousrc

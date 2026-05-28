@@ -14,17 +14,33 @@ set highlightedyank
 set quickscope
 set vim-paragraph-motion
 set textobj-entire
+set argtextobj
+set mini-ai
+set functextobj
+set classtextobj
+set abolish
+set dial
 set commentary
 set which-key
 
+let g:argtextobj_pairs="(:),{:},<:>"
+
+nnoremap gj j
+nnoremap gk k
+nnoremap <Down> gj
+nnoremap <Up> gk
+
 nnoremap c. /\V\C<C-r>"<CR>cgn<C-a><Esc>
 nnoremap d. /\V\C<C-r>"<CR>dgn
+nnoremap gV `[v`]
 nnoremap <silent> [+ :let @"=@+<CR>
 nnoremap <silent> ]+ :let @+=@"<CR>
 nmap +c "+c
 nmap +C "+C
 nmap +d "+d
 nmap +D "+D
+nmap +x "+x
+nmap +X "+X
 nmap +y "+y
 nmap +Y "+Y
 nmap +p "+p
@@ -43,6 +59,8 @@ vmap +c "+c
 vmap +C "+C
 vmap +d "+d
 vmap +D "+D
+vmap +x "+x
+vmap +X "+X
 vmap +y "+y
 vmap +Y "+Y
 vmap +p "+p
@@ -74,3 +92,24 @@ nnoremap <C-h> <C-w>h
 nnoremap <C-j> <C-w>j
 nnoremap <C-k> <C-w>k
 nnoremap <C-l> <C-w>l
+
+nnoremap K <Action>(QuickJavaDoc)
+nnoremap gr <Action>(RenameElement)
+nnoremap gd <Action>(GotoDeclaration)
+nnoremap gD <Action>(GotoImplementation)
+nnoremap gy <Action>(GotoTypeDeclaration)
+nnoremap ge <Action>(ShowUsages)
+nnoremap gQ <Action>(ReformatCode)
+
+nnoremap [b <Action>(PreviousTab)
+nnoremap ]b <Action>(NextTab)
+nnoremap <C-q> <Action>(CloseContent)
+nnoremap <C-w>Q <Action>(CloseContent)
+nnoremap [q <Action>(GotoPreviousError)
+nnoremap ]q <Action>(GotoNextError)
+
+nnoremap <leader>f <Action>(GotoFile)
+nnoremap <leader>s <Action>(FindInPath)
+nnoremap <leader>b <Action>(Switcher)
+nnoremap <leader>t <Action>(ActivateProjectToolWindow)
+nnoremap <leader>o <Action>(FileStructurePopup)
