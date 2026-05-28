@@ -3,45 +3,9 @@ return {
   {
     "neovim/nvim-lspconfig",
     dependencies = {
-      "williamboman/mason.nvim",
-      "williamboman/mason-lspconfig.nvim",
-      "RubixDev/mason-update-all",
       "saghen/blink.cmp",
     },
     config = function()
-      local lspconfig_defaults = require("lspconfig").util.default_config
-      lspconfig_defaults.capabilities = vim.tbl_deep_extend(
-        "force",
-        lspconfig_defaults.capabilities,
-        require("blink.cmp").get_lsp_capabilities({}, false)
-      )
-
-      require("mason").setup({})
-
-      local lsps = {
-        "clangd",
-        "cmake",
-        "gopls",
-        "pyright",
-        "perlnavigator",
-        "lua_ls",
-        "rust_analyzer",
-        "bashls",
-        "html",
-        "cssls",
-        "ts_ls",
-        "jinja_lsp",
-        "sqlls",
-        "jsonls",
-        "yamlls",
-        "lemminx",
-        "dockerls",
-        "docker_compose_language_service",
-        "ansiblels",
-        "puppet",
-        "gh_actions_ls",
-        "gitlab_ci_ls",
-      }
       local lsp_configs = {
         clangd = {
           cmd = {
@@ -79,11 +43,6 @@ return {
       for server_name, config in pairs(lsp_configs) do
         vim.lsp.config(server_name, config)
       end
-      require("mason-lspconfig").setup({
-        ensure_installed = lsps,
-      })
-
-      require("mason-update-all").setup({})
 
       vim.keymap.set("n", "K", vim.lsp.buf.hover)
       vim.keymap.set("i", "<C-S>", vim.lsp.buf.signature_help)
@@ -94,13 +53,44 @@ return {
 
   {
     "williamboman/mason.nvim",
+    opts = {},
   },
 
   {
     "williamboman/mason-lspconfig.nvim",
     dependencies = {
       "williamboman/mason.nvim",
+      "neovim/nvim-lspconfig",
     },
+    config = function()
+      local lsps = {
+        "clangd",
+        "cmake",
+        "gopls",
+        "pyright",
+        "perlnavigator",
+        "lua_ls",
+        "rust_analyzer",
+        "bashls",
+        "html",
+        "cssls",
+        "ts_ls",
+        "jinja_lsp",
+        "sqlls",
+        "jsonls",
+        "yamlls",
+        "lemminx",
+        "dockerls",
+        "docker_compose_language_service",
+        "ansiblels",
+        "puppet",
+        "gh_actions_ls",
+        "gitlab_ci_ls",
+      }
+      require("mason-lspconfig").setup({
+        ensure_installed = lsps,
+      })
+    end,
   },
 
   {
@@ -108,17 +98,18 @@ return {
     dependencies = {
       "williamboman/mason.nvim",
     },
+    opts = {},
   },
 
   {
     "L3MON4D3/LuaSnip",
-    event = "InsertEnter",
     dependencies = {
       "rafamadriz/friendly-snippets",
     },
     config = function()
       require("luasnip.loaders.from_vscode").lazy_load()
     end,
+    event = "InsertEnter",
   },
 
   {
@@ -127,7 +118,6 @@ return {
 
   {
     "milanglacier/minuet-ai.nvim",
-    event = "InsertEnter",
     config = function()
       local preset_configs = {
         ["local"] = {
@@ -181,6 +171,7 @@ return {
         end
       end)
     end,
+    event = "InsertEnter",
   },
 
   {
@@ -215,20 +206,19 @@ return {
 
   {
     "xzbdmw/colorful-menu.nvim",
+    opts = {},
+    event = "InsertEnter",
   },
 
   {
     "saghen/blink.cmp",
     version = "v1.*",
-    event = "InsertEnter",
     dependencies = {
       "xzbdmw/colorful-menu.nvim",
       "milanglacier/minuet-ai.nvim",
       "L3MON4D3/LuaSnip",
     },
     config = function()
-      require("colorful-menu").setup({})
-
       require("blink.cmp").setup({
         keymap = {
           preset = "super-tab",
@@ -307,12 +297,13 @@ return {
         },
       })
     end,
+    event = "InsertEnter",
   },
 
   {
     "windwp/nvim-autopairs",
-    event = "InsertEnter",
     opts = {},
+    event = "InsertEnter",
   },
 
   {
@@ -330,11 +321,12 @@ return {
 
   {
     "haya14busa/vim-asterisk",
-    config = function()
+    init = function()
       vim.cmd([[
         let g:asterisk#keeppos = 1
       ]])
-
+    end,
+    config = function()
       vim.keymap.set("", "*", "<Plug>(asterisk-*)", { remap = true, })
       vim.keymap.set("", "#", "<Plug>(asterisk-#)", { remap = true, })
       vim.keymap.set("", "g*", "<Plug>(asterisk-g*)", { remap = true, })
@@ -344,6 +336,16 @@ return {
       vim.keymap.set("", "z#", "<Plug>(asterisk-z#)", { remap = true, })
       vim.keymap.set("", "gz#", "<Plug>(asterisk-gz#)", { remap = true, })
     end,
+    keys = {
+      { "*" },
+      { "#" },
+      { "g*" },
+      { "g#" },
+      { "z*" },
+      { "gz*" },
+      { "z#" },
+      { "gz#" },
+    },
   },
 
   {
@@ -387,6 +389,24 @@ return {
       vim.keymap.set("v", "g<C-a>", "g<Plug>(dial-increment)", { remap = true, })
       vim.keymap.set("v", "g<C-x>", "g<Plug>(dial-decrement)", { remap = true, })
     end,
+    keys = {
+      {
+        "<C-a>",
+        mode = { "n", "v" },
+      },
+      {
+        "<C-x>",
+        mode = { "n", "v" },
+      },
+      {
+        "g<C-a>",
+        mode = { "n", "v" },
+      },
+      {
+        "g<C-x>",
+        mode = { "n", "v" },
+      },
+    },
   },
 
   {
@@ -395,17 +415,18 @@ return {
 
   {
     "keaising/im-select.nvim",
-    event = "InsertEnter",
     main = "im_select",
     opts = {
       default_im_select = "com.apple.keylayout.ABC",
       keep_quiet_on_no_binary = true,
     },
+    event = "InsertEnter",
   },
 
   {
     "nmac427/guess-indent.nvim",
     opts = {},
+    event = "BufReadPre",
   },
 
   {
@@ -414,16 +435,32 @@ return {
 
   {
     "ntpeters/vim-better-whitespace",
-    config = function()
+    init = function()
       vim.cmd([=[
         let g:better_whitespace_enabled = 0
         let g:better_whitespace_operator = ''
         let g:strip_max_file_size = 99999
         let g:strip_whitespace_confirm = 0
       ]=])
-      vim.keymap.set("n", "]w", "<cmd>NextTrailingWhitespace<CR>")
-      vim.keymap.set("n", "[w", "<cmd>PrevTrailingWhitespace<CR>")
     end,
+    cmd = {
+      "EnableWhitespace",
+      "DisableWhitespace",
+      "ToggleWhitespace",
+      "StripWhitespace",
+      "NextTrailingWhitespace",
+      "PrevTrailingWhitespace",
+    },
+    keys = {
+      {
+        "]w",
+        "<cmd>NextTrailingWhitespace<CR>",
+      },
+      {
+        "[w",
+        "<cmd>PrevTrailingWhitespace<CR>",
+      },
+    },
   },
 
   {
@@ -434,11 +471,61 @@ return {
       ]=])
     end,
     config = function()
+      vim.keymap.set("n", "s", "<Plug>Sneak_s", { remap = true, })
+      vim.keymap.set("n", "S", "<Plug>Sneak_S", { remap = true, })
+      vim.keymap.set("x", "s", "<Plug>Sneak_s", { remap = true, })
+      vim.keymap.set("x", "Z", "<Plug>Sneak_S", { remap = true, })
+      vim.keymap.set("o", "z", "<Plug>Sneak_s", { remap = true, })
+      vim.keymap.set("o", "Z", "<Plug>Sneak_S", { remap = true, })
+      vim.keymap.set({ "n", "x", "o" }, ";", "<Plug>Sneak_;", { remap = true, })
+      vim.keymap.set({ "n", "x", "o" }, ",", "<Plug>Sneak_,", { remap = true, })
       vim.keymap.set("", "f", "<Plug>Sneak_f", { remap = true, })
       vim.keymap.set("", "F", "<Plug>Sneak_F", { remap = true, })
       vim.keymap.set("", "t", "<Plug>Sneak_t", { remap = true, })
       vim.keymap.set("", "T", "<Plug>Sneak_T", { remap = true, })
     end,
+    keys = {
+      {
+        "s",
+        mode = { "n", "x" },
+      },
+      {
+        "S",
+        mode = "n",
+      },
+      {
+        "z",
+        mode = "o",
+      },
+      {
+        "Z",
+        mode = { "x", "o" },
+      },
+      {
+        ";",
+        mode = { "n", "x", "o" },
+      },
+      {
+        ",",
+        mode = { "n", "x", "o" },
+      },
+      {
+        "f",
+        mode = { "n", "x", "o" },
+      },
+      {
+        "F",
+        mode = { "n", "x", "o" },
+      },
+      {
+        "t",
+        mode = { "n", "x", "o" },
+      },
+      {
+        "T",
+        mode = { "n", "x", "o" },
+      },
+    },
   },
 
   {
@@ -460,6 +547,7 @@ return {
     opts = {
       move_cursor = false,
     },
+    event = "InsertEnter",
   },
 
   {
@@ -620,15 +708,20 @@ return {
 
   {
     "mbbill/undotree",
-    cmd = "UndotreeToggle",
-    config = function()
+    init = function()
       vim.cmd([=[
         let g:undotree_WindowLayout = 3
         let g:undotree_SetFocusWhenToggle = 1
         let g:undotree_SplitWidth = 80
       ]=])
-      vim.keymap.set("n", "<leader>u", "<cmd>UndotreeToggle<cr>")
     end,
+    cmd = "UndotreeToggle",
+    keys = {
+      {
+        "<leader>u",
+        "<cmd>UndotreeToggle<cr>",
+      },
+    },
   },
 
   {
@@ -669,6 +762,12 @@ return {
 
   {
     "JoosepAlviste/nvim-ts-context-commentstring",
+    dependencies = {
+      "nvim-treesitter/nvim-treesitter",
+    },
+    opts = {
+      enable_autocmd = false,
+    },
   },
 
   {
@@ -715,26 +814,36 @@ return {
         start_with_preview = "ga",
       },
     },
+    keys = {
+      {
+        "ga",
+        mode = { "n", "x" },
+      },
+    },
   },
 
   {
     "ThePrimeagen/refactoring.nvim",
-    lazy = false,
     dependencies = {
       "lewis6991/async.nvim",
     },
     opts = {},
     keys = {
-      { "gR", function()
-        require("refactoring").select_refactor()
-      end, mode = { "n", "x" }, desc = "Refactor" },
+      {
+        "gR",
+        function()
+          require("refactoring").select_refactor()
+        end,
+        mode = { "n", "x" },
+        desc = "Refactor",
+      },
     },
   },
 
   {
     "danymat/neogen",
-    cmd = "Neogen",
     opts = {},
+    cmd = "Neogen",
   },
 
   {

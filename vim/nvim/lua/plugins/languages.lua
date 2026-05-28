@@ -10,14 +10,12 @@ return {
   {
     "nvim-treesitter/nvim-treesitter",
     build = ":TSUpdate",
-    lazy = false,
-    dependencies = {
-      "JoosepAlviste/nvim-ts-context-commentstring",
-    },
     config = function()
       require("nvim-treesitter").setup({
         install_dir = vim.fn.stdpath("data") .. "/site",
       })
+      vim.opt.runtimepath:prepend(require("lazy.core.config").plugins["nvim-treesitter"].dir .. "/runtime")
+
       local langs = {
         "c",
         "cpp",
@@ -50,16 +48,17 @@ return {
       }
       require("nvim-treesitter").install(langs)
 
-      local allowed_langs = {}
+      local langs_map = {}
       for _, lang in ipairs(langs) do
-        allowed_langs[lang] = true
+        langs_map[lang] = true
       end
+
       vim.api.nvim_create_autocmd("FileType", {
         callback = function(args)
           local filetype = vim.bo[args.buf].filetype
           local lang = vim.treesitter.language.get_lang(filetype) or filetype
 
-          if not allowed_langs[lang] then
+          if not langs_map[lang] then
             return
           end
 
@@ -78,11 +77,8 @@ return {
           vim.treesitter.start(args.buf)
         end,
       })
-
-      require("ts_context_commentstring").setup({
-        enable_autocmd = false,
-      })
     end,
+    lazy = false,
   },
 
   {
@@ -366,18 +362,17 @@ return {
 
   {
     "catgoose/nvim-colorizer.lua",
-    event = "BufReadPre",
     main = "colorizer",
     opts = {
       display = {
         mode = "virtualtext",
       },
     },
+    event = "BufReadPre",
   },
 
   {
     "reo7sp/go.nvim",
-    ft = "go",
     dependencies = {
       "ray-x/guihua.lua",
       "neovim/nvim-lspconfig",
@@ -401,6 +396,7 @@ return {
       comment_placeholder = "",
       icons = false,
     },
+    ft = "go",
   },
 
   {
@@ -416,10 +412,6 @@ return {
     "MeanderingProgrammer/render-markdown.nvim",
     dependencies = {
       "nvim-treesitter/nvim-treesitter",
-    },
-    ft = {
-      "markdown",
-      "codecompanion",
     },
     opts = {
       preset = "obsidian",
@@ -446,14 +438,14 @@ return {
         "codecompanion",
       },
     },
+    ft = {
+      "markdown",
+      "codecompanion",
+    },
   },
 
   {
     "hat0uma/csvview.nvim",
-    ft = {
-      "csv",
-      "tsv",
-    },
     opts = {
       view = {
         display_mode = "border",
@@ -485,22 +477,15 @@ return {
         },
       },
     },
+    ft = {
+      "csv",
+      "tsv",
+    },
   },
 
   {
     "rodjek/vim-puppet",
-    ft = {
-      "pascal",
-      "puppet",
-    },
-    config = function()
-      vim.api.nvim_create_autocmd("BufEnter", {
-        pattern = "*.pp",
-        callback = function()
-          vim.bo.filetype = "puppet"
-        end,
-      })
-    end,
+    ft = "puppet",
   },
 
   {

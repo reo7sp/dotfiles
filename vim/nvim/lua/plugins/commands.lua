@@ -18,20 +18,65 @@ return {
       end
       vim.cmd("autocmd! TermOpen term://* lua set_terminal_keymaps()")
     end,
+    cmd = {
+      "ToggleTerm",
+      "ToggleTermToggleAll",
+      "TermExec",
+    },
+    keys = {
+      {
+        [[<c-\><c-\>]],
+        "<cmd>ToggleTerm<cr>",
+      },
+    },
   },
 
   {
     "tpope/vim-eunuch",
+    cmd = {
+      "Mkdir",
+      "Unlink",
+      "Remove",
+      "Delete",
+      "Copy",
+      "Move",
+      "Duplicate",
+      "Rename",
+      "Chmod",
+      "Cfind",
+      "Clocate",
+      "Lfind",
+      "Llocate",
+      "SudoEdit",
+      "SudoWrite",
+      "Wall",
+      "W",
+    },
   },
 
   {
     "tpope/vim-dispatch",
+    cmd = {
+      "Dispatch",
+      "FocusDispatch",
+      "Make",
+      "Spawn",
+      "Start",
+      "Copen",
+      "AbortDispatch",
+    },
   },
 
   {
     "stevearc/overseer.nvim",
     dependencies = {
       "akinsho/toggleterm.nvim",
+    },
+    opts = {
+      strategy = {
+        "toggleterm",
+        use_shell = true,
+      }
     },
     cmd = {
       "OverseerOpen",
@@ -46,12 +91,6 @@ return {
       "OverseerSaveBundle",
       "OverseerDeleteBundle",
       "OverseerRunCmd",
-    },
-    opts = {
-      strategy = {
-        "toggleterm",
-        use_shell = true,
-      }
     },
   },
 
@@ -71,11 +110,18 @@ return {
     init = function()
       vim.g.VDiffDoMapping = 0
     end,
+    cmd = {
+      "Diffthis",
+      "Diffoff",
+      "Diffupdate",
+      "VDiffthis",
+      "VDiffoff",
+      "VDiffupdate",
+    },
   },
 
   {
     "NeogitOrg/neogit",
-    cmd = "Neogit",
     dependencies = {
       "nvim-telescope/telescope.nvim",
       "esmuellert/codediff.nvim",
@@ -87,6 +133,7 @@ return {
         codediff = true,
       },
     },
+    cmd = "Neogit",
     keys = {
       {
         "<leader>gg",
@@ -100,6 +147,9 @@ return {
     dependencies = {
       "nvim-lua/plenary.nvim",
     },
+    init = function()
+      vim.g.lazygit_floating_window_use_plenary = 1
+    end,
     cmd = {
       "LazyGit",
       "LazyGitConfig",
@@ -107,9 +157,6 @@ return {
       "LazyGitFilter",
       "LazyGitFilterCurrentFile",
     },
-    init = function()
-      vim.g.lazygit_floating_window_use_plenary = 1
-    end,
     keys = {
       {
         "<leader>gG",
@@ -136,14 +183,29 @@ return {
           }
         }
       })
-      vim.keymap.set("n", "<leader>gd", "<cmd>CodeDiff<cr>")
-      vim.keymap.set({ "n", "v" }, "<leader>gD", "<cmd>CodeDiff history<cr>")
     end,
+    cmd = "CodeDiff",
+    keys = {
+      {
+        "<leader>gd",
+        "<cmd>CodeDiff<cr>",
+      },
+      {
+        "<leader>gD",
+        "<cmd>CodeDiff history<cr>",
+        mode = { "n", "v" },
+      },
+    },
   },
 
   {
     "Almo7aya/openingh.nvim",
     opts = {},
+    cmd = {
+      "OpenInGHRepo",
+      "OpenInGHFile",
+      "OpenInGHFileLines",
+    },
   },
 
 }

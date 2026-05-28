@@ -3,7 +3,6 @@ return {
   {
     "catppuccin/nvim",
     name = "catppuccin",
-    lazy = false,
     priority = 1000,
     config = function()
       require("catppuccin").setup({
@@ -53,11 +52,11 @@ return {
       vim.cmd([[colorscheme catppuccin-latte]])
       vim.api.nvim_set_hl(0, "CursorLine", { bg = "#e4e4e4" })
     end,
+    lazy = false,
   },
 
   {
     "nvim-lualine/lualine.nvim",
-    lazy = false,
     config = function()
       -- git integration
       local function diff_source()
@@ -237,11 +236,11 @@ return {
         set noruler
       ]=])
     end,
+    lazy = false,
   },
 
   {
     "romgrk/barbar.nvim",
-    lazy = false,
     init = function()
       vim.g.barbar_auto_setup = false
     end,
@@ -316,6 +315,7 @@ return {
       vim.keymap.set("n", "<C-,>", "<cmd>BufferMovePrevious<CR>")
       vim.keymap.set("n", "<C-.>", "<cmd>BufferMoveNext<CR>")
     end,
+    lazy = false,
   },
 
   {
@@ -826,7 +826,6 @@ return {
 
   {
     "rachartier/tiny-code-action.nvim",
-    event = "LspAttach",
     opts = {
       signs = {
         quickfix = {
@@ -891,6 +890,7 @@ return {
         },
       },
     },
+    event = "LspAttach",
     keys = {
       {
         "g:",
@@ -918,7 +918,6 @@ return {
 
   {
     "folke/which-key.nvim",
-    event = "VeryLazy",
     config = function()
       require("which-key").setup({
         preset = "helix",
@@ -967,6 +966,7 @@ return {
         require("which-key").show()
       end)
     end,
+    event = "VeryLazy",
   },
 
 }

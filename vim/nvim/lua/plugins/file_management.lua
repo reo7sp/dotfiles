@@ -28,7 +28,6 @@ return {
 
   {
     "rmagatti/auto-session",
-    lazy = false,
     config = function()
       require("auto-session").setup({
         auto_create = false,
@@ -39,6 +38,7 @@ return {
         set sessionoptions+=winpos,terminal,folds
       ]=])
     end,
+    lazy = false,
     keys = {
       {
         "<leader>zz",

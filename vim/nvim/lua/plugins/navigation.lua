@@ -314,30 +314,18 @@ return {
 
   {
     "princejoogie/dir-telescope.nvim",
-    dependencies = {
-      "nvim-telescope/telescope.nvim",
-    },
   },
 
   {
     "LukasPietzschmann/telescope-tabs",
-    dependencies = {
-      "nvim-telescope/telescope.nvim",
-    },
   },
 
   {
     "jmacadie/telescope-hierarchy.nvim",
-    dependencies = {
-      "nvim-telescope/telescope.nvim",
-    },
   },
 
   {
     "piersolenski/import.nvim",
-    dependencies = {
-      "nvim-telescope/telescope.nvim",
-    },
   },
 
   {
@@ -596,13 +584,25 @@ return {
       vim.api.nvim_set_hl(0, "NvimTreeNormalNC", { link = "NormalNC" })
       vim.api.nvim_set_hl(0, "NvimTreeWinSeparator", { link = "WinSeparator" })
       vim.api.nvim_set_hl(0, "NvimTreeIndentMarker", { link = "IblIndent" })
-      vim.keymap.set("n", "<leader>t", function()
-        require("nvim-tree.api").tree.toggle({
-          find_file = true,
-          focus = false,
-        })
-      end)
     end,
+    cmd = {
+      "NvimTreeToggle",
+      "NvimTreeOpen",
+      "NvimTreeClose",
+      "NvimTreeFocus",
+      "NvimTreeFindFile",
+    },
+    keys = {
+      {
+        "<leader>t",
+        function()
+          require("nvim-tree.api").tree.toggle({
+            find_file = true,
+            focus = false,
+          })
+        end,
+      },
+    },
   },
 
   {
