@@ -338,6 +338,7 @@ alias edit-vim-settings='nvim ~/.config/nvim/lua/settings.lua'
 alias edit-vim-custom-plugins='nvim ~/.config/nvim/lua/plugins/custom.lua'
 alias edit-vim-custom-commands='nvim ~/.config/nvim/lua/commands/custom.lua'
 alias edit-vim-custom-minuet-llm='vim ~/.config/nvim/lua/configs/custom_minuet_llm.lua'
+alias cd-edit-vim='cd ~/.config/nvim/'
 
 time-start-vim() {
   vim --startuptime /tmp/startuptime.log "$@" +qa

@@ -58,33 +58,7 @@ return {
   {
     "nvim-lualine/lualine.nvim",
     config = function()
-      -- git integration
-      local function diff_source()
-        local gitsigns = vim.b.gitsigns_status_dict
-        if gitsigns then
-          return {
-            added = gitsigns.added,
-            modified = gitsigns.changed,
-            removed = gitsigns.removed,
-          }
-        end
-      end
-
-      -- dynamic width
-      local conditions = {
-        hide_in_width_first = function()
-          return vim.fn.winwidth(0) > 140
-        end,
-        hide_in_width_middle = function()
-          return vim.fn.winwidth(0) > 120
-        end,
-        hide_in_width_last = function()
-          return vim.fn.winwidth(0) > 80
-        end,
-      }
-
-      local lualine = require("lualine")
-      lualine.setup({
+      require("lualine").setup({
         options = {
           theme = "tomorrow",
           icons_enabled = false,
@@ -112,6 +86,10 @@ return {
               fmt = function(str)
                 return str:sub(1, 1)
               end,
+              padding = {
+                left = 1,
+                right = 1,
+              },
             },
           },
           lualine_b = {
@@ -119,56 +97,30 @@ return {
           lualine_c = {
             {
               "filename",
-              path = 1,
+              path = 3,
               file_status = false,
+              padding = {
+                left = 1,
+                right = 1,
+              },
             },
             {
               "aerial",
               depth = 3,
-              sep = " > ",
+              sep = " ",
               padding = {
                 left = 0,
                 right = 1,
               },
-              cond = conditions.hide_in_width_last,
             },
           },
           lualine_x = {
             {
-              "b:gitsigns_head",
-              cond = conditions.hide_in_width_first,
-            },
-            {
-              "diff",
-              source = diff_source,
-              padding = {
-                left = 0,
-                right = 1,
-              },
-              cond = conditions.hide_in_width_middle,
-            },
-            {
-              "filetype",
-              cond = conditions.hide_in_width_middle,
-            },
-            {
-              "lsp_status",
-              symbols = {
-                done = "",
-              },
-              padding = {
-                left = 0,
-                right = 1,
-              },
-              cond = conditions.hide_in_width_middle,
-            },
-            {
               "diagnostics",
               padding = {
-                left = 0,
+                left = 1,
                 right = 1,
               },
-              cond = conditions.hide_in_width_last,
             },
             {
               function()
@@ -179,34 +131,79 @@ return {
                   return "T:ts=" .. vim.api.nvim_buf_get_option(0, "tabstop")
                 end
               end,
-              cond = conditions.hide_in_width_last
+              padding = {
+                left = 0,
+                right = 1,
+              },
             },
             {
               require("minuet.lualine"),
+              padding = {
+                left = 0,
+                right = 1,
+              },
             },
           },
           lualine_y = {
           },
           lualine_z = {
-            "location",
-            "searchcount",
-            "selectioncount",
+            {
+              "location",
+              padding = {
+                left = 1,
+                right = 1,
+              },
+            },
+            {
+              "searchcount",
+              padding = {
+                left = 0,
+                right = 1,
+              },
+            },
+            {
+              "selectioncount",
+              padding = {
+                left = 0,
+                right = 1,
+              },
+            },
           },
         },
         inactive_sections = {
           lualine_a = {
+            {
+              "mode",
+              fmt = function(str)
+                return str:sub(1, 1)
+              end,
+              padding = {
+                left = 1,
+                right = 1,
+              },
+            },
           },
           lualine_b = {
           },
           lualine_c = {
             {
               "filename",
-              path = 1,
+              path = 3,
               file_status = false,
+              padding = {
+                left = 1,
+                right = 1,
+              },
             },
           },
           lualine_x = {
-            "location",
+            {
+              "location",
+              padding = {
+                left = 1,
+                right = 1,
+              },
+            }
           },
           lualine_y = {
           },
@@ -326,6 +323,16 @@ return {
     opts = {
       ui = {
         preselect_current = true,
+        buffer_format = {
+          "icon",
+          function(buf)
+            local path = vim.api.nvim_buf_get_name(buf.id)
+            if path == "" then
+              path = buf.name
+            end
+            return vim.fn.fnamemodify(path, ":~")
+          end,
+        },
         open_win_override = {
           border = "rounded",
         },
