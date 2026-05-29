@@ -111,3 +111,5 @@ end, {
     return { "dir" }
   end,
 })
+
+require("commands.custom")

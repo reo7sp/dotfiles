@@ -8,5 +8,6 @@ can-exec() {
 
 if can-exec nvim; then
   nvim --headless "+Lazy! sync" +qa
+  cp ~/.config/nvim/lazy-lock.json nvim/lazy-lock.json
   nvim --headless -c 'autocmd User MasonUpdateAllComplete quitall' -c 'MasonUpdateAll'
 fi

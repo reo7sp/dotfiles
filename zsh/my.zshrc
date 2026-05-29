@@ -52,6 +52,8 @@ else
   export EDITOR='vim'
 fi
 
+export DOCUMENTS_HOME="${DOCUMENTS_HOME:-$HOME/Documents}"
+
 
 # =============================================================================
 # plugins
@@ -242,7 +244,7 @@ mkcd() {
 }
 
 new-tmp() {
-  mkcd "$HOME/m/oneoff-code/$(date '+%Y-%m-%d')"
+  mkcd "$DOCUMENTS_HOME/oneoff-code/$(date '+%Y-%m-%d')"
 }
 
 alias grep='grep --color=auto'
@@ -330,10 +332,11 @@ xargs-vim() {
 alias xargs-v='xargs-vim'
 
 alias edit-vim='nvim ~/.config/nvim/init.lua'
-alias edit-vim-plugins='nvim ~/.config/nvim/lua/plugins.lua'
+alias edit-vim-plugins='nvim ~/.config/nvim/lua/plugins/'
 alias edit-vim-commands='nvim ~/.config/nvim/lua/commands.lua'
 alias edit-vim-settings='nvim ~/.config/nvim/lua/settings.lua'
 alias edit-vim-custom-plugins='nvim ~/.config/nvim/lua/plugins/custom.lua'
+alias edit-vim-custom-commands='nvim ~/.config/nvim/lua/commands/custom.lua'
 alias edit-vim-custom-minuet-llm='vim ~/.config/nvim/lua/configs/custom_minuet_llm.lua'
 
 time-start-vim() {
@@ -692,7 +695,7 @@ m() {
 
 # -----------------------------------------------------------------------------
 # cursor-agent
-if can-exec cursor-agent; then
+if can-exec cursor-agent && [[ "${NO_PROXY_CURSOR_AGENT:-0}" != '1' ]]; then
   if [[ -z $REAL_CURSOR_AGENT ]]; then
     export REAL_CURSOR_AGENT=$(which cursor-agent)
   fi
@@ -709,7 +712,7 @@ fi
 
 # -----------------------------------------------------------------------------
 # codex
-if can-exec codex; then
+if can-exec codex && [[ "${NO_PROXY_CODEX:-0}" != '1' ]]; then
   if [[ -z $REAL_CODEX ]]; then
     export REAL_CODEX=$(which codex)
   fi
@@ -723,7 +726,7 @@ fi
 
 # -----------------------------------------------------------------------------
 # claude
-if can-exec claude; then
+if can-exec claude && [[ "${NO_PROXY_CLAUDE:-0}" != '1' ]]; then
   if [[ -z $REAL_CLAUDE ]]; then
     export REAL_CLAUDE=$(which claude)
   fi
