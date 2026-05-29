@@ -203,28 +203,6 @@ set listchars=tab:→\ ,space:·,trail:·,extends:⟩,precedes:⟨,nbsp:␣
 set nolist
 ]=])
 
-vim.api.nvim_create_autocmd("FileType", {
-  pattern = "markdown",
-  callback = function()
-    vim.opt_local.wrap = true
-    vim.opt_local.linebreak = true
-  end,
-})
-
-vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
-  pattern = "go.mod",
-  callback = function(args)
-    vim.bo[args.buf].filetype = "gomod"
-  end,
-})
-
-vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
-  pattern = "*.pp",
-  callback = function(args)
-    vim.bo[args.buf].filetype = "puppet"
-  end,
-})
-
 -- -----------------------------------------------------------------------------
 -- editing
 vim.cmd([=[

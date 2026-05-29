@@ -378,6 +378,14 @@ return {
       "neovim/nvim-lspconfig",
       "nvim-treesitter/nvim-treesitter",
     },
+    init = function()
+      vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
+        pattern = "go.mod",
+        callback = function(args)
+          vim.bo[args.buf].filetype = "gomod"
+        end,
+      })
+    end,
     opts = {
       lsp_keymaps = false,
       lsp_codelens = false,
@@ -413,6 +421,15 @@ return {
     dependencies = {
       "nvim-treesitter/nvim-treesitter",
     },
+    init = function()
+      vim.api.nvim_create_autocmd("FileType", {
+        pattern = "markdown",
+        callback = function()
+          vim.opt_local.wrap = true
+          vim.opt_local.linebreak = true
+        end,
+      })
+    end,
     opts = {
       preset = "obsidian",
       completions = {
@@ -485,15 +502,40 @@ return {
 
   {
     "rodjek/vim-puppet",
+    init = function()
+      vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
+        pattern = "*.pp",
+        callback = function(args)
+          vim.bo[args.buf].filetype = "puppet"
+        end,
+      })
+    end,
     ft = "puppet",
   },
 
   {
     "vmware-archive/salt-vim",
+    init = function()
+      vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
+        pattern = "*.sls",
+        callback = function(args)
+          vim.bo[args.buf].filetype = "sls"
+        end,
+      })
+    end,
+    ft = "sls",
   },
 
   {
     "fladson/vim-kitty",
+    init = function()
+      vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
+        pattern = "kitty.conf",
+        callback = function(args)
+          vim.bo[args.buf].filetype = "kitty"
+        end,
+      })
+    end,
     ft = "kitty",
   },
 

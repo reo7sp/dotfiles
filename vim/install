@@ -83,5 +83,5 @@ else
 fi
 
 if can-exec nvim; then
-  nvim --headless "+Lazy! install" +qa
+  nvim --headless "+Lazy! restore" +qa
 fi
