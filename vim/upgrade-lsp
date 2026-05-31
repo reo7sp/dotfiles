@@ -1,0 +1,5 @@
+#!/bin/bash
+set -e -o pipefail
+
+
+nvim --headless -c 'autocmd User MasonUpdateAllComplete quitall' -c 'MasonUpdateAll'

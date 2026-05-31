@@ -8,10 +8,6 @@ else
   QUICK_INSTALL=0
 fi
 
-can-exec() {
-  which "$1" 2>/dev/null 1>/dev/null
-}
-
 confirm() {
   local message=$1
 
@@ -82,6 +78,4 @@ else
   cp nvim/lua/configs/custom_minuet_llm.lua ~/.config/nvim/lua/configs/custom_minuet_llm.lua
 fi
 
-if can-exec nvim; then
-  nvim --headless "+Lazy! restore" +qa
-fi
+nvim --headless "+Lazy! restore" +qa

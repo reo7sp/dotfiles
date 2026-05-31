@@ -1,0 +1,6 @@
+#!/bin/bash
+set -e -o pipefail
+
+
+nvim --headless "+Lazy! sync" +qa
+cp ~/.config/nvim/lazy-lock.json nvim/lazy-lock.json
