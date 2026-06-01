@@ -219,7 +219,7 @@ return {
       end
       vim.keymap.set("n", "<leader>ge", M.git_status, { desc = "Telescope git_status", })
 
-      vim.keymap.set("n", "gf", function()
+      vim.keymap.set("n", "gF", function()
         require("telescope.builtin").find_files({
           default_text = vim.fn.expand("<cword>"),
         })
@@ -228,7 +228,7 @@ return {
         silent = true,
         desc = "Find files with word under cursor",
       })
-      vim.keymap.set("v", "gf", function()
+      vim.keymap.set("v", "gF", function()
         vim.cmd("normal! \"vy")
         require("telescope.builtin").find_files({
           default_text = vim.fn.getreg("v"),
@@ -610,6 +610,18 @@ return {
     main = "other-nvim",
     opts = {
       mappings = {
+        -- h -> cpp
+        {
+          pattern = "(.*)%.h$",
+          target  = "%1.cpp",
+          context = "c",
+        },
+        -- cpp -> h
+        {
+          pattern = "(.*)%.cpp$",
+          target  = "%1.h",
+          context = "c",
+        },
         -- h -> c
         {
           pattern = "(.+)/include/(.+)%.h$",
