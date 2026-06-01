@@ -1,0 +1,12 @@
+#!/bin/bash
+set -e -o pipefail
+
+
+curl -fsSL https://pyenv.run | bash
+
+cat >> ~/.zshrc <<'EOF'
+
+export PYENV_ROOT="$HOME/.pyenv"
+[[ -d "$PYENV_ROOT/bin" ]] && export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init - zsh)"
+EOF

@@ -65,7 +65,6 @@ return {
     config = function()
       local lsps = {
         "clangd",
-        "cmake",
         "gopls",
         "pyright",
         "perlnavigator",

@@ -56,8 +56,13 @@ zsh -c '
   eval "$(antidote bundle zdharma-continuum/fast-syntax-highlighting)" >/dev/null 2>&1
   fast-theme -r 2>/dev/null; fast-theme XDG:catppuccin-latte 2>/dev/null
 ' || true
-mkdir -p ~/bin
-cp bin/strip-whitespace ~/bin/strip-whitespace
+mkdir -p ~/.local/bin
+cp bin/strip-whitespace ~/.local/bin/strip-whitespace
+if [[ -e ~/.bin && ! -L ~/.bin ]]; then
+  echo "~/.bin exists and is not a symlink" >&2
+  exit 1
+fi
+ln -sfn .local/bin ~/.bin
 mkdir -p ~/.config/direnv
 cp direnvrc ~/.config/direnv/direnvrc
 cp direnv.toml ~/.config/direnv/direnv.toml

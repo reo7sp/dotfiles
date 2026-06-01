@@ -1,0 +1,18 @@
+#!/bin/bash
+set -e -o pipefail
+
+
+mkdir -p ~/.local/bin ~/.local/opt ~/go/bin
+cd /tmp
+wget https://go.dev/dl/go1.26.3.linux-amd64.tar.gz
+rm -rf ~/.local/opt/go
+tar -C ~/.local/opt -xzf go1.26.3.linux-amd64.tar.gz
+ln -sf ~/.local/opt/go/bin/go ~/.local/bin/go
+ln -sf ~/.local/opt/go/bin/gofmt ~/.local/bin/gofmt
+
+cat >> ~/.zshrc <<'EOF'
+
+export GOROOT="$HOME/.local/opt/go"
+export GOPATH="$HOME/go"
+export PATH="$HOME/.local/bin:$HOME/go/bin:$PATH"
+EOF

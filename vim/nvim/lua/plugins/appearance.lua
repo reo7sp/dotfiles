@@ -60,7 +60,7 @@ return {
     config = function()
       require("lualine").setup({
         options = {
-          theme = "tomorrow",
+          theme = "Tomorrow",
           icons_enabled = false,
           component_separators = {
             left = "",

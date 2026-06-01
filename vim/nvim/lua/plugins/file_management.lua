@@ -27,6 +27,25 @@ return {
   },
 
   {
+    "amitds1997/remote-nvim.nvim",
+    version = "*",
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+      "MunifTanjim/nui.nvim",
+      "nvim-telescope/telescope.nvim",
+    },
+    cmd = {
+      "RemoteStart",
+      "RemoteStop",
+      "RemoteInfo",
+      "RemoteCleanup",
+      "RemoteConfigDel",
+      "RemoteLog",
+    },
+    opts = {},
+  },
+
+  {
     "rmagatti/auto-session",
     config = function()
       require("auto-session").setup({

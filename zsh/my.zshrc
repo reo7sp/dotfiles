@@ -338,7 +338,16 @@ alias edit-vim-settings='nvim ~/.config/nvim/lua/settings.lua'
 alias edit-vim-custom-plugins='nvim ~/.config/nvim/lua/plugins/custom.lua'
 alias edit-vim-custom-commands='nvim ~/.config/nvim/lua/commands/custom.lua'
 alias edit-vim-custom-minuet-llm='vim ~/.config/nvim/lua/configs/custom_minuet_llm.lua'
+alias edit-vim-custom-gopls='vim ~/.config/nvim/bin/custom-gopls'
 alias cd-edit-vim='cd ~/.config/nvim/'
+
+rsync-vim-custom() {
+  rsync -a ~/.config/nvim/"$1" "$2":~/.config/nvim/"$1"
+}
+alias rsync-edit-vim-custom-plugins='rsync-vim-custom lua/plugins/custom.lua'
+alias rsync-edit-vim-custom-commands='rsync-vim-custom lua/commands/custom.lua'
+alias rsync-edit-vim-custom-minuet-llm='rsync-vim-custom lua/configs/custom_minuet_llm.lua'
+alias rsync-edit-vim-custom-gopls='rsync-vim-custom bin/custom-gopls'
 
 time-start-vim() {
   vim --startuptime /tmp/startuptime.log "$@" +qa

@@ -1,0 +1,10 @@
+#!/bin/bash
+set -e -o pipefail
+
+
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+
+cat >> ~/.zshrc <<'EOF'
+
+[ -f "$HOME/.cargo/env" ] && source "$HOME/.cargo/env"
+EOF
