@@ -276,7 +276,6 @@ else
 fi
 
 alias edit-hosts='sudo vim /etc/hosts'
-alias show-hosts='cat /etc/hosts'
 
 aliases-ls() {
   cat $(antidote path zimfw/exa)/init.zsh
@@ -284,8 +283,8 @@ aliases-ls() {
 
 # -----------------------------------------------------------------------------
 # zsh
-alias autoenv-edit-enter='vim .autoenv.zsh'
-alias autoenv-edit-leave='vim .autoenv_leave.zsh'
+alias edit-autoenv-enter='vim .autoenv.zsh'
+alias edit-autoenv-leave='vim .autoenv_leave.zsh'
 
 if can-exec direnv; then
   eval "$(direnv hook zsh)"
@@ -372,12 +371,6 @@ alias edit-ranger='vim ~/.config/ranger/rc.conf'
 alias edit-kitty='vim ~/.config/kitty/kitty.conf'
 
 # -----------------------------------------------------------------------------
-# tmux
-tm() {
-  tmux -2 a || tmux -2 new
-}
-
-# -----------------------------------------------------------------------------
 # ssh
 if [[ $TERM == 'xterm-kitty' ]]; then
   alias ssh='TERM=xterm-256color ssh'
@@ -385,7 +378,6 @@ fi
 
 alias edit-ssh='vim ~/.ssh/config'
 alias copy-ssh='cat ~/.ssh/id_rsa.pub | pbcopy'
-alias show-ssh='cat ~/.ssh/config'
 
 # -----------------------------------------------------------------------------
 # fd

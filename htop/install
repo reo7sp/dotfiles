@@ -1,0 +1,6 @@
+#!/bin/bash
+set -e -o pipefail
+
+
+mkdir -p ~/.config/htop
+cp htoprc ~/.config/htop/htoprc

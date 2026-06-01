@@ -39,6 +39,7 @@ return {
         "yaml",
         "toml",
         "xml",
+        "proto",
         "dockerfile",
         "vim",
         "markdown",

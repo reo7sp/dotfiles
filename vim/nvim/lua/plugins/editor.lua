@@ -77,6 +77,7 @@ return {
         "jsonls",
         "yamlls",
         "lemminx",
+        "protols",
       }
       require("mason-lspconfig").setup({
         ensure_installed = lsps,
