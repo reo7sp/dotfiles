@@ -298,6 +298,15 @@ alias edit-zsh-plugins='vim ~/.zsh_plugins.txt; source ~/.zshrc'
 alias edit-zsh-p10k='vim ~/.p10k.zsh; source ~/.zshrc'
 alias edit-zshrc='vim ~/.zshrc; source ~/.zshrc'
 
+edit-zsh-clear-cache-completion() {
+  rm -rf \
+    "${XDG_CACHE_HOME:-$HOME/.cache}/zsh/compcache" \
+    "${XDG_CACHE_HOME:-$HOME/.cache}/zsh/compdump" \
+    "${ZDOTDIR:-$HOME}/.zcompcache" \
+    "${ZDOTDIR:-$HOME}/.zcompdump"
+  exec zsh
+}
+
 # -----------------------------------------------------------------------------
 # vim
 if can-exec nvim; then
@@ -697,7 +706,7 @@ m() {
 
 # -----------------------------------------------------------------------------
 # cursor-agent
-if can-exec cursor-agent && [[ "${NO_PROXY_CURSOR_AGENT:-0}" != '1' ]]; then
+if can-exec cursor-agent && [[ "${NO_PROXY_CURSOR:-0}" != '1' ]] && [[ "${NO_PROXY_CURSOR_AGENT:-0}" != '1' ]]; then
   if [[ -z $REAL_CURSOR_AGENT ]]; then
     export REAL_CURSOR_AGENT=$(which cursor-agent)
   fi

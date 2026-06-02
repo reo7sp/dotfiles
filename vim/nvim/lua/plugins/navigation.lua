@@ -330,7 +330,7 @@ return {
 
   {
     "junegunn/fzf",
-    build = "./install --all",
+    build = "./install --bin",
   },
 
   {

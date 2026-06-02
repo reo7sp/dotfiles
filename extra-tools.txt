@@ -1,6 +1,7 @@
 zsh
 neovim
 ranger
+highlight
 ripgrep
 fd
 fzf

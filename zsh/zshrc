@@ -1,3 +1,7 @@
+# custom before
+
+
+# init
 ZDOTDIR=${ZDOTDIR:-$HOME}
 source "$ZDOTDIR/.my.zshrc"
 
