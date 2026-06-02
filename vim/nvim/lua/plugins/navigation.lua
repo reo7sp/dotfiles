@@ -252,46 +252,46 @@ return {
       require("import").setup({
         picker = "telescope",
       })
-      vim.keymap.set("n", "gd", "<cmd>Telescope lsp_definitions<cr>")
-      vim.keymap.set("n", "gD", "<cmd>Telescope lsp_implementations<cr>")
-      vim.keymap.set("n", "gy", "<cmd>Telescope lsp_type_definitions<cr>")
-      vim.keymap.set("n", "ge", "<cmd>Telescope lsp_references<cr>")
-      vim.keymap.set("n", "gE", "<cmd>Telescope hierarchy disable_devicons=true<cr>")
+      vim.keymap.set("n", "gd", "<cmd>Telescope lsp_definitions<cr>", { desc = "Find LSP definitions", })
+      vim.keymap.set("n", "gD", "<cmd>Telescope lsp_implementations<cr>", { desc = "Find LSP implementations", })
+      vim.keymap.set("n", "gy", "<cmd>Telescope lsp_type_definitions<cr>", { desc = "Find LSP type definitions", })
+      vim.keymap.set("n", "ge", "<cmd>Telescope lsp_references<cr>", { desc = "Find LSP references", })
+      vim.keymap.set("n", "gE", "<cmd>Telescope hierarchy disable_devicons=true<cr>", { desc = "Find LSP hierarchy", })
       vim.keymap.set("n", "gs", function()
         require("telescope-live-grep-args.shortcuts").grep_word_under_cursor()
-      end)
+      end, { desc = "Grep word under cursor", })
       vim.keymap.set("n", "<leader>e", function()
         require("telescope").extensions.recent_files.pick()
-      end)
-      vim.keymap.set("n", "<leader>E", "<cmd>Telescope jumplist<cr>")
-      vim.keymap.set("n", "<leader>f", "<cmd>Telescope find_files<cr>")
-      vim.keymap.set("n", "<leader>Ff", "<cmd>Telescope dir find_files<cr>")
-      vim.keymap.set("n", "<leader>s", "<cmd>Telescope live_grep_args<cr>")
+      end, { desc = "Find recent files", })
+      vim.keymap.set("n", "<leader>E", "<cmd>Telescope jumplist<cr>", { desc = "Find jumplist entries", })
+      vim.keymap.set("n", "<leader>f", "<cmd>Telescope find_files<cr>", { desc = "Find files", })
+      vim.keymap.set("n", "<leader>Ff", "<cmd>Telescope dir find_files<cr>", { desc = "Find files in directory", })
+      vim.keymap.set("n", "<leader>s", "<cmd>Telescope live_grep_args<cr>", { desc = "Live grep", })
       vim.keymap.set("v", "<leader>s", function()
         require("telescope-live-grep-args.shortcuts").grep_visual_selection()
-      end)
+      end, { desc = "Grep selected text", })
       vim.keymap.set("v", "gs", function()
         require("telescope-live-grep-args.shortcuts").grep_visual_selection()
-      end)
-      vim.keymap.set("n", "<leader>Fs", "<cmd>Telescope dir live_grep<cr>")
-      vim.keymap.set("n", "<leader>b", "<cmd>Telescope buffers<cr>")
-      vim.keymap.set("n", "<leader>B", "<cmd>Telescope telescope-tabs list_tabs<cr>")
-      vim.keymap.set("n", "<leader>y", "<cmd>Telescope yank_history<cr>")
-      vim.keymap.set("n", "<leader>k", "<cmd>Telescope aerial initial_mode=insert<cr>")
-      vim.keymap.set("n", "<leader>K", "<cmd>Telescope lsp_dynamic_workspace_symbols<cr>")
-      vim.keymap.set("n", "<leader>d", "<cmd>Telescope diagnostics bufnr=0<CR>")
-      vim.keymap.set("n", "<leader>D", "<cmd>Telescope diagnostics<CR>")
-      vim.keymap.set("n", "<leader>Q", "<cmd>Telescope quickfixhistory<cr>")
-      vim.keymap.set("n", "<leader>gb", "<cmd>Telescope git_branches<cr>")
-      vim.keymap.set("n", "<leader>i", "<cmd>Import<cr>")
-      vim.keymap.set("n", "<leader>m", "<cmd>Telescope marks<cr>")
-      vim.keymap.set("n", "<leader>'", "<cmd>Telescope marks<cr>")
-      vim.keymap.set("n", "<leader>`", "<cmd>Telescope marks<cr>")
-      vim.keymap.set("n", "<leader>\"", "<cmd>Telescope registers<cr>")
-      vim.keymap.set("n", "<leader>.", "<cmd>Telescope resume<cr>")
+      end, { desc = "Grep selected text", })
+      vim.keymap.set("n", "<leader>Fs", "<cmd>Telescope dir live_grep<cr>", { desc = "Live grep in directory", })
+      vim.keymap.set("n", "<leader>b", "<cmd>Telescope buffers<cr>", { desc = "Find buffers", })
+      vim.keymap.set("n", "<leader>B", "<cmd>Telescope telescope-tabs list_tabs<cr>", { desc = "Find tabs", })
+      vim.keymap.set("n", "<leader>y", "<cmd>Telescope yank_history<cr>", { desc = "Find yank history", })
+      vim.keymap.set("n", "<leader>k", "<cmd>Telescope aerial initial_mode=insert<cr>", { desc = "Find symbols", })
+      vim.keymap.set("n", "<leader>K", "<cmd>Telescope lsp_dynamic_workspace_symbols<cr>", { desc = "Find workspace symbols", })
+      vim.keymap.set("n", "<leader>d", "<cmd>Telescope diagnostics bufnr=0<CR>", { desc = "Find buffer diagnostics", })
+      vim.keymap.set("n", "<leader>D", "<cmd>Telescope diagnostics<CR>", { desc = "Find diagnostics", })
+      vim.keymap.set("n", "<leader>Q", "<cmd>Telescope quickfixhistory<cr>", { desc = "Find quickfix history", })
+      vim.keymap.set("n", "<leader>gb", "<cmd>Telescope git_branches<cr>", { desc = "Find git branches", })
+      vim.keymap.set("n", "<leader>i", "<cmd>Import<cr>", { desc = "Import symbol", })
+      vim.keymap.set("n", "<leader>m", "<cmd>Telescope marks<cr>", { desc = "Find marks", })
+      vim.keymap.set("n", "<leader>'", "<cmd>Telescope marks<cr>", { desc = "Find marks", })
+      vim.keymap.set("n", "<leader>`", "<cmd>Telescope marks<cr>", { desc = "Find marks", })
+      vim.keymap.set("n", "<leader>\"", "<cmd>Telescope registers<cr>", { desc = "Find registers", })
+      vim.keymap.set("n", "<leader>.", "<cmd>Telescope resume<cr>", { desc = "Resume Telescope", })
       vim.keymap.set("n", "<leader>/", function()
         require("telescope.builtin").current_buffer_fuzzy_find()
-      end)
+      end, { desc = "Fuzzy find in current buffer", })
     end,
   },
 
@@ -409,7 +409,7 @@ return {
         },
       })
 
-      vim.keymap.set("n", "-", "<cmd>Oil<CR>")
+      vim.keymap.set("n", "-", "<cmd>Oil<CR>", { desc = "Open parent directory", })
     end,
   },
 
@@ -601,6 +601,7 @@ return {
             focus = false,
           })
         end,
+        desc = "Toggle file tree",
       },
     },
   },
@@ -675,6 +676,7 @@ return {
       {
         "<leader>a",
         "<cmd>Other<cr>",
+        desc = "Open alternate file",
       },
     },
   },
@@ -704,7 +706,7 @@ return {
       })
       vim.api.nvim_set_hl(0, "AerialLine", { link = "CursorLine" })
       vim.api.nvim_set_hl(0, "AerialGuide", { link = "IblIndent" })
-      vim.keymap.set("n", "<leader>o", "<cmd>AerialToggle!<cr>")
+      vim.keymap.set("n", "<leader>o", "<cmd>AerialToggle!<cr>", { desc = "Toggle symbol outline", })
     end,
   },
 
@@ -729,6 +731,7 @@ return {
           require("grug-far").kill_instance()
           require("grug-far").open()
         end,
+        desc = "Search and replace",
       },
       {
         "<leader>S",
@@ -737,6 +740,7 @@ return {
           require("grug-far").with_visual_selection()
         end,
         mode = "v",
+        desc = "Search and replace selection",
       },
     },
   },

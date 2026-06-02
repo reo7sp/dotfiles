@@ -300,17 +300,17 @@ return {
         cnoreabbrev bsl BufferOrderByLanguage
         cnoreabbrev bsw BufferOrderByWindowNumber
       ]=])
-      vim.keymap.set("n", "[b", "<cmd>BufferPrevious<CR>")
-      vim.keymap.set("n", "]b", "<cmd>BufferNext<CR>")
+      vim.keymap.set("n", "[b", "<cmd>BufferPrevious<CR>", { desc = "Previous buffer", })
+      vim.keymap.set("n", "]b", "<cmd>BufferNext<CR>", { desc = "Next buffer", })
       for i = 1, 8 do
-        vim.keymap.set("n", "<C-" .. i .. ">", "<cmd>BufferGoto " .. i .. "<CR>")
+        vim.keymap.set("n", "<C-" .. i .. ">", "<cmd>BufferGoto " .. i .. "<CR>", { desc = "Go to buffer " .. i, })
       end
-      vim.keymap.set("n", "<C-9>", "<cmd>BufferLast<CR>")
-      vim.keymap.set("n", "<c-q>", "<cmd>BufferClose<cr>")
-      vim.keymap.set("n", "<c-w>Q", "<cmd>BufferClose<cr>")
-      vim.keymap.set("n", "<c-w>O", "<cmd>BufferCloseAllButCurrentOrPinned<cr>")
-      vim.keymap.set("n", "<C-,>", "<cmd>BufferMovePrevious<CR>")
-      vim.keymap.set("n", "<C-.>", "<cmd>BufferMoveNext<CR>")
+      vim.keymap.set("n", "<C-9>", "<cmd>BufferLast<CR>", { desc = "Go to last buffer", })
+      vim.keymap.set("n", "<c-q>", "<cmd>BufferClose<cr>", { desc = "Close buffer", })
+      vim.keymap.set("n", "<c-w>Q", "<cmd>BufferClose<cr>", { desc = "Close buffer", })
+      vim.keymap.set("n", "<c-w>O", "<cmd>BufferCloseAllButCurrentOrPinned<cr>", { desc = "Close other buffers", })
+      vim.keymap.set("n", "<C-,>", "<cmd>BufferMovePrevious<CR>", { desc = "Move buffer left", })
+      vim.keymap.set("n", "<C-.>", "<cmd>BufferMoveNext<CR>", { desc = "Move buffer right", })
     end,
     lazy = false,
   },
@@ -361,6 +361,7 @@ return {
         function()
           require("snipe").open_buffer_menu()
         end,
+        desc = "Open buffer menu",
       },
     },
   },
@@ -376,6 +377,7 @@ return {
         function()
           require("snipe-marks").open_marks_menu("all")
         end,
+        desc = "Open marks menu",
       },
     },
   },
@@ -407,8 +409,8 @@ return {
       local function pick_window()
         vim.api.nvim_set_current_win(require("window-picker").pick_window() or vim.api.nvim_get_current_win())
       end
-      vim.keymap.set("n", "<c-w>e", pick_window)
-      vim.keymap.set("n", "<c-w><c-e>", pick_window)
+      vim.keymap.set("n", "<c-w>e", pick_window, { desc = "Pick window", })
+      vim.keymap.set("n", "<c-w><c-e>", pick_window, { desc = "Pick window", })
     end,
   },
 
@@ -426,10 +428,12 @@ return {
       {
         "<c-w>x",
         "<cmd>WinShift swap<cr>",
+        desc = "Swap window",
       },
       {
         "<c-w><c-x>",
         "<cmd>WinShift swap<cr>",
+        desc = "Swap window",
       },
     },
   },
@@ -476,15 +480,15 @@ return {
               vim.keymap.set("n", "<c-t>", function()
                 vim.cmd([[cclose]])
                 vim.cmd([[Trouble qflist open]])
-              end, { buffer = ev.buf, })
+              end, { buffer = ev.buf, desc = "Open quickfix list in Trouble", })
 
               vim.keymap.set("n", "zx", function()
                 require("quicker").refresh()
-              end, { buffer = ev.buf, })
+              end, { buffer = ev.buf, desc = "Refresh quickfix list", })
 
               vim.keymap.set("n", "q", function()
                 vim.cmd("cclose")
-              end, { buffer = ev.buf, })
+              end, { buffer = ev.buf, desc = "Close quickfix list", })
             end)
           end
         end,
@@ -516,7 +520,7 @@ return {
         require("quicker").toggle({
           focus = true,
         })
-      end)
+      end, { desc = "Toggle quickfix list", })
     end,
   },
 
@@ -632,7 +636,7 @@ return {
       vim.api.nvim_set_hl(0, "TroubleIndentFoldOpen", { link = "IblIndent" })
       vim.keymap.set("n", "<leader>T", function()
         require("trouble").toggle()
-      end)
+      end, { desc = "Toggle Trouble", })
     end,
   },
 
@@ -689,6 +693,7 @@ return {
       {
         "<leader>n",
         "<cmd>TodoTelescope<CR>",
+        desc = "Find todo comments",
       },
     },
   },
@@ -905,6 +910,7 @@ return {
           require("tiny-code-action").code_action()
         end,
         mode = { "n", "v" },
+        desc = "Open LSP code action menu",
       },
     },
   },
@@ -971,7 +977,7 @@ return {
       })
       vim.keymap.set("n", "<leader>?", function()
         require("which-key").show()
-      end)
+      end, { desc = "Show keymaps", })
     end,
     event = "VeryLazy",
   },

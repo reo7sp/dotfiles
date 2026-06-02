@@ -2,7 +2,7 @@
 -- mappings
 
 -- https://nanotipsforvim.prose.sh/esc-in-normal-mode
-vim.keymap.set("n", "<cr>", "<cmd>echo<cr>", { silent = true, })
+vim.keymap.set("n", "<cr>", "<cmd>echo<cr>", { silent = true, desc = "Clear message", })
 
 local clear_msg_timer = -1
 local function empty_message()
@@ -41,6 +41,7 @@ vim.keymap.set("n", "j", function()
 end, {
   expr = true,
   silent = true,
+  desc = "Move down by display line",
 })
 vim.keymap.set("n", "k", function()
   if vim.v.count == 0 then
@@ -50,43 +51,44 @@ vim.keymap.set("n", "k", function()
 end, {
   expr = true,
   silent = true,
+  desc = "Move up by display line",
 })
-vim.keymap.set("n", "gj", "j")
-vim.keymap.set("n", "gk", "k")
-vim.keymap.set("n", "<down>", "gj")
-vim.keymap.set("n", "<up>", "gk")
+vim.keymap.set("n", "gj", "j", { desc = "Move down by physical line", })
+vim.keymap.set("n", "gk", "k", { desc = "Move up by physical line", })
+vim.keymap.set("n", "<down>", "gj", { desc = "Move down by display line", })
+vim.keymap.set("n", "<up>", "gk", { desc = "Move up by display line", })
 
 -- https://superuser.com/a/836924/2151180
 vim.keymap.set("n", "}", function()
   local count = vim.v.count1
   vim.cmd("keepjumps normal! " .. count .. "}")
-end, { silent = true, })
+end, { silent = true, desc = "Next paragraph without jump", })
 
 vim.keymap.set("n", "{", function()
   local count = vim.v.count1
   vim.cmd("keepjumps normal! " .. count .. "{")
-end, { silent = true, })
+end, { silent = true, desc = "Previous paragraph without jump", })
 
 -- https://www.reddit.com/r/neovim/comments/sf0hmc/im_really_proud_of_this_mapping_i_came_up_with/
-vim.keymap.set("n", "g.", [[/\V\C<C-r>"<CR>]])
-vim.keymap.set("n", "c.", [[/\V\C<C-r>"<CR>cgn<C-a><Esc>]])
-vim.keymap.set("n", "d.", [[/\V\C<C-r>"<CR>dgn]])
+vim.keymap.set("n", "g.", [[/\V\C<C-r>"<CR>]], { desc = "Search register text", })
+vim.keymap.set("n", "c.", [[/\V\C<C-r>"<CR>cgn<C-a><Esc>]], { desc = "Change register text", })
+vim.keymap.set("n", "d.", [[/\V\C<C-r>"<CR>dgn]], { desc = "Delete register text", })
 
 -- https://www.reddit.com/r/vim/comments/rctvgk/a_lesser_known_built_in_feature_you_use_regularly/
-vim.keymap.set("n", "gV", "`[v`]")
+vim.keymap.set("n", "gV", "`[v`]", { desc = "Select last changed text", })
 
 -- https://vim.fandom.com/wiki/Comfortable_handling_of_registers
-vim.keymap.set("n", "[+", function() vim.fn.setreg("\"", vim.fn.getreg("+")) end)
-vim.keymap.set("n", "]+", function() vim.fn.setreg("+", vim.fn.getreg("\"")) end)
+vim.keymap.set("n", "[+", function() vim.fn.setreg("\"", vim.fn.getreg("+")) end, { desc = "Copy clipboard to register", })
+vim.keymap.set("n", "]+", function() vim.fn.setreg("+", vim.fn.getreg("\"")) end, { desc = "Copy register to clipboard", })
 
 for _, lhs in ipairs({ "c", "C", "d", "D", "x", "X", "y", "Y", "p", "P", "]p", "[p", "]P", "[P", ">p", "<p", ">P", "<P", "=p", "=P" }) do
-  vim.keymap.set("n", "+" .. lhs, "\"+" .. lhs, { remap = true, })
-  vim.keymap.set("v", "+" .. lhs, "\"+" .. lhs, { remap = true, })
+  vim.keymap.set("n", "+" .. lhs, "\"+" .. lhs, { remap = true, desc = "Use clipboard register for " .. lhs, })
+  vim.keymap.set("v", "+" .. lhs, "\"+" .. lhs, { remap = true, desc = "Use clipboard register for " .. lhs, })
 end
 
 for _, lhs in ipairs({ "c", "C", "d", "D", "x", "X" }) do
-  vim.keymap.set("n", "_" .. lhs, "\"_" .. lhs, { remap = true, })
-  vim.keymap.set("v", "_" .. lhs, "\"_" .. lhs, { remap = true, })
+  vim.keymap.set("n", "_" .. lhs, "\"_" .. lhs, { remap = true, desc = "Use black hole register for " .. lhs, })
+  vim.keymap.set("v", "_" .. lhs, "\"_" .. lhs, { remap = true, desc = "Use black hole register for " .. lhs, })
 end
 
 -- https://gist.github.com/romainl/d2ad868afd7520519057475bd8e9db0c
@@ -109,34 +111,35 @@ vim.keymap.set("n", "gq", function()
 end, {
   expr = true,
   silent = true,
+  desc = "Format with external program",
 })
-vim.keymap.set("n", "gqq", "gq_", { remap = true, })
+vim.keymap.set("n", "gqq", "gq_", { remap = true, desc = "Format current line", })
 
 -- https://www.reddit.com/r/neovim/comments/lchm1o/comment/glzx6zf/
-vim.keymap.set("o", "ie", ":<c-u>silent normal ggVG<CR>", { silent = true, })
-vim.keymap.set("x", "ie", ":<c-u>silent normal ggVG<CR>", { silent = true, })
+vim.keymap.set("o", "ie", ":<c-u>silent normal ggVG<CR>", { silent = true, desc = "Entire buffer text object", })
+vim.keymap.set("x", "ie", ":<c-u>silent normal ggVG<CR>", { silent = true, desc = "Entire buffer text object", })
 
 -- https://bluz71.github.io/2021/09/10/vim-tips-revisited.html#fast-previous-buffer-switching
-vim.keymap.set("n", "<C-Backspace>", "<C-^>")
-vim.keymap.set("n", "<C-S-Backspace>", function() require("telescope-tabs").go_to_previous() end)
+vim.keymap.set("n", "<C-Backspace>", "<C-^>", { desc = "Previous buffer", })
+vim.keymap.set("n", "<C-S-Backspace>", function() require("telescope-tabs").go_to_previous() end, { desc = "Previous tab", })
 
-vim.keymap.set("n", "<C-w>^", "<cmd>vsplit #<cr>")
-vim.keymap.set("n", "<C-w><C-^>", "<cmd>vsplit #<cr>")
-vim.keymap.set("n", "<C-w><Backspace>", "<cmd>vsplit #<cr>")
-vim.keymap.set("n", "<C-w><C-Backspace>", "<cmd>vsplit #<cr>")
-vim.keymap.set("n", "<C-w>n", function() vim.cmd("vsplit"); vim.cmd("enew") end, { silent = true, })
-vim.keymap.set("n", "<C-w><C-n>", function() vim.cmd("vsplit"); vim.cmd("enew") end, { silent = true, })
-vim.keymap.set("n", "<C-w>t", "<C-w>s<C-w>T")
-vim.keymap.set("n", "<C-w><C-t>", "<C-w>s<C-w>T")
+vim.keymap.set("n", "<C-w>^", "<cmd>vsplit #<cr>", { desc = "Split previous buffer", })
+vim.keymap.set("n", "<C-w><C-^>", "<cmd>vsplit #<cr>", { desc = "Split previous buffer", })
+vim.keymap.set("n", "<C-w><Backspace>", "<cmd>vsplit #<cr>", { desc = "Split previous buffer", })
+vim.keymap.set("n", "<C-w><C-Backspace>", "<cmd>vsplit #<cr>", { desc = "Split previous buffer", })
+vim.keymap.set("n", "<C-w>n", function() vim.cmd("vsplit"); vim.cmd("enew") end, { silent = true, desc = "Split new buffer", })
+vim.keymap.set("n", "<C-w><C-n>", function() vim.cmd("vsplit"); vim.cmd("enew") end, { silent = true, desc = "Split new buffer", })
+vim.keymap.set("n", "<C-w>t", "<C-w>s<C-w>T", { desc = "Move window to new tab", })
+vim.keymap.set("n", "<C-w><C-t>", "<C-w>s<C-w>T", { desc = "Move window to new tab", })
 
-vim.keymap.set("c", "<C-A>", "<Home>")
-vim.keymap.set("c", "<C-E>", "<End>")
-vim.keymap.set("c", "<C-F>", "<C-right>")
-vim.keymap.set("c", "<C-B>", "<C-left>")
-vim.keymap.set("i", "<A-left>", "<C-left>")
-vim.keymap.set("i", "<A-right>", "<C-right>")
-vim.keymap.set("c", "<A-left>", "<C-left>")
-vim.keymap.set("c", "<A-right>", "<C-right>")
+vim.keymap.set("c", "<C-A>", "<Home>", { desc = "Move to start of command line", })
+vim.keymap.set("c", "<C-E>", "<End>", { desc = "Move to end of command line", })
+vim.keymap.set("c", "<C-F>", "<C-right>", { desc = "Move one word right", })
+vim.keymap.set("c", "<C-B>", "<C-left>", { desc = "Move one word left", })
+vim.keymap.set("i", "<A-left>", "<C-left>", { desc = "Move one word left", })
+vim.keymap.set("i", "<A-right>", "<C-right>", { desc = "Move one word right", })
+vim.keymap.set("c", "<A-left>", "<C-left>", { desc = "Move one word left", })
+vim.keymap.set("c", "<A-right>", "<C-right>", { desc = "Move one word right", })
 
 vim.cmd([=[
 cnoreabbrev E e
@@ -156,22 +159,22 @@ cnoreabbrev tnew tabnew
 cnoreabbrev te tabe
 ]=])
 
-vim.keymap.set("n", "ZT", "<cmd>tabclose<cr>")
-vim.keymap.set("n", "ZA", "<cmd>wqa<cr>")
+vim.keymap.set("n", "ZT", "<cmd>tabclose<cr>", { desc = "Close tab", })
+vim.keymap.set("n", "ZA", "<cmd>wqa<cr>", { desc = "Write and quit all", })
 
-vim.keymap.set("n", "<C-h>", "<C-w>h")
-vim.keymap.set("n", "<C-j>", "<C-w>j")
-vim.keymap.set("n", "<C-k>", "<C-w>k")
-vim.keymap.set("n", "<C-l>", "<C-w>l")
+vim.keymap.set("n", "<C-h>", "<C-w>h", { desc = "Focus left window", })
+vim.keymap.set("n", "<C-j>", "<C-w>j", { desc = "Focus lower window", })
+vim.keymap.set("n", "<C-k>", "<C-w>k", { desc = "Focus upper window", })
+vim.keymap.set("n", "<C-l>", "<C-w>l", { desc = "Focus right window", })
 -- vim.keymap.set('n', '<C-[>', '<C-w>W')
-vim.keymap.set("n", "<C-ϧ>", "<C-w>W")
-vim.keymap.set("n", "<C-]>", "<C-w>w")
-vim.keymap.set("n", "<C-Up>", "<cmd>resize +2<cr>")
-vim.keymap.set("n", "<C-Down>", "<cmd>resize -2<cr>")
-vim.keymap.set("n", "<C-Right>", "<cmd>vertical resize +2<cr>")
-vim.keymap.set("n", "<C-Left>", "<cmd>vertical resize -2<cr>")
+vim.keymap.set("n", "<C-ϧ>", "<C-w>W", { desc = "Focus previous window", })
+vim.keymap.set("n", "<C-]>", "<C-w>w", { desc = "Focus next window", })
+vim.keymap.set("n", "<C-Up>", "<cmd>resize +2<cr>", { desc = "Increase window height", })
+vim.keymap.set("n", "<C-Down>", "<cmd>resize -2<cr>", { desc = "Decrease window height", })
+vim.keymap.set("n", "<C-Right>", "<cmd>vertical resize +2<cr>", { desc = "Increase window width", })
+vim.keymap.set("n", "<C-Left>", "<cmd>vertical resize -2<cr>", { desc = "Decrease window width", })
 
-vim.keymap.set("c", "<c-q>", "<esc>:vimgrep /<C-r>//j %<cr>:copen<cr>", { silent = true, })
+vim.keymap.set("c", "<c-q>", "<esc>:vimgrep /<C-r>//j %<cr>:copen<cr>", { silent = true, desc = "Search pattern in current file", })
 
 -- -----------------------------------------------------------------------------
 -- appearance

@@ -13,12 +13,20 @@ vim.api.nvim_create_user_command("YankFilename", function()
   vim.fn.setreg("+", current_filename())
 end, {})
 
+vim.api.nvim_create_user_command("YankDirectory", function()
+  vim.fn.setreg("+", vim.fn.fnamemodify(current_filename(), ":h"))
+end, {})
+
 vim.api.nvim_create_user_command("YankReference", function()
   vim.fn.setreg("+", current_filename() .. ":" .. vim.fn.line("."))
 end, {})
 
 vim.api.nvim_create_user_command("YankAbsFilename", function()
   vim.fn.setreg("+", vim.fn.expand("%:p"))
+end, {})
+
+vim.api.nvim_create_user_command("YankAbsDirectory", function()
+  vim.fn.setreg("+", vim.fn.expand("%:p:h"))
 end, {})
 
 vim.api.nvim_create_user_command("YankAbsReference", function()

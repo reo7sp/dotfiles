@@ -62,18 +62,22 @@ return {
       {
         "<leader>zz",
         "<cmd>AutoSession restore<cr>",
+        desc = "Restore session",
       },
       {
         "<leader>zw",
         "<cmd>AutoSession save<cr>",
+        desc = "Save session",
       },
       {
         "<leader>zd",
         "<cmd>AutoSession delete<cr>",
+        desc = "Delete session",
       },
       {
         "<leader>zD",
         "<cmd>AutoSession deletePicker<cr>",
+        desc = "Pick session to delete",
       },
     },
   },

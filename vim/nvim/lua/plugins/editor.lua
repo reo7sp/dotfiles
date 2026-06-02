@@ -44,9 +44,9 @@ return {
         vim.lsp.config(server_name, config)
       end
 
-      vim.keymap.set("n", "K", vim.lsp.buf.hover)
-      vim.keymap.set("i", "<C-S>", vim.lsp.buf.signature_help)
-      vim.keymap.set("n", "gr", vim.lsp.buf.rename, { nowait = true, })
+      vim.keymap.set("n", "K", vim.lsp.buf.hover, { desc = "Show LSP hover", })
+      vim.keymap.set("i", "<C-S>", vim.lsp.buf.signature_help, { desc = "Show LSP signature help", })
+      vim.keymap.set("n", "gr", vim.lsp.buf.rename, { nowait = true, desc = "Rename symbol", })
       vim.keymap.set("n", "gO", "<nop>")
     end,
   },
@@ -161,7 +161,7 @@ return {
         else
           vim.cmd("Minuet blink enable")
         end
-      end)
+      end, { desc = "Toggle LLM auto completion", })
     end,
     event = "InsertEnter",
   },
@@ -185,6 +185,7 @@ return {
         function()
           require("sidekick.cli").send({ msg = "{file}: " })
         end,
+        desc = "Send file to agent",
       },
       {
         "<leader>c",
@@ -192,6 +193,7 @@ return {
           require("sidekick.cli").send({ msg = "{file}: ```{selection}``` " })
         end,
         mode = "v",
+        desc = "Send selection to agent",
       },
     },
   },
@@ -319,24 +321,24 @@ return {
       ]])
     end,
     config = function()
-      vim.keymap.set("", "*", "<Plug>(asterisk-*)", { remap = true, })
-      vim.keymap.set("", "#", "<Plug>(asterisk-#)", { remap = true, })
-      vim.keymap.set("", "g*", "<Plug>(asterisk-g*)", { remap = true, })
-      vim.keymap.set("", "g#", "<Plug>(asterisk-g#)", { remap = true, })
-      vim.keymap.set("", "z*", "<Plug>(asterisk-z*)", { remap = true, })
-      vim.keymap.set("", "gz*", "<Plug>(asterisk-gz*)", { remap = true, })
-      vim.keymap.set("", "z#", "<Plug>(asterisk-z#)", { remap = true, })
-      vim.keymap.set("", "gz#", "<Plug>(asterisk-gz#)", { remap = true, })
+      vim.keymap.set("", "*", "<Plug>(asterisk-*)", { remap = true, desc = "Search word forward", })
+      vim.keymap.set("", "#", "<Plug>(asterisk-#)", { remap = true, desc = "Search word backward", })
+      vim.keymap.set("", "g*", "<Plug>(asterisk-g*)", { remap = true, desc = "Search partial word forward", })
+      vim.keymap.set("", "g#", "<Plug>(asterisk-g#)", { remap = true, desc = "Search partial word backward", })
+      vim.keymap.set("", "z*", "<Plug>(asterisk-z*)", { remap = true, desc = "Search word forward from start", })
+      vim.keymap.set("", "gz*", "<Plug>(asterisk-gz*)", { remap = true, desc = "Search partial word forward from start", })
+      vim.keymap.set("", "z#", "<Plug>(asterisk-z#)", { remap = true, desc = "Search word backward from start", })
+      vim.keymap.set("", "gz#", "<Plug>(asterisk-gz#)", { remap = true, desc = "Search partial word backward from start", })
     end,
     keys = {
-      { "*" },
-      { "#" },
-      { "g*" },
-      { "g#" },
-      { "z*" },
-      { "gz*" },
-      { "z#" },
-      { "gz#" },
+      { "*", desc = "Search word forward", },
+      { "#", desc = "Search word backward", },
+      { "g*", desc = "Search partial word forward", },
+      { "g#", desc = "Search partial word backward", },
+      { "z*", desc = "Search word forward from start", },
+      { "gz*", desc = "Search partial word forward from start", },
+      { "z#", desc = "Search word backward from start", },
+      { "gz#", desc = "Search partial word backward from start", },
     },
   },
 
@@ -372,31 +374,35 @@ return {
           }),
         },
       })
-      vim.keymap.set("n", "<C-a>", "<Plug>(dial-increment)", { remap = true, })
-      vim.keymap.set("n", "<C-x>", "<Plug>(dial-decrement)", { remap = true, })
-      vim.keymap.set("n", "g<C-a>", "g<Plug>(dial-increment)", { remap = true, })
-      vim.keymap.set("n", "g<C-x>", "g<Plug>(dial-decrement)", { remap = true, })
-      vim.keymap.set("v", "<C-a>", "<Plug>(dial-increment)", { remap = true, })
-      vim.keymap.set("v", "<C-x>", "<Plug>(dial-decrement)", { remap = true, })
-      vim.keymap.set("v", "g<C-a>", "g<Plug>(dial-increment)", { remap = true, })
-      vim.keymap.set("v", "g<C-x>", "g<Plug>(dial-decrement)", { remap = true, })
+      vim.keymap.set("n", "<C-a>", "<Plug>(dial-increment)", { remap = true, desc = "Increment", })
+      vim.keymap.set("n", "<C-x>", "<Plug>(dial-decrement)", { remap = true, desc = "Decrement", })
+      vim.keymap.set("n", "g<C-a>", "g<Plug>(dial-increment)", { remap = true, desc = "Increment sequence", })
+      vim.keymap.set("n", "g<C-x>", "g<Plug>(dial-decrement)", { remap = true, desc = "Decrement sequence", })
+      vim.keymap.set("v", "<C-a>", "<Plug>(dial-increment)", { remap = true, desc = "Increment", })
+      vim.keymap.set("v", "<C-x>", "<Plug>(dial-decrement)", { remap = true, desc = "Decrement", })
+      vim.keymap.set("v", "g<C-a>", "g<Plug>(dial-increment)", { remap = true, desc = "Increment sequence", })
+      vim.keymap.set("v", "g<C-x>", "g<Plug>(dial-decrement)", { remap = true, desc = "Decrement sequence", })
     end,
     keys = {
       {
         "<C-a>",
         mode = { "n", "v" },
+        desc = "Increment",
       },
       {
         "<C-x>",
         mode = { "n", "v" },
+        desc = "Decrement",
       },
       {
         "g<C-a>",
         mode = { "n", "v" },
+        desc = "Increment sequence",
       },
       {
         "g<C-x>",
         mode = { "n", "v" },
+        desc = "Decrement sequence",
       },
     },
   },
@@ -447,10 +453,12 @@ return {
       {
         "]w",
         "<cmd>NextTrailingWhitespace<CR>",
+        desc = "Next trailing whitespace",
       },
       {
         "[w",
         "<cmd>PrevTrailingWhitespace<CR>",
+        desc = "Previous trailing whitespace",
       },
     },
   },
@@ -463,59 +471,69 @@ return {
       ]=])
     end,
     config = function()
-      vim.keymap.set("n", "s", "<Plug>Sneak_s", { remap = true, })
-      vim.keymap.set("n", "S", "<Plug>Sneak_S", { remap = true, })
-      vim.keymap.set("x", "s", "<Plug>Sneak_s", { remap = true, })
-      vim.keymap.set("x", "Z", "<Plug>Sneak_S", { remap = true, })
-      vim.keymap.set("o", "z", "<Plug>Sneak_s", { remap = true, })
-      vim.keymap.set("o", "Z", "<Plug>Sneak_S", { remap = true, })
-      vim.keymap.set({ "n", "x", "o" }, ";", "<Plug>Sneak_;", { remap = true, })
-      vim.keymap.set({ "n", "x", "o" }, ",", "<Plug>Sneak_,", { remap = true, })
-      vim.keymap.set("", "f", "<Plug>Sneak_f", { remap = true, })
-      vim.keymap.set("", "F", "<Plug>Sneak_F", { remap = true, })
-      vim.keymap.set("", "t", "<Plug>Sneak_t", { remap = true, })
-      vim.keymap.set("", "T", "<Plug>Sneak_T", { remap = true, })
+      vim.keymap.set("n", "s", "<Plug>Sneak_s", { remap = true, desc = "Sneak forward", })
+      vim.keymap.set("n", "S", "<Plug>Sneak_S", { remap = true, desc = "Sneak backward", })
+      vim.keymap.set("x", "s", "<Plug>Sneak_s", { remap = true, desc = "Sneak forward", })
+      vim.keymap.set("x", "Z", "<Plug>Sneak_S", { remap = true, desc = "Sneak backward", })
+      vim.keymap.set("o", "z", "<Plug>Sneak_s", { remap = true, desc = "Sneak forward", })
+      vim.keymap.set("o", "Z", "<Plug>Sneak_S", { remap = true, desc = "Sneak backward", })
+      vim.keymap.set({ "n", "x", "o" }, ";", "<Plug>Sneak_;", { remap = true, desc = "Repeat Sneak forward", })
+      vim.keymap.set({ "n", "x", "o" }, ",", "<Plug>Sneak_,", { remap = true, desc = "Repeat Sneak backward", })
+      vim.keymap.set("", "f", "<Plug>Sneak_f", { remap = true, desc = "Find character forward", })
+      vim.keymap.set("", "F", "<Plug>Sneak_F", { remap = true, desc = "Find character backward", })
+      vim.keymap.set("", "t", "<Plug>Sneak_t", { remap = true, desc = "Till character forward", })
+      vim.keymap.set("", "T", "<Plug>Sneak_T", { remap = true, desc = "Till character backward", })
     end,
     keys = {
       {
         "s",
         mode = { "n", "x" },
+        desc = "Sneak forward",
       },
       {
         "S",
         mode = "n",
+        desc = "Sneak backward",
       },
       {
         "z",
         mode = "o",
+        desc = "Sneak forward",
       },
       {
         "Z",
         mode = { "x", "o" },
+        desc = "Sneak backward",
       },
       {
         ";",
         mode = { "n", "x", "o" },
+        desc = "Repeat sneak forward",
       },
       {
         ",",
         mode = { "n", "x", "o" },
+        desc = "Repeat sneak backward",
       },
       {
         "f",
         mode = { "n", "x", "o" },
+        desc = "Find character forward",
       },
       {
         "F",
         mode = { "n", "x", "o" },
+        desc = "Find character backward",
       },
       {
         "t",
         mode = { "n", "x", "o" },
+        desc = "Till character forward",
       },
       {
         "T",
         mode = { "n", "x", "o" },
+        desc = "Till character backward",
       },
     },
   },
@@ -530,6 +548,7 @@ return {
           require("pounce").pounce({})
         end,
         mode = { "n", "x", "o" },
+        desc = "Pounce",
       },
     },
   },
@@ -556,6 +575,7 @@ return {
           require("substitute").operator()
         end,
         mode = "n",
+        desc = "Substitute with register",
       },
       {
         "xx",
@@ -563,6 +583,7 @@ return {
           require("substitute").line()
         end,
         mode = "n",
+        desc = "Substitute line with register",
       },
       {
         "X",
@@ -570,6 +591,7 @@ return {
           require("substitute").eol()
         end,
         mode = "n",
+        desc = "Substitute to end of line with register",
       },
       {
         "x",
@@ -577,6 +599,7 @@ return {
           require("substitute").visual()
         end,
         mode = "x",
+        desc = "Substitute selection with register",
       },
     },
   },
@@ -591,6 +614,7 @@ return {
           require("in-and-out").in_and_out()
         end,
         mode = "i",
+        desc = "Jump in or out of brackets",
       },
     },
   },
@@ -619,66 +643,81 @@ return {
         "y",
         "<Plug>(YankyYank)",
         mode = { "n", "x" },
+        desc = "Yank text",
       },
       {
         "p",
         "<Plug>(YankyPutAfter)",
         mode = { "n", "x" },
+        desc = "Put after",
       },
       {
         "P",
         "<Plug>(YankyPutBefore)",
         mode = { "n", "x" },
+        desc = "Put before",
       },
       {
         "gp",
         "<Plug>(YankyGPutAfter)",
         mode = { "n", "x" },
+        desc = "Put after and move cursor",
       },
       {
         "gP",
         "<Plug>(YankyGPutBefore)",
         mode = { "n", "x" },
+        desc = "Put before and move cursor",
       },
       {
         "]p",
         "<Plug>(YankyPutIndentAfterLinewise)",
+        desc = "Put after with linewise indent",
       },
       {
         "[p",
         "<Plug>(YankyPutIndentBeforeLinewise)",
+        desc = "Put before with linewise indent",
       },
       {
         "]P",
         "<Plug>(YankyPutIndentAfterLinewise)",
+        desc = "Put after with linewise indent",
       },
       {
         "[P",
         "<Plug>(YankyPutIndentBeforeLinewise)",
+        desc = "Put before with linewise indent",
       },
       {
         ">p",
         "<Plug>(YankyPutIndentAfterShiftRight)",
+        desc = "Put after and indent right",
       },
       {
         "<p",
         "<Plug>(YankyPutIndentAfterShiftLeft)",
+        desc = "Put after and indent left",
       },
       {
         ">P",
         "<Plug>(YankyPutIndentBeforeShiftRight)",
+        desc = "Put before and indent right",
       },
       {
         "<P",
         "<Plug>(YankyPutIndentBeforeShiftLeft)",
+        desc = "Put before and indent left",
       },
       {
         "=p",
         "<Plug>(YankyPutAfterFilter)",
+        desc = "Put after and reindent",
       },
       {
         "=P",
         "<Plug>(YankyPutBeforeFilter)",
+        desc = "Put before and reindent",
       },
       {
         "iy",
@@ -686,14 +725,17 @@ return {
           require("yanky.textobj").last_put()
         end,
         mode = { "o", "x" },
+        desc = "Last put text object",
       },
       {
         "[y",
         "<Plug>(YankyPreviousEntry)",
+        desc = "Previous yank history entry",
       },
       {
         "]y",
         "<Plug>(YankyNextEntry)",
+        desc = "Next yank history entry",
       },
     },
   },
@@ -712,6 +754,7 @@ return {
       {
         "<leader>u",
         "<cmd>UndotreeToggle<cr>",
+        desc = "Toggle undo tree",
       },
     },
   },
@@ -733,10 +776,10 @@ return {
         end
       })
 
-      vim.keymap.set("n", "zR", require("ufo").openAllFolds)
-      vim.keymap.set("n", "zM", require("ufo").closeAllFolds)
-      vim.keymap.set("n", "zr", require("ufo").openFoldsExceptKinds)
-      vim.keymap.set("n", "zm", require("ufo").closeFoldsWith)
+      vim.keymap.set("n", "zR", require("ufo").openAllFolds, { desc = "Open all folds", })
+      vim.keymap.set("n", "zM", require("ufo").closeAllFolds, { desc = "Close all folds", })
+      vim.keymap.set("n", "zr", require("ufo").openFoldsExceptKinds, { desc = "Open folds except kinds", })
+      vim.keymap.set("n", "zm", require("ufo").closeFoldsWith, { desc = "Close folds with level", })
     end,
   },
 
@@ -777,6 +820,7 @@ return {
         function()
           require("treesj").toggle()
         end,
+        desc = "Toggle split or join",
       },
       {
         "gM",
@@ -810,6 +854,7 @@ return {
       {
         "ga",
         mode = { "n", "x" },
+        desc = "Align with preview",
       },
     },
   },
@@ -921,7 +966,7 @@ return {
       })
       vim.keymap.set("n", "gQ", function()
         require("conform").format({})
-      end)
+      end, { desc = "Format buffer", })
     end,
   },
 
@@ -987,7 +1032,7 @@ return {
             })
           end, { desc = "Prev staged hunk", })
 
-          map({ "o", "x" }, "ih", "<cmd>Gitsigns select_hunk<CR>")
+          map({ "o", "x" }, "ih", "<cmd>Gitsigns select_hunk<CR>", { desc = "Git hunk text object", })
 
           map("n", "gh", require("gitsigns").stage_hunk, { desc = "Stage/unstage git hunk", })
           map("v", "gh", function()
@@ -1006,14 +1051,14 @@ return {
           end, { desc = "Discard git hunk", })
         end
       })
-      vim.keymap.set("n", "<c-w>g", "<cmd>Gitsigns blame_line<CR>")
-      vim.keymap.set("n", "<c-w><c-g>", "<cmd>Gitsigns blame_line<CR>")
+      vim.keymap.set("n", "<c-w>g", "<cmd>Gitsigns blame_line<CR>", { desc = "Blame current line", })
+      vim.keymap.set("n", "<c-w><c-g>", "<cmd>Gitsigns blame_line<CR>", { desc = "Blame current line", })
       vim.keymap.set("n", "<leader>gh", function()
         vim.cmd("Gitsigns blame")
         vim.defer_fn(function()
           vim.cmd("wincmd w")
         end, 200)
-      end, { silent = true, })
+      end, { silent = true, desc = "Open git blame", })
     end,
   },
 

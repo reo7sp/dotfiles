@@ -341,7 +341,7 @@ alias edit-vim-custom-gopls='vim ~/.config/nvim/bin/custom-gopls'
 alias cd-edit-vim='cd ~/.config/nvim/'
 
 rsync-vim-custom() {
-  rsync -a ~/.config/nvim/"$1" "$2":~/.config/nvim/"$1"
+  rsync -aP ~/.config/nvim/"$1" "$2":~/.config/nvim/"$1"
 }
 alias rsync-edit-vim-custom-plugins='rsync-vim-custom lua/plugins/custom.lua'
 alias rsync-edit-vim-custom-commands='rsync-vim-custom lua/commands/custom.lua'

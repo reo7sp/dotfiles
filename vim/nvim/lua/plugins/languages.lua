@@ -197,6 +197,7 @@ return {
         function()
           require("nvim-treesitter-textobjects.swap").swap_next("@parameter.inner")
         end,
+        desc = "Swap parameter with next",
       },
       {
         "]f",
