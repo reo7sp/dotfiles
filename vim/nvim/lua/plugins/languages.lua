@@ -4,6 +4,7 @@ return {
     "sheerun/vim-polyglot",
     init = function()
       vim.g.polyglot_disabled = { "sensible", "autoindent" }
+      vim.g.vim_markdown_no_default_key_mappings = 1
     end,
   },
 

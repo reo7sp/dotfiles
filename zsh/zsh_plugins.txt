@@ -1,5 +1,6 @@
 # prompt
 romkatv/powerlevel10k
+mafredri/zsh-async path:async.zsh
 zdharma-continuum/fast-syntax-highlighting kind:defer
 catppuccin/zsh-fsh kind:path
 

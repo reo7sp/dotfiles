@@ -32,6 +32,7 @@ git config --global user.name "Oleg Morozenkov"
 git config --global user.email "m@oleg.rocks"
 git config --global init.defaultBranch master
 git config --global core.excludesfile ~/.gitignore_global
+git config --global merge.conflictStyle zdiff3
 
 if confirm "Do you want to always use ssh instead of https to connect to github?"; then
   git config --global url.ssh://git@github.com/.insteadOf https://github.com/

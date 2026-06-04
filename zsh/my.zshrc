@@ -349,13 +349,17 @@ alias edit-vim-custom-minuet-llm='vim ~/.config/nvim/lua/configs/custom_minuet_l
 alias edit-vim-custom-gopls='vim ~/.config/nvim/bin/custom-gopls'
 alias cd-edit-vim='cd ~/.config/nvim/'
 
-rsync-vim-custom() {
+rsync-edit-vim-custom() {
   rsync -aP ~/.config/nvim/"$1" "$2":~/.config/nvim/"$1"
 }
-alias rsync-edit-vim-custom-plugins='rsync-vim-custom lua/plugins/custom.lua'
-alias rsync-edit-vim-custom-commands='rsync-vim-custom lua/commands/custom.lua'
-alias rsync-edit-vim-custom-minuet-llm='rsync-vim-custom lua/configs/custom_minuet_llm.lua'
-alias rsync-edit-vim-custom-gopls='rsync-vim-custom bin/custom-gopls'
+alias rsync-edit-vim-custom-plugins='rsync-edit-vim-custom lua/plugins/custom.lua'
+alias rsync-edit-vim-custom-commands='rsync-edit-vim-custom lua/commands/custom.lua'
+alias rsync-edit-vim-custom-minuet-llm='rsync-edit-vim-custom lua/configs/custom_minuet_llm.lua'
+alias rsync-edit-vim-custom-gopls='rsync-edit-vim-custom bin/custom-gopls'
+
+rsync-edit-zshrc() {
+  rsync -aP ~/.zshrc "$1":~/.zshrc
+}
 
 time-start-vim() {
   vim --startuptime /tmp/startuptime.log "$@" +qa
@@ -473,6 +477,7 @@ _fzf_git_fzf () {
 # git
 alias gg='lazygit'
 
+alias gww='gws'
 alias gwdd='DELTA_FEATURES=+side-by-side gwd'
 alias gwdt='gwd --ext-diff'
 alias gwdn='gwd --name-only'
@@ -664,6 +669,8 @@ aliases-git() {
   cat $(antidote path reo7sp/zimfw-git)/init.zsh
 }
 
+alias edit-git-config='vim ~/.gitconfig'
+alias edit-git-ignore='vim ~/.gitignore_global'
 alias edit-lazygit='vim ~/Library/Application\ Support/lazygit/config.yml'
 alias edit-lazygit-sh='vim ~/Library/Application\ Support/lazygit/shell.sh'
 

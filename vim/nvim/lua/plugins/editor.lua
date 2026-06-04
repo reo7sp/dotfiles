@@ -605,6 +605,29 @@ return {
   },
 
   {
+    "chrishrb/gx.nvim",
+    submodules = false,
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+    },
+    init = function()
+      vim.g.netrw_nogx = 1
+    end,
+    opts = {},
+    keys = {
+      {
+        "gx",
+        "<cmd>Browse<cr>",
+        mode = { "n", "x" },
+        desc = "Open URL",
+      },
+    },
+    cmd = {
+      "Browse",
+    },
+  },
+
+  {
     "ysmb-wtsg/in-and-out.nvim",
     event = "InsertEnter",
     keys = {

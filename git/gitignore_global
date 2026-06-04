@@ -9,4 +9,8 @@ compile_commands.json
 pyrightconfig.json
 AGENTS.md
 .claude
+.codex
 .cursor
+.opencode
+.agents
+.mcp.json

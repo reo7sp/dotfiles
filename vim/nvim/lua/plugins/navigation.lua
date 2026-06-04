@@ -493,6 +493,42 @@ return {
         require("telescope.builtin")[func_name](opts)
       end
 
+      function M.cd_to_tree_root()
+        local cwd = require("nvim-tree.core").get_cwd()
+        if (cwd ~= nil) then
+          vim.cmd("cd " .. vim.fn.fnameescape(cwd))
+          vim.notify("CWD: " .. cwd, vim.log.levels.INFO)
+        end
+      end
+
+      function M.open_tree_cwd()
+        local node = api.tree.get_node_under_cursor()
+        local filename = node and node.name ~= ".." and node.absolute_path or nil
+        api.tree.change_root(vim.fn.getcwd(-1, -1))
+        api.tree.reload()
+        api.tree.open()
+        if (filename ~= nil) then
+          api.tree.find_file({
+            buf = filename,
+            focus = true,
+          })
+        end
+      end
+
+      function M.change_root_down()
+        local node = api.tree.get_node_under_cursor()
+        local is_file = node and node.fs_stat and node.fs_stat.type ~= "directory"
+        local filename = is_file and node.absolute_path or nil
+        api.tree.change_root_to_node()
+        if (filename ~= nil) then
+          api.tree.find_file({
+            buf = filename,
+            focus = true,
+          })
+        end
+        vim.cmd("normal! zb")
+      end
+
       require("nvim-tree").setup({
         renderer = {
           icons = {
@@ -575,6 +611,9 @@ return {
           })
           vim.keymap.set("n", "<c-f>", M.launch_find_files, opts("Launch Find Files"))
           vim.keymap.set("n", "<c-s>", M.launch_live_grep, opts("Launch Live Grep"))
+          vim.keymap.set("n", "`", M.cd_to_tree_root, opts("CD To Tree Root"))
+          vim.keymap.set("n", "_", M.open_tree_cwd, opts("Open CWD"))
+          vim.keymap.set("n", "go", M.change_root_down, opts("Down To File"))
           vim.keymap.set("n", "s", "<Plug>Sneak_s", opts("Sneak"))
           vim.keymap.set("n", "S", "<Plug>Sneak_S", opts("Sneak"))
           vim.keymap.set("n", "gs", api.node.run.system, opts("Run System"))
@@ -602,6 +641,20 @@ return {
           })
         end,
         desc = "Toggle file tree",
+      },
+      {
+        "<leader><c-t>",
+        function()
+          if (vim.bo.filetype == "oil" or vim.bo.filetype == "NvimTree") then
+            return
+          end
+          require("nvim-tree.api").tree.open({
+            find_file = true,
+            focus = true,
+            update_root = true,
+          })
+        end,
+        desc = "Focus current file in tree",
       },
     },
   },

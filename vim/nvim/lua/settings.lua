@@ -157,6 +157,9 @@ cnoreabbrev ton tabonly
 cnoreabbrev to tabonly
 cnoreabbrev tnew tabnew
 cnoreabbrev te tabe
+cnoreabbrev cde cd %:p:h
+cnoreabbrev lcde lcd %:p:h
+cnoreabbrev tcde tcd %:p:h
 ]=])
 
 vim.keymap.set("n", "ZT", "<cmd>tabclose<cr>", { desc = "Close tab", })

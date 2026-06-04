@@ -34,6 +34,7 @@
     # os_icon               # os identifier
     dir                     # current directory
     vcs                     # git status
+    arc                     # arc status
     # =========================[ Line #2 ]=========================
     newline                 # \n
     prompt_char             # prompt symbol
