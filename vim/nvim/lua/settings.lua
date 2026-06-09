@@ -32,6 +32,20 @@ vim.api.nvim_create_autocmd({ "TextYankPost", "TextChanged", "TextChangedI" }, {
   callback = function() clear_message_after(3000) end,
 })
 
+vim.api.nvim_create_augroup("cwd_notify", {
+  clear = true,
+})
+vim.api.nvim_create_autocmd("DirChanged", {
+  group = "cwd_notify",
+  pattern = "*",
+  callback = function(event)
+    local cwd = event.file
+    if cwd ~= "" then
+      vim.notify("CWD: " .. cwd, vim.log.levels.INFO)
+    end
+  end,
+})
+
 -- https://bluz71.github.io/2021/09/10/vim-tips-revisited.html#smarter-j-and-k-navigation
 vim.keymap.set("n", "j", function()
   if vim.v.count == 0 then
@@ -84,11 +98,6 @@ vim.keymap.set("n", "]+", function() vim.fn.setreg("+", vim.fn.getreg("\"")) end
 for _, lhs in ipairs({ "c", "C", "d", "D", "x", "X", "y", "Y", "p", "P", "]p", "[p", "]P", "[P", ">p", "<p", ">P", "<P", "=p", "=P" }) do
   vim.keymap.set("n", "+" .. lhs, "\"+" .. lhs, { remap = true, desc = "Use clipboard register for " .. lhs, })
   vim.keymap.set("v", "+" .. lhs, "\"+" .. lhs, { remap = true, desc = "Use clipboard register for " .. lhs, })
-end
-
-for _, lhs in ipairs({ "c", "C", "d", "D", "x", "X" }) do
-  vim.keymap.set("n", "_" .. lhs, "\"_" .. lhs, { remap = true, desc = "Use black hole register for " .. lhs, })
-  vim.keymap.set("v", "_" .. lhs, "\"_" .. lhs, { remap = true, desc = "Use black hole register for " .. lhs, })
 end
 
 -- https://gist.github.com/romainl/d2ad868afd7520519057475bd8e9db0c

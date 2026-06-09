@@ -16,11 +16,18 @@ return {
         vim.keymap.set("t", "<C-w>", [[<C-\><C-n><C-w>]], { buffer = 0, desc = "Terminal window command", })
       end
       vim.cmd("autocmd! TermOpen term://* lua set_terminal_keymaps()")
+      vim.api.nvim_create_user_command("T", function(opts)
+        require("toggleterm").exec(opts.args)
+      end, {
+        nargs = "+",
+        complete = "shellcmd",
+      })
     end,
     cmd = {
       "ToggleTerm",
       "ToggleTermToggleAll",
       "TermExec",
+      "T",
     },
     keys = {
       {
@@ -210,6 +217,25 @@ return {
       "OpenInGHFile",
       "OpenInGHFileLines",
     },
+  },
+
+  {
+    "amitds1997/remote-nvim.nvim",
+    version = "*",
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+      "MunifTanjim/nui.nvim",
+      "nvim-telescope/telescope.nvim",
+    },
+    cmd = {
+      "RemoteStart",
+      "RemoteStop",
+      "RemoteInfo",
+      "RemoteCleanup",
+      "RemoteConfigDel",
+      "RemoteLog",
+    },
+    opts = {},
   },
 
 }

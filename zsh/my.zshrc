@@ -220,6 +220,8 @@ bindkey -M menuselect '^[[Z' reverse-menu-complete # shift-tab
 function my-bindkeys() {
   bindkey '^B' backward-word
   bindkey '^F' forward-word
+  bindkey '^[b' backward-word
+  bindkey '^[f' forward-word
 }
 zvm_after_init_commands+=(my-bindkeys)
 

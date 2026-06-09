@@ -27,25 +27,6 @@ return {
   },
 
   {
-    "amitds1997/remote-nvim.nvim",
-    version = "*",
-    dependencies = {
-      "nvim-lua/plenary.nvim",
-      "MunifTanjim/nui.nvim",
-      "nvim-telescope/telescope.nvim",
-    },
-    cmd = {
-      "RemoteStart",
-      "RemoteStop",
-      "RemoteInfo",
-      "RemoteCleanup",
-      "RemoteConfigDel",
-      "RemoteLog",
-    },
-    opts = {},
-  },
-
-  {
     "rmagatti/auto-session",
     config = function()
       require("auto-session").setup({
@@ -65,7 +46,27 @@ return {
         desc = "Restore session",
       },
       {
+        "<leader>Zz",
+        "<cmd>AutoSession restore<cr>",
+        desc = "Restore session",
+      },
+      {
+        "<leader>zZ",
+        "<cmd>AutoSession search<cr>",
+        desc = "Find sessions",
+      },
+      {
+        "<leader>ZZ",
+        "<cmd>AutoSession search<cr>",
+        desc = "Find sessions",
+      },
+      {
         "<leader>zw",
+        "<cmd>AutoSession save<cr>",
+        desc = "Save session",
+      },
+      {
+        "<leader>Zw",
         "<cmd>AutoSession save<cr>",
         desc = "Save session",
       },
@@ -75,11 +76,26 @@ return {
         desc = "Delete session",
       },
       {
+        "<leader>Zd",
+        "<cmd>AutoSession delete<cr>",
+        desc = "Delete session",
+      },
+      {
         "<leader>zD",
         "<cmd>AutoSession deletePicker<cr>",
         desc = "Pick session to delete",
       },
+      {
+        "<leader>ZD",
+        "<cmd>AutoSession deletePicker<cr>",
+        desc = "Pick session to delete",
+      },
     },
+  },
+
+  {
+    "natecraddock/workspaces.nvim",
+    opts = {},
   },
 
 }

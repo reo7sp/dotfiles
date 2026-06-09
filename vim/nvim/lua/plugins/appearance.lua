@@ -72,12 +72,16 @@ return {
           },
         },
         extensions = {
+          "aerial",
+          "fugitive",
+          "lazy",
+          "mason",
           "nvim-tree",
           "oil",
-          "aerial",
+          "overseer",
           "quickfix",
+          "toggleterm",
           "trouble",
-          "fugitive",
         },
         sections = {
           lualine_a = {
@@ -336,6 +340,9 @@ return {
         open_win_override = {
           border = "rounded",
         },
+      },
+      hints = {
+        dictionary = "fjdksla;cmrueiwoqp",
       },
       navigate = {
         leader = " ",

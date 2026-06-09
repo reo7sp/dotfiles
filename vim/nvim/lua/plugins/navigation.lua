@@ -15,6 +15,7 @@ return {
       "princejoogie/dir-telescope.nvim",
       "LukasPietzschmann/telescope-tabs",
       "jmacadie/telescope-hierarchy.nvim",
+      "natecraddock/workspaces.nvim",
       "piersolenski/import.nvim",
       "gbprod/yanky.nvim",
       "stevearc/aerial.nvim",
@@ -180,6 +181,7 @@ return {
       require("telescope").load_extension("yank_history")
       require("telescope").load_extension("aerial")
       require("telescope").load_extension("hierarchy")
+      require("telescope").load_extension("workspaces")
 
       -- https://github.com/nvim-telescope/telescope.nvim/issues/605
       local actions = require("telescope.actions")
@@ -285,6 +287,20 @@ return {
       vim.keymap.set("n", "<leader>gb", "<cmd>Telescope git_branches<cr>", { desc = "Find git branches", })
       vim.keymap.set("n", "<leader>i", "<cmd>Import<cr>", { desc = "Import symbol", })
       vim.keymap.set("n", "<leader>m", "<cmd>Telescope marks<cr>", { desc = "Find marks", })
+      local find_workspaces = function()
+        require("telescope").extensions.workspaces.workspaces({
+          layout_config = {
+            width = 0.7,
+            height = 0.5,
+          },
+        })
+      end
+      vim.keymap.set("n", "<leader>MM", find_workspaces, { desc = "Find workspaces", })
+      vim.keymap.set("n", "<leader>Mm", find_workspaces, { desc = "Find workspaces", })
+      vim.keymap.set("n", "<leader>Mw", "<cmd>WorkspacesAdd<cr>", { desc = "Add workspace", })
+      vim.keymap.set("n", "<leader>MW", "<cmd>WorkspacesAdd<cr>", { desc = "Add workspace", })
+      vim.keymap.set("n", "<leader>Md", "<cmd>WorkspacesRemove<cr>", { desc = "Delete workspace", })
+      vim.keymap.set("n", "<leader>MD", "<cmd>WorkspacesRemove<cr>", { desc = "Delete workspace", })
       vim.keymap.set("n", "<leader>'", "<cmd>Telescope marks<cr>", { desc = "Find marks", })
       vim.keymap.set("n", "<leader>`", "<cmd>Telescope marks<cr>", { desc = "Find marks", })
       vim.keymap.set("n", "<leader>\"", "<cmd>Telescope registers<cr>", { desc = "Find registers", })
@@ -497,7 +513,6 @@ return {
         local cwd = require("nvim-tree.core").get_cwd()
         if (cwd ~= nil) then
           vim.cmd("cd " .. vim.fn.fnameescape(cwd))
-          vim.notify("CWD: " .. cwd, vim.log.levels.INFO)
         end
       end
 
@@ -643,7 +658,7 @@ return {
         desc = "Toggle file tree",
       },
       {
-        "<leader><c-t>",
+        "_",
         function()
           if (vim.bo.filetype == "oil" or vim.bo.filetype == "NvimTree") then
             return
