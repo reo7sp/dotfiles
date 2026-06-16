@@ -7,5 +7,6 @@ cp ~/.zsh_plugins.txt zsh_plugins.txt
 cp ~/.p10k.zsh p10k.zsh
 cp ~/.config/fsh/overlay.ini overlay.ini
 cp ~/.local/bin/strip-whitespace bin/strip-whitespace
+cp ~/.local/bin/vimdiff bin/vimdiff
 cp ~/.config/direnv/direnvrc direnvrc
 cp ~/.config/direnv/direnv.toml direnv.toml

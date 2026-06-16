@@ -584,6 +584,9 @@ return {
           custom = { "^.git$" },
         },
         actions = {
+          change_dir = {
+            enable = false,
+          },
           open_file = {
             quit_on_open = false,
             window_picker = {

@@ -58,6 +58,7 @@ zsh -c '
 ' || true
 mkdir -p ~/.local/bin
 cp bin/strip-whitespace ~/.local/bin/strip-whitespace
+cp bin/vimdiff ~/.local/bin/vimdiff
 if [[ -e ~/.bin && ! -L ~/.bin ]]; then
   echo "~/.bin exists and is not a symlink" >&2
   exit 1

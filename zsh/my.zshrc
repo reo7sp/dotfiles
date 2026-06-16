@@ -336,6 +336,8 @@ if can-exec v; then
 fi
 alias v='vim'
 
+alias vdiff='vimdiff'
+
 xargs-vim() {
   vim -q -
 }
@@ -352,7 +354,7 @@ alias edit-vim-custom-gopls='vim ~/.config/nvim/bin/custom-gopls'
 alias cd-edit-vim='cd ~/.config/nvim/'
 
 rsync-edit-vim-custom() {
-  rsync -aP ~/.config/nvim/"$1" "$2":~/.config/nvim/"$1"
+  rsync -a ~/.config/nvim/"$1" "$2":~/.config/nvim/"$1"
 }
 alias rsync-edit-vim-custom-plugins='rsync-edit-vim-custom lua/plugins/custom.lua'
 alias rsync-edit-vim-custom-commands='rsync-edit-vim-custom lua/commands/custom.lua'
@@ -360,7 +362,7 @@ alias rsync-edit-vim-custom-minuet-llm='rsync-edit-vim-custom lua/configs/custom
 alias rsync-edit-vim-custom-gopls='rsync-edit-vim-custom bin/custom-gopls'
 
 rsync-edit-zshrc() {
-  rsync -aP ~/.zshrc "$1":~/.zshrc
+  rsync -a ~/.zshrc "$1":~/.zshrc
 }
 
 time-start-vim() {
@@ -721,11 +723,14 @@ if can-exec cursor-agent && [[ "${NO_PROXY_CURSOR:-0}" != '1' ]] && [[ "${NO_PRO
   fi
 fi
 
-if [[ -n $REAL_CURSOR_AGENT ]]; then
-  cursor-agent() {
+if [[ -n $REAL_CURSOR_AGENT ]] && ! alias cursor-agent &>/dev/null; then
+  function cursor-agent {
     ALL_PROXY=socks5h://127.0.0.1:1086 $REAL_CURSOR_AGENT "$@"
   }
-  agent() {
+fi
+
+if [[ -n $REAL_CURSOR_AGENT ]] && ! alias agent &>/dev/null; then
+  function agent {
     ALL_PROXY=socks5h://127.0.0.1:1086 $REAL_CURSOR_AGENT "$@"
   }
 fi
@@ -738,8 +743,8 @@ if can-exec codex && [[ "${NO_PROXY_CODEX:-0}" != '1' ]]; then
   fi
 fi
 
-if [[ -n $REAL_CODEX ]]; then
-  codex() {
+if [[ -n $REAL_CODEX ]] && ! alias codex &>/dev/null; then
+  function codex {
     ALL_PROXY=socks5h://127.0.0.1:1086 $REAL_CODEX "$@"
   }
 fi
@@ -752,8 +757,8 @@ if can-exec claude && [[ "${NO_PROXY_CLAUDE:-0}" != '1' ]]; then
   fi
 fi
 
-if [[ -n $REAL_CLAUDE ]]; then
-  claude() {
+if [[ -n $REAL_CLAUDE ]] && ! alias claude &>/dev/null; then
+  function claude {
     ALL_PROXY=socks5h://127.0.0.1:1086 $REAL_CLAUDE "$@"
   }
 fi
@@ -809,10 +814,6 @@ random-string() {
 alias timestamp='date +%s'
 
 alias is-ip-in-net='python3 -c "import sys; from ipaddress import ip_address, ip_network; print(ip_address(sys.argv[1]) in ip_network(sys.argv[2]))"'
-
-strip-whitespace() {
-  gsed -i 's/[ \t]*$//' "$@"
-}
 
 # -----------------------------------------------------------------------------
 # encode / decode
