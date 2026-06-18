@@ -374,22 +374,6 @@ return {
   },
 
   {
-    "reo7sp/snipe-marks.nvim",
-    dependencies = {
-      "leath-dub/snipe.nvim",
-    },
-    keys = {
-      {
-        "<C-S-Tab>",
-        function()
-          require("snipe-marks").open_marks_menu("all")
-        end,
-        desc = "Open marks menu",
-      },
-    },
-  },
-
-  {
     "kwkarlwang/bufjump.nvim",
     opts = {
       forward_key = "<M-i>",

@@ -28,6 +28,9 @@ return {
 
   {
     "rmagatti/auto-session",
+    dependencies = {
+      "nvim-telescope/telescope.nvim",
+    },
     config = function()
       require("auto-session").setup({
         auto_create = false,
@@ -41,17 +44,7 @@ return {
     lazy = false,
     keys = {
       {
-        "<leader>zz",
-        "<cmd>AutoSession restore<cr>",
-        desc = "Restore session",
-      },
-      {
         "<leader>Zz",
-        "<cmd>AutoSession restore<cr>",
-        desc = "Restore session",
-      },
-      {
-        "<leader>zZ",
         "<cmd>AutoSession search<cr>",
         desc = "Find sessions",
       },
@@ -61,27 +54,17 @@ return {
         desc = "Find sessions",
       },
       {
-        "<leader>zw",
-        "<cmd>AutoSession save<cr>",
-        desc = "Save session",
-      },
-      {
         "<leader>Zw",
         "<cmd>AutoSession save<cr>",
         desc = "Save session",
       },
       {
-        "<leader>zd",
-        "<cmd>AutoSession delete<cr>",
-        desc = "Delete session",
+        "<leader>ZW",
+        "<cmd>AutoSession save<cr>",
+        desc = "Save session",
       },
       {
         "<leader>Zd",
-        "<cmd>AutoSession delete<cr>",
-        desc = "Delete session",
-      },
-      {
-        "<leader>zD",
         "<cmd>AutoSession deletePicker<cr>",
         desc = "Pick session to delete",
       },

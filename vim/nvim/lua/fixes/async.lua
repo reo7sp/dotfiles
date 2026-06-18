@@ -1,5 +1,18 @@
-local promise_async = dofile(vim.fn.stdpath("data") .. "/lazy/promise-async/lua/async.lua")
-local structured_async = require("async.nvim")
+local data_path = vim.fn.stdpath("data")
+local original_package_path = package.path
+
+package.path = table.concat({
+  data_path .. "/lazy/promise-async/lua/?.lua",
+  data_path .. "/lazy/promise-async/lua/?/init.lua",
+  data_path .. "/lazy/async.nvim/lua/?.lua",
+  data_path .. "/lazy/async.nvim/lua/?/init.lua",
+  original_package_path,
+}, ";")
+
+local promise_async = dofile(data_path .. "/lazy/promise-async/lua/async.lua")
+local structured_async = dofile(data_path .. "/lazy/async.nvim/lua/async.lua")
+
+package.path = original_package_path
 
 local mt = getmetatable(promise_async) or {}
 local original_index = mt.__index

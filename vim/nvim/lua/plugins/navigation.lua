@@ -295,8 +295,8 @@ return {
           },
         })
       end
-      vim.keymap.set("n", "<leader>MM", find_workspaces, { desc = "Find workspaces", })
       vim.keymap.set("n", "<leader>Mm", find_workspaces, { desc = "Find workspaces", })
+      vim.keymap.set("n", "<leader>MM", find_workspaces, { desc = "Find workspaces", })
       vim.keymap.set("n", "<leader>Mw", "<cmd>WorkspacesAdd<cr>", { desc = "Add workspace", })
       vim.keymap.set("n", "<leader>MW", "<cmd>WorkspacesAdd<cr>", { desc = "Add workspace", })
       vim.keymap.set("n", "<leader>Md", "<cmd>WorkspacesRemove<cr>", { desc = "Delete workspace", })
@@ -730,10 +730,57 @@ return {
           target  = "%1/include/%2.hpp",
           context = "c",
         },
+        -- proto -> generated C++ source
+        {
+          pattern = "(.*)%.proto$",
+          target = "%1_pb2.cpp",
+          context = "c",
+        },
+        -- generated C++ source -> proto
+        {
+          pattern = "(.*)_pb2%.cpp$",
+          target = "%1.proto",
+          context = "c",
+        },
+        -- proto -> generated Go source
+        {
+          pattern = "(.*)%.proto$",
+          target = "%1_pb2.go",
+          context = "golang",
+        },
+        -- generated Go source -> proto
+        {
+          pattern = "(.*)_pb2%.go$",
+          target = "%1.proto",
+          context = "golang",
+        },
+        -- proto -> generated Python stub
+        {
+          pattern = "(.*)%.proto$",
+          target = "%1_pb2.pyi",
+          context = "python",
+        },
+        -- generated Python stub -> proto
+        {
+          pattern = "(.*)_pb2%.pyi$",
+          target = "%1.proto",
+          context = "python",
+        },
+        -- proto -> generated Python module
+        {
+          pattern = "(.*)%.proto$",
+          target = "%1_pb2.py",
+          context = "python",
+        },
+        -- generated Python module -> proto
+        {
+          pattern = "(.*)_pb2%.py$",
+          target = "%1.proto",
+          context = "python",
+        },
         "c",
         "golang",
         "python",
-        "rust",
       },
     },
     cmd = {
