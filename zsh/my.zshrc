@@ -388,6 +388,10 @@ alias edit-ranger='vim ~/.config/ranger/rc.conf'
 alias edit-kitty='vim ~/.config/kitty/kitty.conf'
 
 # -----------------------------------------------------------------------------
+# tmux
+alias edit-tmux='vim ~/.tmux.conf'
+
+# -----------------------------------------------------------------------------
 # ssh
 if [[ $TERM == 'xterm-kitty' ]]; then
   alias ssh='TERM=xterm-256color ssh'

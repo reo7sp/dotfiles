@@ -5,6 +5,7 @@ My config files:
 - zsh: [zsh/my.zshrc](./zsh/my.zshrc), [zsh/zsh_plugins.txt](./zsh/zsh_plugins.txt).
 - vim: [vim/nvim/init.lua](./vim/nvim/init.lua), [vim/neovintageousrc](./vim/neovintageousrc), [vim/ideavimrc](./vim/ideavimrc), [vim/vscodevimrc](./vim/vscodevimrc).
 - ranger: [ranger/rc.conf](./ranger/rc.conf).
+- tmux: [tmux/tmux.conf](./tmux/tmux.conf).
 - rg: [rg/ripgreprc](./rg/ripgreprc).
 - htop: [htop/htoprc](./htop/htoprc).
 - kitty: [kitty/kitty.conf](./kitty/kitty.conf).
@@ -26,7 +27,7 @@ How vim looks:
 ```sh
 git clone --depth 1 https://github.com/reo7sp/dotfiles
 cd dotfiles
-./install zsh vim ranger rg htop
+./install zsh vim ranger tmux rg htop
 ```
 
 ## How to install quick
@@ -34,7 +35,7 @@ cd dotfiles
 ```sh
 git clone --depth 1 https://github.com/reo7sp/dotfiles
 cd dotfiles
-./install -q zsh vim ranger rg htop
+./install -q zsh vim ranger tmux rg htop
 ```
 
 ## Help
@@ -49,4 +50,4 @@ cd dotfiles
 ./upgrade [-q] MODULES    # upgrades modules' plugins
 ```
 
-Available modules: `zsh`, `vim`, `ranger`, `rg`, `htop`, `kitty`, `git`.
+Available modules: `zsh`, `vim`, `ranger`, `tmux`, `rg`, `htop`, `kitty`, `git`.
