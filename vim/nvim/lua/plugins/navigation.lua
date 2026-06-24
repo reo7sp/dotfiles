@@ -416,7 +416,19 @@ return {
             end,
             desc = "Launch Find Files",
           },
+          ["<leader>f"] = {
+            callback = function()
+              M.launch_find_files()
+            end,
+            desc = "Launch Find Files",
+          },
           ["<C-s>"] = {
+            callback = function()
+              M.launch_live_grep()
+            end,
+            desc = "Launch Live Grep",
+          },
+          ["<leader>s"] = {
             callback = function()
               M.launch_live_grep()
             end,
