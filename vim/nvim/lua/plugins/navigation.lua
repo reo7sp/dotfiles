@@ -559,6 +559,7 @@ return {
       require("nvim-tree").setup({
         renderer = {
           icons = {
+            bookmarks_placement = "before",
             show = {
               file = false,
               folder = false,
@@ -578,7 +579,8 @@ return {
           },
         },
         view = {
-          width = 30,
+          signcolumn = "no",
+          width = 35,
         },
         git = {
           enable = false,
@@ -822,8 +824,8 @@ return {
         layout = {
           placement = "edge",
           default_direction = "left",
-          min_width = 30,
-          width = 30,
+          min_width = 35,
+          width = 35,
         },
         attach_mode = "global",
         nerd_font = false,

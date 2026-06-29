@@ -19,6 +19,7 @@ return {
           ufo = true,
           window_picker = true,
           overseer = true,
+          pounce = true,
           render_markdown = true,
           telescope = {
             enabled = true,
@@ -27,6 +28,31 @@ return {
           illuminate = {
             enabled = true,
             lsp = false,
+          },
+          lualine = {
+            latte = function(colors)
+              return {
+                normal = {
+                  c = {
+                    bg = colors.surface1,
+                  },
+                },
+                inactive = {
+                  a = {
+                    bg = colors.surface1,
+                    fg = colors.text,
+                  },
+                  b = {
+                    bg = colors.surface1,
+                    fg = colors.text,
+                  },
+                  c = {
+                    bg = colors.surface1,
+                    fg = colors.text,
+                  },
+                },
+              }
+            end,
           },
           vim_sneak = true,
           which_key = true,
@@ -50,7 +76,9 @@ return {
         },
       })
       vim.cmd([[colorscheme catppuccin-latte]])
-      vim.api.nvim_set_hl(0, "CursorLine", { bg = "#e4e4e4" })
+      vim.api.nvim_set_hl(0, "CursorLine", {
+        bg = require("catppuccin.palettes").get_palette().mantle,
+      })
     end,
     lazy = false,
   },
@@ -60,7 +88,7 @@ return {
     config = function()
       require("lualine").setup({
         options = {
-          theme = "Tomorrow",
+          theme = "catppuccin-nvim",
           icons_enabled = false,
           component_separators = {
             left = "",
@@ -216,21 +244,9 @@ return {
         },
       })
 
-      local bg = "#C8C8C8"
-      local fg = "#666666"
-      for _, grp in ipairs({
-        "lualine_a_inactive","lualine_b_inactive","lualine_c_inactive",
-        "lualine_x_inactive","lualine_y_inactive","lualine_z_inactive",
-      }) do
-        vim.api.nvim_set_hl(0, grp, {
-          bg = bg,
-          fg = fg,
-        })
-      end
-
       vim.o.fillchars = "vert:┃"
       vim.api.nvim_set_hl(0, "WinSeparator", {
-        fg = bg,
+        fg = "#C8C8C8",
         bold = true,
       })
       vim.cmd([=[
