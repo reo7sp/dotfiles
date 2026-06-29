@@ -167,38 +167,6 @@ return {
   },
 
   {
-    "folke/sidekick.nvim",
-    config = function()
-      require("sidekick").setup({
-        nes = {
-          enabled = false,
-        },
-        cli = {
-          picker = "telescope",
-        },
-      })
-      vim.api.nvim_set_hl(0, "SidekickChat", { link = "Normal" })
-    end,
-    keys = {
-      {
-        "<leader>c",
-        function()
-          require("sidekick.cli").send({ msg = "{file}: " })
-        end,
-        desc = "Send file to agent",
-      },
-      {
-        "<leader>c",
-        function()
-          require("sidekick.cli").send({ msg = "{file}: ```{selection}``` " })
-        end,
-        mode = "v",
-        desc = "Send selection to agent",
-      },
-    },
-  },
-
-  {
     "xzbdmw/colorful-menu.nvim",
     opts = {},
     event = "InsertEnter",
