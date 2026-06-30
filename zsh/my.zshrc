@@ -698,6 +698,10 @@ export DFT_PARSE_ERROR_LIMIT=9999
 export BAT_PAGING=never
 
 # -----------------------------------------------------------------------------
+# tree
+alias tree='tree --dirsfirst'
+
+# -----------------------------------------------------------------------------
 # sublime text
 t() {
   lcd

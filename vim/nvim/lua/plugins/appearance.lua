@@ -398,6 +398,23 @@ return {
   },
 
   {
+    "chrisgrieser/nvim-early-retirement",
+    dependencies = {
+      "romgrk/barbar.nvim",
+    },
+    opts = {
+      ignoreUnsavedChangesBufs = false,
+      deleteBufferWhenFileDeleted = true,
+      deleteFunction = function(bufnr)
+        if not require("barbar.state").is_pinned(bufnr) then
+          vim.api.nvim_buf_delete(bufnr, {})
+        end
+      end,
+      notificationOnAutoClose = true,
+    },
+  },
+
+  {
     "s1n7ax/nvim-window-picker",
     config = function()
       require("window-picker").setup({
