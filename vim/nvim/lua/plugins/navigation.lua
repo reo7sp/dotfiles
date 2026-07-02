@@ -105,25 +105,26 @@ return {
             only_cwd = true,
             show_current_file = true,
             ignore_patterns = {
-              "/tmp/",
-              "Scratch",
-              "Bqf",
-              "quickfix",
-              "trouble",
-              "NvimTree_",
-              "oil",
-              "aerial",
-              "undotree",
-              "Grug",
-              "guihua",
-              "gitsigns",
-              "fugitiveblame",
-              "flog",
-              "CodeCompanion",
-              "NrrwRgn",
-              "Plugins",
+              "^/tmp/",
+              "Scratch$",
+              "Bqf[^/]*$",
+              "quickfix[^/]*$",
+              "^jumppack://",
+              "^trouble",
+              "NvimTree_%d+$",
+              "^oil",
+              "^aerial",
+              "undotree_%d+$",
+              "Grug FAR[^/]*$",
+              "guihua[^/]*$",
+              "^gitsigns",
+              "fugitiveblame$",
+              "^flog",
+              "CodeCompanion[^/]*$",
+              "NrrwRgn[^/]*$",
+              "Plugins$",
               "COMMIT_",
-              "-todo$",
+              "%-todo$",
             },
           },
           live_grep_args = {
@@ -265,7 +266,9 @@ return {
       vim.keymap.set("n", "<leader>e", function()
         require("telescope").extensions.recent_files.pick()
       end, { desc = "Find recent files", })
-      vim.keymap.set("n", "<leader>E", "<cmd>Telescope jumplist<cr>", { desc = "Find jumplist entries", })
+      vim.keymap.set("n", "<leader>E", function()
+        require("telescope").extensions.recent_files.pick({ only_cwd = false })
+      end, { desc = "Find all recent files", })
       vim.keymap.set("n", "<leader>f", "<cmd>Telescope find_files<cr>", { desc = "Find files", })
       vim.keymap.set("n", "<leader>Ff", "<cmd>Telescope dir find_files<cr>", { desc = "Find files in directory", })
       vim.keymap.set("n", "<leader>s", "<cmd>Telescope live_grep_args<cr>", { desc = "Live grep", })
@@ -692,6 +695,13 @@ return {
   },
 
   {
+    "nanotee/zoxide.vim",
+    init = function()
+      vim.g.zoxide_use_select = true
+    end,
+  },
+
+  {
     "rgroli/other.nvim",
     main = "other-nvim",
     opts = {
@@ -820,12 +830,14 @@ return {
       "nvim-treesitter/nvim-treesitter",
     },
     config = function()
+      local sidebar_width = 35
+
       require("aerial").setup({
         layout = {
           placement = "edge",
           default_direction = "left",
-          min_width = 35,
-          width = 35,
+          min_width = sidebar_width,
+          width = sidebar_width,
         },
         attach_mode = "global",
         nerd_font = false,
@@ -835,6 +847,16 @@ return {
         show_guides = true,
         disable_max_lines = 99999,
         disable_max_size = 1000 * 1024,
+      })
+      vim.api.nvim_create_autocmd("VimResized", {
+        callback = function()
+          for _, winid in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
+            local filetype = vim.bo[vim.api.nvim_win_get_buf(winid)].filetype
+            if filetype == "aerial" or filetype == "NvimTree" then
+              vim.api.nvim_win_set_width(winid, sidebar_width)
+            end
+          end
+        end,
       })
       vim.api.nvim_set_hl(0, "AerialLine", { link = "CursorLine" })
       vim.api.nvim_set_hl(0, "AerialGuide", { link = "IblIndent" })

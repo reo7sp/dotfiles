@@ -742,6 +742,7 @@ return {
           "DressingInput",
           "cmp_docs",
           "cmp_menu",
+          "minipick",
           "noice",
           "prompt",
           "TelescopePrompt",
@@ -783,6 +784,7 @@ return {
           "DressingInput",
           "cmp_docs",
           "cmp_menu",
+          "minipick",
           "noice",
           "prompt",
           "TelescopePrompt",
@@ -807,6 +809,7 @@ return {
       require("illuminate").configure({
         disable_keymaps = true,
         filetypes_denylist = {
+          "minipick",
           "TelescopePrompt",
           "trouble",
           "NvimTree",

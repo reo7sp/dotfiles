@@ -249,6 +249,13 @@ new-tmp() {
   mkcd "$DOCUMENTS_HOME/oneoff-code/$(date '+%Y-%m-%d')"
 }
 
+clear-empty-tmps() {
+  local tmp_root="$DOCUMENTS_HOME/oneoff-code"
+  [[ -d "$tmp_root" ]] || return 0
+
+  find "$tmp_root" -mindepth 1 -maxdepth 1 -type d -empty -exec rmdir {} +
+}
+
 alias grep='grep --color=auto'
 alias fgrep='fgrep --color=auto'
 alias egrep='egrep --color=auto'
