@@ -1,12 +1,12 @@
 #!/bin/bash
 set -e -o pipefail
 
+SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &> /dev/null && pwd)
+cd "$SCRIPT_DIR"
+
 do_upgrade() {
   echo "$1:"
-  cd "$1"
-  shift
-  ./upgrade "$@"
-  cd ..
+  "$1/upgrade" "${@:2}"
   echo
 }
 

@@ -1,11 +1,12 @@
 #!/bin/bash
 set -e -o pipefail
 
+SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &> /dev/null && pwd)
+cd "$SCRIPT_DIR"
+
 do_import() {
   echo "$1:"
-  cd "$1"
-  ./import-changes
-  cd ..
+  "$1/import"
   echo
 }
 

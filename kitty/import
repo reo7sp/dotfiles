@@ -1,6 +1,9 @@
 #!/bin/bash
 set -e -o pipefail
 
+SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &> /dev/null && pwd)
+cd "$SCRIPT_DIR"
+
 
 cp ~/.config/kitty/kitty.conf kitty.conf
 cp ~/.config/kitty/current-theme.conf current-theme.conf

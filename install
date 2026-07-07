@@ -1,12 +1,12 @@
 #!/bin/bash
 set -e -o pipefail
 
+SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &> /dev/null && pwd)
+cd "$SCRIPT_DIR"
+
 do_install() {
   echo "$1:"
-  cd "$1"
-  shift
-  ./install "$@"
-  cd ..
+  "$1/install" "${@:2}"
   echo
 }
 

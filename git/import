@@ -1,6 +1,9 @@
 #!/bin/bash
 set -e -o pipefail
 
+SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &> /dev/null && pwd)
+cd "$SCRIPT_DIR"
+
 
 cp ~/.gitignore_global gitignore_global
 cp ~/Library/Application\ Support/lazygit/config.yml lazygit/config.yml
