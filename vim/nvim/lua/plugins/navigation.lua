@@ -302,8 +302,34 @@ return {
       vim.keymap.set("n", "<leader>MM", find_workspaces, { desc = "Find workspaces", })
       vim.keymap.set("n", "<leader>Mw", "<cmd>WorkspacesAdd<cr>", { desc = "Add workspace", })
       vim.keymap.set("n", "<leader>MW", "<cmd>WorkspacesAdd<cr>", { desc = "Add workspace", })
-      vim.keymap.set("n", "<leader>Md", "<cmd>WorkspacesRemove<cr>", { desc = "Delete workspace", })
-      vim.keymap.set("n", "<leader>MD", "<cmd>WorkspacesRemove<cr>", { desc = "Delete workspace", })
+      local delete_workspace = function()
+        require("telescope.pickers").new({}, {
+          prompt_title = "Delete workspace",
+          finder = require("telescope.finders").new_table({
+            results = require("workspaces").get(),
+            entry_maker = function(workspace)
+              return {
+                value = workspace,
+                display = workspace.name .. "  " .. workspace.path,
+                ordinal = workspace.name .. " " .. workspace.path,
+              }
+            end,
+          }),
+          sorter = require("telescope.config").values.generic_sorter({}),
+          attach_mappings = function(prompt_bufnr)
+            actions.select_default:replace(function()
+              local workspace = require("telescope.actions.state").get_selected_entry()
+              actions.close(prompt_bufnr)
+              if workspace then
+                require("workspaces").remove(workspace.value.name)
+              end
+            end)
+            return true
+          end,
+        }):find()
+      end
+      vim.keymap.set("n", "<leader>Md", delete_workspace, { desc = "Pick workspace to delete", })
+      vim.keymap.set("n", "<leader>MD", delete_workspace, { desc = "Pick workspace to delete", })
       vim.keymap.set("n", "<leader>'", "<cmd>Telescope marks<cr>", { desc = "Find marks", })
       vim.keymap.set("n", "<leader>`", "<cmd>Telescope marks<cr>", { desc = "Find marks", })
       vim.keymap.set("n", "<leader>\"", "<cmd>Telescope registers<cr>", { desc = "Find registers", })

@@ -5,5 +5,5 @@ SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &> /dev/null && pwd)
 cd "$SCRIPT_DIR"
 
 
-cp ~/.ripgreprc ripgreprc
-cp ~/.rgignore rgignore
+mkdir -p ~/.config/fd
+cp ../git/gitignore_global ~/.config/fd/ignore

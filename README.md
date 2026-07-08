@@ -6,8 +6,6 @@ My config files:
 - vim: [vim/nvim/init.lua](./vim/nvim/init.lua), [vim/neovintageousrc](./vim/neovintageousrc), [vim/ideavimrc](./vim/ideavimrc), [vim/vscodevimrc](./vim/vscodevimrc).
 - ranger: [ranger/rc.conf](./ranger/rc.conf).
 - tmux: [tmux/tmux.conf](./tmux/tmux.conf).
-- rg: [rg/ripgreprc](./rg/ripgreprc).
-- htop: [htop/htoprc](./htop/htoprc).
 - kitty: [kitty/kitty.conf](./kitty/kitty.conf).
 - git: [git/install](./git/install).
 - sublime text: [sublime-dotfiles repo](https://github.com/reo7sp/sublime-dotfiles?tab=readme-ov-file#sublime-dotfiles).
@@ -27,7 +25,7 @@ How vim looks:
 ```sh
 git clone --depth 1 https://github.com/reo7sp/dotfiles
 cd dotfiles
-./install zsh vim ranger tmux rg htop
+./install zsh vim ranger tmux rg fd htop
 ```
 
 ## How to install quick
@@ -35,7 +33,7 @@ cd dotfiles
 ```sh
 git clone --depth 1 https://github.com/reo7sp/dotfiles
 cd dotfiles
-./install -q zsh vim ranger tmux rg htop
+./install -q zsh vim ranger tmux rg fd htop
 ```
 
 ## Help
@@ -50,4 +48,4 @@ cd dotfiles
 ./upgrade [-q] MODULES    # upgrades modules' plugins
 ```
 
-Available modules: `zsh`, `vim`, `ranger`, `tmux`, `rg`, `htop`, `kitty`, `git`.
+Available modules: `zsh`, `vim`, `ranger`, `tmux`, `rg`, `fd`, `htop`, `kitty`, `git`.

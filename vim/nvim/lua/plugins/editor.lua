@@ -6,6 +6,13 @@ return {
       "saghen/blink.cmp",
     },
     config = function()
+      local lsp_capabilities = vim.lsp.protocol.make_client_capabilities()
+      lsp_capabilities.workspace.didChangeWatchedFiles.dynamicRegistration = false
+      local lsp_global_config = {
+        capabilities = lsp_capabilities,
+      }
+      vim.lsp.config("*", lsp_global_config)
+
       local lsp_configs = {
         clangd = {
           cmd = {
@@ -40,8 +47,16 @@ return {
           },
         },
       }
-      for server_name, config in pairs(lsp_configs) do
-        vim.lsp.config(server_name, config)
+      for lsp_name, lsp_config in pairs(lsp_configs) do
+        vim.lsp.config(lsp_name, lsp_config)
+      end
+
+      local default_rename_handler = vim.lsp.handlers["textDocument/rename"]
+      vim.lsp.handlers["textDocument/rename"] = function(err, result, ctx, config)
+        default_rename_handler(err, result, ctx, config)
+        if not err and result then
+          vim.cmd("wall")
+        end
       end
 
       vim.keymap.set("n", "K", vim.lsp.buf.hover, { desc = "Show LSP hover", })
@@ -393,6 +408,18 @@ return {
     "nmac427/guess-indent.nvim",
     opts = {},
     event = "BufReadPre",
+    init = function()
+      vim.api.nvim_create_autocmd("VimEnter", {
+        once = true,
+        callback = function()
+          vim.defer_fn(function()
+            vim.cmd("GuessIndent auto_cmd silent")
+            vim.cmd.redrawstatus()
+          end, 50)
+        end,
+      })
+    end,
+    cmd = "GuessIndent",
   },
 
   {
@@ -829,6 +856,9 @@ return {
       require("textcase").setup({
         prefix = "gt",
       })
+      vim.keymap.set({ "n", "x" }, "gt<Space>", function()
+        require("textcase").quick_replace("to_lower_phrase_case")
+      end, { desc = "Convert to space-delimited case" })
       vim.keymap.set("n", "gT", "<nop>")
     end,
   },

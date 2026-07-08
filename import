@@ -11,6 +11,6 @@ do_import() {
 }
 
 
-for it in zsh vim ranger tmux rg kitty git; do
+for it in zsh vim ranger tmux kitty git; do
   do_import $it
 done
