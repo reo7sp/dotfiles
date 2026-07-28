@@ -23,6 +23,13 @@ return {
   },
 
   {
+    "awalland/nvim-file-watch",
+    opts = {
+      notify = false,
+    },
+  },
+
+  {
     "farmergreg/vim-lastplace",
   },
 

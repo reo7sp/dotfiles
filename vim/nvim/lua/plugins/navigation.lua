@@ -409,7 +409,7 @@ return {
         view_options = {
           show_hidden = true,
         },
-        watch_for_changes = false,
+        watch_for_changes = true,
         git = {
           add = function(path)
             return true
