@@ -25,7 +25,7 @@ How vim looks:
 ```sh
 git clone --depth 1 https://github.com/reo7sp/dotfiles
 cd dotfiles
-./install zsh vim ranger tmux rg fd htop
+./install zsh vim ranger tmux rg fd hunk htop
 ```
 
 ## How to install quick
@@ -33,7 +33,7 @@ cd dotfiles
 ```sh
 git clone --depth 1 https://github.com/reo7sp/dotfiles
 cd dotfiles
-./install -q zsh vim ranger tmux rg fd htop
+./install -q zsh vim ranger tmux rg fd hunk htop
 ```
 
 ## Help
@@ -48,4 +48,4 @@ cd dotfiles
 ./upgrade [-q] MODULES    # upgrades modules' plugins
 ```
 
-Available modules: `zsh`, `vim`, `ranger`, `tmux`, `rg`, `fd`, `htop`, `kitty`, `git`.
+Available modules: `zsh`, `vim`, `ranger`, `tmux`, `rg`, `fd`, `hunk`, `htop`, `kitty`, `git`.

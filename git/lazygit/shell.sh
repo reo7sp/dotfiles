@@ -182,14 +182,14 @@ gwX() { git rm -rf "$@"; }
 # my aliases
 gll() { tig "$@"; }
 
-gwdd() { DELTA_FEATURES=+side-by-side gwd "$@"; }
+gwdf() { hunk diff "$@"; }
 gwdt() { gwd --ext-diff "$@"; }
 gwdn() { gwd --name-only "$@"; }
 gwdh() { gwd HEAD "$@"; }
-gwddh() { gwdd HEAD "$@"; }
+gwdfh() { hunk diff HEAD "$@"; }
 gwdth() { gwdt HEAD "$@"; }
 gwdnh() { gwdn HEAD "$@"; }
-gcsd() { DELTA_FEATURES=+side-by-side gcs "$@"; }
+gcsf() { hunk show "$@"; }
 gcst() { gcs --ext-diff "$@"; }
 gcsn() { gcs --name-only --pretty="" "$@"; }
 gcss() { git rev-parse HEAD "$@"; }

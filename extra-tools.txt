@@ -11,6 +11,7 @@ jq
 direnv
 colordiff
 delta
+hunk
 difftastic
 lazygit
 clang-format

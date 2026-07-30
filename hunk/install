@@ -4,13 +4,6 @@ set -e -o pipefail
 SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &> /dev/null && pwd)
 cd "$SCRIPT_DIR"
 
-do_import() {
-  echo "$1:"
-  "$1/import"
-  echo
-}
 
-
-for it in zsh vim ranger tmux kitty hunk git; do
-  do_import $it
-done
+mkdir -p ~/.config/hunk
+cp config.toml ~/.config/hunk/config.toml
