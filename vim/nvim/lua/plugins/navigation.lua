@@ -762,10 +762,19 @@ return {
           target  = "%1/src/%2.cpp",
           context = "c",
         },
+        -- include/<namespace>/name.h -> src/name.cpp
+        {
+          pattern = "(.+)/include/.*/([^/]+)%.h$",
+          target  = "%1/src/%2.cpp",
+          context = "c",
+        },
         -- cpp -> h
         {
           pattern = "(.+)/src/(.+)%.cpp$",
-          target  = "%1/include/%2.h",
+          target  = {
+            "%1/include/%2.h",
+            "%1/include/**/%2.h",
+          },
           context = "c",
         },
         -- hpp -> cpp

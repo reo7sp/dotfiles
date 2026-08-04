@@ -6,4 +6,4 @@ cd "$SCRIPT_DIR"
 
 
 ./upgrade-plugins
-./upgrade-lsp
+./upgrade-lsp-ts

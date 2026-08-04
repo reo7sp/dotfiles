@@ -6,7 +6,9 @@ cd "$SCRIPT_DIR"
 
 do_install() {
   echo "$1:"
-  "$1/install" "${@:2}"
+  if ! "$1/install" "${@:2}"; then
+    echo "Skipping $1 after install failed." >&2
+  fi
   echo
 }
 

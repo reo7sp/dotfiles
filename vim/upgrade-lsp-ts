@@ -3,3 +3,4 @@ set -e -o pipefail
 
 
 nvim --headless -c 'autocmd User MasonUpdateAllComplete quitall' -c 'MasonUpdateAll'
+nvim --headless "+lua assert(require('nvim-treesitter').update():wait(300000))" +qa

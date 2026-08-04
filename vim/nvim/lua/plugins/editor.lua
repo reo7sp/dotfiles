@@ -400,8 +400,9 @@ return {
     opts = {
       default_im_select = "com.apple.keylayout.ABC",
       keep_quiet_on_no_binary = true,
+      set_default_events = { "VimEnter", "InsertLeave", "CmdlineLeave", "FocusGained" },
     },
-    event = "InsertEnter",
+    lazy = false,
   },
 
   {
