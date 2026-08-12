@@ -608,7 +608,7 @@ return {
             jump = true,
           })
         else
-          vim.cmd("cnext")
+          vim.cmd("silent! cnext")
         end
       end
 
@@ -619,7 +619,7 @@ return {
             jump = true,
           })
         else
-          vim.cmd("cprev")
+          vim.cmd("silent! cprev")
         end
       end
 

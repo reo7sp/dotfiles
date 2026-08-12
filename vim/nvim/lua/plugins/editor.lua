@@ -400,8 +400,24 @@ return {
     opts = {
       default_im_select = "com.apple.keylayout.ABC",
       keep_quiet_on_no_binary = true,
-      set_default_events = { "VimEnter", "InsertLeave", "CmdlineLeave", "FocusGained" },
+      set_default_events = { "VimEnter", "InsertLeave", "CmdlineLeave" },
     },
+    config = function(_, opts)
+      require("im_select").setup(opts)
+
+      vim.api.nvim_create_autocmd("FocusGained", {
+        group = vim.api.nvim_create_augroup("im-select-focus", { clear = true }),
+        callback = function()
+          local mode = vim.api.nvim_get_mode().mode
+          if vim.fn.executable("macism") ~= 1
+            or not (mode:match("^n") or mode == "v" or mode == "V" or mode == "\22")
+          then
+            return
+          end
+          vim.system({ "macism", opts.default_im_select }, { detach = true })
+        end,
+      })
+    end,
     lazy = false,
   },
 
@@ -921,8 +937,8 @@ return {
             "gofmt",
           },
           python = {
-            "isort",
-            "black",
+            "ruff_organize_imports",
+            "ruff_format",
           },
           lua = {
             "stylua",

@@ -46,6 +46,10 @@ if can-exec brew; then
   eval "$(brew shellenv)"
 fi
 
+if (( IS_MACOS )) && can-exec im-select; then
+  im-select com.apple.keylayout.ABC > /dev/null 2>&1
+fi
+
 if can-exec nvim; then
   export EDITOR='nvim'
 else
@@ -214,6 +218,7 @@ WORDCHARS=${WORDCHARS/\/}
 WORDCHARS=${WORDCHARS/_}
 WORDCHARS=${WORDCHARS/|}
 WORDCHARS=${WORDCHARS/-}
+WORDCHARS=${WORDCHARS/=}
 zmodload zsh/complist
 bindkey -M menuselect '^[[Z' reverse-menu-complete # shift-tab
 
@@ -224,6 +229,42 @@ function my-bindkeys() {
   bindkey '^[f' forward-word
 }
 zvm_after_init_commands+=(my-bindkeys)
+
+if (( IS_MACOS )) && can-exec im-select; then
+  ZSH_AUTOSUGGEST_IGNORE_WIDGETS+=(.zsh-focus-in .zsh-focus-out)
+
+  function zsh-focus-tracking-enable() {
+    printf '\e[?1004h'
+  }
+
+  function zsh-focus-tracking-disable() {
+    printf '\e[?1004l'
+  }
+
+  function zsh-focus-in() {
+    im-select com.apple.keylayout.ABC > /dev/null 2>&1 &!
+  }
+
+  function zsh-focus-out() {
+    return 0
+  }
+
+  function zsh-focus-events-init() {
+    zle -N .zsh-focus-in zsh-focus-in
+    zle -N .zsh-focus-out zsh-focus-out
+    local keymap
+    for keymap in viins vicmd visual viopp isearch command menuselect; do
+      bindkey -M "$keymap" $'\e[I' .zsh-focus-in
+      bindkey -M "$keymap" $'\e[O' .zsh-focus-out
+    done
+
+    autoload -Uz add-zsh-hook
+    add-zsh-hook precmd zsh-focus-tracking-enable
+    add-zsh-hook preexec zsh-focus-tracking-disable
+    zsh-focus-tracking-enable
+  }
+  zvm_after_init_commands+=(zsh-focus-events-init)
+fi
 
 
 # =============================================================================
@@ -299,6 +340,8 @@ if can-exec direnv; then
   eval "$(direnv hook zsh)"
 fi
 
+alias edit-direnv='vim .envrc'
+alias edit-envrc='vim .envrc'
 alias direnv-edit='vim .envrc'
 alias envrc-edit='vim .envrc'
 
@@ -314,6 +357,17 @@ edit-zsh-clear-cache-completion() {
     "${ZDOTDIR:-$HOME}/.zcompcache" \
     "${ZDOTDIR:-$HOME}/.zcompdump"
   exec zsh
+}
+
+bak-edit-zshrc() {
+  if [[ -f "$HOME/.zshrc.bak" ]]; then
+    cp "$HOME/.zshrc.bak" "$HOME/.zshrc.bak.2" || return
+  fi
+  cp "$HOME/.zshrc" "$HOME/.zshrc.bak"
+}
+
+rsync-edit-zshrc() {
+  rsync -a ~/.zshrc "$1":~/.zshrc
 }
 
 # -----------------------------------------------------------------------------
@@ -358,18 +412,32 @@ alias edit-vim-custom-plugins='nvim ~/.config/nvim/lua/plugins/custom.lua'
 alias edit-vim-custom-commands='nvim ~/.config/nvim/lua/commands/custom.lua'
 alias edit-vim-custom-minuet-llm='vim ~/.config/nvim/lua/configs/custom_minuet_llm.lua'
 alias edit-vim-custom-gopls='vim ~/.config/nvim/bin/custom-gopls'
+
 alias cd-edit-vim='cd ~/.config/nvim/'
 
-rsync-edit-vim-custom() {
-  rsync -a ~/.config/nvim/"$1" "$2":~/.config/nvim/"$1"
+bak-edit-vim-custom() {
+  local file
+  for file in \
+    "$HOME/.config/nvim/lua/plugins/custom.lua" \
+    "$HOME/.config/nvim/lua/commands/custom.lua" \
+    "$HOME/.config/nvim/lua/configs/custom_minuet_llm.lua" \
+    "$HOME/.config/nvim/bin/custom-gopls"; do
+    if [[ -f "$file.bak" ]]; then
+      cp "$file.bak" "$file.bak.2" || return
+    fi
+    cp "$file" "$file.bak" || return
+  done
 }
-alias rsync-edit-vim-custom-plugins='rsync-edit-vim-custom lua/plugins/custom.lua'
-alias rsync-edit-vim-custom-commands='rsync-edit-vim-custom lua/commands/custom.lua'
-alias rsync-edit-vim-custom-minuet-llm='rsync-edit-vim-custom lua/configs/custom_minuet_llm.lua'
-alias rsync-edit-vim-custom-gopls='rsync-edit-vim-custom bin/custom-gopls'
 
-rsync-edit-zshrc() {
-  rsync -a ~/.zshrc "$1":~/.zshrc
+rsync-edit-vim-custom() {
+  local file
+  for file in \
+    lua/plugins/custom.lua \
+    lua/commands/custom.lua \
+    lua/configs/custom_minuet_llm.lua \
+    bin/custom-gopls; do
+    rsync -a "$HOME/.config/nvim/$file" "$1":~/.config/nvim/"$file" || return
+  done
 }
 
 time-start-vim() {
@@ -828,23 +896,49 @@ random-string() {
 
 alias timestamp='date +%s'
 
-alias is-ip-in-net='python3 -c "import sys; from ipaddress import ip_address, ip_network; print(ip_address(sys.argv[1]) in ip_network(sys.argv[2]))"'
+is-ip-in-net() {
+  python3 -c 'import sys; from ipaddress import ip_address, ip_network; print(ip_address(sys.argv[1]) in ip_network(sys.argv[2]))' "$1" "$2"
+}
+
+decode-json-data() {
+  python3 -c 'import sys,json; sys.stdout.buffer.write(json.load(sys.stdin)["data"].encode("latin1"))'
+}
 
 # -----------------------------------------------------------------------------
 # encode / decode
-alias encode-url='python3 -c "import sys, urllib.parse; print(urllib.parse.quote(sys.stdin.read().strip()))"'
-alias decode-url='python3 -c "import sys, urllib.parse; print(urllib.parse.unquote_plus(sys.stdin.read().strip()))"'
+encode-url() {
+  python3 -c 'import sys, urllib.parse; print(urllib.parse.quote(sys.argv[1]))' "$1"
+}
 
-alias encode-html='python3 -c "import sys, html; print(html.escape(sys.stdin.read().strip()))"'
-alias decode-html='python3 -c "import sys, html; print(html.unescape(sys.stdin.read().strip()))"'
+decode-url() {
+  python3 -c 'import sys, urllib.parse; print(urllib.parse.unquote_plus(sys.argv[1]))' "$1"
+}
 
-alias encode-base64='python3 -c "import sys, base64; sys.stdout.buffer.write(base64.b64encode(sys.stdin.buffer.read()))"'
-alias decode-base64='python3 -c "import sys, base64; sys.stdout.buffer.write(base64.b64decode(sys.stdin.read().strip()))"'
+encode-html() {
+  python3 -c 'import sys, html; print(html.escape(sys.argv[1]))' "$1"
+}
+
+decode-html() {
+  python3 -c 'import sys, html; print(html.unescape(sys.argv[1]))' "$1"
+}
+
+encode-base64() {
+  python3 -c 'import sys, base64; sys.stdout.buffer.write(base64.b64encode(sys.argv[1].encode()))' "$1"
+}
+
+decode-base64() {
+  python3 -c 'import sys, base64; sys.stdout.buffer.write(base64.b64decode(sys.argv[1]))' "$1"
+}
 
 # -----------------------------------------------------------------------------
 # flags
-alias decode-flags-bin="python3 -c \"print([f'(1 << {i})' for i, v in enumerate(bin(int(input()))[2:][::-1]) if v == '1'])\""
-alias decode-flags-hex="python3 -c \"print([hex(1 << i) for i, v in enumerate(bin(int(input()))[2:][::-1]) if v == '1'])\""
+decode-flags-bin() {
+  python3 -c 'import sys; print([f"(1 << {i})" for i, v in enumerate(bin(int(sys.argv[1]))[2:][::-1]) if v == "1"])' "$1"
+}
+
+decode-flags-hex() {
+  python3 -c 'import sys; print([hex(1 << i) for i, v in enumerate(bin(int(sys.argv[1]))[2:][::-1]) if v == "1"])' "$1"
+}
 
 # -----------------------------------------------------------------------------
 # markdown
