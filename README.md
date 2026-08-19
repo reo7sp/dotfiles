@@ -48,4 +48,4 @@ cd dotfiles
 ./upgrade [-q] MODULES    # upgrades modules' plugins
 ```
 
-Available modules: `zsh`, `vim`, `ranger`, `tmux`, `rg`, `fd`, `hunk`, `htop`, `kitty`, `git`.
+Available modules: `zsh vim ranger tmux rg fd hunk htop kitty git`.

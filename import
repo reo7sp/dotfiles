@@ -5,12 +5,15 @@ SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &> /dev/null && pwd)
 cd "$SCRIPT_DIR"
 
 do_import() {
+  if [[ ! -f "$1/import" ]]; then
+    return
+  fi
   echo "$1:"
   "$1/import"
   echo
 }
 
 
-for it in zsh vim ranger tmux kitty hunk git; do
+for it in zsh vim ranger tmux rg fd hunk htop kitty git; do
   do_import $it
 done

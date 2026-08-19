@@ -5,6 +5,9 @@ SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &> /dev/null && pwd)
 cd "$SCRIPT_DIR"
 
 do_upgrade() {
+  if [[ ! -f "$1/upgrade" ]]; then
+    return
+  fi
   echo "$1:"
   "$1/upgrade" "${@:2}"
   echo

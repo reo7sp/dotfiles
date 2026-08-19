@@ -5,6 +5,9 @@ SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &> /dev/null && pwd)
 cd "$SCRIPT_DIR"
 
 do_install() {
+  if [[ ! -f "$1/install" ]]; then
+    return
+  fi
   echo "$1:"
   if ! "$1/install" "${@:2}"; then
     echo "Skipping $1 after install failed." >&2

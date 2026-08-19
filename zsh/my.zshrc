@@ -46,8 +46,8 @@ if can-exec brew; then
   eval "$(brew shellenv)"
 fi
 
-if (( IS_MACOS )) && can-exec im-select; then
-  im-select com.apple.keylayout.ABC > /dev/null 2>&1
+if (( IS_MACOS )) && can-exec macism; then
+  macism com.apple.keylayout.ABC > /dev/null 2>&1
 fi
 
 if can-exec nvim; then
@@ -230,7 +230,7 @@ function my-bindkeys() {
 }
 zvm_after_init_commands+=(my-bindkeys)
 
-if (( IS_MACOS )) && can-exec im-select; then
+if (( IS_MACOS )) && can-exec macism; then
   ZSH_AUTOSUGGEST_IGNORE_WIDGETS+=(.zsh-focus-in .zsh-focus-out)
 
   function zsh-focus-tracking-enable() {
@@ -242,7 +242,7 @@ if (( IS_MACOS )) && can-exec im-select; then
   }
 
   function zsh-focus-in() {
-    im-select com.apple.keylayout.ABC > /dev/null 2>&1 &!
+    macism com.apple.keylayout.ABC > /dev/null 2>&1 &!
   }
 
   function zsh-focus-out() {

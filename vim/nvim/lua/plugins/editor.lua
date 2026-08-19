@@ -414,7 +414,7 @@ return {
           then
             return
           end
-          vim.system({ "macism", opts.default_im_select }, { detach = true })
+          vim.system({ "macism", opts.default_im_select }):wait(200)
         end,
       })
     end,
