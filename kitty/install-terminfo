@@ -1,0 +1,26 @@
+#!/bin/bash
+set -e -o pipefail
+
+kitty_terminfo_dir=/Applications/kitty.app/Contents/Resources/kitty/terminfo
+if [[ ! -d "$kitty_terminfo_dir" ]]; then
+  exit 0
+fi
+
+terminfo_source=$(mktemp)
+trap 'rm -f "$terminfo_source"' EXIT
+
+infocmp -x -A "$kitty_terminfo_dir" xterm-kitty > "$terminfo_source"
+python3 - "$terminfo_source" <<'PY'
+from pathlib import Path
+import sys
+
+path = Path(sys.argv[1])
+source = path.read_text()
+old = r'cnorm=\E[?12h\E[?25h'
+if source.count(old) != 1:
+    raise SystemExit('Unexpected xterm-kitty cnorm capability')
+
+path.write_text(source.replace(old, r'cnorm=\E[?25h'))
+PY
+
+tic -x -o "$HOME/.terminfo" "$terminfo_source"

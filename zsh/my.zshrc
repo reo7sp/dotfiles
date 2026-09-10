@@ -26,7 +26,7 @@ fi
 
 if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
   if [[ $IS_SSH == 0 && $TERM == 'xterm-kitty' ]]; then
-    echo -ne '\e[6 q'   # cursor beam
+    echo -ne '\e[5 q'   # blinking cursor beam
     echo -ne '\e]2;~\a' # title "~"
   fi
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
@@ -36,6 +36,10 @@ if uname -a | grep Darwin > /dev/null; then
   export IS_MACOS=1
 else
   export IS_MACOS=0
+fi
+
+if [[ $IS_MACOS == 1 && $TERM == 'xterm-kitty' && -f "$HOME/.terminfo/78/xterm-kitty" ]]; then
+  export TERMINFO="$HOME/.terminfo"
 fi
 
 can-exec() {
@@ -108,6 +112,12 @@ fi
 
 # -----------------------------------------------------------------------------
 # jeffreytse/zsh-vi-mode
+ZVM_INSERT_MODE_CURSOR=$ZVM_CURSOR_BLINKING_BEAM
+ZVM_NORMAL_MODE_CURSOR=$ZVM_CURSOR_BLOCK
+ZVM_VISUAL_MODE_CURSOR=$ZVM_CURSOR_BLINKING_BLOCK
+ZVM_VISUAL_LINE_MODE_CURSOR=$ZVM_CURSOR_BLINKING_BLOCK
+ZVM_OPPEND_MODE_CURSOR=$ZVM_CURSOR_BLINKING_UNDERLINE
+
 function my-zvm-init() {
   bindkey -M vicmd '^[' undefined-key
 }

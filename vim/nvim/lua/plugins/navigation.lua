@@ -205,20 +205,41 @@ return {
           return { "git", "-c", "core.pager=delta", "-c", "delta.paging=always", "show", "--no-ext-diff", entry.value .. "^!" }
         end
       })
+      local function run_git_picker(picker, opts)
+          opts = opts or {}
+          local cwd = opts.cwd or vim.fn.getcwd()
+          if not vim.fs.find(".git", { path = cwd, upward = true })[1] then
+            vim.notify("Not a Git repository: " .. cwd, vim.log.levels.ERROR, {
+              title = "Telescope Git",
+            })
+            return
+          end
+
+          local ok, err = pcall(picker, opts)
+          if not ok then
+            local message = tostring(err):gsub("^.-:%d+:%s*", "")
+            vim.notify(message, vim.log.levels.ERROR, {
+              title = "Telescope Git",
+            })
+          end
+      end
       M.git_status = function(opts)
           opts = opts or {}
           opts.previewer = git_status_previewer
-          builtin.git_status(opts)
+          run_git_picker(builtin.git_status, opts)
       end
       M.git_bcommits = function(opts)
           opts = opts or {}
           opts.previewer = git_commits_previewer
-          builtin.git_bcommits(opts)
+          run_git_picker(builtin.git_bcommits, opts)
       end
       M.git_commits = function(opts)
           opts = opts or {}
           opts.previewer = git_commits_previewer
-          builtin.git_commits(opts)
+          run_git_picker(builtin.git_commits, opts)
+      end
+      M.git_branches = function(opts)
+          run_git_picker(builtin.git_branches, opts)
       end
       vim.keymap.set("n", "<leader>ge", M.git_status, { desc = "Telescope git_status", })
 
@@ -287,7 +308,7 @@ return {
       vim.keymap.set("n", "<leader>d", "<cmd>Telescope diagnostics bufnr=0<CR>", { desc = "Find buffer diagnostics", })
       vim.keymap.set("n", "<leader>D", "<cmd>Telescope diagnostics<CR>", { desc = "Find diagnostics", })
       vim.keymap.set("n", "<leader>Q", "<cmd>Telescope quickfixhistory<cr>", { desc = "Find quickfix history", })
-      vim.keymap.set("n", "<leader>gb", "<cmd>Telescope git_branches<cr>", { desc = "Find git branches", })
+      vim.keymap.set("n", "<leader>gb", M.git_branches, { desc = "Find git branches", })
       vim.keymap.set("n", "<leader>i", "<cmd>Import<cr>", { desc = "Import symbol", })
       vim.keymap.set("n", "<leader>m", "<cmd>Telescope marks<cr>", { desc = "Find marks", })
       local find_workspaces = function()

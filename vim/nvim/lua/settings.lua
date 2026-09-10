@@ -194,8 +194,10 @@ vim.cmd([=[
 set number
 set relativenumber
 set cursorline
+set guicursor+=a:blinkwait700-blinkon500-blinkoff500
+set guicursor+=n:blinkon0
 set colorcolumn=80,120
-set scrolloff=3
+set scrolloff=2
 set sidescroll=1
 
 set nowrap

@@ -106,13 +106,6 @@ return {
   },
 
   {
-    "rickhowe/diffchar.vim",
-    init = function()
-      vim.g.DiffCharDoMapping = 0
-    end,
-  },
-
-  {
     "rickhowe/spotdiff.vim",
     init = function()
       vim.g.VDiffDoMapping = 0
@@ -192,6 +185,21 @@ return {
           }
         }
       })
+
+      local group = vim.api.nvim_create_augroup("codediff-keymaps", { clear = true })
+      vim.api.nvim_create_autocmd("User", {
+        group = group,
+        pattern = "CodeDiffOpen",
+        callback = function(args)
+          local tabpage = args.data and args.data.tabpage
+          if not tabpage then
+            return
+          end
+
+          require("codediff.ui.lifecycle").set_tab_keymap(tabpage, "n", "]c", "<Nop>", { desc = "Disabled in CodeDiff" })
+          require("codediff.ui.lifecycle").set_tab_keymap(tabpage, "n", "[c", "<Nop>", { desc = "Disabled in CodeDiff" })
+        end,
+      })
     end,
     cmd = "CodeDiff",
     keys = {
@@ -206,6 +214,88 @@ return {
         mode = { "n", "v" },
         desc = "Open diff for current file",
       },
+    },
+  },
+
+  {
+    "dlyongemallo/diffview-plus.nvim",
+    name = "diffview.nvim",
+    version = "*",
+    init = function()
+      vim.api.nvim_create_autocmd({ "BufWritePost", "FocusGained", "ShellCmdPost", "TermClose" }, {
+        group = vim.api.nvim_create_augroup("diffview-auto-refresh", { clear = true }),
+        callback = function(args)
+          if not package.loaded["diffview"] then
+            return
+          end
+
+          local current_view = require("diffview.lib").get_current_view()
+          for _, view in ipairs(require("diffview.lib").views) do
+            if args.event ~= "BufWritePost" or view ~= current_view then
+              view.emitter:emit("refresh_files")
+            end
+          end
+        end,
+      })
+    end,
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+    },
+    opts = function()
+      return {
+        use_icons = false,
+        enhanced_diff_hl = true,
+        keymaps = {
+          view = {
+            { "n", "q", "<cmd>DiffviewClose<cr>", { desc = "Close Diffview" } },
+            { "n", "]h", "]c", { desc = "Next hunk" } },
+            { "n", "[h", "[c", { desc = "Previous hunk" } },
+            { "n", "]c", "<Nop>" },
+            { "n", "[c", "<Nop>" },
+            { "n", "]f", require("diffview.actions").select_next_entry, { desc = "Next file" } },
+            { "n", "[f", require("diffview.actions").select_prev_entry, { desc = "Previous file" } },
+            { "n", "t", require("diffview.actions").cycle_layout, { desc = "Toggle layout" } },
+          },
+          file_panel = {
+            { "n", "q", "<cmd>DiffviewClose<cr>", { desc = "Close Diffview" } },
+            { "n", "]f", require("diffview.actions").select_next_entry, { desc = "Next file" } },
+            { "n", "[f", require("diffview.actions").select_prev_entry, { desc = "Previous file" } },
+          },
+          file_history_panel = {
+            { "n", "q", "<cmd>DiffviewClose<cr>", { desc = "Close Diffview" } },
+          },
+        },
+        hooks = {
+          view_opened = function(view)
+            local old_views = {}
+            for _, old_view in ipairs(require("diffview.lib").views) do
+              if old_view ~= view then
+                old_views[#old_views + 1] = old_view
+              end
+            end
+            for _, old_view in ipairs(old_views) do
+              old_view:close()
+              require("diffview.lib").dispose_view(old_view)
+            end
+          end,
+          diff_buf_win_enter = function(bufnr)
+            vim.b[bufnr].ignore_early_retirement = true
+            vim.opt_local.cursorlineopt = "number"
+            vim.opt_local.fillchars:append({ diff = " " })
+          end,
+        },
+      }
+    end,
+    cmd = {
+      "DiffviewOpen",
+      "DiffviewFileHistory",
+      "DiffviewDiffFiles",
+      "DiffviewMergeFiles",
+      "DiffviewDiffDirs",
+      "DiffviewClose",
+      "DiffviewToggleFiles",
+      "DiffviewFocusFiles",
+      "DiffviewRefresh",
     },
   },
 
