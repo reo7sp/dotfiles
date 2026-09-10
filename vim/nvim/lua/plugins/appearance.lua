@@ -402,6 +402,29 @@ return {
     dependencies = {
       "romgrk/barbar.nvim",
     },
+    init = function()
+      vim.api.nvim_create_autocmd("FocusGained", {
+        callback = function()
+          local diffview_buffers = {}
+          for _, bufnr in ipairs(vim.api.nvim_list_bufs()) do
+            if vim.api.nvim_buf_is_loaded(bufnr)
+                and vim.bo[bufnr].buftype == ""
+                and vim.api.nvim_buf_get_name(bufnr):match("^diffview://") then
+              vim.bo[bufnr].buftype = "nowrite"
+              diffview_buffers[#diffview_buffers + 1] = bufnr
+            end
+          end
+
+          vim.schedule(function()
+            for _, bufnr in ipairs(diffview_buffers) do
+              if vim.api.nvim_buf_is_valid(bufnr) then
+                vim.bo[bufnr].buftype = ""
+              end
+            end
+          end)
+        end,
+      })
+    end,
     opts = {
       ignoreUnsavedChangesBufs = false,
       deleteBufferWhenFileDeleted = true,

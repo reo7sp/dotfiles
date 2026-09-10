@@ -1031,8 +1031,8 @@ return {
       require("gitsigns").setup({
         sign_priority = 100,
         trouble = false,
+        signs_staged_enable = true,
         on_attach = function(bufnr)
-          local gitsigns = require("gitsigns")
           local function map(mode, l, r, opts)
             opts = opts or {}
             opts.buffer = bufnr
@@ -1045,7 +1045,7 @@ return {
                 bang = true,
               })
             else
-              gitsigns.nav_hunk("next")
+              require("gitsigns").nav_hunk("next")
             end
           end, { desc = "Next git hunk", })
           map("n", "[h", function()
@@ -1055,7 +1055,7 @@ return {
                 bang = true,
               })
             else
-              gitsigns.nav_hunk("prev")
+              require("gitsigns").nav_hunk("prev")
             end
           end, { desc = "Prev git hunk", })
 
@@ -1088,6 +1088,12 @@ return {
             })
           end, { desc = "Discard git hunk", })
         end
+      })
+      vim.api.nvim_create_autocmd({ "FocusGained", "ShellCmdPost", "TermLeave" }, {
+        group = vim.api.nvim_create_augroup("gitsigns-auto-refresh", { clear = true }),
+        callback = function()
+          require("gitsigns").refresh()
+        end,
       })
       vim.keymap.set("n", "<c-w>g", "<cmd>Gitsigns blame_line<CR>", { desc = "Blame current line", })
       vim.keymap.set("n", "<c-w><c-g>", "<cmd>Gitsigns blame_line<CR>", { desc = "Blame current line", })
