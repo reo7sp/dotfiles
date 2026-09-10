@@ -6,7 +6,6 @@
 .envrc
 .idea/
 .vscode/
-AGENTS.md
 .claude/
 .codex/
 .cursor/
