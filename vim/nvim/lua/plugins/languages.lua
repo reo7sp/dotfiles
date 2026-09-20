@@ -4,6 +4,7 @@ return {
     "sheerun/vim-polyglot",
     init = function()
       vim.g.polyglot_disabled = { "sensible", "autoindent" }
+      vim.g.no_plugin_maps = 1
       vim.g.vim_markdown_no_default_key_mappings = 1
     end,
   },
@@ -89,110 +90,11 @@ return {
       "nvim-treesitter/nvim-treesitter",
     },
     opts = {
-      select = {
-        lookahead = true,
-      },
       move = {
         set_jumps = true,
       },
     },
     keys = {
-      {
-        "aa",
-        function()
-          require("nvim-treesitter-textobjects.select").select_textobject("@parameter.outer", "textobjects")
-        end,
-        mode = { "x", "o" },
-        desc = "Select outer part of a parameter/argument",
-      },
-      {
-        "ia",
-        function()
-          require("nvim-treesitter-textobjects.select").select_textobject("@parameter.inner", "textobjects")
-        end,
-        mode = { "x", "o" },
-        desc = "Select inner part of a parameter/argument",
-      },
-      {
-        "ai",
-        function()
-          require("nvim-treesitter-textobjects.select").select_textobject("@conditional.outer", "textobjects")
-        end,
-        mode = { "x", "o" },
-        desc = "Select outer part of a conditional",
-      },
-      {
-        "ii",
-        function()
-          require("nvim-treesitter-textobjects.select").select_textobject("@conditional.inner", "textobjects")
-        end,
-        mode = { "x", "o" },
-        desc = "Select inner part of a conditional",
-      },
-      {
-        "al",
-        function()
-          require("nvim-treesitter-textobjects.select").select_textobject("@loop.outer", "textobjects")
-        end,
-        mode = { "x", "o" },
-        desc = "Select outer part of a loop",
-      },
-      {
-        "il",
-        function()
-          require("nvim-treesitter-textobjects.select").select_textobject("@loop.inner", "textobjects")
-        end,
-        mode = { "x", "o" },
-        desc = "Select inner part of a loop",
-      },
-      {
-        "af",
-        function()
-          require("nvim-treesitter-textobjects.select").select_textobject("@call.outer", "textobjects")
-        end,
-        mode = { "x", "o" },
-        desc = "Select outer part of a function call",
-      },
-      {
-        "if",
-        function()
-          require("nvim-treesitter-textobjects.select").select_textobject("@call.inner", "textobjects")
-        end,
-        mode = { "x", "o" },
-        desc = "Select inner part of a function call",
-      },
-      {
-        "am",
-        function()
-          require("nvim-treesitter-textobjects.select").select_textobject("@function.outer", "textobjects")
-        end,
-        mode = { "x", "o" },
-        desc = "Select outer part of a method/function definition",
-      },
-      {
-        "im",
-        function()
-          require("nvim-treesitter-textobjects.select").select_textobject("@function.inner", "textobjects")
-        end,
-        mode = { "x", "o" },
-        desc = "Select inner part of a method/function definition",
-      },
-      {
-        "ac",
-        function()
-          require("nvim-treesitter-textobjects.select").select_textobject("@class.outer", "textobjects")
-        end,
-        mode = { "x", "o" },
-        desc = "Select outer part of a class",
-      },
-      {
-        "ic",
-        function()
-          require("nvim-treesitter-textobjects.select").select_textobject("@class.inner", "textobjects")
-        end,
-        mode = { "x", "o" },
-        desc = "Select inner part of a class",
-      },
       {
         "cm",
         function()
@@ -367,8 +269,15 @@ return {
     "catgoose/nvim-colorizer.lua",
     main = "colorizer",
     opts = {
-      display = {
-        mode = "virtualtext",
+      options = {
+        parsers = {
+          names = {
+            enable = false,
+          },
+        },
+        display = {
+          mode = "virtualtext",
+        },
       },
     },
     event = "BufReadPre",
@@ -405,7 +314,6 @@ return {
       luasnip = false,
       tag_options = "",
       comment_placeholder = "",
-      icons = false,
     },
     ft = "go",
   },

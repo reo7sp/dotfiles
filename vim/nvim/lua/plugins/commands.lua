@@ -121,83 +121,139 @@ return {
   },
 
   {
-    "NeogitOrg/neogit",
-    dependencies = {
-      "nvim-telescope/telescope.nvim",
-      "esmuellert/codediff.nvim",
-    },
-    opts = {
-      graph_style = "unicode",
-      integrations = {
-        telescope = true,
-        codediff = true,
-      },
-    },
-    cmd = "Neogit",
-    keys = {
-      {
-        "<leader>gg",
-        "<cmd>Neogit<cr>",
-        desc = "Open Neogit",
-      },
-    },
-  },
-
-  {
-    "kdheepak/lazygit.nvim",
-    dependencies = {
-      "nvim-lua/plenary.nvim",
-    },
-    init = function()
-      vim.g.lazygit_floating_window_use_plenary = 1
-    end,
-    cmd = {
-      "LazyGit",
-      "LazyGitConfig",
-      "LazyGitCurrentFile",
-      "LazyGitFilter",
-      "LazyGitFilterCurrentFile",
-    },
-    keys = {
-      {
-        "<leader>gG",
-        "<cmd>LazyGit<cr>",
-        desc = "Open LazyGit",
-      },
-    },
-  },
-
-  {
     "esmuellert/codediff.nvim",
     config = function()
       require("codediff").setup({
         explorer = {
           view_mode = "tree",
-          icons = {
-            folder_closed = "",
-            folder_open = "",
-          },
         },
         keymaps = {
           view = {
             next_hunk = "]h",
             prev_hunk = "[h",
+            stage_hunk = false,
+            unstage_hunk = false,
+            discard_hunk = false,
+            show_help = false,
           }
         }
       })
 
       local group = vim.api.nvim_create_augroup("codediff-keymaps", { clear = true })
+      local lifecycle = require("codediff.ui.lifecycle")
+      local hunk = require("codediff.ui.view.actions.hunk")
+
+      local function context(tabpage)
+        local session = lifecycle.get_session(tabpage)
+        local original_bufnr, modified_bufnr = lifecycle.get_buffers(tabpage)
+        return session, {
+          tabpage = tabpage,
+          original_bufnr = original_bufnr,
+          modified_bufnr = modified_bufnr,
+          is_explorer_mode = lifecycle.get_panel_name(tabpage) == "explorer",
+          is_history_mode = lifecycle.get_panel_name(tabpage) == "history",
+          is_inline = session and session.layout == "inline" or false,
+          is_conflict = session and session.merge == true or false,
+        }
+      end
+
+      local function set_hunk_keymaps(tabpage, bufnr)
+        lifecycle.set_buf_keymap(tabpage, bufnr, "n", "gh", function()
+          local session, ctx = context(tabpage)
+          if session and session.modified_revision == ":0" then
+            hunk.unstage_hunk(ctx)
+          else
+            hunk.stage_hunk(ctx)
+          end
+        end, { desc = "Stage/unstage git hunk" })
+        lifecycle.set_buf_keymap(tabpage, bufnr, "n", "gH", function()
+          local _, ctx = context(tabpage)
+          hunk.discard_hunk(ctx)
+        end, { desc = "Discard git hunk" })
+      end
+
+      local function set_keymaps_when_ready(tabpage, attempts)
+        local session = lifecycle.get_session(tabpage)
+        if not session then
+          if attempts > 0 then
+            vim.defer_fn(function()
+              set_keymaps_when_ready(tabpage, attempts - 1)
+            end, 50)
+          end
+          return
+        end
+
+        local original_bufnr, modified_bufnr = lifecycle.get_buffers(tabpage)
+        for _, bufnr in ipairs({ original_bufnr, modified_bufnr }) do
+          if bufnr and vim.api.nvim_buf_is_valid(bufnr) then
+            set_hunk_keymaps(tabpage, bufnr)
+          end
+        end
+        lifecycle.set_tab_keymap(tabpage, "n", "]c", "<Nop>", { desc = "<Nop>" })
+        lifecycle.set_tab_keymap(tabpage, "n", "[c", "<Nop>", { desc = "<Nop>" })
+      end
+
       vim.api.nvim_create_autocmd("User", {
         group = group,
-        pattern = "CodeDiffOpen",
+        pattern = { "CodeDiffOpen", "CodeDiffFileSelect", "CodeDiffVirtualFileLoaded" },
         callback = function(args)
           local tabpage = args.data and args.data.tabpage
-          if not tabpage then
+          if tabpage then
+            set_keymaps_when_ready(tabpage, 40)
+          else
+            vim.defer_fn(function()
+              for _, candidate in ipairs(vim.api.nvim_list_tabpages()) do
+                if lifecycle.get_session(candidate) then
+                  set_keymaps_when_ready(candidate, 1)
+                end
+              end
+            end, 100)
+          end
+        end,
+      })
+      vim.api.nvim_create_autocmd({ "BufEnter", "WinEnter" }, {
+        group = group,
+        callback = function()
+          vim.schedule(function()
+            local win = vim.api.nvim_get_current_win()
+            local tabpage = vim.api.nvim_win_get_tabpage(win)
+            local bufnr = vim.api.nvim_win_get_buf(win)
+            local original_bufnr, modified_bufnr = lifecycle.get_buffers(tabpage)
+            if bufnr == original_bufnr or bufnr == modified_bufnr then
+              set_hunk_keymaps(tabpage, bufnr)
+            end
+          end)
+        end,
+      })
+      vim.api.nvim_create_autocmd("User", {
+        group = group,
+        pattern = "CodeDiffClose",
+        callback = function(args)
+          local tabpage = args.data and args.data.tabpage
+          local session = tabpage and require("codediff.ui.lifecycle").get_session(tabpage)
+          if not session then
             return
           end
 
-          require("codediff.ui.lifecycle").set_tab_keymap(tabpage, "n", "]c", "<Nop>", { desc = "Disabled in CodeDiff" })
-          require("codediff.ui.lifecycle").set_tab_keymap(tabpage, "n", "[c", "<Nop>", { desc = "Disabled in CodeDiff" })
+          local buffers = {
+            session.original_bufnr,
+            session.modified_bufnr,
+            session.result_bufnr,
+            session.panel and session.panel.view and session.panel.view.bufnr,
+          }
+          vim.schedule(function()
+            for _, bufnr in ipairs(buffers) do
+              if bufnr and vim.api.nvim_buf_is_valid(bufnr) then
+                local name = vim.api.nvim_buf_get_name(bufnr)
+                local is_real_file = vim.bo[bufnr].buftype == ""
+                    and name ~= ""
+                    and vim.fn.filereadable(name) == 1
+                if not is_real_file then
+                  pcall(vim.api.nvim_buf_delete, bufnr, { force = true })
+                end
+              end
+            end
+          end)
         end,
       })
     end,
@@ -205,7 +261,16 @@ return {
     keys = {
       {
         "<leader>gd",
-        "<cmd>CodeDiff<cr>",
+        function()
+          local lifecycle = require("codediff.ui.lifecycle")
+          for _, tabpage in ipairs(vim.api.nvim_list_tabpages()) do
+            if lifecycle.get_panel_name(tabpage) == "explorer" then
+              vim.api.nvim_set_current_tabpage(tabpage)
+              return
+            end
+          end
+          vim.cmd("CodeDiff")
+        end,
         desc = "Open diff",
       },
       {
@@ -242,9 +307,116 @@ return {
       "nvim-lua/plenary.nvim",
     },
     opts = function()
+      local function copy_hunk(target_type, missing_message)
+        local view = require("diffview.lib").get_current_view()
+        local layout = view and view.cur_layout
+        if not layout then
+          return
+        end
+
+        local target
+        local source
+        for _, win in ipairs(layout.windows) do
+          if win.file and win.file.rev then
+            if win.file.rev.type == target_type then
+              target = win
+            else
+              source = win
+            end
+          end
+        end
+
+        if target and not source and layout.name == "diff1_inline" then
+          require("diffview.actions").diffget_inline()
+          vim.api.nvim_win_call(target.id, function()
+            vim.cmd.write()
+          end)
+          return
+        end
+
+        if not (target and source and target.file.bufnr and source.file.bufnr) then
+          vim.notify(missing_message, vim.log.levels.WARN)
+          return
+        end
+
+        local current_buf = vim.api.nvim_get_current_buf()
+        if current_buf == target.file.bufnr then
+          vim.cmd("diffget " .. source.file.bufnr)
+        elseif current_buf == source.file.bufnr then
+          vim.cmd("diffput " .. target.file.bufnr)
+        else
+          return
+        end
+
+        vim.api.nvim_win_call(target.id, function()
+          vim.cmd.write()
+        end)
+      end
+
+      local RevType = require("diffview.vcs.rev").RevType
+      local function gitsigns_hunk(action)
+        local view = require("diffview.lib").get_current_view()
+        local layout = view and view.cur_layout
+        if not layout then
+          return false
+        end
+
+        for _, win in ipairs(layout.windows) do
+          if win.file and win.file.rev and win.file.rev.type == RevType.LOCAL then
+            local line = vim.api.nvim_win_get_cursor(0)[1]
+            vim.api.nvim_win_call(win.id, function()
+              local line_count = vim.api.nvim_buf_line_count(win.file.bufnr)
+              vim.api.nvim_win_set_cursor(win.id, { math.min(line, line_count), 0 })
+              require("gitsigns")[action]()
+            end)
+            return true
+          end
+        end
+
+        return false
+      end
+
+      local function reopen_as_staged_hunk()
+        local view = require("diffview.lib").get_current_view()
+        local current = view and view.cur_entry
+        if not (current and current.path and view.files) then
+          return false
+        end
+
+        for _, entry in ipairs(view.files.working) do
+          if entry.path == current.path then
+            return false
+          end
+        end
+
+        local staged
+        for _, entry in ipairs(view.files.staged) do
+          if entry.path == current.path then
+            staged = entry
+            break
+          end
+        end
+        if not staged then
+          return false
+        end
+
+        local line = vim.api.nvim_win_get_cursor(0)[1]
+        view:set_file(staged, true):finally(function()
+          vim.schedule(function()
+            local main = view.cur_layout and view.cur_layout:get_main_win()
+            if main and main:is_valid() then
+              local line_count = vim.api.nvim_buf_line_count(main.file.bufnr)
+              vim.api.nvim_win_set_cursor(main.id, { math.min(line, line_count), 0 })
+              copy_hunk(RevType.STAGE, "No index hunk to unstage")
+            end
+          end)
+        end)
+        return true
+      end
+
       return {
-        use_icons = false,
         enhanced_diff_hl = true,
+        show_help_hints = false,
         keymaps = {
           view = {
             { "n", "q", "<cmd>DiffviewClose<cr>", { desc = "Close Diffview" } },
@@ -255,6 +427,16 @@ return {
             { "n", "]f", require("diffview.actions").select_next_entry, { desc = "Next file" } },
             { "n", "[f", require("diffview.actions").select_prev_entry, { desc = "Previous file" } },
             { "n", "t", require("diffview.actions").cycle_layout, { desc = "Toggle layout" } },
+            { "n", "gh", function()
+              if not reopen_as_staged_hunk() and not gitsigns_hunk("stage_hunk") then
+                copy_hunk(RevType.STAGE, "No index hunk to unstage")
+              end
+            end, { desc = "Stage/unstage git hunk" } },
+            { "n", "gH", function()
+              if not gitsigns_hunk("reset_hunk") then
+                vim.notify("No unstaged hunk to discard", vim.log.levels.WARN)
+              end
+            end, { desc = "Discard git hunk" } },
           },
           file_panel = {
             { "n", "q", "<cmd>DiffviewClose<cr>", { desc = "Close Diffview" } },
@@ -267,15 +449,20 @@ return {
         },
         hooks = {
           view_opened = function(view)
-            local old_views = {}
-            for _, old_view in ipairs(require("diffview.lib").views) do
-              if old_view ~= view then
-                old_views[#old_views + 1] = old_view
+            local lib = require("diffview.lib")
+            local existing_view
+            for _, candidate in ipairs(lib.views) do
+              if candidate ~= view and candidate.class == view.class then
+                existing_view = candidate
+                break
               end
             end
-            for _, old_view in ipairs(old_views) do
-              old_view:close()
-              require("diffview.lib").dispose_view(old_view)
+
+            if existing_view and vim.api.nvim_tabpage_is_valid(existing_view.tabpage) then
+              view:close()
+              lib.dispose_view(view)
+              vim.api.nvim_set_current_tabpage(existing_view.tabpage)
+              existing_view.emitter:emit("refresh_files")
             end
           end,
           diff_buf_win_enter = function(bufnr)
@@ -296,6 +483,29 @@ return {
       "DiffviewToggleFiles",
       "DiffviewFocusFiles",
       "DiffviewRefresh",
+    },
+  },
+
+  {
+    "NeogitOrg/neogit",
+    dependencies = {
+      "nvim-telescope/telescope.nvim",
+      "esmuellert/codediff.nvim",
+    },
+    opts = {
+      graph_style = "unicode",
+      integrations = {
+        telescope = true,
+        codediff = true,
+      },
+    },
+    cmd = "Neogit",
+    keys = {
+      {
+        "<leader>gg",
+        "<cmd>Neogit<cr>",
+        desc = "Open Neogit",
+      },
     },
   },
 
@@ -339,25 +549,6 @@ return {
         desc = "Send selection to agent",
       },
     },
-  },
-
-  {
-    "amitds1997/remote-nvim.nvim",
-    version = "*",
-    dependencies = {
-      "nvim-lua/plenary.nvim",
-      "MunifTanjim/nui.nvim",
-      "nvim-telescope/telescope.nvim",
-    },
-    cmd = {
-      "RemoteStart",
-      "RemoteStop",
-      "RemoteInfo",
-      "RemoteCleanup",
-      "RemoteConfigDel",
-      "RemoteLog",
-    },
-    opts = {},
   },
 
 }

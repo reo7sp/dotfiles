@@ -183,7 +183,9 @@ return {
 
   {
     "xzbdmw/colorful-menu.nvim",
-    opts = {},
+    opts = {
+      max_width = 76,
+    },
     event = "InsertEnter",
   },
 
@@ -234,18 +236,12 @@ return {
             max_items = 25,
           },
           menu = {
+            min_width = 80,
             draw = {
-              columns = {
-                {
-                  "label",
-                  gap = 1,
-                },
-                {
-                  "kind",
-                },
-              },
+              columns = { { "kind_icon" }, { "label", gap = 1 }, },
               components = {
                 label = {
+                  width = { fixed = 76 },
                   text = function(ctx)
                     return require("colorful-menu").blink_components_text(ctx)
                   end,
@@ -275,6 +271,88 @@ return {
       })
     end,
     event = "InsertEnter",
+  },
+
+  {
+    "folke/flash.nvim",
+    event = "VeryLazy",
+    keys = {
+      {
+        "s",
+        function()
+          require("flash").jump()
+        end,
+        mode = { "n", "x", "o" },
+        desc = "Flash",
+      },
+      {
+        "S",
+        function()
+          require("flash").treesitter()
+        end,
+        mode = { "n", "x", "o" },
+        desc = "Flash Treesitter",
+      },
+      {
+        "<C-S>",
+        function()
+          require("flash").toggle()
+        end,
+        mode = { "c" },
+        desc = "Toggle Flash Search",
+      },
+    },
+  },
+
+  {
+    "kylechui/nvim-surround",
+    opts = {
+      move_cursor = false,
+    },
+    event = "InsertEnter",
+  },
+
+  {
+    "gbprod/substitute.nvim",
+    opts = {
+      range = {
+        prefix = "x",
+      },
+    },
+    keys = {
+      {
+        "x",
+        function()
+          require("substitute").operator()
+        end,
+        mode = "n",
+        desc = "Substitute with register",
+      },
+      {
+        "xx",
+        function()
+          require("substitute").line()
+        end,
+        mode = "n",
+        desc = "Substitute line with register",
+      },
+      {
+        "X",
+        function()
+          require("substitute").eol()
+        end,
+        mode = "n",
+        desc = "Substitute to end of line with register",
+      },
+      {
+        "x",
+        function()
+          require("substitute").visual()
+        end,
+        mode = "x",
+        desc = "Substitute selection with register",
+      },
+    },
   },
 
   {
@@ -323,10 +401,6 @@ return {
       { "z#", desc = "Search word backward from start", },
       { "gz#", desc = "Search partial word backward from start", },
     },
-  },
-
-  {
-    "wellle/targets.vim",
   },
 
   {
@@ -391,6 +465,53 @@ return {
   },
 
   {
+    "nvim-mini/mini.ai",
+    version = false,
+    config = function()
+      local ai = require("mini.ai")
+      ai.setup({
+        custom_textobjects = {
+          m = ai.gen_spec.treesitter({
+            a = "@function.outer",
+            i = "@function.inner",
+          }),
+          c = ai.gen_spec.treesitter({
+            a = "@class.outer",
+            i = "@class.inner",
+          }),
+          o = ai.gen_spec.treesitter({
+            a = { "@conditional.outer", "@loop.outer", },
+            i = { "@conditional.inner", "@loop.inner", },
+          }),
+        },
+      })
+    end,
+  },
+
+  {
+    "chrishrb/gx.nvim",
+    submodules = false,
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+    },
+    init = function()
+      vim.g.netrw_nogx = 1
+    end,
+    opts = {},
+    keys = {
+      {
+        "gx",
+        "<cmd>Browse<cr>",
+        mode = { "n", "x" },
+        desc = "Open URL",
+      },
+    },
+    cmd = {
+      "Browse",
+    },
+  },
+
+  {
     "romainl/vim-cool",
   },
 
@@ -419,6 +540,21 @@ return {
       })
     end,
     lazy = false,
+  },
+
+  {
+    "ysmb-wtsg/in-and-out.nvim",
+    event = "InsertEnter",
+    keys = {
+      {
+        "<C-CR>",
+        function()
+          require("in-and-out").in_and_out()
+        end,
+        mode = "i",
+        desc = "Jump in or out of brackets",
+      },
+    },
   },
 
   {
@@ -471,185 +607,6 @@ return {
         "[w",
         "<cmd>PrevTrailingWhitespace<CR>",
         desc = "Previous trailing whitespace",
-      },
-    },
-  },
-
-  {
-    "justinmk/vim-sneak",
-    init = function()
-      vim.cmd([=[
-        let g:sneak#use_ic_scs = 1
-      ]=])
-    end,
-    config = function()
-      vim.keymap.set("n", "s", "<Plug>Sneak_s", { remap = true, desc = "Sneak forward", })
-      vim.keymap.set("n", "S", "<Plug>Sneak_S", { remap = true, desc = "Sneak backward", })
-      vim.keymap.set("x", "s", "<Plug>Sneak_s", { remap = true, desc = "Sneak forward", })
-      vim.keymap.set("x", "Z", "<Plug>Sneak_S", { remap = true, desc = "Sneak backward", })
-      vim.keymap.set("o", "z", "<Plug>Sneak_s", { remap = true, desc = "Sneak forward", })
-      vim.keymap.set("o", "Z", "<Plug>Sneak_S", { remap = true, desc = "Sneak backward", })
-      vim.keymap.set({ "n", "x", "o" }, ";", "<Plug>Sneak_;", { remap = true, desc = "Repeat Sneak forward", })
-      vim.keymap.set({ "n", "x", "o" }, ",", "<Plug>Sneak_,", { remap = true, desc = "Repeat Sneak backward", })
-      vim.keymap.set("", "f", "<Plug>Sneak_f", { remap = true, desc = "Find character forward", })
-      vim.keymap.set("", "F", "<Plug>Sneak_F", { remap = true, desc = "Find character backward", })
-      vim.keymap.set("", "t", "<Plug>Sneak_t", { remap = true, desc = "Till character forward", })
-      vim.keymap.set("", "T", "<Plug>Sneak_T", { remap = true, desc = "Till character backward", })
-    end,
-    keys = {
-      {
-        "s",
-        mode = { "n", "x" },
-        desc = "Sneak forward",
-      },
-      {
-        "S",
-        mode = "n",
-        desc = "Sneak backward",
-      },
-      {
-        "z",
-        mode = "o",
-        desc = "Sneak forward",
-      },
-      {
-        "Z",
-        mode = { "x", "o" },
-        desc = "Sneak backward",
-      },
-      {
-        ";",
-        mode = { "n", "x", "o" },
-        desc = "Repeat sneak forward",
-      },
-      {
-        ",",
-        mode = { "n", "x", "o" },
-        desc = "Repeat sneak backward",
-      },
-      {
-        "f",
-        mode = { "n", "x", "o" },
-        desc = "Find character forward",
-      },
-      {
-        "F",
-        mode = { "n", "x", "o" },
-        desc = "Find character backward",
-      },
-      {
-        "t",
-        mode = { "n", "x", "o" },
-        desc = "Till character forward",
-      },
-      {
-        "T",
-        mode = { "n", "x", "o" },
-        desc = "Till character backward",
-      },
-    },
-  },
-
-  {
-    "rlane/pounce.nvim",
-    opts = {},
-    keys = {
-      {
-        "<leader><leader>",
-        function()
-          require("pounce").pounce({})
-        end,
-        mode = { "n", "x", "o" },
-        desc = "Pounce",
-      },
-    },
-  },
-
-  {
-    "kylechui/nvim-surround",
-    opts = {
-      move_cursor = false,
-    },
-    event = "InsertEnter",
-  },
-
-  {
-    "gbprod/substitute.nvim",
-    opts = {
-      range = {
-        prefix = "x",
-      },
-    },
-    keys = {
-      {
-        "x",
-        function()
-          require("substitute").operator()
-        end,
-        mode = "n",
-        desc = "Substitute with register",
-      },
-      {
-        "xx",
-        function()
-          require("substitute").line()
-        end,
-        mode = "n",
-        desc = "Substitute line with register",
-      },
-      {
-        "X",
-        function()
-          require("substitute").eol()
-        end,
-        mode = "n",
-        desc = "Substitute to end of line with register",
-      },
-      {
-        "x",
-        function()
-          require("substitute").visual()
-        end,
-        mode = "x",
-        desc = "Substitute selection with register",
-      },
-    },
-  },
-
-  {
-    "chrishrb/gx.nvim",
-    submodules = false,
-    dependencies = {
-      "nvim-lua/plenary.nvim",
-    },
-    init = function()
-      vim.g.netrw_nogx = 1
-    end,
-    opts = {},
-    keys = {
-      {
-        "gx",
-        "<cmd>Browse<cr>",
-        mode = { "n", "x" },
-        desc = "Open URL",
-      },
-    },
-    cmd = {
-      "Browse",
-    },
-  },
-
-  {
-    "ysmb-wtsg/in-and-out.nvim",
-    event = "InsertEnter",
-    keys = {
-      {
-        "<C-CR>",
-        function()
-          require("in-and-out").in_and_out()
-        end,
-        mode = "i",
-        desc = "Jump in or out of brackets",
       },
     },
   },
@@ -916,12 +873,6 @@ return {
   },
 
   {
-    "danymat/neogen",
-    opts = {},
-    cmd = "Neogen",
-  },
-
-  {
     "stevearc/conform.nvim",
     config = function()
       require("conform").setup({
@@ -1009,18 +960,9 @@ return {
   },
 
   {
-    "chrisbra/NrrwRgn",
-    cmd = {
-      "NR",
-      "NRP",
-      "NRM",
-      "NW",
-      "NRV",
-      "NUD",
-      "NRN",
-      "NRS",
-      "NRMulti",
-    },
+    "danymat/neogen",
+    opts = {},
+    cmd = "Neogen",
   },
 
   {

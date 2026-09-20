@@ -31,22 +31,13 @@ return {
       maps = {
         split = "<C-x>",
       },
-      icons = {
-        syntax = {
-          var = "",
-          method = "",
-          ["function"] = "",
-          ["arrow_function"] = "",
-          parameter = "",
-          associated = "",
-          namespace = "",
-          type = "",
-          field = "",
-          interface = "",
-          module = "",
-          flag = "",
-        },
-      },
+    },
+  },
+
+  {
+    "nvim-tree/nvim-web-devicons",
+    opts = {
+      color_icons = false,
     },
   },
 

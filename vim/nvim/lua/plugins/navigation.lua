@@ -42,7 +42,6 @@ return {
           },
           initial_mode = "insert",
           sorting_strategy = "ascending",
-          disable_devicons = true,
           dynamic_preview_title = true,
           set_env = {
             LESS = "",
@@ -110,6 +109,7 @@ return {
               "Bqf[^/]*$",
               "quickfix[^/]*$",
               "^jumppack://",
+              "^health://",
               "^trouble",
               "NvimTree_%d+$",
               "^oil",
@@ -121,7 +121,6 @@ return {
               "fugitiveblame$",
               "^flog",
               "CodeCompanion[^/]*$",
-              "NrrwRgn[^/]*$",
               "Plugins$",
               "COMMIT_",
               "%-todo$",
@@ -160,9 +159,6 @@ return {
                 }),
               },
             },
-          },
-          hierarchy = {
-            disable_devicons = true,
           },
           aerial = {
             show_columns = "symbols",
@@ -280,7 +276,7 @@ return {
       vim.keymap.set("n", "gD", "<cmd>Telescope lsp_implementations<cr>", { desc = "Find LSP implementations", })
       vim.keymap.set("n", "gy", "<cmd>Telescope lsp_type_definitions<cr>", { desc = "Find LSP type definitions", })
       vim.keymap.set("n", "ge", "<cmd>Telescope lsp_references<cr>", { desc = "Find LSP references", })
-      vim.keymap.set("n", "gE", "<cmd>Telescope hierarchy disable_devicons=true<cr>", { desc = "Find LSP hierarchy", })
+      vim.keymap.set("n", "gE", "<cmd>Telescope hierarchy<cr>", { desc = "Find LSP hierarchy", })
       vim.keymap.set("n", "gs", function()
         require("telescope-live-grep-args.shortcuts").grep_word_under_cursor()
       end, { desc = "Grep word under cursor", })
@@ -311,46 +307,6 @@ return {
       vim.keymap.set("n", "<leader>gb", M.git_branches, { desc = "Find git branches", })
       vim.keymap.set("n", "<leader>i", "<cmd>Import<cr>", { desc = "Import symbol", })
       vim.keymap.set("n", "<leader>m", "<cmd>Telescope marks<cr>", { desc = "Find marks", })
-      local find_workspaces = function()
-        require("telescope").extensions.workspaces.workspaces({
-          layout_config = {
-            width = 0.7,
-            height = 0.5,
-          },
-        })
-      end
-      vim.keymap.set("n", "<leader>Mm", find_workspaces, { desc = "Find workspaces", })
-      vim.keymap.set("n", "<leader>MM", find_workspaces, { desc = "Find workspaces", })
-      vim.keymap.set("n", "<leader>Mw", "<cmd>WorkspacesAdd<cr>", { desc = "Add workspace", })
-      vim.keymap.set("n", "<leader>MW", "<cmd>WorkspacesAdd<cr>", { desc = "Add workspace", })
-      local delete_workspace = function()
-        require("telescope.pickers").new({}, {
-          prompt_title = "Delete workspace",
-          finder = require("telescope.finders").new_table({
-            results = require("workspaces").get(),
-            entry_maker = function(workspace)
-              return {
-                value = workspace,
-                display = workspace.name .. "  " .. workspace.path,
-                ordinal = workspace.name .. " " .. workspace.path,
-              }
-            end,
-          }),
-          sorter = require("telescope.config").values.generic_sorter({}),
-          attach_mappings = function(prompt_bufnr)
-            actions.select_default:replace(function()
-              local workspace = require("telescope.actions.state").get_selected_entry()
-              actions.close(prompt_bufnr)
-              if workspace then
-                require("workspaces").remove(workspace.value.name)
-              end
-            end)
-            return true
-          end,
-        }):find()
-      end
-      vim.keymap.set("n", "<leader>Md", delete_workspace, { desc = "Pick workspace to delete", })
-      vim.keymap.set("n", "<leader>MD", delete_workspace, { desc = "Pick workspace to delete", })
       vim.keymap.set("n", "<leader>'", "<cmd>Telescope marks<cr>", { desc = "Find marks", })
       vim.keymap.set("n", "<leader>`", "<cmd>Telescope marks<cr>", { desc = "Find marks", })
       vim.keymap.set("n", "<leader>\"", "<cmd>Telescope registers<cr>", { desc = "Find registers", })
@@ -427,6 +383,9 @@ return {
       end
 
       require("oil").setup({
+        columns = {
+          { "icon", add_padding = false, },
+        },
         view_options = {
           show_hidden = true,
         },
@@ -524,7 +483,6 @@ return {
   {
     "nvim-tree/nvim-tree.lua",
     dependencies = {
-      "justinmk/vim-sneak",
       "s1n7ax/nvim-window-picker",
       "nvim-telescope/telescope.nvim",
     },
@@ -608,24 +566,14 @@ return {
 
       require("nvim-tree").setup({
         renderer = {
-          icons = {
-            bookmarks_placement = "before",
-            show = {
-              file = false,
-              folder = false,
-              folder_arrow = false,
-              git = false,
-              modified = false,
-              hidden = false,
-              diagnostics = false,
-              bookmarks = true,
-            },
-            glyphs = {
-              bookmark = "M",
-            },
-          },
+          root_folder_label = false,
           indent_markers = {
             enable = true,
+          },
+          icons = {
+            show = {
+              folder_arrow = false,
+            },
           },
         },
         view = {
@@ -696,8 +644,6 @@ return {
           vim.keymap.set("n", "`", M.cd_to_tree_root, opts("CD To Tree Root"))
           vim.keymap.set("n", "_", M.open_tree_cwd, opts("Open CWD"))
           vim.keymap.set("n", "go", M.change_root_down, opts("Down To File"))
-          vim.keymap.set("n", "s", "<Plug>Sneak_s", opts("Sneak"))
-          vim.keymap.set("n", "S", "<Plug>Sneak_S", opts("Sneak"))
           vim.keymap.set("n", "gs", api.node.run.system, opts("Run System"))
         end,
       })
@@ -705,6 +651,10 @@ return {
       vim.api.nvim_set_hl(0, "NvimTreeNormalNC", { link = "NormalNC" })
       vim.api.nvim_set_hl(0, "NvimTreeWinSeparator", { link = "WinSeparator" })
       vim.api.nvim_set_hl(0, "NvimTreeIndentMarker", { link = "IblIndent" })
+      vim.api.nvim_set_hl(0, "NvimTreeSpecialFile", { link = "NvimTreeFileName" })
+      vim.api.nvim_set_hl(0, "NvimTreeExecFile", { link = "NvimTreeFileName" })
+      vim.api.nvim_set_hl(0, "NvimTreeImageFile", { link = "NvimTreeFileName" })
+      vim.api.nvim_set_hl(0, "NvimTreeSymlink", { link = "NvimTreeFileName" })
     end,
     cmd = {
       "NvimTreeToggle",
@@ -739,6 +689,82 @@ return {
         desc = "Focus current file in tree",
       },
     },
+  },
+
+  {
+    "stevearc/aerial.nvim",
+    version = "*",
+    dependencies = {
+      "nvim-treesitter/nvim-treesitter",
+    },
+    config = function()
+      local sidebar_width = 35
+
+      require("aerial").setup({
+        layout = {
+          placement = "edge",
+          default_direction = "left",
+          min_width = sidebar_width,
+          width = sidebar_width,
+        },
+        attach_mode = "global",
+        close_on_select = false,
+        autojump = true,
+        show_guides = true,
+        disable_max_lines = 99999,
+        disable_max_size = 1000 * 1024,
+      })
+
+      local aerial_render = require("aerial.render")
+      local update_aerial_buffer = aerial_render.update_aerial_buffer
+      local function remove_aerial_icon_gaps(bufnr)
+        local _, aerial_bufnr = require("aerial.util").get_buffers(bufnr)
+        if not aerial_bufnr then
+          return
+        end
+        local namespace = vim.api.nvim_create_namespace("aerial")
+        local extmarks = vim.api.nvim_buf_get_extmarks(aerial_bufnr, namespace, 0, -1, { details = true, })
+        vim.bo[aerial_bufnr].modifiable = true
+        for _, extmark in ipairs(extmarks) do
+          local row = extmark[2]
+          local details = extmark[4]
+          if details.hl_group and details.hl_group:match("^Aerial.*Icon$") then
+            local line = vim.api.nvim_buf_get_lines(aerial_bufnr, row, row + 1, false)[1]
+            local col = details.end_col
+            if line:sub(col + 1, col + 1) == " " then
+              vim.api.nvim_buf_set_text(aerial_bufnr, row, col, row, col + 1, { "", })
+            end
+          end
+        end
+        vim.bo[aerial_bufnr].modifiable = false
+      end
+      aerial_render.update_aerial_buffer = function(bufnr)
+        update_aerial_buffer(bufnr)
+        remove_aerial_icon_gaps(bufnr)
+      end
+      vim.api.nvim_create_autocmd("FileType", {
+        pattern = "aerial",
+        callback = function(args)
+          vim.defer_fn(function()
+            remove_aerial_icon_gaps(args.buf)
+          end, 10)
+        end,
+      })
+      vim.api.nvim_create_autocmd("VimResized", {
+        callback = function()
+          for _, winid in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
+            local filetype = vim.bo[vim.api.nvim_win_get_buf(winid)].filetype
+            if filetype == "aerial" or filetype == "NvimTree" then
+              vim.api.nvim_win_set_width(winid, sidebar_width)
+            end
+          end
+        end,
+      })
+      vim.api.nvim_set_hl(0, "AerialLine", { link = "CursorLine" })
+      vim.api.nvim_set_hl(0, "AerialGuide", { link = "IblIndent" })
+
+      vim.keymap.set("n", "<leader>o", "<cmd>AerialToggle!<cr>", { desc = "Toggle symbol outline", })
+    end,
   },
 
   {
@@ -880,56 +906,12 @@ return {
   },
 
   {
-    "stevearc/aerial.nvim",
-    version = "*",
-    dependencies = {
-      "nvim-treesitter/nvim-treesitter",
-    },
-    config = function()
-      local sidebar_width = 35
-
-      require("aerial").setup({
-        layout = {
-          placement = "edge",
-          default_direction = "left",
-          min_width = sidebar_width,
-          width = sidebar_width,
-        },
-        attach_mode = "global",
-        nerd_font = false,
-        use_icon_provider = false,
-        close_on_select = false,
-        autojump = true,
-        show_guides = true,
-        disable_max_lines = 99999,
-        disable_max_size = 1000 * 1024,
-      })
-      vim.api.nvim_create_autocmd("VimResized", {
-        callback = function()
-          for _, winid in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
-            local filetype = vim.bo[vim.api.nvim_win_get_buf(winid)].filetype
-            if filetype == "aerial" or filetype == "NvimTree" then
-              vim.api.nvim_win_set_width(winid, sidebar_width)
-            end
-          end
-        end,
-      })
-      vim.api.nvim_set_hl(0, "AerialLine", { link = "CursorLine" })
-      vim.api.nvim_set_hl(0, "AerialGuide", { link = "IblIndent" })
-      vim.keymap.set("n", "<leader>o", "<cmd>AerialToggle!<cr>", { desc = "Toggle symbol outline", })
-    end,
-  },
-
-  {
     "MagicDuck/grug-far.nvim",
     opts = {
       instanceName = "grug-far",
       normalModeSearch = true,
       startInInsertMode = false,
       transient = true,
-      icons = {
-        enabled = false,
-      },
       history = {
         maxHistoryLines = 1000,
       },

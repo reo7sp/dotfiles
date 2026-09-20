@@ -16,6 +16,13 @@ import sys
 
 path = Path(sys.argv[1])
 source = path.read_text()
+old_header = 'xterm-kitty|KovIdTTY,'
+if source.count(old_header) == 1:
+    source = source.replace(
+        old_header,
+        'xterm-kitty|KovId Kitty terminal emulator,',
+    )
+
 old = r'cnorm=\E[?12h\E[?25h'
 if source.count(old) != 1:
     raise SystemExit('Unexpected xterm-kitty cnorm capability')

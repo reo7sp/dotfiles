@@ -91,6 +91,8 @@ vim.keymap.set("n", "d.", [[/\V\C<C-r>"<CR>dgn]], { desc = "Delete register text
 -- https://www.reddit.com/r/vim/comments/rctvgk/a_lesser_known_built_in_feature_you_use_regularly/
 vim.keymap.set("n", "gV", "`[v`]", { desc = "Select last changed text", })
 
+vim.keymap.set("x", "g/", [[<Esc>/\%V]], { silent = false, desc = "Search inside visual selection", })
+
 -- https://vim.fandom.com/wiki/Comfortable_handling_of_registers
 vim.keymap.set("n", "[+", function() vim.fn.setreg("\"", vim.fn.getreg("+")) end, { desc = "Copy clipboard to register", })
 vim.keymap.set("n", "]+", function() vim.fn.setreg("+", vim.fn.getreg("\"")) end, { desc = "Copy register to clipboard", })
@@ -149,6 +151,17 @@ vim.keymap.set("i", "<A-left>", "<C-left>", { desc = "Move one word left", })
 vim.keymap.set("i", "<A-right>", "<C-right>", { desc = "Move one word right", })
 vim.keymap.set("c", "<A-left>", "<C-left>", { desc = "Move one word left", })
 vim.keymap.set("c", "<A-right>", "<C-right>", { desc = "Move one word right", })
+
+vim.keymap.set("i", "<M-h>", "<Left>", { desc = "Move cursor left", })
+vim.keymap.set("i", "<M-j>", "<Down>", { desc = "Move cursor down", })
+vim.keymap.set("i", "<M-k>", "<Up>", { desc = "Move cursor up", })
+vim.keymap.set("i", "<M-l>", "<Right>", { desc = "Move cursor right", })
+vim.keymap.set("c", "<M-h>", "<Left>", { desc = "Move cursor left", })
+vim.keymap.set("c", "<M-l>", "<Right>", { desc = "Move cursor right", })
+vim.keymap.set("t", "<M-h>", "<Left>", { desc = "Move cursor left", })
+vim.keymap.set("t", "<M-j>", "<Down>", { desc = "Move cursor down", })
+vim.keymap.set("t", "<M-k>", "<Up>", { desc = "Move cursor up", })
+vim.keymap.set("t", "<M-l>", "<Right>", { desc = "Move cursor right", })
 
 vim.cmd([=[
 cnoreabbrev E e

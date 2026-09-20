@@ -19,7 +19,7 @@ return {
           ufo = true,
           window_picker = true,
           overseer = true,
-          pounce = true,
+          flash = true,
           render_markdown = true,
           telescope = {
             enabled = true,
@@ -54,7 +54,6 @@ return {
               }
             end,
           },
-          vim_sneak = true,
           which_key = true,
           native_lsp = {
             enabled = true,
@@ -78,6 +77,17 @@ return {
       vim.cmd([[colorscheme catppuccin-latte]])
       vim.api.nvim_set_hl(0, "CursorLine", {
         bg = require("catppuccin.palettes").get_palette().mantle,
+      })
+      vim.api.nvim_set_hl(0, "BlinkCmpMenu", {
+        bg = require("catppuccin.palettes").get_palette().crust,
+        fg = require("catppuccin.palettes").get_palette().overlay2,
+      })
+      vim.api.nvim_set_hl(0, "BlinkCmpMenuBorder", {
+        bg = require("catppuccin.palettes").get_palette().crust,
+        fg = require("catppuccin.palettes").get_palette().blue,
+      })
+      vim.api.nvim_set_hl(0, "VirtColumn", {
+        fg = require("catppuccin.palettes").get_palette().crust,
       })
     end,
     lazy = false,
@@ -104,7 +114,19 @@ return {
           "fugitive",
           "lazy",
           "mason",
-          "nvim-tree",
+          {
+            sections = {
+              lualine_a = {
+                function()
+                  local root = require("nvim-tree.core").get_cwd()
+                  return root and vim.fn.fnamemodify(root, ":~") or ""
+                end,
+              },
+            },
+            filetypes = {
+              "NvimTree",
+            },
+          },
           "oil",
           "overseer",
           "quickfix",
@@ -286,10 +308,8 @@ return {
             button = "",
           },
           pinned = {
+            button = " ",
             filename = true,
-            separator = {
-              right = " ★ ",
-            },
           },
           separator_at_end = false,
         },
@@ -336,104 +356,10 @@ return {
   },
 
   {
-    "leath-dub/snipe.nvim",
-    dependencies = {
-      "romgrk/barbar.nvim",
-    },
-    opts = {
-      ui = {
-        preselect_current = true,
-        buffer_format = {
-          "icon",
-          function(buf)
-            local path = vim.api.nvim_buf_get_name(buf.id)
-            if path == "" then
-              path = buf.name
-            end
-            return vim.fn.fnamemodify(path, ":~")
-          end,
-        },
-        open_win_override = {
-          border = "rounded",
-        },
-      },
-      hints = {
-        dictionary = "fjdksla;cmrueiwoqp",
-      },
-      navigate = {
-        leader = " ",
-      },
-      sort = function(buffers)
-        local index_of = require("barbar.utils.list").index_of
-        local state = require("barbar.state")
-        local barbar_buffers = state.buffers or {}
-        table.sort(buffers, function(a, b)
-          local ai = index_of(barbar_buffers, a.id) or math.huge
-          local bi = index_of(barbar_buffers, b.id) or math.huge
-          if ai == bi then
-            return a.id < b.id
-          end
-          return ai < bi
-        end)
-        return buffers
-      end,
-    },
-    keys = {
-      {
-        "<C-Tab>",
-        function()
-          require("snipe").open_buffer_menu()
-        end,
-        desc = "Open buffer menu",
-      },
-    },
-  },
-
-  {
     "kwkarlwang/bufjump.nvim",
     opts = {
       forward_key = "<M-i>",
       backward_key = "<M-o>",
-    },
-  },
-
-  {
-    "chrisgrieser/nvim-early-retirement",
-    dependencies = {
-      "romgrk/barbar.nvim",
-    },
-    init = function()
-      vim.api.nvim_create_autocmd("FocusGained", {
-        callback = function()
-          local diffview_buffers = {}
-          for _, bufnr in ipairs(vim.api.nvim_list_bufs()) do
-            if vim.api.nvim_buf_is_loaded(bufnr)
-                and vim.bo[bufnr].buftype == ""
-                and vim.api.nvim_buf_get_name(bufnr):match("^diffview://") then
-              vim.bo[bufnr].buftype = "nowrite"
-              diffview_buffers[#diffview_buffers + 1] = bufnr
-            end
-          end
-
-          vim.schedule(function()
-            for _, bufnr in ipairs(diffview_buffers) do
-              if vim.api.nvim_buf_is_valid(bufnr) then
-                vim.bo[bufnr].buftype = ""
-              end
-            end
-          end)
-        end,
-      })
-    end,
-    opts = {
-      ignoreUnsavedChangesBufs = false,
-      deleteBufferWhenFileDeleted = true,
-      deleteFunction = function(bufnr)
-        if not require("barbar.state").is_pinned(bufnr) then
-          vim.api.nvim_buf_delete(bufnr, {})
-        end
-      end,
-      notificationOnAutoClose = true,
     },
   },
 
@@ -555,13 +481,6 @@ return {
           treesitter = true,
           lsp = false,
         },
-        type_icons = {
-          E = "E",
-          W = "W",
-          I = "I",
-          N = "N",
-          H = "H",
-        },
       })
       vim.keymap.set("n", "<leader>q", function()
         require("quicker").toggle({
@@ -585,42 +504,6 @@ return {
         keys = {
           ["<c-x>"] = "jump_split",
           ["<c-s>"] = false,
-        },
-        icons = {
-          indent = {
-            fold_open     = "  ",
-            fold_closed   = "  ",
-          },
-          folder_closed   = "",
-          folder_open     = "",
-          kinds = {
-            Array         = "",
-            Boolean       = "",
-            Class         = "",
-            Constant      = "",
-            Constructor   = "",
-            Enum          = "",
-            EnumMember    = "",
-            Event         = "",
-            Field         = "",
-            File          = "",
-            Function      = "",
-            Interface     = "",
-            Key           = "",
-            Method        = "",
-            Module        = "",
-            Namespace     = "",
-            Null          = "",
-            Number        = "",
-            Object        = "",
-            Operator      = "",
-            Package       = "",
-            Property      = "",
-            String        = "",
-            Struct        = "",
-            TypeParameter = "",
-            Variable      = "",
-          },
         },
       })
 
@@ -688,59 +571,92 @@ return {
   },
 
   {
-    "folke/todo-comments.nvim",
-    dependencies = {
-      "nvim-lua/plenary.nvim",
-    },
+    "RRethy/vim-illuminate",
+    config = function()
+      require("illuminate").configure({
+        disable_keymaps = true,
+        filetypes_denylist = {
+          "minipick",
+          "TelescopePrompt",
+          "trouble",
+          "NvimTree",
+          "oil",
+          "aerial",
+          "undotree",
+          "fugitiveblame",
+        },
+      })
+      vim.keymap.set("n", "[[", function()
+        require("illuminate").goto_prev_reference()
+      end, { desc = "Prev Reference", })
+      vim.keymap.set("n", "]]", function()
+        require("illuminate").goto_next_reference()
+      end, { desc = "Next Reference", })
+    end,
+  },
+
+  {
+    "lukas-reineke/indent-blankline.nvim",
+    main = "ibl",
     opts = {
-      signs = false,
-      keywords = {
-        FIX = {
-          icon = "",
-        },
-        TODO = {
-          icon = "",
-        },
-        HACK = {
-          icon = "",
-        },
-        WARN = {
-          icon = "",
-        },
-        PERF = {
-          icon = "",
-        },
-        NOTE = {
-          icon = "",
-        },
-        TEST = {
-          icon = "",
-        },
+      indent = {
+        char = "▏",
       },
-      highlight = {
-        comments_only = true,
-        after = "empty",
+      scope = {
+        enabled = false,
       },
     },
+  },
+
+  {
+    "lukas-reineke/virt-column.nvim",
+    opts = {
+      char = "╎",
+      highlight = "VirtColumn",
+    },
+  },
+
+  {
+    "sitiom/nvim-numbertoggle",
+  },
+
+  {
+    "j-hui/fidget.nvim",
+    config = function()
+      require("fidget").setup({
+        notification = {
+          view = {
+            stack_upwards = false,
+          },
+        },
+      })
+      vim.notify = require("fidget").notify
+    end,
+  },
+
+  {
+    "rachartier/tiny-inline-diagnostic.nvim",
+    config = function()
+      require("tiny-inline-diagnostic").setup({})
+      vim.diagnostic.config({
+        virtual_text = false,
+      })
+      vim.api.nvim_set_hl(0, "TinyInlineDiagnosticVirtualTextArrow", { link = "CursorLine" })
+    end,
+  },
+
+  {
+    "rachartier/tiny-code-action.nvim",
+    opts = {},
+    event = "LspAttach",
     keys = {
       {
-        "]n",
+        "g:",
         function()
-          require("todo-comments").jump_next()
+          require("tiny-code-action").code_action()
         end,
-        desc = "Next todo comment",
-      },
-      {
-        "[n",
-        function()
-          require("todo-comments").jump_prev()
-        end,
-        desc = "Previous todo comment",
-      },
-      {
-        "<leader>n",
-        "<cmd>TodoTelescope<CR>",
-        desc = "Find todo comments",
+        mode = { "n", "v" },
+        desc = "Open LSP code action menu",
       },
     },
   },
@@ -821,162 +737,57 @@ return {
           "qf",
         },
       })
+      vim.api.nvim_set_hl(0, "SatelliteBar", {
+        bg = require("catppuccin.palettes").get_palette().surface2,
+      })
       vim.api.nvim_set_hl(0, "SatelliteSearch", { link = "SatelliteMark" })
       vim.api.nvim_set_hl(0, "SatelliteSearchCurrent", { link = "SatelliteMark" })
     end,
   },
 
   {
-    "RRethy/vim-illuminate",
-    config = function()
-      require("illuminate").configure({
-        disable_keymaps = true,
-        filetypes_denylist = {
-          "minipick",
-          "TelescopePrompt",
-          "trouble",
-          "NvimTree",
-          "oil",
-          "aerial",
-          "undotree",
-          "fugitiveblame",
-        },
-      })
-    end,
-  },
-
-  {
-    "lukas-reineke/indent-blankline.nvim",
-    main = "ibl",
+    "folke/todo-comments.nvim",
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+    },
     opts = {
-      indent = {
-        char = "▏",
+      signs = false,
+      merge_keywords = false,
+      keywords = {
+        FIX = { icon = " ", color = "error", alt = { "FIXME", "BUG", "FIXIT", "ISSUE", }, },
+        TODO = { icon = " ", color = "info", },
+        HACK = { icon = " ", color = "warning", },
+        WARN = { icon = " ", color = "warning", alt = { "WARNING", "XXX", }, },
+        PERF = { icon = " ", alt = { "OPTIM", "PERFORMANCE", "OPTIMIZE", }, },
+        NOTE = { icon = " ", color = "hint", alt = { "INFO", }, },
       },
-      scope = {
-        enabled = false,
+      highlight = {
+        comments_only = true,
+        after = "empty",
       },
     },
-  },
-
-  {
-    "lukas-reineke/virt-column.nvim",
-    opts = {
-      char = "╎",
-      highlight = "IblIndent",
-    },
-  },
-
-  {
-    "sitiom/nvim-numbertoggle",
-  },
-
-  {
-    "mawkler/hml.nvim",
-    opts = {},
-  },
-
-  {
-    "rachartier/tiny-inline-diagnostic.nvim",
-    config = function()
-      require("tiny-inline-diagnostic").setup({})
-      vim.diagnostic.config({
-        virtual_text = false,
-      })
-      vim.api.nvim_set_hl(0, "TinyInlineDiagnosticVirtualTextArrow", { link = "CursorLine" })
-    end,
-  },
-
-  {
-    "rachartier/tiny-code-action.nvim",
-    opts = {
-      signs = {
-        quickfix = {
-          "",
-          {
-            link = "DiagnosticWarning",
-          },
-        },
-        others = {
-          "",
-          {
-            link = "DiagnosticWarning",
-          },
-        },
-        refactor = {
-          "",
-          {
-            link = "DiagnosticInfo",
-          },
-        },
-        ["refactor.move"] = {
-          "",
-          {
-            link = "DiagnosticInfo",
-          },
-        },
-        ["refactor.extract"] = {
-          "",
-          {
-            link = "DiagnosticError",
-          },
-        },
-        ["source.organizeImports"] = {
-          "",
-          {
-            link = "DiagnosticWarning",
-          },
-        },
-        ["source.fixAll"] = {
-          "",
-          {
-            link = "DiagnosticError",
-          },
-        },
-        ["source"] = {
-          "",
-          {
-            link = "DiagnosticError",
-          },
-        },
-        ["rename"] = {
-          "",
-          {
-            link = "DiagnosticWarning",
-          },
-        },
-        ["codeAction"] = {
-          "",
-          {
-            link = "DiagnosticWarning",
-          },
-        },
-      },
-    },
-    event = "LspAttach",
+    event = { "BufReadPost", "BufNewFile", },
     keys = {
       {
-        "g:",
+        "]n",
         function()
-          require("tiny-code-action").code_action()
+          require("todo-comments").jump_next()
         end,
-        mode = { "n", "v" },
-        desc = "Open LSP code action menu",
+        desc = "Next todo comment",
+      },
+      {
+        "[n",
+        function()
+          require("todo-comments").jump_prev()
+        end,
+        desc = "Previous todo comment",
+      },
+      {
+        "<leader>n",
+        "<cmd>TodoTelescope<CR>",
+        desc = "Find todo comments",
       },
     },
-  },
-
-  {
-    "j-hui/fidget.nvim",
-    config = function()
-      require("fidget").setup({
-        notification = {
-          view = {
-            stack_upwards = false,
-          },
-        },
-      })
-      vim.notify = require("fidget").notify
-    end,
   },
 
   {
@@ -984,45 +795,15 @@ return {
     config = function()
       require("which-key").setup({
         preset = "helix",
+        icons = {
+          mappings = false,
+        },
         delay = function(ctx)
           return ctx.plugin and 0 or 500
         end,
         win = {
           no_overlap = false,
           width = 80,
-        },
-        icons = {
-          mappings = false,
-          keys = {
-            Up = "<Up>",
-            Down = "<Down>",
-            Left = "<Left>",
-            Right = "<Right>",
-            C = "<C>",
-            M = "<M>",
-            D = "<D>",
-            S = "<S>",
-            CR = "<CR>",
-            Esc = "<Esc>",
-            ScrollWheelDown = "<ScrollWheelDown>",
-            ScrollWheelUp = "<ScrollWheelUp>",
-            NL = "<NL>",
-            BS = "<BS>",
-            Space = "<Space>",
-            Tab = "<Tab>",
-            F1 = "<F1>",
-            F2 = "<F2>",
-            F3 = "<F3>",
-            F4 = "<F4>",
-            F5 = "<F5>",
-            F6 = "<F6>",
-            F7 = "<F7>",
-            F8 = "<F8>",
-            F9 = "<F9>",
-            F10 = "<F10>",
-            F11 = "<F11>",
-            F12 = "<F12>",
-          },
         },
       })
       vim.keymap.set("n", "<leader>?", function()
