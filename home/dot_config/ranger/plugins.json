@@ -1,0 +1,10 @@
+[
+  {
+    "name": "zoxide",
+    "url": "https://github.com/jchook/ranger-zoxide.git"
+  },
+  {
+    "name": "ranger_fzf_filter",
+    "url": "https://github.com/MuXiu1997/ranger-fzf-filter.git"
+  }
+]

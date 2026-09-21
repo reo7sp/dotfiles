@@ -1,0 +1,9 @@
+#!/bin/bash
+set -e -o pipefail
+
+{{ if eq .chezmoi.os "darwin" -}}
+lazygit_dir="$HOME/Library/Application Support/lazygit"
+mkdir -p "$lazygit_dir"
+ln -sfn "$HOME/.config/lazygit/config.yml" "$lazygit_dir/config.yml"
+ln -sfn "$HOME/.config/lazygit/shell.sh" "$lazygit_dir/shell.sh"
+{{ end -}}

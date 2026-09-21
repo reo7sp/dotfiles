@@ -1,0 +1,12 @@
+#!/bin/bash
+set -e -o pipefail
+
+# lazy-lock: {{ include "dot_config/nvim/lazy-lock.json" | sha256sum }}
+
+if [ "${NVIM_SKIP_INSTALL_PLUGINS:-0}" = 1 ]; then
+  exit 0
+fi
+
+if command -v nvim >/dev/null 2>&1; then
+  NVIM_SKIP_CUSTOM_PLUGINS=1 nvim --headless "+Lazy! restore" +qa
+fi

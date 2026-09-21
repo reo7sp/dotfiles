@@ -2,12 +2,11 @@
 
 My config files:
 
-- zsh: [zsh/my.zshrc](./zsh/my.zshrc), [zsh/zsh_plugins.txt](./zsh/zsh_plugins.txt).
-- vim: [vim/nvim/init.lua](./vim/nvim/init.lua), [vim/neovintageousrc](./vim/neovintageousrc), [vim/ideavimrc](./vim/ideavimrc), [vim/vscodevimrc](./vim/vscodevimrc).
-- ranger: [ranger/rc.conf](./ranger/rc.conf).
-- tmux: [tmux/tmux.conf](./tmux/tmux.conf).
-- kitty: [kitty/kitty.conf](./kitty/kitty.conf).
-- git: [git/install](./git/install).
+- zsh: [config.zsh](./home/dot_config/zsh/config.zsh), [zsh_plugins.txt](./home/dot_zsh_plugins.txt).
+- vim: [init.lua](./home/dot_config/nvim/init.lua), [neovintageousrc](./home/dot_neovintageousrc), [ideavimrc](./home/dot_ideavimrc), [vscodevimrc](./home/dot_vscodevimrc).
+- ranger: [rc.conf](./home/dot_config/ranger/rc.conf).
+- tmux: [tmux.conf](./home/dot_tmux.conf).
+- kitty: [kitty.conf](./home/dot_config/kitty/kitty.conf).
 - sublime text: [sublime-dotfiles repo](https://github.com/reo7sp/sublime-dotfiles?tab=readme-ov-file#sublime-dotfiles).
 
 <br>
@@ -20,32 +19,67 @@ How vim looks:
 
 ![vim screenshot](https://i.imgur.com/gkvmdvC.png)
 
+
 ## How to install
 
-```sh
-git clone --depth 1 https://github.com/reo7sp/dotfiles
-cd dotfiles
-./install zsh vim ranger tmux rg fd hunk htop
-```
+### Step 1: Download
 
-## How to install quick
+macOS:
 
 ```sh
-git clone --depth 1 https://github.com/reo7sp/dotfiles
-cd dotfiles
-./install -q zsh vim ranger tmux rg fd hunk htop
+brew install chezmoi
+
+chezmoi init reo7sp
 ```
 
-## Help
+Linux:
 
 ```sh
-./install [-q] MODULES    # installs dotfiles
-```
-```sh
-./update [-q] MODULES     # updates dotfiles
-```
-```sh
-./upgrade [-q] MODULES    # upgrades modules' plugins
+sudo apt-get install chezmoi # Debian/Ubuntu
+sudo dnf install chezmoi     # Fedora
+
+chezmoi init reo7sp
 ```
 
-Available modules: `zsh vim ranger tmux rg fd hunk htop kitty git`.
+> If the repository was cloned manually:
+>
+> ```sh
+> git clone https://github.com/reo7sp/dotfiles.git
+> cd dotfiles
+> chezmoi --source . init
+> ```
+
+### Step 2: Apply
+
+```sh
+chezmoi apply
+```
+
+
+## Usage
+
+Import:
+
+```sh
+chezmoi re-add
+```
+
+Install:
+
+```sh
+chezmoi status
+chezmoi apply
+```
+
+Upgrade:
+
+```sh
+upgrade-edit-zsh
+upgrade-edit-vim
+```
+
+List files:
+
+```sh
+chezmoi managed
+```

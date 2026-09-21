@@ -1,0 +1,14 @@
+#!/bin/bash
+set -e -o pipefail
+
+# plugins: {{ include "dot_config/ranger/plugins.json" | sha256sum }}
+
+plugins_dir="$HOME/.config/ranger/plugins"
+mkdir -p "$plugins_dir"
+
+jq -er '.[] | [.name, .url] | @tsv' "$HOME/.config/ranger/plugins.json" |
+  while IFS=$'\t' read -r name url; do
+    if [ ! -d "$plugins_dir/$name/.git" ]; then
+      git clone "$url" "$plugins_dir/$name"
+    fi
+  done

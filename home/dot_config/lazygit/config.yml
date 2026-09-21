@@ -1,0 +1,9 @@
+os:
+  shellFunctionsFile: ~/.config/lazygit/shell.sh
+git:
+  diffRenderers:
+    - colorArg: always
+      command: delta --light --paging=never
+gui:
+  commandLogSize: 3
+  border: single
