@@ -320,11 +320,22 @@ return {
       })
       vim.api.nvim_set_hl(0, "BufferCurrentMod", { link = "BufferCurrent" })
       vim.api.nvim_set_hl(0, "BufferInactiveMod", { link = "BufferInactive" })
+      vim.api.nvim_create_user_command("BufferCloseAllButVisibleOrPinned", function()
+        local bdelete = require("barbar.bbye").bdelete
+        local state = require("barbar.state")
+
+        for _, bufnr in ipairs(state.buffers) do
+          if not state.is_pinned(bufnr) and vim.fn.bufwinnr(bufnr) == -1 then
+            bdelete(false, bufnr)
+          end
+        end
+        require("barbar.ui.render").update()
+      end, { desc = "Close every buffer except visible or pinned buffers" })
       vim.cmd([=[
         cnoreabbrev bq BufferClose
         cnoreabbrev bd BufferClose
         cnoreabbrev bo BufferCloseAllButCurrentOrPinned
-        cnoreabbrev bon BufferCloseAllButCurrentOrPinned
+        cnoreabbrev bon BufferCloseAllButVisibleOrPinned
         cnoreabbrev bonly BufferCloseAllButCurrentOrPinned
         cnoreabbrev bql BufferCloseBuffersLeft
         cnoreabbrev bdl BufferCloseBuffersLeft

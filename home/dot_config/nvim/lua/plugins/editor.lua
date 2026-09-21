@@ -559,20 +559,8 @@ return {
 
   {
     "nmac427/guess-indent.nvim",
+    lazy = false,
     opts = {},
-    event = "BufReadPre",
-    init = function()
-      vim.api.nvim_create_autocmd("VimEnter", {
-        once = true,
-        callback = function()
-          vim.defer_fn(function()
-            vim.cmd("GuessIndent auto_cmd silent")
-            vim.cmd.redrawstatus()
-          end, 50)
-        end,
-      })
-    end,
-    cmd = "GuessIndent",
   },
 
   {

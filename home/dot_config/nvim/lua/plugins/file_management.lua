@@ -1,7 +1,7 @@
 return {
 
   {
-    "bogado/file-line",
+    "lewis6991/fileline.nvim",
   },
 
   {
