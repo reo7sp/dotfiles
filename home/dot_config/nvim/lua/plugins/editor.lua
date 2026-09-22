@@ -13,6 +13,18 @@ return {
       }
       vim.lsp.config("*", lsp_global_config)
 
+      local pylsp_plugins = {}
+      for _, name in ipairs({
+        "autopep8", "flake8", "folding", "jedi_completion", "jedi_definition",
+        "jedi_highlight", "jedi_hover", "jedi_references", "jedi_rename",
+        "jedi_signature_help", "jedi_symbols", "jedi_type_definition", "mccabe",
+        "preload", "pycodestyle", "pydocstyle", "pyflakes", "pylint",
+        "rope_autoimport", "rope_completion", "yapf",
+      }) do
+        pylsp_plugins[name] = { enabled = false }
+      end
+      pylsp_plugins.pylsp_rope = { enabled = true, rename = false }
+
       local lsp_configs = {
         clangd = {
           cmd = {
@@ -46,9 +58,32 @@ return {
             },
           },
         },
+        pylsp = {
+          cmd = { vim.fn.stdpath("data") .. "/pylsp-rope/bin/pylsp" },
+          root_dir = function(bufnr, on_dir)
+            local root = vim.fs.root(bufnr, "pyrightconfig.json")
+            if root then on_dir(root) end
+          end,
+          on_init = function(client)
+            for name in pairs(client.server_capabilities) do
+              if name:match("Provider$") and name ~= "codeActionProvider" and name ~= "executeCommandProvider" then
+                client.server_capabilities[name] = false
+              end
+            end
+          end,
+          settings = {
+            pylsp = {
+              plugins = pylsp_plugins,
+            },
+          },
+        },
       }
       for lsp_name, lsp_config in pairs(lsp_configs) do
         vim.lsp.config(lsp_name, lsp_config)
+      end
+
+      if vim.fn.executable(lsp_configs.pylsp.cmd[1]) == 1 then
+        vim.lsp.enable("pylsp")
       end
 
       local default_rename_handler = vim.lsp.handlers["textDocument/rename"]
