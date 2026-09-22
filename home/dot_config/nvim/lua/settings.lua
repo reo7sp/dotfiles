@@ -250,7 +250,8 @@ set expandtab
 set autoindent
 set copyindent
 set smartindent
-set formatoptions+=cro
+set formatoptions+=ro  " r - continue comments on Enter; o - continue comments after o/O
+set formatoptions-=tc  " t - auto-wrap text; c - auto-wrap comments
 set fixendofline
 set nrformats+=unsigned
 
@@ -284,6 +285,12 @@ augroup SHADA
   autocmd FocusLost,VimLeavePre * silent! wshada
 augroup END
 ]=])
+
+vim.api.nvim_create_autocmd("FileType", {
+  callback = function()
+    vim.opt_local.formatoptions:remove({ "t", "c" })
+  end,
+})
 
 -- -----------------------------------------------------------------------------
 -- navigation

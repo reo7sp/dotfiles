@@ -22,14 +22,12 @@ How vim looks:
 
 ## How to install
 
-### Step 1: Download
+### Step 1: Install chezmoi
 
 macOS:
 
 ```sh
 brew install chezmoi
-
-chezmoi init reo7sp
 ```
 
 Linux:
@@ -37,7 +35,11 @@ Linux:
 ```sh
 sudo apt-get install chezmoi # Debian/Ubuntu
 sudo dnf install chezmoi     # Fedora
+```
 
+### Step 2: Install dotfiles
+
+```sh
 chezmoi init reo7sp
 ```
 
@@ -49,7 +51,7 @@ chezmoi init reo7sp
 > chezmoi --source . init
 > ```
 
-### Step 2: Apply
+### Step 3: Apply
 
 ```sh
 chezmoi apply
@@ -58,27 +60,31 @@ chezmoi apply
 
 ## Usage
 
-Import:
+Import dotfiles:
 
 ```sh
+chezmoi cd
 chezmoi re-add
 ```
 
-Install:
+Install dotfiles:
 
 ```sh
+chezmoi cd
+git fetch
+git reset --hard origin/master
 chezmoi status
 chezmoi apply
 ```
 
-Upgrade:
+Upgrade plugins:
 
 ```sh
 upgrade-edit-zsh
 upgrade-edit-vim
 ```
 
-List files:
+List dotfiles:
 
 ```sh
 chezmoi managed

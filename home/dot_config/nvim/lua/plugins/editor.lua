@@ -557,6 +557,7 @@ return {
       default_im_select = "com.apple.keylayout.ABC",
       keep_quiet_on_no_binary = true,
       set_default_events = { "VimEnter", "InsertLeave", "CmdlineLeave" },
+      set_previous_events = {},
     },
     config = function(_, opts)
       require("im_select").setup(opts)
