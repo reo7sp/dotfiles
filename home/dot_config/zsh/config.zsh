@@ -601,14 +601,14 @@ _fzf_git_fzf () {
 alias gg='lazygit'
 
 alias gww='gws'
-alias gwdf='hunk diff'
+gwdd() { gwd "$@" | delta --side-by-side; }
 alias gwdt='gwd --ext-diff'
 alias gwdn='gwd --name-only'
 alias gwdh='gwd HEAD'
-alias gwdfh='hunk diff HEAD'
+gwddh() { gwd HEAD "$@" | delta --side-by-side; }
 alias gwdth='gwdt HEAD'
 alias gwdnh='gwdn HEAD'
-alias gcsf='hunk show'
+gcsd() { gcs "$@" | delta --side-by-side; }
 alias gcst='gcs --ext-diff'
 alias gcsn='gcs --name-only --pretty=""'
 alias gcss='git rev-parse HEAD'
