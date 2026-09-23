@@ -72,6 +72,39 @@ vim.keymap.set("n", "gk", "k", { desc = "Move up by physical line", })
 vim.keymap.set("n", "<down>", "gj", { desc = "Move down by display line", })
 vim.keymap.set("n", "<up>", "gk", { desc = "Move up by display line", })
 
+-- [z ]z
+local function jump_to_closed_fold(direction)
+  local line = vim.api.nvim_win_get_cursor(0)[1]
+  local last_line = vim.api.nvim_buf_line_count(0)
+  local destination
+  if direction > 0 then
+    line = math.max(line, vim.fn.foldclosedend(line))
+  end
+
+  for _ = 1, vim.v.count1 do
+    local target
+    for candidate = line + direction, direction > 0 and last_line or 1, direction do
+      local start = vim.fn.foldclosed(candidate)
+      if start ~= -1 then
+        target = start
+        break
+      end
+    end
+    if not target then
+      break
+    end
+    destination = target
+    line = direction > 0 and vim.fn.foldclosedend(target) or target
+  end
+
+  if destination then
+    vim.api.nvim_win_set_cursor(0, { destination, 0 })
+  end
+end
+
+vim.keymap.set("n", "]z", function() jump_to_closed_fold(1) end, { desc = "Next closed fold", })
+vim.keymap.set("n", "[z", function() jump_to_closed_fold(-1) end, { desc = "Previous closed fold", })
+
 -- https://superuser.com/a/836924/2151180
 vim.keymap.set("n", "}", function()
   local count = vim.v.count1
@@ -286,6 +319,7 @@ augroup SHADA
 augroup END
 ]=])
 
+-- Filetype plugins may re-enable automatic hard wrapping.
 vim.api.nvim_create_autocmd("FileType", {
   callback = function()
     vim.opt_local.formatoptions:remove({ "t", "c" })

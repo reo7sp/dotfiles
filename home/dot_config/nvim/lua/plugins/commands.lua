@@ -282,209 +282,295 @@ return {
     },
   },
 
-  {
-    "dlyongemallo/diffview-plus.nvim",
-    name = "diffview.nvim",
-    version = "*",
-    init = function()
-      vim.api.nvim_create_autocmd({ "BufWritePost", "FocusGained", "ShellCmdPost", "TermClose" }, {
-        group = vim.api.nvim_create_augroup("diffview-auto-refresh", { clear = true }),
-        callback = function(args)
-          if not package.loaded["diffview"] then
+  (function()
+    local diffview_fold_state = {}
+
+    local function save_diffview_folds()
+      if not package.loaded["diffview"] then
+        return
+      end
+
+      local view = require("diffview.lib").get_current_view()
+      if not (view and view.cur_layout) then
+        return
+      end
+
+      local saved = {}
+      for _, win in ipairs(view.cur_layout.windows) do
+        if win.file and win.file.bufnr and vim.api.nvim_win_is_valid(win.id)
+            and vim.wo[win.id].foldmethod == "diff" then
+          saved[win.id] = vim.api.nvim_win_call(win.id, function()
+            local opened = {}
+            local previous_level = 0
+            for line = 1, vim.api.nvim_buf_line_count(win.file.bufnr) do
+              local level = vim.fn.foldlevel(line)
+              if level > previous_level and vim.fn.foldclosed(line) == -1 then
+                opened[#opened + 1] = line
+              end
+              previous_level = level
+            end
+            return {
+              bufnr = win.file.bufnr,
+              foldlevel = vim.wo.foldlevel,
+              opened = opened,
+            }
+          end)
+        end
+      end
+      diffview_fold_state[view.tabpage] = saved
+    end
+
+    local function restore_diffview_folds(view, layout)
+      local saved = diffview_fold_state[view.tabpage]
+      if not saved or view.cur_layout ~= layout then
+        return
+      end
+
+      for _, win in ipairs(layout.windows) do
+        local state = saved[win.id]
+        if state and win.file and state.bufnr == win.file.bufnr and vim.api.nvim_win_is_valid(win.id) then
+          vim.wo[win.id].foldlevel = state.foldlevel
+        end
+      end
+
+      for index = #layout.windows, 1, -1 do
+        local win = layout.windows[index]
+        local state = saved[win.id]
+        if state and win.file and state.bufnr == win.file.bufnr and vim.api.nvim_win_is_valid(win.id) then
+          vim.api.nvim_win_call(win.id, function()
+            for _, line in ipairs(state.opened) do
+              if line <= vim.api.nvim_buf_line_count(state.bufnr) and vim.fn.foldlevel(line) > 0 then
+                pcall(vim.cmd, line .. "foldopen")
+              end
+            end
+          end)
+        end
+      end
+    end
+
+    return {
+      "dlyongemallo/diffview-plus.nvim",
+      name = "diffview.nvim",
+      version = "*",
+      init = function()
+        vim.api.nvim_create_autocmd("TabLeave", {
+          group = vim.api.nvim_create_augroup("diffview-save-folds", { clear = true }),
+          callback = save_diffview_folds,
+        })
+        vim.api.nvim_create_autocmd({ "BufWritePost", "FocusGained", "ShellCmdPost", "TermClose" }, {
+          group = vim.api.nvim_create_augroup("diffview-auto-refresh", { clear = true }),
+          callback = function(args)
+            if not package.loaded["diffview"] then
+              return
+            end
+
+            save_diffview_folds()
+            local current_view = require("diffview.lib").get_current_view()
+            for _, view in ipairs(require("diffview.lib").views) do
+              if args.event ~= "BufWritePost" or view ~= current_view then
+                view.emitter:emit("refresh_files")
+              end
+            end
+          end,
+        })
+      end,
+      dependencies = {
+        "nvim-lua/plenary.nvim",
+      },
+      opts = function()
+        local function copy_hunk(target_type, missing_message)
+          local view = require("diffview.lib").get_current_view()
+          local layout = view and view.cur_layout
+          if not layout then
             return
           end
 
-          local current_view = require("diffview.lib").get_current_view()
-          for _, view in ipairs(require("diffview.lib").views) do
-            if args.event ~= "BufWritePost" or view ~= current_view then
-              view.emitter:emit("refresh_files")
+          local target
+          local source
+          for _, win in ipairs(layout.windows) do
+            if win.file and win.file.rev then
+              if win.file.rev.type == target_type then
+                target = win
+              else
+                source = win
+              end
             end
           end
-        end,
-      })
-    end,
-    dependencies = {
-      "nvim-lua/plenary.nvim",
-    },
-    opts = function()
-      local function copy_hunk(target_type, missing_message)
-        local view = require("diffview.lib").get_current_view()
-        local layout = view and view.cur_layout
-        if not layout then
-          return
-        end
 
-        local target
-        local source
-        for _, win in ipairs(layout.windows) do
-          if win.file and win.file.rev then
-            if win.file.rev.type == target_type then
-              target = win
-            else
-              source = win
-            end
+          if target and not source and layout.name == "diff1_inline" then
+            require("diffview.actions").diffget_inline()
+            vim.api.nvim_win_call(target.id, function()
+              vim.cmd.write()
+            end)
+            return
           end
-        end
 
-        if target and not source and layout.name == "diff1_inline" then
-          require("diffview.actions").diffget_inline()
+          if not (target and source and target.file.bufnr and source.file.bufnr) then
+            vim.notify(missing_message, vim.log.levels.WARN)
+            return
+          end
+
+          local current_buf = vim.api.nvim_get_current_buf()
+          if current_buf == target.file.bufnr then
+            vim.cmd("diffget " .. source.file.bufnr)
+          elseif current_buf == source.file.bufnr then
+            vim.cmd("diffput " .. target.file.bufnr)
+          else
+            return
+          end
+
           vim.api.nvim_win_call(target.id, function()
             vim.cmd.write()
           end)
-          return
         end
 
-        if not (target and source and target.file.bufnr and source.file.bufnr) then
-          vim.notify(missing_message, vim.log.levels.WARN)
-          return
-        end
-
-        local current_buf = vim.api.nvim_get_current_buf()
-        if current_buf == target.file.bufnr then
-          vim.cmd("diffget " .. source.file.bufnr)
-        elseif current_buf == source.file.bufnr then
-          vim.cmd("diffput " .. target.file.bufnr)
-        else
-          return
-        end
-
-        vim.api.nvim_win_call(target.id, function()
-          vim.cmd.write()
-        end)
-      end
-
-      local RevType = require("diffview.vcs.rev").RevType
-      local function gitsigns_hunk(action)
-        local view = require("diffview.lib").get_current_view()
-        local layout = view and view.cur_layout
-        if not layout then
-          return false
-        end
-
-        for _, win in ipairs(layout.windows) do
-          if win.file and win.file.rev and win.file.rev.type == RevType.LOCAL then
-            local line = vim.api.nvim_win_get_cursor(0)[1]
-            vim.api.nvim_win_call(win.id, function()
-              local line_count = vim.api.nvim_buf_line_count(win.file.bufnr)
-              vim.api.nvim_win_set_cursor(win.id, { math.min(line, line_count), 0 })
-              require("gitsigns")[action]()
-            end)
-            return true
-          end
-        end
-
-        return false
-      end
-
-      local function reopen_as_staged_hunk()
-        local view = require("diffview.lib").get_current_view()
-        local current = view and view.cur_entry
-        if not (current and current.path and view.files) then
-          return false
-        end
-
-        for _, entry in ipairs(view.files.working) do
-          if entry.path == current.path then
+        local RevType = require("diffview.vcs.rev").RevType
+        local function gitsigns_hunk(action)
+          local view = require("diffview.lib").get_current_view()
+          local layout = view and view.cur_layout
+          if not layout then
             return false
           end
-        end
 
-        local staged
-        for _, entry in ipairs(view.files.staged) do
-          if entry.path == current.path then
-            staged = entry
-            break
+          for _, win in ipairs(layout.windows) do
+            if win.file and win.file.rev and win.file.rev.type == RevType.LOCAL then
+              local line = vim.api.nvim_win_get_cursor(0)[1]
+              vim.api.nvim_win_call(win.id, function()
+                local line_count = vim.api.nvim_buf_line_count(win.file.bufnr)
+                vim.api.nvim_win_set_cursor(win.id, { math.min(line, line_count), 0 })
+                require("gitsigns")[action]()
+              end)
+              return true
+            end
           end
-        end
-        if not staged then
+
           return false
         end
 
-        local line = vim.api.nvim_win_get_cursor(0)[1]
-        view:set_file(staged, true):finally(function()
-          vim.schedule(function()
-            local main = view.cur_layout and view.cur_layout:get_main_win()
-            if main and main:is_valid() then
-              local line_count = vim.api.nvim_buf_line_count(main.file.bufnr)
-              vim.api.nvim_win_set_cursor(main.id, { math.min(line, line_count), 0 })
-              copy_hunk(RevType.STAGE, "No index hunk to unstage")
-            end
-          end)
-        end)
-        return true
-      end
+        local function reopen_as_staged_hunk()
+          local view = require("diffview.lib").get_current_view()
+          local current = view and view.cur_entry
+          if not (current and current.path and view.files) then
+            return false
+          end
 
-      return {
-        enhanced_diff_hl = true,
-        show_help_hints = false,
-        keymaps = {
-          view = {
-            { "n", "q", "<cmd>DiffviewClose<cr>", { desc = "Close Diffview" } },
-            { "n", "]h", "]c", { desc = "Next hunk" } },
-            { "n", "[h", "[c", { desc = "Previous hunk" } },
-            { "n", "]c", "<Nop>" },
-            { "n", "[c", "<Nop>" },
-            { "n", "]f", require("diffview.actions").select_next_entry, { desc = "Next file" } },
-            { "n", "[f", require("diffview.actions").select_prev_entry, { desc = "Previous file" } },
-            { "n", "t", require("diffview.actions").cycle_layout, { desc = "Toggle layout" } },
-            { "n", "gh", function()
-              if not reopen_as_staged_hunk() and not gitsigns_hunk("stage_hunk") then
+          for _, entry in ipairs(view.files.working) do
+            if entry.path == current.path then
+              return false
+            end
+          end
+
+          local staged
+          for _, entry in ipairs(view.files.staged) do
+            if entry.path == current.path then
+              staged = entry
+              break
+            end
+          end
+          if not staged then
+            return false
+          end
+
+          local line = vim.api.nvim_win_get_cursor(0)[1]
+          view:set_file(staged, true):finally(function()
+            vim.schedule(function()
+              local main = view.cur_layout and view.cur_layout:get_main_win()
+              if main and main:is_valid() then
+                local line_count = vim.api.nvim_buf_line_count(main.file.bufnr)
+                vim.api.nvim_win_set_cursor(main.id, { math.min(line, line_count), 0 })
                 copy_hunk(RevType.STAGE, "No index hunk to unstage")
               end
-            end, { desc = "Stage/unstage git hunk" } },
-            { "n", "gH", function()
-              if not gitsigns_hunk("reset_hunk") then
-                vim.notify("No unstaged hunk to discard", vim.log.levels.WARN)
-              end
-            end, { desc = "Discard git hunk" } },
-          },
-          file_panel = {
-            { "n", "q", "<cmd>DiffviewClose<cr>", { desc = "Close Diffview" } },
-            { "n", "]f", require("diffview.actions").select_next_entry, { desc = "Next file" } },
-            { "n", "[f", require("diffview.actions").select_prev_entry, { desc = "Previous file" } },
-          },
-          file_history_panel = {
-            { "n", "q", "<cmd>DiffviewClose<cr>", { desc = "Close Diffview" } },
-          },
-        },
-        hooks = {
-          view_opened = function(view)
-            local lib = require("diffview.lib")
-            local existing_view
-            for _, candidate in ipairs(lib.views) do
-              if candidate ~= view and candidate.class == view.class then
-                existing_view = candidate
-                break
-              end
-            end
+            end)
+          end)
+          return true
+        end
 
-            if existing_view and vim.api.nvim_tabpage_is_valid(existing_view.tabpage) then
-              view:close()
-              lib.dispose_view(view)
-              vim.api.nvim_set_current_tabpage(existing_view.tabpage)
-              existing_view.emitter:emit("refresh_files")
-            end
-          end,
-          diff_buf_win_enter = function(bufnr)
-            vim.b[bufnr].ignore_early_retirement = true
-            vim.opt_local.cursorlineopt = "number"
-            vim.opt_local.fillchars:append({ diff = " " })
-          end,
-        },
-      }
-    end,
-    cmd = {
-      "DiffviewOpen",
-      "DiffviewFileHistory",
-      "DiffviewDiffFiles",
-      "DiffviewMergeFiles",
-      "DiffviewDiffDirs",
-      "DiffviewClose",
-      "DiffviewToggleFiles",
-      "DiffviewFocusFiles",
-      "DiffviewRefresh",
-    },
-  },
+        return {
+          enhanced_diff_hl = true,
+          show_help_hints = false,
+          keymaps = {
+            view = {
+              { "n", "q", "<cmd>DiffviewClose<cr>", { desc = "Close Diffview" } },
+              { "n", "]h", "]c", { desc = "Next hunk" } },
+              { "n", "[h", "[c", { desc = "Previous hunk" } },
+              { "n", "]c", "<Nop>" },
+              { "n", "[c", "<Nop>" },
+              { "n", "]f", require("diffview.actions").select_next_entry, { desc = "Next file" } },
+              { "n", "[f", require("diffview.actions").select_prev_entry, { desc = "Previous file" } },
+              { "n", "t", require("diffview.actions").cycle_layout, { desc = "Toggle layout" } },
+              { "n", "gh", function()
+                if not reopen_as_staged_hunk() and not gitsigns_hunk("stage_hunk") then
+                  copy_hunk(RevType.STAGE, "No index hunk to unstage")
+                end
+              end, { desc = "Stage/unstage git hunk" } },
+              { "n", "gH", function()
+                if not gitsigns_hunk("reset_hunk") then
+                  vim.notify("No unstaged hunk to discard", vim.log.levels.WARN)
+                end
+              end, { desc = "Discard git hunk" } },
+            },
+            file_panel = {
+              { "n", "q", "<cmd>DiffviewClose<cr>", { desc = "Close Diffview" } },
+              { "n", "]f", require("diffview.actions").select_next_entry, { desc = "Next file" } },
+              { "n", "[f", require("diffview.actions").select_prev_entry, { desc = "Previous file" } },
+            },
+            file_history_panel = {
+              { "n", "q", "<cmd>DiffviewClose<cr>", { desc = "Close Diffview" } },
+            },
+          },
+          hooks = {
+            view_closed = function(view)
+              diffview_fold_state[view.tabpage] = nil
+            end,
+            view_opened = function(view)
+              local lib = require("diffview.lib")
+              local existing_view
+              for _, candidate in ipairs(lib.views) do
+                if candidate ~= view and candidate.class == view.class then
+                  existing_view = candidate
+                  break
+                end
+              end
+
+              if existing_view and vim.api.nvim_tabpage_is_valid(existing_view.tabpage) then
+                view:close()
+                lib.dispose_view(view)
+                vim.api.nvim_set_current_tabpage(existing_view.tabpage)
+                existing_view.emitter:emit("refresh_files")
+              end
+            end,
+            diff_buf_win_enter = function(bufnr, winid)
+              vim.b[bufnr].ignore_early_retirement = true
+              vim.opt_local.cursorlineopt = "number"
+              vim.opt_local.fillchars:append({ diff = " " })
+              local view = require("diffview.lib").get_current_view()
+              local layout = view and view.cur_layout
+              if layout and diffview_fold_state[view.tabpage] and not layout._restore_folds_pending then
+                layout._restore_folds_pending = true
+                view.emitter:once("file_open_post", function()
+                  layout._restore_folds_pending = false
+                  vim.schedule(function()
+                    restore_diffview_folds(view, layout)
+                  end)
+                end)
+              end
+            end,
+          },
+        }
+      end,
+      cmd = {
+        "DiffviewOpen",
+        "DiffviewFileHistory",
+        "DiffviewDiffFiles",
+        "DiffviewMergeFiles",
+        "DiffviewDiffDirs",
+        "DiffviewClose",
+        "DiffviewToggleFiles",
+        "DiffviewFocusFiles",
+        "DiffviewRefresh",
+      },
+    }
+  end)(),
 
   {
     "NeogitOrg/neogit",
