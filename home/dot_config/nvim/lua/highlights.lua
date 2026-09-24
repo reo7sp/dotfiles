@@ -47,7 +47,6 @@ local function apply_highlights()
     MarkSignNumHL = "SignColumn",
     SatelliteSearch = "SatelliteMark",
     SatelliteSearchCurrent = "SatelliteMark",
-    SidekickChat = "Normal",
   }
   for group, target in pairs(links) do
     vim.api.nvim_set_hl(0, group, { link = target })

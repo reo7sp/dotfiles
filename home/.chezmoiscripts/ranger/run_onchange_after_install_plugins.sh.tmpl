@@ -3,6 +3,10 @@ set -e -o pipefail
 
 # plugins: {{ include "dot_config/ranger/plugins.json" | sha256sum }}
 
+if ! command -v ranger >/dev/null 2>&1; then
+  exit 0
+fi
+
 plugins_dir="$HOME/.config/ranger/plugins"
 mkdir -p "$plugins_dir"
 

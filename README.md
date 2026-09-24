@@ -24,17 +24,32 @@ How vim looks:
 
 ### Step 1: Install chezmoi
 
-macOS:
+#### macOS
 
 ```sh
 brew install chezmoi
 ```
 
-Linux:
+#### Linux (Debian/Ubuntu)
 
 ```sh
-sudo apt-get install chezmoi # Debian/Ubuntu
-sudo dnf install chezmoi     # Fedora
+sudo apt update
+sudo apt install chezmoi
+```
+
+#### Linux (CentOS)
+
+```sh
+sudo dnf install chezmoi
+```
+
+#### Linux (any)
+
+```sh
+mkdir -p "$HOME/.local/bin"
+sh -c "$(curl -fsLS https://get.chezmoi.io)" -- -b "$HOME/.local/bin"
+export PATH="$HOME/.local/bin:$PATH"
+chezmoi --version
 ```
 
 ### Step 2: Install dotfiles
@@ -63,18 +78,14 @@ chezmoi apply
 Import dotfiles:
 
 ```sh
-chezmoi cd
 chezmoi re-add
+chezmoi cd
 ```
 
 Install dotfiles:
 
 ```sh
-chezmoi cd
-git fetch
-git reset --hard origin/master
-chezmoi status
-chezmoi apply
+chezmoi update
 ```
 
 Upgrade plugins:

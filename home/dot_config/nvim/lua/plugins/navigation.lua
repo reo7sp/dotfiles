@@ -23,6 +23,12 @@ return {
       "romgrk/barbar.nvim",
     },
     config = function()
+      local function file_path_display(opts, path)
+        local path_opts = vim.tbl_extend("force", {}, opts, { path_display = {}, })
+        local display = require("telescope.utils").transform_path(path_opts, path)
+        return (opts.disable_devicons and "" or " ") .. display
+      end
+
       require("telescope").setup({
         defaults = {
           mappings = {
@@ -51,6 +57,7 @@ return {
         pickers = {
           find_files = {
             hidden = true,
+            path_display = file_path_display,
             mappings = {
               n = {
                 ["<C-i>"] = function () require("telescope.builtin").find_files({ no_ignore = true }) end,
@@ -103,6 +110,7 @@ return {
             stat_files = false,
             only_cwd = true,
             show_current_file = true,
+            path_display = file_path_display,
             ignore_patterns = {
               "^/tmp/",
               "Scratch$",
@@ -363,6 +371,16 @@ return {
     config = function()
       local M = {}
 
+      local oil_columns = require("oil.columns")
+      local icon_column = oil_columns.get_column(nil, "icon")
+      oil_columns.register("icon_gap", {
+        render = function(entry, _, bufnr)
+          local icon = icon_column.render(entry, { add_padding = false, }, bufnr)
+          return { icon[1] .. " ", icon[2], }
+        end,
+        parse = icon_column.parse,
+      })
+
       function M.launch_live_grep(opts)
         return M.launch_telescope("live_grep", opts)
       end
@@ -384,7 +402,7 @@ return {
 
       require("oil").setup({
         columns = {
-          { "icon", add_padding = false, },
+          "icon_gap",
         },
         view_options = {
           show_hidden = true,
@@ -541,6 +559,9 @@ return {
             enable = true,
           },
           icons = {
+            padding = {
+              icon = "  ",
+            },
             show = {
               folder_arrow = false,
             },
@@ -658,6 +679,7 @@ return {
     version = "*",
     dependencies = {
       "nvim-treesitter/nvim-treesitter",
+      "onsails/lspkind.nvim",
     },
     config = function()
       local sidebar_width = 35
@@ -676,45 +698,18 @@ return {
         close_on_select = false,
         autojump = true,
         show_guides = true,
+        icons = vim.tbl_map(function(icon)
+          return icon .. " "
+        end, vim.tbl_extend("force", require("lspkind").presets.default, {
+          Field = "",
+          Method = "󰊕",
+          Property = "",
+        })),
+        use_icon_provider = false,
         disable_max_lines = 99999,
         disable_max_size = 1000 * 1024,
       })
 
-      local aerial_render = require("aerial.render")
-      local update_aerial_buffer = aerial_render.update_aerial_buffer
-      local function remove_aerial_icon_gaps(bufnr)
-        local _, aerial_bufnr = require("aerial.util").get_buffers(bufnr)
-        if not aerial_bufnr then
-          return
-        end
-        local namespace = vim.api.nvim_create_namespace("aerial")
-        local extmarks = vim.api.nvim_buf_get_extmarks(aerial_bufnr, namespace, 0, -1, { details = true, })
-        vim.bo[aerial_bufnr].modifiable = true
-        for _, extmark in ipairs(extmarks) do
-          local row = extmark[2]
-          local details = extmark[4]
-          if details.hl_group and details.hl_group:match("^Aerial.*Icon$") then
-            local line = vim.api.nvim_buf_get_lines(aerial_bufnr, row, row + 1, false)[1]
-            local col = details.end_col
-            if line:sub(col + 1, col + 1) == " " then
-              vim.api.nvim_buf_set_text(aerial_bufnr, row, col, row, col + 1, { "", })
-            end
-          end
-        end
-        vim.bo[aerial_bufnr].modifiable = false
-      end
-      aerial_render.update_aerial_buffer = function(bufnr)
-        update_aerial_buffer(bufnr)
-        remove_aerial_icon_gaps(bufnr)
-      end
-      vim.api.nvim_create_autocmd("FileType", {
-        pattern = "aerial",
-        callback = function(args)
-          vim.defer_fn(function()
-            remove_aerial_icon_gaps(args.buf)
-          end, 10)
-        end,
-      })
       vim.api.nvim_create_autocmd("VimResized", {
         callback = function()
           for _, winid in ipairs(vim.api.nvim_tabpage_list_wins(0)) do

@@ -94,7 +94,9 @@ return {
         end
       end
 
-      vim.keymap.set("n", "K", vim.lsp.buf.hover, { desc = "Show LSP hover", })
+      vim.keymap.set("n", "K", function()
+        vim.lsp.buf.hover({ border = "rounded", })
+      end, { desc = "Show LSP hover", })
       vim.keymap.set("i", "<C-S>", vim.lsp.buf.signature_help, { desc = "Show LSP signature help", })
       vim.keymap.set("n", "gr", vim.lsp.buf.rename, { nowait = true, desc = "Rename symbol", })
       vim.keymap.set("n", "gO", "<nop>")
@@ -159,64 +161,6 @@ return {
   },
 
   {
-    "milanglacier/minuet-ai.nvim",
-    config = function()
-      local preset_configs = {
-        ["local"] = {
-          provider = "openai_fim_compatible",
-          provider_options = {
-            openai_fim_compatible = {
-              name = "local",
-              end_point = "http://localhost:11434/v1/completions",
-              api_key = "TERM",
-              stream = true,
-              model = "qwen2.5-coder:3b",
-              optional = {
-                max_tokens = 64,
-                top_p = 0.9,
-              },
-            },
-          },
-        },
-        remote = {
-          provider = "openai_compatible",
-          provider_options = {
-            openai_compatible = vim.tbl_extend("force", {
-              name = "remote",
-            }, require("configs.custom_minuet_llm")),
-          },
-        },
-      }
-      require("minuet").setup({
-        presets = preset_configs,
-        blink = {
-          enable_auto_complete = false,
-        },
-        n_completions = 1,
-        context_window = 1024,
-        request_timeout = 3,
-      })
-
-      local default_preset = "local"
-      if preset_configs["remote"]
-          and preset_configs["remote"]["provider_options"]
-          and preset_configs["remote"]["provider_options"]["openai_compatible"]
-          and preset_configs["remote"]["provider_options"]["openai_compatible"]["end_point"] then
-        default_preset = "remote"
-      end
-      require("minuet").config = vim.tbl_deep_extend("force", require("minuet").config, preset_configs[default_preset])
-      vim.keymap.set("n", "<leader>=", function()
-        if require("minuet").config["blink"].enable_auto_complete then
-          vim.cmd("Minuet blink disable")
-        else
-          vim.cmd("Minuet blink enable")
-        end
-      end, { desc = "Toggle LLM auto completion", })
-    end,
-    event = "InsertEnter",
-  },
-
-  {
     "xzbdmw/colorful-menu.nvim",
     opts = {
       max_width = 76,
@@ -229,18 +173,24 @@ return {
     version = "v1.*",
     dependencies = {
       "xzbdmw/colorful-menu.nvim",
-      "milanglacier/minuet-ai.nvim",
       "L3MON4D3/LuaSnip",
+      "onsails/lspkind.nvim",
     },
     config = function()
       require("blink.cmp").setup({
+        appearance = {
+          kind_icons = vim.tbl_extend("force", require("lspkind").presets.default, {
+            Field = "",
+            Method = "󰊕",
+            Property = "",
+          }),
+        },
         keymap = {
           preset = "super-tab",
           ["<CR>"] = {
             "accept",
             "fallback",
           },
-          ["<C-y>"] = require("minuet").make_blink_map(),
         },
         sources = {
           default = {
@@ -248,16 +198,9 @@ return {
             "path",
             "buffer",
             "snippets",
-            "minuet",
           },
-          providers = {
-            minuet = {
-              name = "minuet",
-              module = "minuet.blink",
-              async = true,
-              timeout_ms = 3000,
-              score_offset = 50,
-            },
+          per_filetype = {
+            codecompanion = { "codecompanion" },
           },
         },
         snippets = {
@@ -273,7 +216,8 @@ return {
           menu = {
             min_width = 80,
             draw = {
-              columns = { { "kind_icon" }, { "label", gap = 1 }, },
+              gap = 2,
+              columns = { { "kind_icon" }, { "label" }, },
               components = {
                 label = {
                   width = { fixed = 76 },

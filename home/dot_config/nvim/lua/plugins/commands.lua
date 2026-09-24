@@ -9,10 +9,10 @@ return {
         shade_terminals = false,
       })
       function _G.set_terminal_keymaps()
-        vim.keymap.set("t", "<C-h>", [[<Cmd>wincmd h<CR>]], { buffer = 0, desc = "Focus left window", })
-        vim.keymap.set("t", "<C-j>", [[<Cmd>wincmd j<CR>]], { buffer = 0, desc = "Focus lower window", })
-        vim.keymap.set("t", "<C-k>", [[<Cmd>wincmd k<CR>]], { buffer = 0, desc = "Focus upper window", })
-        vim.keymap.set("t", "<C-l>", [[<Cmd>wincmd l<CR>]], { buffer = 0, desc = "Focus right window", })
+        vim.keymap.set("t", "<C-h>", require("smart-splits").move_cursor_left, { buffer = 0, desc = "Focus left window", })
+        vim.keymap.set("t", "<C-j>", require("smart-splits").move_cursor_down, { buffer = 0, desc = "Focus lower window", })
+        vim.keymap.set("t", "<C-k>", require("smart-splits").move_cursor_up, { buffer = 0, desc = "Focus upper window", })
+        vim.keymap.set("t", "<C-l>", require("smart-splits").move_cursor_right, { buffer = 0, desc = "Focus right window", })
         vim.keymap.set("t", "<C-w>", [[<C-\><C-n><C-w>]], { buffer = 0, desc = "Terminal window command", })
       end
       vim.cmd("autocmd! TermOpen term://* lua set_terminal_keymaps()")
@@ -606,32 +606,96 @@ return {
   },
 
   {
-    "folke/sidekick.nvim",
-    config = function()
-      require("sidekick").setup({
-        nes = {
-          enabled = false,
+    "olimorris/codecompanion.nvim",
+    version = "^19.0.0",
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+      "nvim-treesitter/nvim-treesitter",
+    },
+    opts = {
+      adapters = {
+        acp = {
+          extend = {
+            claude_code = {
+              commands = {
+                default = { "npx", "-y", "@agentclientprotocol/claude-agent-acp" },
+              },
+            },
+            codex = {
+              commands = {
+                default = { "npx", "-y", "@agentclientprotocol/codex-acp" },
+              },
+              defaults = {
+                auth_method = "chat-gpt",
+              },
+            },
+          },
         },
+      },
+      interactions = {
         cli = {
-          picker = "telescope",
+          agent = "codex",
+          agents = {
+            claude_code = {
+              cmd = vim.fn.exepath("claude") ~= "" and "claude" or vim.fn.expand("~/.local/bin/claude"),
+              args = {},
+              description = "Claude Code CLI",
+            },
+            codex = {
+              cmd = "codex",
+              args = {},
+              description = "Codex CLI",
+            },
+            opencode = {
+              cmd = "opencode",
+              args = {},
+              description = "OpenCode CLI",
+            },
+          },
         },
-      })
-    end,
+        chat = {
+          adapter = "codex",
+          keymaps = {
+            fold_code = {
+              modes = { n = "zM" },
+            },
+            goto_file_under_cursor = {
+              modes = { n = "gf" },
+            },
+          },
+        },
+      },
+      display = {
+        chat = {
+          fold_context = true,
+          show_reasoning = false,
+          window = {
+            width = 0.4,
+            opts = {
+              number = false,
+              relativenumber = false,
+            },
+          },
+        },
+      },
+    },
+    cmd = {
+      "CodeCompanionChat",
+      "CodeCompanionActions",
+      "CodeCompanionCodeReview",
+      "CodeCompanionCLI",
+    },
     keys = {
       {
         "<leader>c",
-        function()
-          require("sidekick.cli").send({ msg = "{file}: " })
-        end,
-        desc = "Send file to agent",
+        "<cmd>CodeCompanionChat Toggle<cr>",
+        desc = "Toggle Codex chat",
       },
       {
         "<leader>c",
-        function()
-          require("sidekick.cli").send({ msg = "{file}: ```{selection}``` " })
-        end,
+        "<cmd>CodeCompanionChat Add<cr>",
         mode = "v",
-        desc = "Send selection to agent",
+        desc = "Add selection to Codex chat",
       },
     },
   },

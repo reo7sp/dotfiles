@@ -220,17 +220,9 @@ cnoreabbrev tcde tcd %:p:h
 vim.keymap.set("n", "ZT", "<cmd>tabclose<cr>", { desc = "Close tab", })
 vim.keymap.set("n", "ZA", "<cmd>wqa<cr>", { desc = "Write and quit all", })
 
-vim.keymap.set("n", "<C-h>", "<C-w>h", { desc = "Focus left window", })
-vim.keymap.set("n", "<C-j>", "<C-w>j", { desc = "Focus lower window", })
-vim.keymap.set("n", "<C-k>", "<C-w>k", { desc = "Focus upper window", })
-vim.keymap.set("n", "<C-l>", "<C-w>l", { desc = "Focus right window", })
 -- vim.keymap.set('n', '<C-[>', '<C-w>W')
 vim.keymap.set("n", "<C-ϧ>", "<C-w>W", { desc = "Focus previous window", })
 vim.keymap.set("n", "<C-]>", "<C-w>w", { desc = "Focus next window", })
-vim.keymap.set("n", "<C-Up>", "<cmd>resize +2<cr>", { desc = "Increase window height", })
-vim.keymap.set("n", "<C-Down>", "<cmd>resize -2<cr>", { desc = "Decrease window height", })
-vim.keymap.set("n", "<C-Right>", "<cmd>vertical resize +2<cr>", { desc = "Increase window width", })
-vim.keymap.set("n", "<C-Left>", "<cmd>vertical resize -2<cr>", { desc = "Decrease window width", })
 
 vim.keymap.set("c", "<c-q>", "<esc>:vimgrep /<C-r>//j %<cr>:copen<cr>", { silent = true, desc = "Search pattern in current file", })
 

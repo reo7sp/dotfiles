@@ -424,7 +424,6 @@ alias edit-vim-commands='vim ~/.config/nvim/lua/commands.lua'
 alias edit-vim-settings='vim ~/.config/nvim/lua/settings.lua'
 alias edit-vim-custom-plugins='vim ~/.config/nvim/lua/plugins/custom.lua'
 alias edit-vim-custom-commands='vim ~/.config/nvim/lua/commands/custom.lua'
-alias edit-vim-custom-minuet-llm='vim ~/.config/nvim/lua/configs/custom_minuet_llm.lua'
 alias edit-vim-custom-gopls='vim ~/.config/nvim/bin/custom-gopls'
 
 alias cd-edit-vim='cd ~/.config/nvim/'
@@ -434,7 +433,6 @@ bak-edit-vim-custom() {
   for file in \
     "$HOME/.config/nvim/lua/plugins/custom.lua" \
     "$HOME/.config/nvim/lua/commands/custom.lua" \
-    "$HOME/.config/nvim/lua/configs/custom_minuet_llm.lua" \
     "$HOME/.config/nvim/bin/custom-gopls"; do
     if [[ -f "$file.bak" ]]; then
       cp "$file.bak" "$file.bak.2" || return
@@ -448,7 +446,6 @@ rsync-edit-vim-custom() {
   for file in \
     lua/plugins/custom.lua \
     lua/commands/custom.lua \
-    lua/configs/custom_minuet_llm.lua \
     bin/custom-gopls; do
     rsync -a "$HOME/.config/nvim/$file" "$1":~/.config/nvim/"$file" || return
   done
@@ -565,27 +562,34 @@ fi
 
 alias f='fzf'
 
+_fzf_open() {
+  local selected
+  selected=$(fzf) || return
+  [[ -n $selected ]] || return
+  "$@" "$selected"
+}
+
 catf() {
-  fzf --bind 'enter:become(cat {})'
+  _fzf_open cat
 }
 
 batf() {
-  fzf --bind 'enter:become(bat {})'
+  _fzf_open bat
 }
 
 lessf() {
-  fzf --bind 'enter:become(less {})'
+  _fzf_open less
 }
 
 vimf() {
   lcd
-  fzf --bind "enter:become($EDITOR {})"
+  _fzf_open "$EDITOR"
 }
 alias vf='vimf'
 
 tf() {
   lcd
-  fzf --bind 'enter:become(subl {})'
+  _fzf_open subl
 }
 
 cdf() {

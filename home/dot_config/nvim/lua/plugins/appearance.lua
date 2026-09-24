@@ -80,6 +80,11 @@ return {
   },
 
   {
+    "tanvirtin/monokai.nvim",
+    lazy = false,
+  },
+
+  {
     "nvim-lualine/lualine.nvim",
     config = function()
       require("lualine").setup({
@@ -176,13 +181,6 @@ return {
                   return "T:ts=" .. vim.api.nvim_buf_get_option(0, "tabstop")
                 end
               end,
-              padding = {
-                left = 0,
-                right = 1,
-              },
-            },
-            {
-              require("minuet.lualine"),
               padding = {
                 left = 0,
                 right = 1,
@@ -380,6 +378,25 @@ return {
       end
       vim.keymap.set("n", "<c-w>e", pick_window, { desc = "Pick window", })
       vim.keymap.set("n", "<c-w><c-e>", pick_window, { desc = "Pick window", })
+    end,
+  },
+
+  {
+    "smart-splits-nvim/smart-splits.nvim",
+    lazy = false,
+    config = function()
+      require("smart-splits").setup({
+      })
+
+      vim.keymap.set("n", "<C-h>", require("smart-splits").move_cursor_left, { desc = "Focus left window", })
+      vim.keymap.set("n", "<C-j>", require("smart-splits").move_cursor_down, { desc = "Focus lower window", })
+      vim.keymap.set("n", "<C-k>", require("smart-splits").move_cursor_up, { desc = "Focus upper window", })
+      vim.keymap.set("n", "<C-l>", require("smart-splits").move_cursor_right, { desc = "Focus right window", })
+
+      vim.keymap.set("n", "<C-Left>", require("smart-splits").resize_left, { desc = "Resize window left", })
+      vim.keymap.set("n", "<C-Down>", require("smart-splits").resize_down, { desc = "Resize window down", })
+      vim.keymap.set("n", "<C-Up>", require("smart-splits").resize_up, { desc = "Resize window up", })
+      vim.keymap.set("n", "<C-Right>", require("smart-splits").resize_right, { desc = "Resize window right", })
     end,
   },
 
