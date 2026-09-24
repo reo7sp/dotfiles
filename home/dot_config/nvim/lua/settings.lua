@@ -1,8 +1,44 @@
 -- -----------------------------------------------------------------------------
 -- mappings
 
+local function copy_selection_to_system_clipboard()
+  vim.cmd('normal! "+y')
+  vim.notify("Copied selection to system clipboard", vim.log.levels.INFO)
+end
+
+local function copy_line_to_system_clipboard()
+  vim.cmd('normal! "+yy')
+  vim.notify("Copied line to system clipboard", vim.log.levels.INFO)
+end
+
+vim.keymap.set("x", "<RightMouse>", copy_selection_to_system_clipboard, { desc = "Copy selection to system clipboard" })
+
+if vim.env.TERM == "xterm-kitty" and vim.env.KITTY_WINDOW_ID then
+  local function set_kitty_editor_status(active)
+    if vim.api.nvim_ui_send then
+      vim.api.nvim_ui_send("\x1b]1337;SetUserVar=in_nvim" .. (active and "=MQ==" or "") .. "\x07")
+    end
+  end
+
+  vim.api.nvim_create_autocmd({ "VimEnter", "VimResume", "UIEnter" }, {
+    group = vim.api.nvim_create_augroup("KittyEditorStatus", { clear = true }),
+    callback = function() set_kitty_editor_status(true) end,
+  })
+  vim.api.nvim_create_autocmd({ "VimLeave", "VimSuspend" }, {
+    group = "KittyEditorStatus",
+    callback = function() set_kitty_editor_status(false) end,
+  })
+
+  vim.keymap.set("n", "<D-c>", copy_line_to_system_clipboard, { desc = "Copy line to system clipboard" })
+  vim.keymap.set("x", "<D-c>", copy_selection_to_system_clipboard, { desc = "Copy selection to system clipboard" })
+  vim.keymap.set("n", "<D-v>", '"+p', { desc = "Paste from system clipboard" })
+  vim.keymap.set("x", "<D-v>", '"+p', { desc = "Replace selection from system clipboard" })
+  vim.keymap.set("i", "<D-v>", "<C-r><C-o>+", { desc = "Paste from system clipboard" })
+  vim.keymap.set("c", "<D-v>", "<C-r>+", { desc = "Paste from system clipboard" })
+end
+
 -- https://nanotipsforvim.prose.sh/esc-in-normal-mode
-vim.keymap.set("n", "<cr>", "<cmd>echo<cr>", { silent = true, desc = "Clear message", })
+vim.keymap.set("n", "<CR>", "<Cmd>echo<CR>", { silent = true, desc = "Clear message", })
 
 local clear_msg_timer = -1
 local function empty_message()
@@ -18,31 +54,45 @@ local function clear_message_after(ms)
   clear_msg_timer = vim.fn.timer_start(ms, empty_message)
 end
 
-vim.api.nvim_create_augroup("cmd_msg_cls", {
-  clear = true,
-})
 vim.api.nvim_create_autocmd("CmdlineLeave", {
-  group = "cmd_msg_cls",
+  group = vim.api.nvim_create_augroup("ClearCommandMessage", { clear = true }),
   pattern = ":",
   callback = function() clear_message_after(3000) end,
 })
 vim.api.nvim_create_autocmd({ "TextYankPost", "TextChanged", "TextChangedI" }, {
-  group = "cmd_msg_cls",
+  group = vim.api.nvim_create_augroup("ClearCommandMessage", { clear = false }),
   pattern = "*",
   callback = function() clear_message_after(3000) end,
 })
 
-vim.api.nvim_create_augroup("cwd_notify", {
-  clear = true,
-})
 vim.api.nvim_create_autocmd("DirChanged", {
-  group = "cwd_notify",
+  group = vim.api.nvim_create_augroup("NotifyCwdChange", { clear = true }),
   pattern = "*",
   callback = function(event)
     local cwd = event.file
     if cwd ~= "" then
       vim.notify("CWD: " .. cwd, vim.log.levels.INFO)
     end
+  end,
+})
+
+vim.api.nvim_create_autocmd("BufWinLeave", {
+  group = vim.api.nvim_create_augroup("CloseEmptyUnnamedBuffer", { clear = true }),
+  callback = function(event)
+    local bufnr = event.buf
+    vim.schedule(function()
+      if not vim.api.nvim_buf_is_valid(bufnr)
+          or vim.api.nvim_buf_get_name(bufnr) ~= ""
+          or vim.bo[bufnr].buftype ~= ""
+          or vim.bo[bufnr].modified
+          or not vim.api.nvim_buf_is_loaded(bufnr)
+          or vim.api.nvim_buf_line_count(bufnr) ~= 1
+          or vim.api.nvim_buf_get_lines(bufnr, 0, 1, false)[1] ~= ""
+          or #vim.fn.win_findbuf(bufnr) > 0 then
+        return
+      end
+      vim.api.nvim_buf_delete(bufnr, {})
+    end)
   end,
 })
 
@@ -69,8 +119,8 @@ end, {
 })
 vim.keymap.set("n", "gj", "j", { desc = "Move down by physical line", })
 vim.keymap.set("n", "gk", "k", { desc = "Move up by physical line", })
-vim.keymap.set("n", "<down>", "gj", { desc = "Move down by display line", })
-vim.keymap.set("n", "<up>", "gk", { desc = "Move up by display line", })
+vim.keymap.set("n", "<Down>", "gj", { desc = "Move down by display line", })
+vim.keymap.set("n", "<Up>", "gk", { desc = "Move up by display line", })
 
 -- [z ]z
 local function jump_to_closed_fold(direction)
@@ -160,30 +210,30 @@ end, {
 vim.keymap.set("n", "gqq", "gq_", { remap = true, desc = "Format current line", })
 
 -- https://www.reddit.com/r/neovim/comments/lchm1o/comment/glzx6zf/
-vim.keymap.set("o", "ie", ":<c-u>silent normal ggVG<CR>", { silent = true, desc = "Entire buffer text object", })
-vim.keymap.set("x", "ie", ":<c-u>silent normal ggVG<CR>", { silent = true, desc = "Entire buffer text object", })
+vim.keymap.set("o", "ie", ":<C-u>silent normal ggVG<CR>", { silent = true, desc = "Entire buffer text object", })
+vim.keymap.set("x", "ie", ":<C-u>silent normal ggVG<CR>", { silent = true, desc = "Entire buffer text object", })
 
 -- https://bluz71.github.io/2021/09/10/vim-tips-revisited.html#fast-previous-buffer-switching
 vim.keymap.set("n", "<C-Backspace>", "<C-^>", { desc = "Previous buffer", })
 vim.keymap.set("n", "<C-S-Backspace>", function() require("telescope-tabs").go_to_previous() end, { desc = "Previous tab", })
 
-vim.keymap.set("n", "<C-w>^", "<cmd>vsplit #<cr>", { desc = "Split previous buffer", })
-vim.keymap.set("n", "<C-w><C-^>", "<cmd>vsplit #<cr>", { desc = "Split previous buffer", })
-vim.keymap.set("n", "<C-w><Backspace>", "<cmd>vsplit #<cr>", { desc = "Split previous buffer", })
-vim.keymap.set("n", "<C-w><C-Backspace>", "<cmd>vsplit #<cr>", { desc = "Split previous buffer", })
+vim.keymap.set("n", "<C-w>^", "<Cmd>vsplit #<CR>", { desc = "Split previous buffer", })
+vim.keymap.set("n", "<C-w><C-^>", "<Cmd>vsplit #<CR>", { desc = "Split previous buffer", })
+vim.keymap.set("n", "<C-w><Backspace>", "<Cmd>vsplit #<CR>", { desc = "Split previous buffer", })
+vim.keymap.set("n", "<C-w><C-Backspace>", "<Cmd>vsplit #<CR>", { desc = "Split previous buffer", })
 vim.keymap.set("n", "<C-w>n", function() vim.cmd("vsplit"); vim.cmd("enew") end, { silent = true, desc = "Split new buffer", })
 vim.keymap.set("n", "<C-w><C-n>", function() vim.cmd("vsplit"); vim.cmd("enew") end, { silent = true, desc = "Split new buffer", })
 vim.keymap.set("n", "<C-w>t", "<C-w>s<C-w>T", { desc = "Move window to new tab", })
 vim.keymap.set("n", "<C-w><C-t>", "<C-w>s<C-w>T", { desc = "Move window to new tab", })
 
-vim.keymap.set("c", "<C-A>", "<Home>", { desc = "Move to start of command line", })
-vim.keymap.set("c", "<C-E>", "<End>", { desc = "Move to end of command line", })
-vim.keymap.set("c", "<C-F>", "<C-right>", { desc = "Move one word right", })
-vim.keymap.set("c", "<C-B>", "<C-left>", { desc = "Move one word left", })
-vim.keymap.set("i", "<A-left>", "<C-left>", { desc = "Move one word left", })
-vim.keymap.set("i", "<A-right>", "<C-right>", { desc = "Move one word right", })
-vim.keymap.set("c", "<A-left>", "<C-left>", { desc = "Move one word left", })
-vim.keymap.set("c", "<A-right>", "<C-right>", { desc = "Move one word right", })
+vim.keymap.set("c", "<C-a>", "<Home>", { desc = "Move to start of command line", })
+vim.keymap.set("c", "<C-e>", "<End>", { desc = "Move to end of command line", })
+vim.keymap.set("c", "<C-f>", "<C-Right>", { desc = "Move one word right", })
+vim.keymap.set("c", "<C-b>", "<C-Left>", { desc = "Move one word left", })
+vim.keymap.set("i", "<M-Left>", "<C-Left>", { desc = "Move one word left", })
+vim.keymap.set("i", "<M-Right>", "<C-Right>", { desc = "Move one word right", })
+vim.keymap.set("c", "<M-Left>", "<C-Left>", { desc = "Move one word left", })
+vim.keymap.set("c", "<M-Right>", "<C-Right>", { desc = "Move one word right", })
 
 vim.keymap.set("i", "<M-h>", "<Left>", { desc = "Move cursor left", })
 vim.keymap.set("i", "<M-j>", "<Down>", { desc = "Move cursor down", })
@@ -217,22 +267,14 @@ cnoreabbrev lcde lcd %:p:h
 cnoreabbrev tcde tcd %:p:h
 ]=])
 
-vim.keymap.set("n", "ZT", "<cmd>tabclose<cr>", { desc = "Close tab", })
-vim.keymap.set("n", "ZA", "<cmd>wqa<cr>", { desc = "Write and quit all", })
+vim.keymap.set("n", "ZT", "<Cmd>tabclose<CR>", { desc = "Close tab", })
+vim.keymap.set("n", "ZA", "<Cmd>wqa<CR>", { desc = "Write and quit all", })
 
-vim.keymap.set("n", "<C-h>", "<C-w>h", { desc = "Focus left window", })
-vim.keymap.set("n", "<C-j>", "<C-w>j", { desc = "Focus lower window", })
-vim.keymap.set("n", "<C-k>", "<C-w>k", { desc = "Focus upper window", })
-vim.keymap.set("n", "<C-l>", "<C-w>l", { desc = "Focus right window", })
 -- vim.keymap.set('n', '<C-[>', '<C-w>W')
 vim.keymap.set("n", "<C-ϧ>", "<C-w>W", { desc = "Focus previous window", })
 vim.keymap.set("n", "<C-]>", "<C-w>w", { desc = "Focus next window", })
-vim.keymap.set("n", "<C-Up>", "<cmd>resize +2<cr>", { desc = "Increase window height", })
-vim.keymap.set("n", "<C-Down>", "<cmd>resize -2<cr>", { desc = "Decrease window height", })
-vim.keymap.set("n", "<C-Right>", "<cmd>vertical resize +2<cr>", { desc = "Increase window width", })
-vim.keymap.set("n", "<C-Left>", "<cmd>vertical resize -2<cr>", { desc = "Decrease window width", })
 
-vim.keymap.set("c", "<c-q>", "<esc>:vimgrep /<C-r>//j %<cr>:copen<cr>", { silent = true, desc = "Search pattern in current file", })
+vim.keymap.set("c", "<C-q>", "<Esc>:vimgrep /<C-r>//j %<CR>:copen<CR>", { silent = true, desc = "Search pattern in current file", })
 
 -- -----------------------------------------------------------------------------
 -- appearance
@@ -243,7 +285,7 @@ set cursorline
 set guicursor+=a:blinkwait700-blinkon500-blinkoff500
 set guicursor+=n:blinkon0
 set colorcolumn=80,120
-set scrolloff=2
+set scrolloff=3
 set sidescroll=1
 
 set nowrap
@@ -309,15 +351,13 @@ set nowritebackup
 set noswapfile
 set history=1000
 set shada=s100,!,h,<100,:1000,'10000
-
-" https://vi.stackexchange.com/a/24564
-augroup SHADA
-  autocmd!
-  " autocmd FocusGained * lua vim.defer_fn(function() vim.cmd('silent! rshada') end, 100)
-  " autocmd FocusLost,TextYankPost,VimLeavePre * silent! wshada
-  autocmd FocusLost,VimLeavePre * silent! wshada
-augroup END
 ]=])
+
+-- https://vi.stackexchange.com/a/24564
+vim.api.nvim_create_autocmd({ "FocusLost", "VimLeavePre" }, {
+  group = vim.api.nvim_create_augroup("WriteShada", { clear = true }),
+  command = "silent! wshada",
+})
 
 -- Filetype plugins may re-enable automatic hard wrapping.
 vim.api.nvim_create_autocmd("FileType", {
@@ -338,12 +378,18 @@ set grepprg=rg\ --vimgrep
 set grepformat=%f:%l:%c:%m
 cnoreabbrev <expr> grep  (getcmdtype() ==# ':' && getcmdline() =~# '^grep')  ? 'silent grep'  : 'grep'
 cnoreabbrev <expr> lgrep (getcmdtype() ==# ':' && getcmdline() =~# '^lgrep') ? 'silent lgrep' : 'lgrep'
-augroup init_quickfix
-  autocmd!
-  autocmd QuickFixCmdPost [^l]* cwindow
-  autocmd QuickFixCmdPost l* lwindow
-augroup END
 ]=])
+
+vim.api.nvim_create_autocmd("QuickFixCmdPost", {
+  group = vim.api.nvim_create_augroup("OpenQuickfix", { clear = true }),
+  pattern = "[^l]*",
+  command = "cwindow",
+})
+vim.api.nvim_create_autocmd("QuickFixCmdPost", {
+  group = vim.api.nvim_create_augroup("OpenQuickfix", { clear = false }),
+  pattern = "l*",
+  command = "lwindow",
+})
 
 -- -----------------------------------------------------------------------------
 -- encoding

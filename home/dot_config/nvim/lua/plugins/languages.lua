@@ -396,11 +396,11 @@ return {
           mode = { "n", "v" },
         },
         jump_next_row = {
-          "<Enter>",
+          "<CR>",
           mode = { "n", "v" },
         },
         jump_prev_row = {
-          "<S-Enter>",
+          "<S-CR>",
           mode = { "n", "v" },
         },
       },
@@ -435,14 +435,6 @@ return {
       })
     end,
     ft = "sls",
-  },
-
-  {
-    "xvzc/chezmoi.nvim",
-    dependencies = {
-      "nvim-lua/plenary.nvim",
-    },
-    opts = {},
   },
 
   {

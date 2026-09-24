@@ -22,6 +22,8 @@ local function apply_highlights()
   vim.api.nvim_set_hl(0, "BlinkCmpMenu", { bg = colors.crust, fg = colors.overlay2 })
   vim.api.nvim_set_hl(0, "BlinkCmpMenuBorder", { bg = colors.crust, fg = colors.blue })
   vim.api.nvim_set_hl(0, "SatelliteBar", { bg = colors.surface2 })
+  vim.api.nvim_set_hl(0, "BufferTabpages", { bg = colors.blue, fg = colors.mantle, bold = true })
+  vim.api.nvim_set_hl(0, "BufferTabpagesSep", { bg = colors.blue, fg = colors.mantle, bold = true })
 
   local links = {
     VirtColumn = "IblIndent",
@@ -29,6 +31,7 @@ local function apply_highlights()
     NvimTreeNormalNC = "Normal",
     NvimTreeWinSeparator = "WinSeparator",
     NvimTreeIndentMarker = "IblIndent",
+    NeoTreeIndentMarker = "IblIndent",
     NvimTreeSpecialFile = "NvimTreeFileName",
     NvimTreeExecFile = "NvimTreeFileName",
     NvimTreeImageFile = "NvimTreeFileName",
@@ -47,7 +50,6 @@ local function apply_highlights()
     MarkSignNumHL = "SignColumn",
     SatelliteSearch = "SatelliteMark",
     SatelliteSearchCurrent = "SatelliteMark",
-    SidekickChat = "Normal",
   }
   for group, target in pairs(links) do
     vim.api.nvim_set_hl(0, group, { link = target })

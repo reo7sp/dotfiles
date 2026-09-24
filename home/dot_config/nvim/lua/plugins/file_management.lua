@@ -62,14 +62,17 @@ return {
       })
     end,
     opts = {
+      retirementAgeMins = 30,
       ignoreUnsavedChangesBufs = false,
       deleteBufferWhenFileDeleted = true,
       deleteFunction = function(bufnr)
         if not require("barbar.state").is_pinned(bufnr) then
+          local filename = vim.fs.basename(vim.api.nvim_buf_get_name(bufnr))
           vim.api.nvim_buf_delete(bufnr, {})
+          vim.notify(("Auto-closed %q"):format(filename), vim.log.levels.INFO, { title = "early-retirement" })
         end
       end,
-      notificationOnAutoClose = true,
+      notificationOnAutoClose = false,
     },
   },
 
@@ -92,32 +95,32 @@ return {
     keys = {
       {
         "<leader>Zz",
-        "<cmd>AutoSession search<cr>",
+        "<Cmd>AutoSession search<CR>",
         desc = "Find sessions",
       },
       {
         "<leader>ZZ",
-        "<cmd>AutoSession search<cr>",
+        "<Cmd>AutoSession search<CR>",
         desc = "Find sessions",
       },
       {
         "<leader>Zw",
-        "<cmd>AutoSession save<cr>",
+        "<Cmd>AutoSession save<CR>",
         desc = "Save session",
       },
       {
         "<leader>ZW",
-        "<cmd>AutoSession save<cr>",
+        "<Cmd>AutoSession save<CR>",
         desc = "Save session",
       },
       {
         "<leader>Zd",
-        "<cmd>AutoSession deletePicker<cr>",
+        "<Cmd>AutoSession deletePicker<CR>",
         desc = "Pick session to delete",
       },
       {
         "<leader>ZD",
-        "<cmd>AutoSession deletePicker<cr>",
+        "<Cmd>AutoSession deletePicker<CR>",
         desc = "Pick session to delete",
       },
     },
@@ -167,8 +170,8 @@ return {
 
       vim.keymap.set("n", "<leader>Mm", find_workspaces, { desc = "Find workspaces", })
       vim.keymap.set("n", "<leader>MM", find_workspaces, { desc = "Find workspaces", })
-      vim.keymap.set("n", "<leader>Mw", "<cmd>WorkspacesAdd<cr>", { desc = "Add workspace", })
-      vim.keymap.set("n", "<leader>MW", "<cmd>WorkspacesAdd<cr>", { desc = "Add workspace", })
+      vim.keymap.set("n", "<leader>Mw", "<Cmd>WorkspacesAdd<CR>", { desc = "Add workspace", })
+      vim.keymap.set("n", "<leader>MW", "<Cmd>WorkspacesAdd<CR>", { desc = "Add workspace", })
       vim.keymap.set("n", "<leader>Md", delete_workspace, { desc = "Pick workspace to delete", })
       vim.keymap.set("n", "<leader>MD", delete_workspace, { desc = "Pick workspace to delete", })
     end,

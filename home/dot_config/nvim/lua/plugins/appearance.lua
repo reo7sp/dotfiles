@@ -80,6 +80,11 @@ return {
   },
 
   {
+    "tanvirtin/monokai.nvim",
+    lazy = false,
+  },
+
+  {
     "nvim-lualine/lualine.nvim",
     config = function()
       require("lualine").setup({
@@ -176,13 +181,6 @@ return {
                   return "T:ts=" .. vim.api.nvim_buf_get_option(0, "tabstop")
                 end
               end,
-              padding = {
-                left = 0,
-                right = 1,
-              },
-            },
-            {
-              require("minuet.lualine"),
               padding = {
                 left = 0,
                 right = 1,
@@ -336,17 +334,17 @@ return {
         cnoreabbrev bsl BufferOrderByLanguage
         cnoreabbrev bsw BufferOrderByWindowNumber
       ]=])
-      vim.keymap.set("n", "[b", "<cmd>BufferPrevious<CR>", { desc = "Previous buffer", })
-      vim.keymap.set("n", "]b", "<cmd>BufferNext<CR>", { desc = "Next buffer", })
+      vim.keymap.set("n", "[b", "<Cmd>BufferPrevious<CR>", { desc = "Previous buffer", })
+      vim.keymap.set("n", "]b", "<Cmd>BufferNext<CR>", { desc = "Next buffer", })
       for i = 1, 8 do
-        vim.keymap.set("n", "<C-" .. i .. ">", "<cmd>BufferGoto " .. i .. "<CR>", { desc = "Go to buffer " .. i, })
+        vim.keymap.set("n", "<C-" .. i .. ">", "<Cmd>BufferGoto " .. i .. "<CR>", { desc = "Go to buffer " .. i, })
       end
-      vim.keymap.set("n", "<C-9>", "<cmd>BufferLast<CR>", { desc = "Go to last buffer", })
-      vim.keymap.set("n", "<c-q>", "<cmd>BufferClose<cr>", { desc = "Close buffer", })
-      vim.keymap.set("n", "<c-w>Q", "<cmd>BufferClose<cr>", { desc = "Close buffer", })
-      vim.keymap.set("n", "<c-w>O", "<cmd>BufferCloseAllButCurrentOrPinned<cr>", { desc = "Close other buffers", })
-      vim.keymap.set("n", "<C-,>", "<cmd>BufferMovePrevious<CR>", { desc = "Move buffer left", })
-      vim.keymap.set("n", "<C-.>", "<cmd>BufferMoveNext<CR>", { desc = "Move buffer right", })
+      vim.keymap.set("n", "<C-9>", "<Cmd>BufferLast<CR>", { desc = "Go to last buffer", })
+      vim.keymap.set("n", "<C-q>", "<Cmd>BufferClose<CR>", { desc = "Close buffer", })
+      vim.keymap.set("n", "<C-w>Q", "<Cmd>BufferClose<CR>", { desc = "Close buffer", })
+      vim.keymap.set("n", "<C-w>O", "<Cmd>BufferCloseAllButCurrentOrPinned<CR>", { desc = "Close other buffers", })
+      vim.keymap.set("n", "<C-,>", "<Cmd>BufferMovePrevious<CR>", { desc = "Move buffer left", })
+      vim.keymap.set("n", "<C-.>", "<Cmd>BufferMoveNext<CR>", { desc = "Move buffer right", })
     end,
     lazy = false,
   },
@@ -378,8 +376,27 @@ return {
       local function pick_window()
         vim.api.nvim_set_current_win(require("window-picker").pick_window() or vim.api.nvim_get_current_win())
       end
-      vim.keymap.set("n", "<c-w>e", pick_window, { desc = "Pick window", })
-      vim.keymap.set("n", "<c-w><c-e>", pick_window, { desc = "Pick window", })
+      vim.keymap.set("n", "<C-w>e", pick_window, { desc = "Pick window", })
+      vim.keymap.set("n", "<C-w><C-e>", pick_window, { desc = "Pick window", })
+    end,
+  },
+
+  {
+    "smart-splits-nvim/smart-splits.nvim",
+    lazy = false,
+    config = function()
+      require("smart-splits").setup({
+      })
+
+      vim.keymap.set("n", "<C-h>", require("smart-splits").move_cursor_left, { desc = "Focus left window", })
+      vim.keymap.set("n", "<C-j>", require("smart-splits").move_cursor_down, { desc = "Focus lower window", })
+      vim.keymap.set("n", "<C-k>", require("smart-splits").move_cursor_up, { desc = "Focus upper window", })
+      vim.keymap.set("n", "<C-l>", require("smart-splits").move_cursor_right, { desc = "Focus right window", })
+
+      vim.keymap.set("n", "<C-Left>", require("smart-splits").resize_left, { desc = "Resize window left", })
+      vim.keymap.set("n", "<C-Down>", require("smart-splits").resize_down, { desc = "Resize window down", })
+      vim.keymap.set("n", "<C-Up>", require("smart-splits").resize_up, { desc = "Resize window up", })
+      vim.keymap.set("n", "<C-Right>", require("smart-splits").resize_right, { desc = "Resize window right", })
     end,
   },
 
@@ -395,13 +412,13 @@ return {
     },
     keys = {
       {
-        "<c-w>x",
-        "<cmd>WinShift swap<cr>",
+        "<C-w>x",
+        "<Cmd>WinShift swap<CR>",
         desc = "Swap window",
       },
       {
-        "<c-w><c-x>",
-        "<cmd>WinShift swap<cr>",
+        "<C-w><C-x>",
+        "<Cmd>WinShift swap<CR>",
         desc = "Swap window",
       },
     },
@@ -415,6 +432,7 @@ return {
     },
     config = function()
       require("bqf").setup({
+        magic_window = false,
         preview = {
           auto_preview = false,
           winblend = 0,
@@ -436,9 +454,9 @@ return {
           tabc = "",
           prevfile = "K",
           nextfile = "J",
-          pscrollup = "<c-u>",
-          pscrolldown = "<c-d>",
-          ptoggleauto = "<c-p>",
+          pscrollup = "<C-u>",
+          pscrolldown = "<C-d>",
+          ptoggleauto = "<C-p>",
         },
       })
 
@@ -446,7 +464,7 @@ return {
         callback = function(ev)
           if vim.bo[ev.buf].buftype == "quickfix" then
             vim.schedule(function()
-              vim.keymap.set("n", "<c-t>", function()
+              vim.keymap.set("n", "<C-t>", function()
                 vim.cmd([[cclose]])
                 vim.cmd([[Trouble qflist open]])
               end, { buffer = ev.buf, desc = "Open quickfix list in Trouble", })
@@ -498,8 +516,8 @@ return {
           position = "bottom",
         },
         keys = {
-          ["<c-x>"] = "jump_split",
-          ["<c-s>"] = false,
+          ["<C-x>"] = "jump_split",
+          ["<C-s>"] = false,
         },
       })
 
@@ -767,7 +785,7 @@ return {
       },
       {
         "<leader>n",
-        "<cmd>TodoTelescope<CR>",
+        "<Cmd>TodoTelescope<CR>",
         desc = "Find todo comments",
       },
     },

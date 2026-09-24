@@ -23,6 +23,12 @@ return {
       "romgrk/barbar.nvim",
     },
     config = function()
+      local function file_path_display(opts, path)
+        local path_opts = vim.tbl_extend("force", {}, opts, { path_display = {}, })
+        local display = require("telescope.utils").transform_path(path_opts, path)
+        return (opts.disable_devicons and "" or " ") .. display
+      end
+
       require("telescope").setup({
         defaults = {
           mappings = {
@@ -50,7 +56,7 @@ return {
         },
         pickers = {
           find_files = {
-            hidden = true,
+            path_display = file_path_display,
             mappings = {
               n = {
                 ["<C-i>"] = function () require("telescope.builtin").find_files({ no_ignore = true }) end,
@@ -103,6 +109,7 @@ return {
             stat_files = false,
             only_cwd = true,
             show_current_file = true,
+            path_display = file_path_display,
             ignore_patterns = {
               "^/tmp/",
               "Scratch$",
@@ -272,11 +279,11 @@ return {
       require("import").setup({
         picker = "telescope",
       })
-      vim.keymap.set("n", "gd", "<cmd>Telescope lsp_definitions<cr>", { desc = "Find LSP definitions", })
-      vim.keymap.set("n", "gD", "<cmd>Telescope lsp_implementations<cr>", { desc = "Find LSP implementations", })
-      vim.keymap.set("n", "gy", "<cmd>Telescope lsp_type_definitions<cr>", { desc = "Find LSP type definitions", })
-      vim.keymap.set("n", "ge", "<cmd>Telescope lsp_references<cr>", { desc = "Find LSP references", })
-      vim.keymap.set("n", "gE", "<cmd>Telescope hierarchy<cr>", { desc = "Find LSP hierarchy", })
+      vim.keymap.set("n", "gd", "<Cmd>Telescope lsp_definitions<CR>", { desc = "Find LSP definitions", })
+      vim.keymap.set("n", "gD", "<Cmd>Telescope lsp_implementations<CR>", { desc = "Find LSP implementations", })
+      vim.keymap.set("n", "gy", "<Cmd>Telescope lsp_type_definitions<CR>", { desc = "Find LSP type definitions", })
+      vim.keymap.set("n", "ge", "<Cmd>Telescope lsp_references<CR>", { desc = "Find LSP references", })
+      vim.keymap.set("n", "gE", "<Cmd>Telescope hierarchy<CR>", { desc = "Find LSP hierarchy", })
       vim.keymap.set("n", "gs", function()
         require("telescope-live-grep-args.shortcuts").grep_word_under_cursor()
       end, { desc = "Grep word under cursor", })
@@ -286,31 +293,31 @@ return {
       vim.keymap.set("n", "<leader>E", function()
         require("telescope").extensions.recent_files.pick({ only_cwd = false })
       end, { desc = "Find all recent files", })
-      vim.keymap.set("n", "<leader>f", "<cmd>Telescope find_files<cr>", { desc = "Find files", })
-      vim.keymap.set("n", "<leader>Ff", "<cmd>Telescope dir find_files<cr>", { desc = "Find files in directory", })
-      vim.keymap.set("n", "<leader>s", "<cmd>Telescope live_grep_args<cr>", { desc = "Live grep", })
+      vim.keymap.set("n", "<leader>f", "<Cmd>Telescope find_files<CR>", { desc = "Find files", })
+      vim.keymap.set("n", "<leader>Ff", "<Cmd>Telescope dir find_files<CR>", { desc = "Find files in directory", })
+      vim.keymap.set("n", "<leader>s", "<Cmd>Telescope live_grep_args<CR>", { desc = "Live grep", })
       vim.keymap.set("v", "<leader>s", function()
         require("telescope-live-grep-args.shortcuts").grep_visual_selection()
       end, { desc = "Grep selected text", })
       vim.keymap.set("v", "gs", function()
         require("telescope-live-grep-args.shortcuts").grep_visual_selection()
       end, { desc = "Grep selected text", })
-      vim.keymap.set("n", "<leader>Fs", "<cmd>Telescope dir live_grep<cr>", { desc = "Live grep in directory", })
-      vim.keymap.set("n", "<leader>b", "<cmd>Telescope buffers<cr>", { desc = "Find buffers", })
-      vim.keymap.set("n", "<leader>B", "<cmd>Telescope telescope-tabs list_tabs<cr>", { desc = "Find tabs", })
-      vim.keymap.set("n", "<leader>y", "<cmd>Telescope yank_history<cr>", { desc = "Find yank history", })
-      vim.keymap.set("n", "<leader>k", "<cmd>Telescope aerial initial_mode=insert<cr>", { desc = "Find symbols", })
-      vim.keymap.set("n", "<leader>K", "<cmd>Telescope lsp_dynamic_workspace_symbols<cr>", { desc = "Find workspace symbols", })
-      vim.keymap.set("n", "<leader>d", "<cmd>Telescope diagnostics bufnr=0<CR>", { desc = "Find buffer diagnostics", })
-      vim.keymap.set("n", "<leader>D", "<cmd>Telescope diagnostics<CR>", { desc = "Find diagnostics", })
-      vim.keymap.set("n", "<leader>Q", "<cmd>Telescope quickfixhistory<cr>", { desc = "Find quickfix history", })
+      vim.keymap.set("n", "<leader>Fs", "<Cmd>Telescope dir live_grep<CR>", { desc = "Live grep in directory", })
+      vim.keymap.set("n", "<leader>b", "<Cmd>Telescope buffers<CR>", { desc = "Find buffers", })
+      vim.keymap.set("n", "<leader>B", "<Cmd>Telescope telescope-tabs list_tabs<CR>", { desc = "Find tabs", })
+      vim.keymap.set("n", "<leader>y", "<Cmd>Telescope yank_history<CR>", { desc = "Find yank history", })
+      vim.keymap.set("n", "<leader>k", "<Cmd>Telescope aerial initial_mode=insert<CR>", { desc = "Find symbols", })
+      vim.keymap.set("n", "<leader>K", "<Cmd>Telescope lsp_dynamic_workspace_symbols<CR>", { desc = "Find workspace symbols", })
+      vim.keymap.set("n", "<leader>d", "<Cmd>Telescope diagnostics bufnr=0<CR>", { desc = "Find buffer diagnostics", })
+      vim.keymap.set("n", "<leader>D", "<Cmd>Telescope diagnostics<CR>", { desc = "Find diagnostics", })
+      vim.keymap.set("n", "<leader>Q", "<Cmd>Telescope quickfixhistory<CR>", { desc = "Find quickfix history", })
       vim.keymap.set("n", "<leader>gb", M.git_branches, { desc = "Find git branches", })
-      vim.keymap.set("n", "<leader>i", "<cmd>Import<cr>", { desc = "Import symbol", })
-      vim.keymap.set("n", "<leader>m", "<cmd>Telescope marks<cr>", { desc = "Find marks", })
-      vim.keymap.set("n", "<leader>'", "<cmd>Telescope marks<cr>", { desc = "Find marks", })
-      vim.keymap.set("n", "<leader>`", "<cmd>Telescope marks<cr>", { desc = "Find marks", })
-      vim.keymap.set("n", "<leader>\"", "<cmd>Telescope registers<cr>", { desc = "Find registers", })
-      vim.keymap.set("n", "<leader>.", "<cmd>Telescope resume<cr>", { desc = "Resume Telescope", })
+      vim.keymap.set("n", "<leader>i", "<Cmd>Import<CR>", { desc = "Import symbol", })
+      vim.keymap.set("n", "<leader>m", "<Cmd>Telescope marks<CR>", { desc = "Find marks", })
+      vim.keymap.set("n", "<leader>'", "<Cmd>Telescope marks<CR>", { desc = "Find marks", })
+      vim.keymap.set("n", "<leader>`", "<Cmd>Telescope marks<CR>", { desc = "Find marks", })
+      vim.keymap.set("n", "<leader>\"", "<Cmd>Telescope registers<CR>", { desc = "Find registers", })
+      vim.keymap.set("n", "<leader>.", "<Cmd>Telescope resume<CR>", { desc = "Resume Telescope", })
       vim.keymap.set("n", "<leader>/", function()
         require("telescope.builtin").current_buffer_fuzzy_find()
       end, { desc = "Fuzzy find in current buffer", })
@@ -363,6 +370,16 @@ return {
     config = function()
       local M = {}
 
+      local oil_columns = require("oil.columns")
+      local icon_column = oil_columns.get_column(nil, "icon")
+      oil_columns.register("icon_gap", {
+        render = function(entry, _, bufnr)
+          local icon = icon_column.render(entry, { add_padding = false, }, bufnr)
+          return { icon[1] .. " ", icon[2], }
+        end,
+        parse = icon_column.parse,
+      })
+
       function M.launch_live_grep(opts)
         return M.launch_telescope("live_grep", opts)
       end
@@ -384,7 +401,7 @@ return {
 
       require("oil").setup({
         columns = {
-          { "icon", add_padding = false, },
+          "icon_gap",
         },
         view_options = {
           show_hidden = true,
@@ -446,7 +463,7 @@ return {
         },
       })
 
-      vim.keymap.set("n", "-", "<cmd>Oil<CR>", { desc = "Open parent directory", })
+      vim.keymap.set("n", "-", "<Cmd>Oil<CR>", { desc = "Open parent directory", })
     end,
   },
 
@@ -541,6 +558,9 @@ return {
             enable = true,
           },
           icons = {
+            padding = {
+              icon = "  ",
+            },
             show = {
               folder_arrow = false,
             },
@@ -609,8 +629,8 @@ return {
           vim.keymap.del("n", "<C-]>", {
             buffer = bufnr,
           })
-          vim.keymap.set("n", "<c-f>", M.launch_find_files, opts("Launch Find Files"))
-          vim.keymap.set("n", "<c-s>", M.launch_live_grep, opts("Launch Live Grep"))
+          vim.keymap.set("n", "<C-f>", M.launch_find_files, opts("Launch Find Files"))
+          vim.keymap.set("n", "<C-s>", M.launch_live_grep, opts("Launch Live Grep"))
           vim.keymap.set("n", "`", M.cd_to_tree_root, opts("CD To Tree Root"))
           vim.keymap.set("n", "_", M.open_tree_cwd, opts("Open CWD"))
           vim.keymap.set("n", "go", M.change_root_down, opts("Down To File"))
@@ -629,10 +649,22 @@ return {
       {
         "<leader>t",
         function()
+          local winid
+          if not require("nvim-tree.api").tree.is_visible() then
+            winid = vim.api.nvim_open_win(0, false, {
+              split = "left",
+              win = -1,
+              width = 35,
+            })
+          end
           require("nvim-tree.api").tree.toggle({
             find_file = true,
             focus = false,
+            winid = winid,
           })
+          if winid then
+            vim.cmd("wincmd =")
+          end
         end,
         desc = "Toggle file tree",
       },
@@ -658,6 +690,7 @@ return {
     version = "*",
     dependencies = {
       "nvim-treesitter/nvim-treesitter",
+      "onsails/lspkind.nvim",
     },
     config = function()
       local sidebar_width = 35
@@ -668,6 +701,7 @@ return {
           default_direction = "left",
           min_width = sidebar_width,
           width = sidebar_width,
+          preserve_equality = true,
           win_opts = {
             winhighlight = "NormalNC:Normal",
           },
@@ -676,45 +710,18 @@ return {
         close_on_select = false,
         autojump = true,
         show_guides = true,
+        icons = vim.tbl_map(function(icon)
+          return icon .. " "
+        end, vim.tbl_extend("force", require("lspkind").presets.default, {
+          Field = "",
+          Method = "󰊕",
+          Property = "",
+        })),
+        use_icon_provider = false,
         disable_max_lines = 99999,
         disable_max_size = 1000 * 1024,
       })
 
-      local aerial_render = require("aerial.render")
-      local update_aerial_buffer = aerial_render.update_aerial_buffer
-      local function remove_aerial_icon_gaps(bufnr)
-        local _, aerial_bufnr = require("aerial.util").get_buffers(bufnr)
-        if not aerial_bufnr then
-          return
-        end
-        local namespace = vim.api.nvim_create_namespace("aerial")
-        local extmarks = vim.api.nvim_buf_get_extmarks(aerial_bufnr, namespace, 0, -1, { details = true, })
-        vim.bo[aerial_bufnr].modifiable = true
-        for _, extmark in ipairs(extmarks) do
-          local row = extmark[2]
-          local details = extmark[4]
-          if details.hl_group and details.hl_group:match("^Aerial.*Icon$") then
-            local line = vim.api.nvim_buf_get_lines(aerial_bufnr, row, row + 1, false)[1]
-            local col = details.end_col
-            if line:sub(col + 1, col + 1) == " " then
-              vim.api.nvim_buf_set_text(aerial_bufnr, row, col, row, col + 1, { "", })
-            end
-          end
-        end
-        vim.bo[aerial_bufnr].modifiable = false
-      end
-      aerial_render.update_aerial_buffer = function(bufnr)
-        update_aerial_buffer(bufnr)
-        remove_aerial_icon_gaps(bufnr)
-      end
-      vim.api.nvim_create_autocmd("FileType", {
-        pattern = "aerial",
-        callback = function(args)
-          vim.defer_fn(function()
-            remove_aerial_icon_gaps(args.buf)
-          end, 10)
-        end,
-      })
       vim.api.nvim_create_autocmd("VimResized", {
         callback = function()
           for _, winid in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
@@ -726,7 +733,7 @@ return {
         end,
       })
 
-      vim.keymap.set("n", "<leader>o", "<cmd>AerialToggle!<cr>", { desc = "Toggle symbol outline", })
+      vim.keymap.set("n", "<leader>o", "<Cmd>AerialToggle!<CR>", { desc = "Toggle symbol outline", })
     end,
   },
 
@@ -862,7 +869,7 @@ return {
     keys = {
       {
         "<leader>a",
-        "<cmd>Other<cr>",
+        "<Cmd>Other<CR>",
         desc = "Open alternate file",
       },
     },
@@ -875,6 +882,9 @@ return {
       normalModeSearch = true,
       startInInsertMode = false,
       transient = true,
+      keymaps = {
+        close = { n = "q" },
+      },
       history = {
         maxHistoryLines = 1000,
       },

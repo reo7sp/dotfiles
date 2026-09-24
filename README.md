@@ -3,7 +3,7 @@
 My config files:
 
 - zsh: [config.zsh](./home/dot_config/zsh/config.zsh), [zsh_plugins.txt](./home/dot_zsh_plugins.txt).
-- vim: [init.lua](./home/dot_config/nvim/init.lua), [neovintageousrc](./home/dot_neovintageousrc), [ideavimrc](./home/dot_ideavimrc), [vscodevimrc](./home/dot_vscodevimrc).
+- nvim: [init.lua](./home/dot_config/nvim/init.lua), [neovintageousrc](./home/dot_neovintageousrc), [ideavimrc](./home/dot_ideavimrc), [vscodevimrc](./home/dot_vscodevimrc).
 - ranger: [rc.conf](./home/dot_config/ranger/rc.conf).
 - tmux: [tmux.conf](./home/dot_tmux.conf).
 - kitty: [kitty.conf](./home/dot_config/kitty/kitty.conf).
@@ -15,26 +15,41 @@ How zsh looks:
 
 ![zsh screenshot](https://i.imgur.com/m7jOpKB.png)
 
-How vim looks:
+How nvim looks:
 
-![vim screenshot](https://i.imgur.com/gkvmdvC.png)
+![nvim screenshot](https://i.imgur.com/gkvmdvC.png)
 
 
 ## How to install
 
 ### Step 1: Install chezmoi
 
-macOS:
+#### macOS
 
 ```sh
 brew install chezmoi
 ```
 
-Linux:
+#### Linux (Debian/Ubuntu)
 
 ```sh
-sudo apt-get install chezmoi # Debian/Ubuntu
-sudo dnf install chezmoi     # Fedora
+sudo apt update
+sudo apt install chezmoi
+```
+
+#### Linux (CentOS)
+
+```sh
+sudo dnf install chezmoi
+```
+
+#### Linux (any)
+
+```sh
+mkdir -p "$HOME/.local/bin"
+sh -c "$(curl -fsLS https://get.chezmoi.io)" -- -b "$HOME/.local/bin"
+export PATH="$HOME/.local/bin:$PATH"
+chezmoi --version
 ```
 
 ### Step 2: Install dotfiles
@@ -57,24 +72,24 @@ chezmoi init reo7sp
 chezmoi apply
 ```
 
+## Extra tools
+
+[tools.txt](./tools.txt)
+
 
 ## Usage
 
 Import dotfiles:
 
 ```sh
-chezmoi cd
 chezmoi re-add
+chezmoi cd
 ```
 
 Install dotfiles:
 
 ```sh
-chezmoi cd
-git fetch
-git reset --hard origin/master
-chezmoi status
-chezmoi apply
+chezmoi update
 ```
 
 Upgrade plugins:

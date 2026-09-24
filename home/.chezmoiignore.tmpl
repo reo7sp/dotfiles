@@ -1,0 +1,5 @@
+{{ if eq .chezmoi.os "darwin" -}}
+.local/share/fonts
+{{ else -}}
+Library
+{{ end -}}

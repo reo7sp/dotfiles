@@ -94,10 +94,12 @@ return {
         end
       end
 
-      vim.keymap.set("n", "K", vim.lsp.buf.hover, { desc = "Show LSP hover", })
-      vim.keymap.set("i", "<C-S>", vim.lsp.buf.signature_help, { desc = "Show LSP signature help", })
+      vim.keymap.set("n", "K", function()
+        vim.lsp.buf.hover({ border = "rounded", })
+      end, { desc = "Show LSP hover", })
+      vim.keymap.set("i", "<C-s>", vim.lsp.buf.signature_help, { desc = "Show LSP signature help", })
       vim.keymap.set("n", "gr", vim.lsp.buf.rename, { nowait = true, desc = "Rename symbol", })
-      vim.keymap.set("n", "gO", "<nop>")
+      vim.keymap.set("n", "gO", "<Nop>")
     end,
   },
 
@@ -159,64 +161,6 @@ return {
   },
 
   {
-    "milanglacier/minuet-ai.nvim",
-    config = function()
-      local preset_configs = {
-        ["local"] = {
-          provider = "openai_fim_compatible",
-          provider_options = {
-            openai_fim_compatible = {
-              name = "local",
-              end_point = "http://localhost:11434/v1/completions",
-              api_key = "TERM",
-              stream = true,
-              model = "qwen2.5-coder:3b",
-              optional = {
-                max_tokens = 64,
-                top_p = 0.9,
-              },
-            },
-          },
-        },
-        remote = {
-          provider = "openai_compatible",
-          provider_options = {
-            openai_compatible = vim.tbl_extend("force", {
-              name = "remote",
-            }, require("configs.custom_minuet_llm")),
-          },
-        },
-      }
-      require("minuet").setup({
-        presets = preset_configs,
-        blink = {
-          enable_auto_complete = false,
-        },
-        n_completions = 1,
-        context_window = 1024,
-        request_timeout = 3,
-      })
-
-      local default_preset = "local"
-      if preset_configs["remote"]
-          and preset_configs["remote"]["provider_options"]
-          and preset_configs["remote"]["provider_options"]["openai_compatible"]
-          and preset_configs["remote"]["provider_options"]["openai_compatible"]["end_point"] then
-        default_preset = "remote"
-      end
-      require("minuet").config = vim.tbl_deep_extend("force", require("minuet").config, preset_configs[default_preset])
-      vim.keymap.set("n", "<leader>=", function()
-        if require("minuet").config["blink"].enable_auto_complete then
-          vim.cmd("Minuet blink disable")
-        else
-          vim.cmd("Minuet blink enable")
-        end
-      end, { desc = "Toggle LLM auto completion", })
-    end,
-    event = "InsertEnter",
-  },
-
-  {
     "xzbdmw/colorful-menu.nvim",
     opts = {
       max_width = 76,
@@ -229,18 +173,24 @@ return {
     version = "v1.*",
     dependencies = {
       "xzbdmw/colorful-menu.nvim",
-      "milanglacier/minuet-ai.nvim",
       "L3MON4D3/LuaSnip",
+      "onsails/lspkind.nvim",
     },
     config = function()
       require("blink.cmp").setup({
+        appearance = {
+          kind_icons = vim.tbl_extend("force", require("lspkind").presets.default, {
+            Field = "",
+            Method = "󰊕",
+            Property = "",
+          }),
+        },
         keymap = {
           preset = "super-tab",
           ["<CR>"] = {
             "accept",
             "fallback",
           },
-          ["<C-y>"] = require("minuet").make_blink_map(),
         },
         sources = {
           default = {
@@ -248,16 +198,9 @@ return {
             "path",
             "buffer",
             "snippets",
-            "minuet",
           },
-          providers = {
-            minuet = {
-              name = "minuet",
-              module = "minuet.blink",
-              async = true,
-              timeout_ms = 3000,
-              score_offset = 50,
-            },
+          per_filetype = {
+            codecompanion = { "codecompanion" },
           },
         },
         snippets = {
@@ -273,7 +216,8 @@ return {
           menu = {
             min_width = 80,
             draw = {
-              columns = { { "kind_icon" }, { "label", gap = 1 }, },
+              gap = 2,
+              columns = { { "kind_icon" }, { "label" }, },
               components = {
                 label = {
                   width = { fixed = 76 },
@@ -329,7 +273,7 @@ return {
         desc = "Flash Treesitter",
       },
       {
-        "<C-S>",
+        "<C-s>",
         function()
           require("flash").toggle()
         end,
@@ -536,7 +480,7 @@ return {
     keys = {
       {
         "gx",
-        "<cmd>Browse<cr>",
+        "<Cmd>Browse<CR>",
         mode = { "n", "x" },
         desc = "Open URL",
       },
@@ -563,7 +507,7 @@ return {
       require("im_select").setup(opts)
 
       vim.api.nvim_create_autocmd("FocusGained", {
-        group = vim.api.nvim_create_augroup("im-select-focus", { clear = true }),
+        group = vim.api.nvim_create_augroup("ImSelectFocus", { clear = true }),
         callback = function()
           local mode = vim.api.nvim_get_mode().mode
           if vim.fn.executable("macism") ~= 1
@@ -624,12 +568,12 @@ return {
     keys = {
       {
         "]w",
-        "<cmd>NextTrailingWhitespace<CR>",
+        "<Cmd>NextTrailingWhitespace<CR>",
         desc = "Next trailing whitespace",
       },
       {
         "[w",
-        "<cmd>PrevTrailingWhitespace<CR>",
+        "<Cmd>PrevTrailingWhitespace<CR>",
         desc = "Previous trailing whitespace",
       },
     },
@@ -769,7 +713,7 @@ return {
     keys = {
       {
         "<leader>u",
-        "<cmd>UndotreeToggle<cr>",
+        "<Cmd>UndotreeToggle<CR>",
         desc = "Toggle undo tree",
       },
     },
@@ -840,7 +784,7 @@ return {
       },
       {
         "gM",
-        "<nop>",
+        "<Nop>",
       },
     },
   },
@@ -857,7 +801,7 @@ return {
       vim.keymap.set({ "n", "x" }, "gt<Space>", function()
         require("textcase").quick_replace("to_lower_phrase_case")
       end, { desc = "Convert to space-delimited case" })
-      vim.keymap.set("n", "gT", "<nop>")
+      vim.keymap.set("n", "gT", "<Nop>")
     end,
   },
 
@@ -992,8 +936,8 @@ return {
   {
     "lewis6991/gitsigns.nvim",
     config = function()
-      vim.keymap.set({ "n", "v" }, "gh", "<nop>")
-      vim.keymap.set({ "n", "v" }, "gH", "<nop>")
+      vim.keymap.set({ "n", "v" }, "gh", "<Nop>")
+      vim.keymap.set({ "n", "v" }, "gH", "<Nop>")
       require("gitsigns").setup({
         sign_priority = 100,
         trouble = false,
@@ -1036,7 +980,7 @@ return {
             })
           end, { desc = "Prev staged hunk", })
 
-          map({ "o", "x" }, "ih", "<cmd>Gitsigns select_hunk<CR>", { desc = "Git hunk text object", })
+          map({ "o", "x" }, "ih", "<Cmd>Gitsigns select_hunk<CR>", { desc = "Git hunk text object", })
 
           map("n", "gh", require("gitsigns").stage_hunk, { desc = "Stage/unstage git hunk", })
           map("v", "gh", function()
@@ -1056,13 +1000,13 @@ return {
         end
       })
       vim.api.nvim_create_autocmd({ "FocusGained", "ShellCmdPost", "TermLeave" }, {
-        group = vim.api.nvim_create_augroup("gitsigns-auto-refresh", { clear = true }),
+        group = vim.api.nvim_create_augroup("GitsignsAutoRefresh", { clear = true }),
         callback = function()
           require("gitsigns").refresh()
         end,
       })
-      vim.keymap.set("n", "<c-w>g", "<cmd>Gitsigns blame_line<CR>", { desc = "Blame current line", })
-      vim.keymap.set("n", "<c-w><c-g>", "<cmd>Gitsigns blame_line<CR>", { desc = "Blame current line", })
+      vim.keymap.set("n", "<C-w>g", "<Cmd>Gitsigns blame_line<CR>", { desc = "Blame current line", })
+      vim.keymap.set("n", "<C-w><C-g>", "<Cmd>Gitsigns blame_line<CR>", { desc = "Blame current line", })
       vim.keymap.set("n", "<leader>gh", function()
         vim.cmd("Gitsigns blame")
         vim.defer_fn(function()
