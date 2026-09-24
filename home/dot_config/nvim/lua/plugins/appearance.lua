@@ -75,20 +75,6 @@ return {
         },
       })
       vim.cmd([[colorscheme catppuccin-latte]])
-      vim.api.nvim_set_hl(0, "CursorLine", {
-        bg = require("catppuccin.palettes").get_palette().mantle,
-      })
-      vim.api.nvim_set_hl(0, "BlinkCmpMenu", {
-        bg = require("catppuccin.palettes").get_palette().crust,
-        fg = require("catppuccin.palettes").get_palette().overlay2,
-      })
-      vim.api.nvim_set_hl(0, "BlinkCmpMenuBorder", {
-        bg = require("catppuccin.palettes").get_palette().crust,
-        fg = require("catppuccin.palettes").get_palette().blue,
-      })
-      vim.api.nvim_set_hl(0, "VirtColumn", {
-        fg = require("catppuccin.palettes").get_palette().crust,
-      })
     end,
     lazy = false,
   },
@@ -98,7 +84,12 @@ return {
     config = function()
       require("lualine").setup({
         options = {
-          theme = "catppuccin-nvim",
+          theme = function()
+            if vim.g.colors_name and vim.g.colors_name:match("^catppuccin") then
+              return "catppuccin-nvim"
+            end
+            return "auto"
+          end,
           icons_enabled = false,
           component_separators = {
             left = "",
@@ -267,10 +258,6 @@ return {
       })
 
       vim.o.fillchars = "vert:┃"
-      vim.api.nvim_set_hl(0, "WinSeparator", {
-        fg = "#C8C8C8",
-        bold = true,
-      })
       vim.cmd([=[
         set noruler
       ]=])
@@ -318,8 +305,6 @@ return {
         sidebar_filetypes = {},
         no_name_title = "[No Name]",
       })
-      vim.api.nvim_set_hl(0, "BufferCurrentMod", { link = "BufferCurrent" })
-      vim.api.nvim_set_hl(0, "BufferInactiveMod", { link = "BufferInactive" })
       vim.api.nvim_create_user_command("BufferCloseAllButVisibleOrPinned", function()
         local bdelete = require("barbar.bbye").bdelete
         local state = require("barbar.state")
@@ -570,11 +555,6 @@ return {
         silent = true,
         desc = "Last (Trouble/QF)",
       })
-      vim.api.nvim_set_hl(0, "TroubleNormal", { link = "Normal" })
-      vim.api.nvim_set_hl(0, "TroubleNormalNC", { link = "Normal" })
-      vim.api.nvim_set_hl(0, "TroubleIndent", { link = "IblIndent" })
-      vim.api.nvim_set_hl(0, "TroubleIndentFoldClosed", { link = "IblIndent" })
-      vim.api.nvim_set_hl(0, "TroubleIndentFoldOpen", { link = "IblIndent" })
       vim.keymap.set("n", "<leader>T", function()
         require("trouble").toggle()
       end, { desc = "Toggle Trouble", })
@@ -622,7 +602,7 @@ return {
   {
     "lukas-reineke/virt-column.nvim",
     opts = {
-      char = "╎",
+      char = "┊",
       highlight = "VirtColumn",
     },
   },
@@ -652,7 +632,6 @@ return {
       vim.diagnostic.config({
         virtual_text = false,
       })
-      vim.api.nvim_set_hl(0, "TinyInlineDiagnosticVirtualTextArrow", { link = "CursorLine" })
     end,
   },
 
@@ -706,8 +685,6 @@ return {
           "qf",
         },
       })
-      vim.api.nvim_set_hl(0, "MarkSignHL", { link = "SignColumn" })
-      vim.api.nvim_set_hl(0, "MarkSignNumHL", { link = "SignColumn" })
     end,
   },
 
@@ -748,11 +725,6 @@ return {
           "qf",
         },
       })
-      vim.api.nvim_set_hl(0, "SatelliteBar", {
-        bg = require("catppuccin.palettes").get_palette().surface2,
-      })
-      vim.api.nvim_set_hl(0, "SatelliteSearch", { link = "SatelliteMark" })
-      vim.api.nvim_set_hl(0, "SatelliteSearchCurrent", { link = "SatelliteMark" })
     end,
   },
 

@@ -617,14 +617,6 @@ return {
           vim.keymap.set("n", "gs", api.node.run.system, opts("Run System"))
         end,
       })
-      vim.api.nvim_set_hl(0, "NvimTreeNormal", { link = "Normal" })
-      vim.api.nvim_set_hl(0, "NvimTreeNormalNC", { link = "NormalNC" })
-      vim.api.nvim_set_hl(0, "NvimTreeWinSeparator", { link = "WinSeparator" })
-      vim.api.nvim_set_hl(0, "NvimTreeIndentMarker", { link = "IblIndent" })
-      vim.api.nvim_set_hl(0, "NvimTreeSpecialFile", { link = "NvimTreeFileName" })
-      vim.api.nvim_set_hl(0, "NvimTreeExecFile", { link = "NvimTreeFileName" })
-      vim.api.nvim_set_hl(0, "NvimTreeImageFile", { link = "NvimTreeFileName" })
-      vim.api.nvim_set_hl(0, "NvimTreeSymlink", { link = "NvimTreeFileName" })
     end,
     cmd = {
       "NvimTreeToggle",
@@ -676,6 +668,9 @@ return {
           default_direction = "left",
           min_width = sidebar_width,
           width = sidebar_width,
+          win_opts = {
+            winhighlight = "NormalNC:Normal",
+          },
         },
         attach_mode = "global",
         close_on_select = false,
@@ -730,8 +725,6 @@ return {
           end
         end,
       })
-      vim.api.nvim_set_hl(0, "AerialLine", { link = "CursorLine" })
-      vim.api.nvim_set_hl(0, "AerialGuide", { link = "IblIndent" })
 
       vim.keymap.set("n", "<leader>o", "<cmd>AerialToggle!<cr>", { desc = "Toggle symbol outline", })
     end,

@@ -12,7 +12,7 @@ return {
     "kevinhwang91/promise-async",
     init = function()
       package.preload.async = function()
-        return require("fixes")
+        return require("fixes.async")
       end
     end,
   },

@@ -616,7 +616,6 @@ return {
           picker = "telescope",
         },
       })
-      vim.api.nvim_set_hl(0, "SidekickChat", { link = "Normal" })
     end,
     keys = {
       {
