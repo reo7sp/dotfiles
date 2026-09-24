@@ -438,14 +438,6 @@ return {
   },
 
   {
-    "xvzc/chezmoi.nvim",
-    dependencies = {
-      "nvim-lua/plenary.nvim",
-    },
-    opts = {},
-  },
-
-  {
     "fladson/vim-kitty",
     init = function()
       vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {

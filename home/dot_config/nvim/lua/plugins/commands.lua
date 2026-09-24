@@ -9,10 +9,10 @@ return {
         shade_terminals = false,
       })
       function _G.set_terminal_keymaps()
-        vim.keymap.set("t", "<C-h>", [[<Cmd>wincmd h<CR>]], { buffer = 0, desc = "Focus left window", })
-        vim.keymap.set("t", "<C-j>", [[<Cmd>wincmd j<CR>]], { buffer = 0, desc = "Focus lower window", })
-        vim.keymap.set("t", "<C-k>", [[<Cmd>wincmd k<CR>]], { buffer = 0, desc = "Focus upper window", })
-        vim.keymap.set("t", "<C-l>", [[<Cmd>wincmd l<CR>]], { buffer = 0, desc = "Focus right window", })
+        vim.keymap.set("t", "<C-h>", require("smart-splits").move_cursor_left, { buffer = 0, desc = "Focus left window", })
+        vim.keymap.set("t", "<C-j>", require("smart-splits").move_cursor_down, { buffer = 0, desc = "Focus lower window", })
+        vim.keymap.set("t", "<C-k>", require("smart-splits").move_cursor_up, { buffer = 0, desc = "Focus upper window", })
+        vim.keymap.set("t", "<C-l>", require("smart-splits").move_cursor_right, { buffer = 0, desc = "Focus right window", })
         vim.keymap.set("t", "<C-w>", [[<C-\><C-n><C-w>]], { buffer = 0, desc = "Terminal window command", })
       end
       vim.cmd("autocmd! TermOpen term://* lua set_terminal_keymaps()")
@@ -123,9 +123,23 @@ return {
   {
     "esmuellert/codediff.nvim",
     config = function()
+      local default_formatters = require("codediff.ui.explorer.formatters")
+      local function with_icon_gap(formatter)
+        return function(ctx)
+          if ctx.icon == "" then
+            return formatter(ctx)
+          end
+          return formatter(vim.tbl_extend("force", ctx, { icon = ctx.icon .. " " }))
+        end
+      end
+
       require("codediff").setup({
         explorer = {
           view_mode = "tree",
+          formatters = {
+            file = with_icon_gap(default_formatters.file),
+            folder = with_icon_gap(default_formatters.folder),
+          },
         },
         keymaps = {
           view = {
@@ -139,7 +153,6 @@ return {
         }
       })
 
-      local group = vim.api.nvim_create_augroup("codediff-keymaps", { clear = true })
       local lifecycle = require("codediff.ui.lifecycle")
       local hunk = require("codediff.ui.view.actions.hunk")
 
@@ -194,7 +207,7 @@ return {
       end
 
       vim.api.nvim_create_autocmd("User", {
-        group = group,
+        group = vim.api.nvim_create_augroup("CodeDiffKeymaps", { clear = true }),
         pattern = { "CodeDiffOpen", "CodeDiffFileSelect", "CodeDiffVirtualFileLoaded" },
         callback = function(args)
           local tabpage = args.data and args.data.tabpage
@@ -212,7 +225,7 @@ return {
         end,
       })
       vim.api.nvim_create_autocmd({ "BufEnter", "WinEnter" }, {
-        group = group,
+        group = vim.api.nvim_create_augroup("CodeDiffKeymaps", { clear = false }),
         callback = function()
           vim.schedule(function()
             local win = vim.api.nvim_get_current_win()
@@ -226,7 +239,7 @@ return {
         end,
       })
       vim.api.nvim_create_autocmd("User", {
-        group = group,
+        group = vim.api.nvim_create_augroup("CodeDiffKeymaps", { clear = false }),
         pattern = "CodeDiffClose",
         callback = function(args)
           local tabpage = args.data and args.data.tabpage
@@ -297,7 +310,9 @@ return {
 
       local saved = {}
       for _, win in ipairs(view.cur_layout.windows) do
-        if win.file and win.file.bufnr and vim.api.nvim_win_is_valid(win.id)
+        if win.file and win.file.bufnr and vim.api.nvim_buf_is_valid(win.file.bufnr)
+            and vim.api.nvim_win_is_valid(win.id)
+            and vim.api.nvim_win_get_buf(win.id) == win.file.bufnr
             and vim.wo[win.id].foldmethod == "diff" then
           saved[win.id] = vim.api.nvim_win_call(win.id, function()
             local opened = {}
@@ -328,7 +343,8 @@ return {
 
       for _, win in ipairs(layout.windows) do
         local state = saved[win.id]
-        if state and win.file and state.bufnr == win.file.bufnr and vim.api.nvim_win_is_valid(win.id) then
+        if state and win.file and state.bufnr == win.file.bufnr
+            and vim.api.nvim_buf_is_valid(state.bufnr) and vim.api.nvim_win_is_valid(win.id) then
           vim.wo[win.id].foldlevel = state.foldlevel
         end
       end
@@ -336,7 +352,8 @@ return {
       for index = #layout.windows, 1, -1 do
         local win = layout.windows[index]
         local state = saved[win.id]
-        if state and win.file and state.bufnr == win.file.bufnr and vim.api.nvim_win_is_valid(win.id) then
+        if state and win.file and state.bufnr == win.file.bufnr
+            and vim.api.nvim_buf_is_valid(state.bufnr) and vim.api.nvim_win_is_valid(win.id) then
           vim.api.nvim_win_call(win.id, function()
             for _, line in ipairs(state.opened) do
               if line <= vim.api.nvim_buf_line_count(state.bufnr) and vim.fn.foldlevel(line) > 0 then
@@ -354,11 +371,11 @@ return {
       version = "*",
       init = function()
         vim.api.nvim_create_autocmd("TabLeave", {
-          group = vim.api.nvim_create_augroup("diffview-save-folds", { clear = true }),
+          group = vim.api.nvim_create_augroup("DiffviewSaveFolds", { clear = true }),
           callback = save_diffview_folds,
         })
         vim.api.nvim_create_autocmd({ "BufWritePost", "FocusGained", "ShellCmdPost", "TermClose" }, {
-          group = vim.api.nvim_create_augroup("diffview-auto-refresh", { clear = true }),
+          group = vim.api.nvim_create_augroup("DiffviewAutoRefresh", { clear = true }),
           callback = function(args)
             if not package.loaded["diffview"] then
               return
@@ -606,32 +623,96 @@ return {
   },
 
   {
-    "folke/sidekick.nvim",
-    config = function()
-      require("sidekick").setup({
-        nes = {
-          enabled = false,
+    "olimorris/codecompanion.nvim",
+    version = "^19.0.0",
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+      "nvim-treesitter/nvim-treesitter",
+    },
+    opts = {
+      adapters = {
+        acp = {
+          extend = {
+            claude_code = {
+              commands = {
+                default = { "npx", "-y", "@agentclientprotocol/claude-agent-acp" },
+              },
+            },
+            codex = {
+              commands = {
+                default = { "npx", "-y", "@agentclientprotocol/codex-acp" },
+              },
+              defaults = {
+                auth_method = "chat-gpt",
+              },
+            },
+          },
         },
+      },
+      interactions = {
         cli = {
-          picker = "telescope",
+          agent = "codex",
+          agents = {
+            claude_code = {
+              cmd = vim.fn.exepath("claude") ~= "" and "claude" or vim.fn.expand("~/.local/bin/claude"),
+              args = {},
+              description = "Claude Code CLI",
+            },
+            codex = {
+              cmd = "codex",
+              args = {},
+              description = "Codex CLI",
+            },
+            opencode = {
+              cmd = "opencode",
+              args = {},
+              description = "OpenCode CLI",
+            },
+          },
         },
-      })
-    end,
+        chat = {
+          adapter = "codex",
+          keymaps = {
+            fold_code = {
+              modes = { n = "zM" },
+            },
+            goto_file_under_cursor = {
+              modes = { n = "gf" },
+            },
+          },
+        },
+      },
+      display = {
+        chat = {
+          fold_context = true,
+          show_reasoning = false,
+          window = {
+            width = 0.4,
+            opts = {
+              number = false,
+              relativenumber = false,
+            },
+          },
+        },
+      },
+    },
+    cmd = {
+      "CodeCompanionChat",
+      "CodeCompanionActions",
+      "CodeCompanionCodeReview",
+      "CodeCompanionCLI",
+    },
     keys = {
       {
         "<leader>c",
-        function()
-          require("sidekick.cli").send({ msg = "{file}: " })
-        end,
-        desc = "Send file to agent",
+        "<cmd>CodeCompanionChat Toggle<cr>",
+        desc = "Toggle Codex chat",
       },
       {
         "<leader>c",
-        function()
-          require("sidekick.cli").send({ msg = "{file}: ```{selection}``` " })
-        end,
+        "<cmd>CodeCompanionChat Add<cr>",
         mode = "v",
-        desc = "Send selection to agent",
+        desc = "Add selection to Codex chat",
       },
     },
   },

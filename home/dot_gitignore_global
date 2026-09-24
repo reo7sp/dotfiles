@@ -1,6 +1,5 @@
 *~
 .DS_Store
-.git/
 .autoenv.zsh
 .autoenv_leave.zsh
 .envrc
