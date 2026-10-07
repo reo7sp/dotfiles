@@ -164,6 +164,9 @@ export PATH="$(antidote path reo7sp/zimfw-git)/functions:$PATH"
 # -----------------------------------------------------------------------------
 # junegunn/fzf-git.sh
 function fzf-git-bindkeys() {
+  autoload -Uz up-line-or-beginning-search down-line-or-beginning-search
+  zle -N up-line-or-beginning-search
+  zle -N down-line-or-beginning-search
   zvm_bindkey viins "^P" up-line-or-beginning-search
   zvm_bindkey viins "^N" down-line-or-beginning-search
   for o in files branches tags remotes hashes stashes lreflogs each_ref; do
@@ -233,10 +236,12 @@ zmodload zsh/complist
 bindkey -M menuselect '^[[Z' reverse-menu-complete # shift-tab
 
 function my-bindkeys() {
-  bindkey '^B' backward-word
-  bindkey '^F' forward-word
+  bindkey '^B' backward-char
+  bindkey '^F' forward-char
   bindkey '^[b' backward-word
   bindkey '^[f' forward-word
+  bindkey '^A' beginning-of-line
+  bindkey '^E' end-of-line
 }
 zvm_after_init_commands+=(my-bindkeys)
 

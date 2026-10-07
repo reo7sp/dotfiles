@@ -1,5 +1,14 @@
 " vim: ft=vim
 
+cnoremap <C-a> <Home>
+cnoremap <C-e> <End>
+cnoremap <C-b> <Left>
+cnoremap <C-f> <Right>
+cnoremap <M-b> <C-Left>
+cnoremap <M-f> <C-Right>
+cnoremap <C-p> <Up>
+cnoremap <C-n> <Down>
+
 nnoremap gj j
 nnoremap gk k
 nnoremap <Down> gj
