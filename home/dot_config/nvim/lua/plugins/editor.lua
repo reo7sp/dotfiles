@@ -58,6 +58,13 @@ return {
             },
           },
         },
+        pyright = {
+          capabilities = {
+            workspace = {
+              didChangeWatchedFiles = { dynamicRegistration = true },
+            },
+          },
+        },
         pylsp = {
           cmd = { vim.fn.stdpath("data") .. "/pylsp-rope/bin/pylsp" },
           root_dir = function(bufnr, on_dir)

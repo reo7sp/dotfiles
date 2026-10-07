@@ -282,10 +282,12 @@ return {
             enabled = false,
           },
           separator = {
+            left = " ",
             right = " ",
           },
           inactive = {
             separator = {
+              left = " ",
               right = " ",
             },
           },

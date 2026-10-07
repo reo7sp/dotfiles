@@ -6,8 +6,11 @@ ripgrep
 fd
 fzf
 zoxide
+eza
 bat
+xterm-kitty
 jq
+yq
 direnv
 colordiff
 delta

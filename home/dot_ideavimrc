@@ -2,6 +2,15 @@
 
 let mapleader=" "
 
+cnoremap <C-a> <Home>
+cnoremap <C-e> <End>
+cnoremap <C-b> <Left>
+cnoremap <C-f> <Right>
+cnoremap <M-b> <C-Left>
+cnoremap <M-f> <C-Right>
+cnoremap <C-p> <Up>
+cnoremap <C-n> <Down>
+
 set ignorecase
 set smartcase
 set relativenumber
