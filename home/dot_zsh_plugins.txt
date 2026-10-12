@@ -1,15 +1,14 @@
+# general
+mafredri/zsh-async path:async.zsh
+romkatv/zsh-defer
+
 # prompt
 romkatv/powerlevel10k
-mafredri/zsh-async path:async.zsh
-zdharma-continuum/fast-syntax-highlighting kind:defer
-catppuccin/zsh-fsh kind:path
 
 # editing
 jeffreytse/zsh-vi-mode
 mdumitru/fancy-ctrl-z
-zsh-users/zsh-autosuggestions
 zsh-users/zsh-history-substring-search
-djui/alias-tips
 
 # aliases & settings
 reo7sp/zimfw-exa

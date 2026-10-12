@@ -4,10 +4,13 @@ end
 
 local function apply_highlights()
   local colors
+  local visible_background
   if vim.g.colors_name and vim.g.colors_name:match("^catppuccin") then
     colors = require("catppuccin.palettes").get_palette()
+    visible_background = require("catppuccin.utils.colors").blend(colors.surface0, colors.mantle, 0.7)
   else
     colors = {
+      surface0 = highlight_color("TabLine", "bg") or highlight_color("Normal", "bg"),
       surface1 = highlight_color("LineNr", "fg") or highlight_color("Normal", "fg"),
       mantle = highlight_color("CursorColumn", "bg") or highlight_color("Normal", "bg"),
       crust = highlight_color("SignColumnSB", "bg") or highlight_color("NormalFloat", "bg"),
@@ -24,6 +27,16 @@ local function apply_highlights()
   vim.api.nvim_set_hl(0, "SatelliteBar", { bg = colors.surface2 })
   vim.api.nvim_set_hl(0, "BufferTabpages", { bg = colors.blue, fg = colors.mantle, bold = true })
   vim.api.nvim_set_hl(0, "BufferTabpagesSep", { bg = colors.blue, fg = colors.mantle, bold = true })
+  local visible_colors = {
+    BufferVisible = colors.text or highlight_color("Normal", "fg"),
+    BufferVisibleIndex = colors.blue,
+    BufferVisibleMod = colors.yellow or highlight_color("BufferDefaultVisibleMod", "fg"),
+    BufferVisibleSign = colors.blue,
+    BufferVisibleTarget = colors.red or highlight_color("BufferDefaultVisibleTarget", "fg"),
+  }
+  for group, foreground in pairs(visible_colors) do
+    vim.api.nvim_set_hl(0, group, { bg = visible_background or colors.surface0, fg = foreground })
+  end
 
   local links = {
     VirtColumn = "IblIndent",

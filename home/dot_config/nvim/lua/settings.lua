@@ -6,11 +6,6 @@ local function copy_selection_to_system_clipboard()
   vim.notify("Copied selection to system clipboard", vim.log.levels.INFO)
 end
 
-local function copy_line_to_system_clipboard()
-  vim.cmd('normal! "+yy')
-  vim.notify("Copied line to system clipboard", vim.log.levels.INFO)
-end
-
 vim.keymap.set("x", "<RightMouse>", copy_selection_to_system_clipboard, { desc = "Copy selection to system clipboard" })
 
 if vim.env.TERM == "xterm-kitty" and vim.env.KITTY_WINDOW_ID then
@@ -29,7 +24,6 @@ if vim.env.TERM == "xterm-kitty" and vim.env.KITTY_WINDOW_ID then
     callback = function() set_kitty_editor_status(false) end,
   })
 
-  vim.keymap.set("n", "<D-c>", copy_line_to_system_clipboard, { desc = "Copy line to system clipboard" })
   vim.keymap.set("x", "<D-c>", copy_selection_to_system_clipboard, { desc = "Copy selection to system clipboard" })
   vim.keymap.set("n", "<D-v>", '"+p', { desc = "Paste from system clipboard" })
   vim.keymap.set("x", "<D-v>", '"+p', { desc = "Replace selection from system clipboard" })

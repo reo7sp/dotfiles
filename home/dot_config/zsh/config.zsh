@@ -23,21 +23,27 @@ else
   export IS_SSH=0
 fi
 
+if [[ $OSTYPE == linux* && $HOST == lima-* ]]; then
+  export IS_LIMA=1
+else
+  export IS_LIMA=0
+fi
+
 if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
-  if [[ $IS_SSH == 0 && $TERM == 'xterm-kitty' ]]; then
+  if (( ! IS_SSH )) && [[ $TERM == 'xterm-kitty' ]]; then
     echo -ne '\e[5 q'   # blinking cursor beam
     echo -ne '\e]2;~\a' # title "~"
   fi
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
-if uname -a | grep Darwin > /dev/null; then
+if [[ $OSTYPE == darwin* ]]; then
   export IS_MACOS=1
 else
   export IS_MACOS=0
 fi
 
-if [[ $IS_MACOS == 1 && $TERM == 'xterm-kitty' && -f "$HOME/.terminfo/78/xterm-kitty" ]]; then
+if (( IS_MACOS )) && [[ $TERM == 'xterm-kitty' && -f "$HOME/.terminfo/78/xterm-kitty" ]]; then
   export TERMINFO="$HOME/.terminfo"
 fi
 
@@ -45,8 +51,8 @@ can-exec() {
   (( $+commands[$1] ))
 }
 
-if can-exec brew; then
-  eval "$(brew shellenv)"
+if [[ :$FPATH: != *:/opt/homebrew/share/zsh/site-functions:* ]] && can-exec brew; then
+  eval "$(brew shellenv zsh)"
 fi
 
 if can-exec nvim; then
@@ -58,7 +64,7 @@ fi
 export DOCUMENTS_HOME="${DOCUMENTS_HOME:-$HOME/Documents}"
 
 if (( IS_MACOS )) && can-exec macism; then
-  macism com.apple.keylayout.ABC > /dev/null 2>&1
+  macism com.apple.keylayout.ABC > /dev/null 2>&1 &!
 fi
 
 
@@ -72,9 +78,36 @@ export NVM_LAZY_LOAD=true
 export NVM_LAZY_LOAD_EXTRA_COMMANDS=('open-swagger-ui')
 export NVM_COMPLETION=true
 
+typeset -g ZSH_AUTOSUGGEST_MANUAL_REBIND=1
+
 source "$HOME/.antidote/antidote.zsh"
 
 antidote load
+
+zmodload zsh/parameter
+
+# Заменяем $(zle -l -L ...) и $(declare -f ...) таблицами widgets и functions, чтобы регистрировать vi-виджеты без лишних subshell, сохраняя обёртки существующих виджетов.
+function zvm_define_widget() {
+  local widget=$1
+  local func=${2:-$1}
+  local original=${widgets[$widget]}
+
+  if [[ $original == user:* ]]; then
+    local rawfunc=${original#user:}
+    local wrapper="zvm_${widget}-wrapper"
+    local called=false
+    [[ ${functions[$func]} == *'$rawfunc'* ]] && called=true
+    eval "$wrapper() { zvm_widget_wrapper $rawfunc $func $called \"\$@\" }"
+    func=$wrapper
+  fi
+
+  zle -N "$widget" "$func"
+}
+
+if (( ! IS_SSH && ! IS_LIMA )); then
+  antidote load "${ZDOTDIR:-$HOME}/.zsh_prompt_plugins.txt"
+  antidote load "${ZDOTDIR:-$HOME}/.zsh_editing_plugins.txt"
+fi
 
 
 # =============================================================================
@@ -103,11 +136,13 @@ typeset -g POWERLEVEL9K_BACKGROUND_JOBS_VERBOSE=true
 
 # -----------------------------------------------------------------------------
 # catppuccin/zsh-fsh
-FSTHEME_DIR="$HOME/.config/fsh"
-if [[ ! -f "$FSTHEME_DIR/catppuccin-latte.ini" ]]; then
-  mkdir -p "$FSTHEME_DIR"
-  CATPPUCCIN_BUNDLE="$(antidote path catppuccin/zsh-fsh)/themes"
-  ln -sf "$CATPPUCCIN_BUNDLE"/catppuccin-*.ini "$FSTHEME_DIR"/
+if (( ! IS_SSH && ! IS_LIMA )); then
+  FSTHEME_DIR="$HOME/.config/fsh"
+  if [[ ! -f "$FSTHEME_DIR/catppuccin-latte.ini" ]]; then
+    mkdir -p "$FSTHEME_DIR"
+    CATPPUCCIN_BUNDLE="$(antidote path catppuccin/zsh-fsh)/themes"
+    ln -sf "$CATPPUCCIN_BUNDLE"/catppuccin-*.ini "$FSTHEME_DIR"/
+  fi
 fi
 
 # -----------------------------------------------------------------------------
@@ -122,6 +157,55 @@ function my-zvm-init() {
   bindkey -M vicmd '^[' undefined-key
 }
 zvm_after_init_commands+=(my-zvm-init)
+
+# Выбираем escape-последовательность курсора через case вместо $(zvm_cursor_style ...), чтобы избежать лишних subshell при смене vi-режима и восстановлении курсора перед запуском команды.
+function my-zvm-set-cursor() {
+  local style=${(L)1}
+  case $ZVM_TERM in
+    xterm*|rxvt*|screen*|tmux*|konsole*|alacritty*|st*|foot*|wezterm)
+      case $style in
+        $ZVM_CURSOR_BLOCK) style='\e[2 q';;
+        $ZVM_CURSOR_UNDERLINE) style='\e[4 q';;
+        $ZVM_CURSOR_BEAM) style='\e[6 q';;
+        $ZVM_CURSOR_BLINKING_BLOCK) style='\e[1 q';;
+        $ZVM_CURSOR_BLINKING_UNDERLINE) style='\e[3 q';;
+        $ZVM_CURSOR_BLINKING_BEAM) style='\e[5 q';;
+        $ZVM_CURSOR_USER_DEFAULT) style='\e[0 q';;
+      esac
+      ;;
+    *) style='\e[0 q';;
+  esac
+  if [[ $style == '\e[0 q' ]]; then
+    local old_style
+    case $ZVM_MODE in
+      $ZVM_MODE_INSERT) old_style=$ZVM_INSERT_MODE_CURSOR;;
+      $ZVM_MODE_NORMAL) old_style=$ZVM_NORMAL_MODE_CURSOR;;
+      $ZVM_MODE_VISUAL) old_style=$ZVM_VISUAL_MODE_CURSOR;;
+      $ZVM_MODE_VISUAL_LINE) old_style=$ZVM_VISUAL_LINE_MODE_CURSOR;;
+    esac
+    [[ $old_style =~ '\e\][0-9]+;.+\a' ]] && style+='\e\e]112\a'
+  fi
+  zvm_set_cursor "$style"
+}
+
+function zvm_update_cursor() {
+  $ZVM_CURSOR_STYLE_ENABLED || return
+  if $ZVM_OPPEND_MODE; then
+    my-zvm-set-cursor "$ZVM_OPPEND_MODE_CURSOR"
+    return
+  fi
+  case ${1:-$ZVM_MODE} in
+    $ZVM_MODE_NORMAL) my-zvm-set-cursor "$ZVM_NORMAL_MODE_CURSOR";;
+    $ZVM_MODE_INSERT) my-zvm-set-cursor "$ZVM_INSERT_MODE_CURSOR";;
+    $ZVM_MODE_VISUAL) my-zvm-set-cursor "$ZVM_VISUAL_MODE_CURSOR";;
+    $ZVM_MODE_VISUAL_LINE) my-zvm-set-cursor "$ZVM_VISUAL_LINE_MODE_CURSOR";;
+  esac
+}
+
+function zvm_zle-line-finish() {
+  my-zvm-set-cursor "$ZVM_CURSOR_USER_DEFAULT"
+  zvm_switch_keyword_history=()
+}
 
 # -----------------------------------------------------------------------------
 # mdumitru/fancy-ctrl-z
@@ -138,12 +222,16 @@ zvm_after_init_commands+=(fancy-ctrl-z-with-zvm-init)
 
 # -----------------------------------------------------------------------------
 # zsh-users/zsh-autosuggestions
-export ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=20
+if (( ! IS_SSH && ! IS_LIMA )); then
+  export ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=20
 
-function zsh-autosuggestions-init() {
-  bindkey '^ ' autosuggest-accept
-}
-zvm_after_init_commands+=(zsh-autosuggestions-init)
+  function zsh-autosuggestions-init() {
+    bindkey '^ ' autosuggest-accept
+    zsh-defer _zsh_autosuggest_bind_widgets
+  }
+  zvm_after_init_commands+=(zsh-autosuggestions-init)
+  zvm_after_lazy_keybindings_commands+=('zsh-defer _zsh_autosuggest_bind_widgets')
+fi
 
 # -----------------------------------------------------------------------------
 # zsh-users/zsh-history-substring-search
@@ -334,7 +422,7 @@ alias mv='mv -f'
 alias suz='su -m -c zsh'
 alias sudoz="sudo ZDOTDIR=\$HOME PATH=\$PATH zsh"
 
-if [[ $IS_MACOS == 1 ]]; then
+if (( IS_MACOS )); then
   alias show-ports='lsof -iTCP -sTCP:LISTEN -n -P'
 else
   alias show-ports='netstat -tulpn'
@@ -353,6 +441,19 @@ alias edit-autoenv-leave='vim .autoenv_leave.zsh'
 
 if can-exec direnv; then
   eval "$(direnv hook zsh)"
+  functions[_my-direnv-hook]=$functions[_direnv_hook]
+
+  # Пропускаем direnv export, если нет активного окружения и файлов .envrc/.env в текущем и родительских каталогах; иначе вызываем исходный hook для загрузки, обновления или выгрузки окружения.
+  function _direnv_hook() {
+    if [[ -z ${DIRENV_DIR-}${DIRENV_FILE-}${DIRENV_DIFF-} ]]; then
+      local directory=$PWD
+      while [[ ! -e $directory/.envrc && ! -L $directory/.envrc && ! -e $directory/.env && ! -L $directory/.env ]]; do
+        [[ $directory == / ]] && return 0
+        directory=${directory:h}
+      done
+    fi
+    _my-direnv-hook "$@"
+  }
 fi
 
 alias edit-direnv='vim .envrc'
@@ -406,7 +507,7 @@ if can-exec nvim; then
   }
 elif can-exec vim; then
   if [[ -z $REAL_VIM ]]; then
-    export REAL_VIM=$(which vim)
+    export REAL_VIM=${commands[vim]}
   fi
   vim() {
     lcd
@@ -416,7 +517,7 @@ fi
 
 if can-exec v; then
   if [[ -z $REAL_V ]]; then
-    export REAL_V=$(which v)
+    export REAL_V=${commands[v]}
   fi
   vlang() {
     $REAL_V "$@"
@@ -526,14 +627,19 @@ copy-ssh() {
 }
 
 # -----------------------------------------------------------------------------
+# lima
+export LIMA_INSTANCE="ubuntu"
+export LIMA_WORKDIR="/home/${USER}.guest"
+
+# -----------------------------------------------------------------------------
 # fd
 if can-exec fdfind; then
   if [[ -z $REAL_FD ]]; then
-    export REAL_FD=$(which fdfind)
+    export REAL_FD=${commands[fdfind]}
   fi
 elif can-exec fd; then
   if [[ -z $REAL_FD ]]; then
-    export REAL_FD=$(which fd)
+    export REAL_FD=${commands[fd]}
   fi
 fi
 
@@ -859,7 +965,7 @@ m() {
 # codex
 if can-exec codex && [[ "${NO_PROXY_CODEX:-0}" != '1' ]]; then
   if [[ -z $REAL_CODEX ]]; then
-    export REAL_CODEX=$(which codex)
+    export REAL_CODEX=${commands[codex]}
   fi
 fi
 
@@ -873,7 +979,7 @@ fi
 # claude
 if can-exec claude && [[ "${NO_PROXY_CLAUDE:-0}" != '1' ]]; then
   if [[ -z $REAL_CLAUDE ]]; then
-    export REAL_CLAUDE=$(which claude)
+    export REAL_CLAUDE=${commands[claude]}
   fi
 fi
 
@@ -887,7 +993,7 @@ fi
 # cursor-agent
 if can-exec cursor-agent && [[ "${NO_PROXY_CURSOR:-0}" != '1' ]] && [[ "${NO_PROXY_CURSOR_AGENT:-0}" != '1' ]]; then
   if [[ -z $REAL_CURSOR_AGENT ]]; then
-    export REAL_CURSOR_AGENT=$(which cursor-agent)
+    export REAL_CURSOR_AGENT=${commands[cursor-agent]}
   fi
 fi
 
@@ -932,6 +1038,10 @@ alias jn='jupyter notebook'
 # -----------------------------------------------------------------------------
 # docker
 export DOCKER_BUILDKIT=1
+
+if (( IS_MACOS )) && can-exec limactl; then
+  export DOCKER_HOST="$(limactl list docker-rootful --format 'unix://{{.Dir}}/sock/docker.sock')"
+fi
 
 alias d='docker'
 alias dc='docker-compose'

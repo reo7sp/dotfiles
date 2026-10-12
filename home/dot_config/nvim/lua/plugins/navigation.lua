@@ -463,7 +463,11 @@ return {
         },
       })
 
-      vim.keymap.set("n", "-", "<Cmd>Oil<CR>", { desc = "Open parent directory", })
+      vim.keymap.set("n", "-", function()
+        if vim.bo.buftype == "" and vim.bo.filetype ~= "aerial" then
+          vim.cmd.Oil()
+        end
+      end, { desc = "Open parent directory", })
     end,
   },
 

@@ -522,7 +522,7 @@ return {
           then
             return
           end
-          vim.system({ "macism", opts.default_im_select }):wait(200)
+          vim.system({ "macism", opts.default_im_select })
         end,
       })
     end,
