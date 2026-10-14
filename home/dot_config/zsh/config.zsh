@@ -67,9 +67,11 @@ if (( IS_MACOS )) && can-exec macism; then
   macism com.apple.keylayout.ABC > /dev/null 2>&1 &!
 fi
 
-
 # =============================================================================
 # plugins
+fpath+=~/.zfunc
+fpath+=~/.ya.completion/zsh
+
 export PYENV_ROOT="$HOME/.pyenv"
 export PATH="$PYENV_ROOT/bin:$PATH"
 
@@ -87,7 +89,7 @@ antidote load
 zmodload zsh/parameter
 
 # Заменяем $(zle -l -L ...) и $(declare -f ...) таблицами widgets и functions, чтобы регистрировать vi-виджеты без лишних subshell, сохраняя обёртки существующих виджетов.
-function zvm_define_widget() {
+zvm_define_widget() {
   local widget=$1
   local func=${2:-$1}
   local original=${widgets[$widget]}
@@ -153,13 +155,13 @@ ZVM_VISUAL_MODE_CURSOR=$ZVM_CURSOR_BLINKING_BLOCK
 ZVM_VISUAL_LINE_MODE_CURSOR=$ZVM_CURSOR_BLINKING_BLOCK
 ZVM_OPPEND_MODE_CURSOR=$ZVM_CURSOR_BLINKING_UNDERLINE
 
-function my-zvm-init() {
+my-zvm-init() {
   bindkey -M vicmd '^[' undefined-key
 }
 zvm_after_init_commands+=(my-zvm-init)
 
 # Выбираем escape-последовательность курсора через case вместо $(zvm_cursor_style ...), чтобы избежать лишних subshell при смене vi-режима и восстановлении курсора перед запуском команды.
-function my-zvm-set-cursor() {
+my-zvm-set-cursor() {
   local style=${(L)1}
   case $ZVM_TERM in
     xterm*|rxvt*|screen*|tmux*|konsole*|alacritty*|st*|foot*|wezterm)
@@ -188,7 +190,7 @@ function my-zvm-set-cursor() {
   zvm_set_cursor "$style"
 }
 
-function zvm_update_cursor() {
+zvm_update_cursor() {
   $ZVM_CURSOR_STYLE_ENABLED || return
   if $ZVM_OPPEND_MODE; then
     my-zvm-set-cursor "$ZVM_OPPEND_MODE_CURSOR"
@@ -202,18 +204,18 @@ function zvm_update_cursor() {
   esac
 }
 
-function zvm_zle-line-finish() {
+zvm_zle-line-finish() {
   my-zvm-set-cursor "$ZVM_CURSOR_USER_DEFAULT"
   zvm_switch_keyword_history=()
 }
 
 # -----------------------------------------------------------------------------
 # mdumitru/fancy-ctrl-z
-function fancy-ctrl-z-with-zvm() {
+fancy-ctrl-z-with-zvm() {
   fancy-ctrl-z
   zvm_enter_insert_mode
 }
-function fancy-ctrl-z-with-zvm-init() {
+fancy-ctrl-z-with-zvm-init() {
   zvm_define_widget fancy-ctrl-z-with-zvm
   zvm_bindkey viins '^Z' fancy-ctrl-z-with-zvm
   zvm_bindkey vicmd '^Z' fancy-ctrl-z-with-zvm
@@ -225,7 +227,7 @@ zvm_after_init_commands+=(fancy-ctrl-z-with-zvm-init)
 if (( ! IS_SSH && ! IS_LIMA )); then
   export ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=20
 
-  function zsh-autosuggestions-init() {
+  zsh-autosuggestions-init() {
     bindkey '^ ' autosuggest-accept
     zsh-defer _zsh_autosuggest_bind_widgets
   }
@@ -237,7 +239,7 @@ fi
 # zsh-users/zsh-history-substring-search
 export HISTORY_SUBSTRING_SEARCH_PREFIXED=1
 
-function zsh-history-substring-search-init() {
+zsh-history-substring-search-init() {
   bindkey '^[[A' history-substring-search-up
   bindkey '^[[B' history-substring-search-down
   bindkey '^P' history-substring-search-up
@@ -251,7 +253,7 @@ export PATH="$(antidote path reo7sp/zimfw-git)/functions:$PATH"
 
 # -----------------------------------------------------------------------------
 # junegunn/fzf-git.sh
-function fzf-git-bindkeys() {
+fzf-git-bindkeys() {
   autoload -Uz up-line-or-beginning-search down-line-or-beginning-search
   zle -N up-line-or-beginning-search
   zle -N down-line-or-beginning-search
@@ -262,7 +264,7 @@ function fzf-git-bindkeys() {
     eval "zvm_bindkey viins '^g${o[1]}' fzf-git-$o-widget"
   done
 }
-function fzf-git-lazy-bindkeys() {
+fzf-git-lazy-bindkeys() {
   for o in files branches tags remotes hashes stashes lreflogs each_ref; do
     eval "zvm_bindkey vicmd '^g^${o[1]}' fzf-git-$o-widget"
     eval "zvm_bindkey vicmd '^g${o[1]}' fzf-git-$o-widget"
@@ -323,7 +325,7 @@ WORDCHARS=${WORDCHARS/=}
 zmodload zsh/complist
 bindkey -M menuselect '^[[Z' reverse-menu-complete # shift-tab
 
-function my-bindkeys() {
+my-bindkeys() {
   bindkey '^B' backward-char
   bindkey '^F' forward-char
   bindkey '^[b' backward-word
@@ -336,23 +338,23 @@ zvm_after_init_commands+=(my-bindkeys)
 if (( IS_MACOS )) && can-exec macism; then
   ZSH_AUTOSUGGEST_IGNORE_WIDGETS+=(.zsh-focus-in .zsh-focus-out)
 
-  function zsh-focus-tracking-enable() {
+  zsh-focus-tracking-enable() {
     printf '\e[?1004h'
   }
 
-  function zsh-focus-tracking-disable() {
+  zsh-focus-tracking-disable() {
     printf '\e[?1004l'
   }
 
-  function zsh-focus-in() {
+  zsh-focus-in() {
     macism com.apple.keylayout.ABC > /dev/null 2>&1 &!
   }
 
-  function zsh-focus-out() {
+  zsh-focus-out() {
     return 0
   }
 
-  function zsh-focus-events-init() {
+  zsh-focus-events-init() {
     zle -N .zsh-focus-in zsh-focus-in
     zle -N .zsh-focus-out zsh-focus-out
     local keymap
@@ -363,6 +365,7 @@ if (( IS_MACOS )) && can-exec macism; then
 
     autoload -Uz add-zsh-hook
     add-zsh-hook precmd zsh-focus-tracking-enable
+    add-zsh-hook precmd zsh-focus-in
     add-zsh-hook preexec zsh-focus-tracking-disable
     zsh-focus-tracking-enable
   }
@@ -444,7 +447,7 @@ if can-exec direnv; then
   functions[_my-direnv-hook]=$functions[_direnv_hook]
 
   # Пропускаем direnv export, если нет активного окружения и файлов .envrc/.env в текущем и родительских каталогах; иначе вызываем исходный hook для загрузки, обновления или выгрузки окружения.
-  function _direnv_hook() {
+  _direnv_hook() {
     if [[ -z ${DIRENV_DIR-}${DIRENV_FILE-}${DIRENV_DIFF-} ]]; then
       local directory=$PWD
       while [[ ! -e $directory/.envrc && ! -L $directory/.envrc && ! -e $directory/.env && ! -L $directory/.env ]]; do
@@ -469,7 +472,6 @@ alias edit-zshrc='vim ~/.zshrc; source ~/.zshrc'
 bak-edit() {
   local result=0
   bak-edit-zshrc "$@" || result=$?
-  bak-edit-zsh-arc "$@" || result=$?
   bak-edit-vim-custom "$@" || result=$?
   return "$result"
 }
@@ -632,33 +634,26 @@ export LIMA_INSTANCE="ubuntu"
 export LIMA_WORKDIR="/home/${USER}.guest"
 
 # -----------------------------------------------------------------------------
-# fd
-if can-exec fdfind; then
-  if [[ -z $REAL_FD ]]; then
-    export REAL_FD=${commands[fdfind]}
-  fi
-elif can-exec fd; then
-  if [[ -z $REAL_FD ]]; then
-    export REAL_FD=${commands[fd]}
-  fi
-fi
-
-export FD_OPTIONS='--hidden'
-
-if [[ -n $REAL_FD ]]; then
-  fd() {
-    $REAL_FD $FD_OPTIONS "$@"
-  }
-  fdg() {
-    $REAL_FD "$@"
-  }
-fi
-
-# -----------------------------------------------------------------------------
 # rg
 export RIPGREP_CONFIG_PATH="$HOME/.ripgreprc"
 
 alias edit-rg="vim $RIPGREP_CONFIG_PATH"
+
+# -----------------------------------------------------------------------------
+# fd
+if [[ -z $REAL_FD ]]; then
+  if can-exec fdfind; then
+    export REAL_FD=${commands[fdfind]}
+  else
+    export REAL_FD=${commands[fd]}
+  fi
+fi
+
+export FD_OPTIONS='--no-require-git'
+
+fd() {
+  "$REAL_FD" $FD_OPTIONS "$@"
+}
 
 # -----------------------------------------------------------------------------
 # zoxide
@@ -666,17 +661,17 @@ if can-exec zoxide; then
   zvm_after_init_commands+=('eval "$(zoxide init zsh)"')
 fi
 
+alias zr='zoxide remove "$PWD"'
+alias ze='zoxide edit'
+
 # -----------------------------------------------------------------------------
 # fzf
 export FZF_DEFAULT_OPTS='--color=light'
+export FZF_DEFAULT_COMMAND="$REAL_FD $FD_OPTIONS --type f --strip-cwd-prefix"
+export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 
 if can-exec fzf; then
   zvm_after_init_commands+=('source <(fzf --zsh 2>/dev/null)')
-fi
-
-if can-exec fd; then
-  export FZF_DEFAULT_COMMAND="$REAL_FD $FD_OPTIONS --type f --strip-cwd-prefix"
-  export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 fi
 
 alias f='fzf'
@@ -723,32 +718,35 @@ _fzf_git_fzf () {
 # git
 alias gg='lazygit'
 
-alias gww='gws'
-gwdd() { gwd "$@" | delta --side-by-side; }
-alias gwdt='gwd --ext-diff'
-alias gwdn='gwd --name-only'
-alias gwdh='gwd HEAD'
-gwddh() { gwd HEAD "$@" | delta --side-by-side; }
-alias gwdth='gwdt HEAD'
-alias gwdnh='gwdn HEAD'
-gcsd() { gcs "$@" | delta --side-by-side; }
-alias gcst='gcs --ext-diff'
-alias gcsn='gcs --name-only --pretty=""'
-alias gcss='git rev-parse HEAD'
-alias gcsj='git show --no-patch'
-alias gcsc='git show --stat'
+alias gbd='gb -D'
+gbdr() {
+  echo "$@" | xargs -n1 git branch -D
+  echo "$@" | xargs -n1 -P0 git push origin --delete
+}
+alias gb-all="find . -maxdepth 1 -type d | xargs -n1 -t -I{} git -C '{}' branch"
 
 alias gcom='gco master'
 alias gcomm='gco origin/master'
 alias gcoh='gco HEAD'
-
 gcoi() {
   _fzf_git_branches --no-multi | xargs git checkout
 }
-
-git-default-branch() {
-  git symbolic-ref refs/remotes/origin/HEAD | cut -f4 -d/
+gcsd() {
+  gcs "$@" | delta --side-by-side
 }
+alias gcst='gcs --ext-diff'
+alias gcsn='gcs --name-only --pretty=""'
+alias gcss='git rev-parse HEAD'
+alias gcsj='git show --no-patch'
+alias gcsk='git show --stat'
+alias gcu='git add -A && git commit --amend --reuse-message HEAD'
+alias gc-wip="git add -A && git commit -m 'wip'"
+alias gc-fix="git add -A && git commit -m 'fix'"
+alias gc-upd="git add -A && git commit -m 'update'"
+alias gc-kik="git add -A && git commit -m 'kik'"
+alias gcp='git cherry-pick'
+alias gcpa='git cherry-pick --abort'
+alias gcpc='git cherry-pick --continue'
 
 gfcd() {
   local repo=$1
@@ -761,6 +759,27 @@ gfcd() {
 
   git clone "$repo" "$dir"
   cd "$dir"
+}
+alias gfm-all='find . -maxdepth 1 -type d ! -name . | sort -R | while read -r d; do echo "$d:"; git -C "$d" pull; sleep 2; done'
+alias gfr-all='find . -maxdepth 1 -type d ! -name . | sort -R | while read -r d; do echo "$d:"; git -C "$d" pull --rebase; sleep 2; done'
+
+alias giaa='git add -A :/'
+
+alias gww='gws'
+gwdd() {
+  gwd "$@" | delta --side-by-side
+}
+alias gwdt='gwd --ext-diff'
+alias gwdn='gwd --name-only'
+alias gwdh='gwd HEAD'
+gwddh() {
+  gwd HEAD "$@" | delta --side-by-side
+}
+alias gwdth='gwdt HEAD'
+alias gwdnh='gwdn HEAD'
+
+git-default-branch() {
+  git symbolic-ref refs/remotes/origin/HEAD | cut -f4 -d/
 }
 
 glab-cd() {
@@ -788,28 +807,6 @@ gh-cd() {
   gh repo clone "$repo" "$dir"
   cd "$dir"
 }
-
-alias gcu='git add -A && git commit --amend --reuse-message HEAD'
-
-alias gc-wip="git add -A && git commit -m 'wip'"
-alias gc-fix="git add -A && git commit -m 'fix'"
-alias gc-upd="git add -A && git commit -m 'update'"
-alias gc-kik="git add -A && git commit -m 'kik'"
-
-alias gcp='git cherry-pick'
-alias gcpa='git cherry-pick --abort'
-alias gcpc='git cherry-pick --continue'
-
-alias gbd='gb -D'
-
-gbdr() {
-  echo "$@" | xargs -n1 git branch -D
-  echo "$@" | xargs -n1 -P0 git push origin --delete
-}
-
-alias gfm-all='find . -maxdepth 1 -type d ! -name . | sort -R | while read -r d; do echo "$d:"; git -C "$d" pull; sleep 2; done'
-alias gfr-all='find . -maxdepth 1 -type d ! -name . | sort -R | while read -r d; do echo "$d:"; git -C "$d" pull --rebase; sleep 2; done'
-alias gb-all="find . -maxdepth 1 -type d | xargs -n1 -t -I{} git -C '{}' branch"
 
 git-fix-macos() {
   # 1) Очищаем существующие fetch правила
@@ -921,6 +918,236 @@ alias edit-lazygit='vim ~/.config/lazygit/config.yml'
 alias edit-lazygit-sh='vim ~/.config/lazygit/shell.sh'
 
 # -----------------------------------------------------------------------------
+# arc
+alias ab='arc branch'
+alias abc='arc checkout -b'
+alias abd='arc branch -d'
+alias abdf='arc branch -D'
+alias abdm='arc branch -d --merged'
+alias abl='arc branch -v'
+
+alias ac='arc commit'
+alias aca='arc commit --all'
+alias acm='arc commit --message'
+alias aco='arc checkout'
+alias acom='arc checkout trunk'
+alias acf='arc commit --amend --no-edit'
+alias acF='arc commit --amend'
+alias acp='arc cherry-pick'
+alias acpa='arc cherry-pick --abort'
+alias acpc='arc cherry-pick --continue'
+alias acr='arc revert'
+acs() {
+  arc show --git "$@" | delta
+}
+acsc() {
+  arc show --git "$@" | _arc_filter_diff_without_tests | delta
+}
+acsd() {
+  arc show --git "$@" | delta --side-by-side
+}
+acsdc() {
+  arc show --git "$@" | _arc_filter_diff_without_tests | delta --side-by-side
+}
+acst() {
+  local commit="${1:-HEAD}"
+  (( $# )) && shift
+  arc difftool -t difft "${commit}^" "$commit" "$@"
+}
+acstc() {
+  local commit="${1:-HEAD}" names file
+  local -a files
+  (( $# )) && shift
+  names=$(arc diff --git --name-only --relative=. "${commit}^" "$commit" "$@") || return
+  for file in "${(@f)names}"; do
+    file="${(Q)file}"
+    [[ -n "$file" && "${file:t}" != test_* ]] && files+=("$PWD/$file")
+  done
+  (( ${#files} )) || return 0
+  arc difftool -t difft "${commit}^" "$commit" "${files[@]}"
+}
+alias acsn='arc show --git --name-only'
+alias acss='arc rev-parse HEAD'
+acsj() {
+  arc show --git --quiet "$@" | delta
+}
+acsk() {
+  arc show --git --stat "$@" | delta
+}
+alias acu='arc add -A && arc commit --amend --no-edit'
+alias ac-wip="arc add -A && arc commit -m 'wip'"
+alias ac-fix="arc add -A && arc commit -m 'fix'"
+alias ac-upd="arc add -A && arc commit -m 'update'"
+alias ac-kik="arc add -A && arc commit -m 'kik'"
+
+alias ad='arc ls-files'
+alias adc='arc ls-files --cached'
+alias adm='arc ls-files --modified'
+alias adu='arc ls-files --other'
+
+alias af='arc fetch'
+alias afm='arc pull --ff-only'
+alias afmm='arc pull --ff-only trunk'
+alias afM='arc pull'
+alias afr='arc pull --rebase'
+
+alias aia='arc add'
+alias aiaa='arc add "$(arc root)/"'
+alias air='arc reset'
+
+alias al='arc log'
+ald() {
+  arc log --patch "$@" | delta --side-by-side
+}
+alias alo='arc log --oneline'
+alias alr='arc reflog'
+
+alias ap='arc push'
+alias apf='arc push --force'
+alias apr='arc pr'
+alias aprc='arc pr create'
+alias aprco='arc pr checkout'
+alias aprl='arc pr list'
+alias aprr='arc pr status'
+alias aprs='arc pr view'
+alias aprp='arc pr publish'
+
+alias ar='arc rebase'
+alias ara='arc rebase --abort'
+alias arC='arc rebase --continue'
+alias ari='arc rebase --interactive'
+alias ars='arc rebase --skip'
+alias arm='arc rebase trunk'
+
+alias as='arc stash'
+alias asa='arc stash apply'
+alias asx='arc stash drop'
+alias asl='arc stash list'
+alias asp='arc stash pop'
+alias ass='arc stash push --include-untracked'
+alias asu='arc submit'
+
+alias aww='arc status --short'
+awwc() {
+  arc status --short "$@" | _arc_filter_status_without_tests
+}
+alias awS='arc status'
+awd() {
+  arc diff --git "$@" | delta
+}
+awdc() {
+  arc diff --git "$@" | _arc_filter_diff_without_tests | delta
+}
+awdd() {
+  arc diff --git "$@" | delta --side-by-side
+}
+awddc() {
+  arc diff --git "$@" | _arc_filter_diff_without_tests | delta --side-by-side
+}
+alias awdt='arc difftool -t difft'
+alias awdn='arc diff --git --name-only'
+awdnc() {
+  arc diff --git --name-only "$@" | _arc_filter_names_without_tests
+}
+awdh() {
+  arc diff --git HEAD "$@" | delta
+}
+awdhc() {
+  arc diff --git HEAD "$@" | _arc_filter_diff_without_tests | delta
+}
+awddh() {
+  arc diff --git HEAD "$@" | delta --side-by-side
+}
+awddhc() {
+  arc diff --git HEAD "$@" | _arc_filter_diff_without_tests | delta --side-by-side
+}
+awdch() {
+  arc diff --git --cached HEAD "$@" | delta
+}
+awdchc() {
+  arc diff --git --cached HEAD "$@" | _arc_filter_diff_without_tests | delta
+}
+alias awdnh='arc diff --git --name-only HEAD'
+awdnhc() {
+  arc diff --git --name-only HEAD "$@" | _arc_filter_names_without_tests
+}
+alias awr='arc reset'
+alias awR='arc reset --hard'
+alias awc='arc clean --dry-run'
+alias awC='arc clean -d'
+alias awm='arc mv'
+alias awx='arc rm'
+
+_arc_filter_status_without_tests() {
+  local line status_path old_file new_file
+
+  while IFS= read -r line; do
+    status_path="${line[4,-1]}"
+    old_file="${(Q)${status_path%% -> *}}"
+    new_file="${(Q)${status_path##* -> }}"
+    if [[ "${old_file:t}" != test_* && "${new_file:t}" != test_* ]]; then
+      print -r -- "$line"
+    fi
+  done
+}
+_arc_filter_diff_without_tests() {
+  local -a header_parts
+  local block line old_file new_file
+  local skip=0
+
+  while IFS= read -r line; do
+    if [[ "$line" == "diff --git "* ]]; then
+      (( skip )) || print -rn -- "$block"
+      block=
+      skip=0
+      header_parts=("${(z)line}")
+      old_file="${(Q)header_parts[3]}"
+      new_file="${(Q)header_parts[4]}"
+      if [[ "${old_file:t}" == test_* || "${new_file:t}" == test_* ]]; then
+        skip=1
+      fi
+    fi
+    block+="$line"$'\n'
+  done
+  (( skip )) || print -rn -- "$block"
+}
+_arc_filter_names_without_tests() {
+  local file
+
+  while IFS= read -r file; do
+    [[ "${file:t}" == test_* ]] || print -r -- "$file"
+  done
+}
+
+cda() {
+  cd "$(arc root 2>/dev/null || printf "%s\n" "$HOME/arcadia")/$1"
+}
+
+cata() {
+  cat "$(arc root 2>/dev/null || printf "%s\n" "$HOME/arcadia")/$1"
+}
+
+bata() {
+  bat "$(arc root 2>/dev/null || printf "%s\n" "$HOME/arcadia")/$1"
+}
+
+lessa() {
+  less "$(arc root 2>/dev/null || printf "%s\n" "$HOME/arcadia")/$1"
+}
+
+vima() {
+  vim "$(arc root 2>/dev/null || printf "%s\n" "$HOME/arcadia")/$1"
+}
+alias va='vima'
+
+ta() {
+  subl "$(arc root 2>/dev/null || printf "%s\n" "$HOME/arcadia")/$1"
+}
+
+alias yg='ya grep'
+alias ygr='ya grep --remote'
+
+# -----------------------------------------------------------------------------
 # delta
 alias deltad='DELTA_FEATURES=+side-by-side delta'
 
@@ -970,7 +1197,7 @@ if can-exec codex && [[ "${NO_PROXY_CODEX:-0}" != '1' ]]; then
 fi
 
 if [[ -n $REAL_CODEX ]] && ! alias codex &>/dev/null; then
-  function codex {
+  codex() {
     ALL_PROXY=socks5h://127.0.0.1:1086 $REAL_CODEX "$@"
   }
 fi
@@ -984,7 +1211,7 @@ if can-exec claude && [[ "${NO_PROXY_CLAUDE:-0}" != '1' ]]; then
 fi
 
 if [[ -n $REAL_CLAUDE ]] && ! alias claude &>/dev/null; then
-  function claude {
+  claude() {
     ALL_PROXY=socks5h://127.0.0.1:1086 $REAL_CLAUDE "$@"
   }
 fi
@@ -998,13 +1225,13 @@ if can-exec cursor-agent && [[ "${NO_PROXY_CURSOR:-0}" != '1' ]] && [[ "${NO_PRO
 fi
 
 if [[ -n $REAL_CURSOR_AGENT ]] && ! alias cursor-agent &>/dev/null; then
-  function cursor-agent {
+  cursor-agent() {
     ALL_PROXY=socks5h://127.0.0.1:1086 $REAL_CURSOR_AGENT "$@"
   }
 fi
 
 if [[ -n $REAL_CURSOR_AGENT ]] && ! alias agent &>/dev/null; then
-  function agent {
+  agent() {
     ALL_PROXY=socks5h://127.0.0.1:1086 $REAL_CURSOR_AGENT "$@"
   }
 fi

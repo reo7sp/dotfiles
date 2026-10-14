@@ -505,6 +505,11 @@ return {
         return {
           enhanced_diff_hl = true,
           show_help_hints = false,
+          view = {
+            default = { disable_diagnostics = true },
+            merge_tool = { disable_diagnostics = true },
+            file_history = { disable_diagnostics = true },
+          },
           keymaps = {
             view = {
               { "n", "q", "<Cmd>DiffviewClose<CR>", { desc = "Close Diffview" } },
