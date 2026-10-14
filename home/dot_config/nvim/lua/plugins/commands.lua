@@ -628,6 +628,22 @@ return {
   },
 
   {
+    "coffebar/transfer.nvim",
+    cmd = {
+      "TransferInit",
+      "DiffRemote",
+      "TransferUpload",
+      "TransferDownload",
+      "TransferDirDiff",
+      "TransferRepeat",
+    },
+    opts = {},
+    keys = {
+      { "<leader>v", "<Cmd>TransferUpload<CR>", desc = "Upload to remote", },
+    },
+  },
+
+  {
     "olimorris/codecompanion.nvim",
     version = "^19.0.0",
     dependencies = {
@@ -711,13 +727,13 @@ return {
       {
         "<leader>c",
         "<Cmd>CodeCompanionChat Toggle<CR>",
-        desc = "Toggle Codex chat",
+        desc = "Toggle AI chat",
       },
       {
         "<leader>c",
         "<Cmd>CodeCompanionChat Add<CR>",
         mode = "v",
-        desc = "Add selection to Codex chat",
+        desc = "Add selection to AI chat",
       },
     },
   },
