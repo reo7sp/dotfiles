@@ -26,3 +26,5 @@ stylua
 shfmt
 prettier
 yamlfmt
+lima
+colima

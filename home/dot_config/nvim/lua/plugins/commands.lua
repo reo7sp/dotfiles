@@ -640,6 +640,7 @@ return {
     opts = {},
     keys = {
       { "<leader>v", "<Cmd>TransferUpload<CR>", desc = "Upload to remote", },
+      { "<leader>V", "<Cmd>TransferUpload .<CR>", desc = "Upload cwd to remote", },
     },
   },
 

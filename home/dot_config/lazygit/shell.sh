@@ -67,6 +67,7 @@ gfu() { git pull --ff-only --all --prune "$@"; }
 
 # Index (i)
 gia() { git add "$@"; }
+giaa() { git add -A :/ "$@"; }
 giA() { git add --patch "$@"; }
 giu() { git add --update "$@"; }
 giU() { git add --verbose --all "$@"; }
@@ -180,8 +181,7 @@ gwX() { git rm -rf "$@"; }
 
 # ------------------------------------------------------------------------------
 # my aliases
-gll() { tig "$@"; }
-
+gww() { gws "$@"; }
 gwdd() { gwd "$@" | delta --side-by-side; }
 gwdt() { gwd --ext-diff "$@"; }
 gwdn() { gwd --name-only "$@"; }
@@ -194,7 +194,7 @@ gcst() { gcs --ext-diff "$@"; }
 gcsn() { gcs --name-only --pretty="" "$@"; }
 gcss() { git rev-parse HEAD "$@"; }
 gcsj() { git show --no-patch "$@"; }
-gcsc() { git show --stat "$@"; }
+gcsk() { git show --stat "$@"; }
 
 gcom() { gco master "$@"; }
 gcomm() { gco origin/master "$@"; }

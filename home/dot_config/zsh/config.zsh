@@ -461,8 +461,6 @@ fi
 
 alias edit-direnv='vim .envrc'
 alias edit-envrc='vim .envrc'
-alias direnv-edit='vim .envrc'
-alias envrc-edit='vim .envrc'
 
 alias edit-zsh='vim ~/.config/zsh/config.zsh; source ~/.zshrc'
 alias edit-zsh-plugins='vim ~/.zsh_plugins.txt; source ~/.zshrc'
@@ -491,7 +489,7 @@ upgrade-edit-zsh() {
   antidote update
 }
 
-edit-zsh-clear-cache-completion() {
+clear-cache-edit-zsh() {
   rm -rf \
     "${XDG_CACHE_HOME:-$HOME/.cache}/zsh/compcache" \
     "${XDG_CACHE_HOME:-$HOME/.cache}/zsh/compdump" \
@@ -595,6 +593,8 @@ alias edit-ranger='vim ~/.config/ranger/rc.conf'
 
 # -----------------------------------------------------------------------------
 # kitty
+alias icat="kitty +kitten icat"
+
 alias edit-kitty='vim ~/.config/kitty/kitty.conf'
 
 # -----------------------------------------------------------------------------
@@ -923,7 +923,7 @@ alias ab='arc branch'
 alias abc='arc checkout -b'
 alias abd='arc branch -d'
 alias abdf='arc branch -D'
-alias abdm='arc branch -d --merged'
+alias abdm='arc fetch trunk && arc branch -d --merged arcadia/trunk'
 alias abl='arc branch -v'
 
 alias ac='arc commit'
@@ -1197,7 +1197,7 @@ if can-exec codex && [[ "${NO_PROXY_CODEX:-0}" != '1' ]]; then
 fi
 
 if [[ -n $REAL_CODEX ]] && ! alias codex &>/dev/null; then
-  codex() {
+  function codex {
     ALL_PROXY=socks5h://127.0.0.1:1086 $REAL_CODEX "$@"
   }
 fi
@@ -1211,7 +1211,7 @@ if can-exec claude && [[ "${NO_PROXY_CLAUDE:-0}" != '1' ]]; then
 fi
 
 if [[ -n $REAL_CLAUDE ]] && ! alias claude &>/dev/null; then
-  claude() {
+  function claude {
     ALL_PROXY=socks5h://127.0.0.1:1086 $REAL_CLAUDE "$@"
   }
 fi
@@ -1225,13 +1225,13 @@ if can-exec cursor-agent && [[ "${NO_PROXY_CURSOR:-0}" != '1' ]] && [[ "${NO_PRO
 fi
 
 if [[ -n $REAL_CURSOR_AGENT ]] && ! alias cursor-agent &>/dev/null; then
-  cursor-agent() {
+  function cursor-agent {
     ALL_PROXY=socks5h://127.0.0.1:1086 $REAL_CURSOR_AGENT "$@"
   }
 fi
 
 if [[ -n $REAL_CURSOR_AGENT ]] && ! alias agent &>/dev/null; then
-  agent() {
+  function agent {
     ALL_PROXY=socks5h://127.0.0.1:1086 $REAL_CURSOR_AGENT "$@"
   }
 fi
@@ -1259,19 +1259,27 @@ fi
 alias p='python3'
 alias p2='python2'
 alias pp='python3 -m ptpython || ptpython'
-alias pp-install='pip3 install ptpython --break-system-packages'
+alias install-pp='pip3 install ptpython --break-system-packages'
 alias jn='jupyter notebook'
+
+install-venv() {
+  if [[ ! -e "$HOME/venv" ]]; then
+    python3 -m venv "$HOME/venv"
+  fi
+}
 
 # -----------------------------------------------------------------------------
 # docker
 export DOCKER_BUILDKIT=1
 
-if (( IS_MACOS )) && can-exec limactl; then
-  export DOCKER_HOST="$(limactl list docker-rootful --format 'unix://{{.Dir}}/sock/docker.sock')"
+if (( IS_MACOS )) && can-exec colima; then
+  export DOCKER_HOST="unix://$HOME/.colima/default/docker.sock"
 fi
 
 alias d='docker'
 alias dc='docker-compose'
+
+alias install-colima-docker='colima start --vm-type=vz --vz-rosetta'
 
 # -----------------------------------------------------------------------------
 # k8s
