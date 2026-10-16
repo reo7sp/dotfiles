@@ -108,11 +108,17 @@ return {
       vim.keymap.set("n", "gr", vim.lsp.buf.rename, { nowait = true, desc = "Rename symbol", })
       vim.keymap.set("n", "gO", "<Nop>")
     end,
+    cond = function()
+      return vim.env.KITTY_SCROLLBACK_NVIM ~= "true"
+    end,
   },
 
   {
     "williamboman/mason.nvim",
     opts = {},
+    cond = function()
+      return vim.env.KITTY_SCROLLBACK_NVIM ~= "true"
+    end,
   },
 
   {
@@ -142,6 +148,9 @@ return {
         ensure_installed = lsps,
       })
     end,
+    cond = function()
+      return vim.env.KITTY_SCROLLBACK_NVIM ~= "true"
+    end,
   },
 
   {
@@ -150,6 +159,9 @@ return {
       "williamboman/mason.nvim",
     },
     opts = {},
+    cond = function()
+      return vim.env.KITTY_SCROLLBACK_NVIM ~= "true"
+    end,
   },
 
   {
@@ -526,7 +538,6 @@ return {
         end,
       })
     end,
-    lazy = false,
   },
 
   {
@@ -546,7 +557,6 @@ return {
 
   {
     "nmac427/guess-indent.nvim",
-    lazy = false,
     opts = {},
   },
 
@@ -932,6 +942,9 @@ return {
         require("conform").format({})
       end, { desc = "Format buffer", })
     end,
+    cond = function()
+      return vim.env.KITTY_SCROLLBACK_NVIM ~= "true"
+    end,
   },
 
   {
@@ -1021,6 +1034,9 @@ return {
         end, 200)
       end, { silent = true, desc = "Open git blame", })
     end,
+    cond = function()
+      return vim.env.KITTY_SCROLLBACK_NVIM ~= "true"
+    end,
   },
 
   {
@@ -1029,6 +1045,9 @@ return {
     opts = {
       disable_diagnostics = true,
     },
+    cond = function()
+      return vim.env.KITTY_SCROLLBACK_NVIM ~= "true"
+    end,
   },
 
 }

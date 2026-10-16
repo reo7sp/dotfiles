@@ -31,6 +31,9 @@ return {
         return true
       end
     },
+    cond = function()
+      return vim.env.KITTY_SCROLLBACK_NVIM ~= "true"
+    end,
   },
 
   {
@@ -74,6 +77,9 @@ return {
       end,
       notificationOnAutoClose = false,
     },
+    cond = function()
+      return vim.env.KITTY_SCROLLBACK_NVIM ~= "true"
+    end,
   },
 
   {
@@ -92,6 +98,9 @@ return {
       ]=])
     end,
     lazy = false,
+    cond = function()
+      return vim.env.KITTY_SCROLLBACK_NVIM ~= "true"
+    end,
     keys = {
       {
         "<leader>Zz",

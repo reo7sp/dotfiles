@@ -76,12 +76,10 @@ return {
       })
       vim.cmd([[colorscheme catppuccin-latte]])
     end,
-    lazy = false,
   },
 
   {
     "tanvirtin/monokai.nvim",
-    lazy = false,
   },
 
   {
@@ -260,7 +258,9 @@ return {
         set noruler
       ]=])
     end,
-    lazy = false,
+    cond = function()
+      return vim.env.KITTY_SCROLLBACK_NVIM ~= "true"
+    end,
   },
 
   {
@@ -348,7 +348,9 @@ return {
       vim.keymap.set("n", "<C-,>", "<Cmd>BufferMovePrevious<CR>", { desc = "Move buffer left", })
       vim.keymap.set("n", "<C-.>", "<Cmd>BufferMoveNext<CR>", { desc = "Move buffer right", })
     end,
-    lazy = false,
+    cond = function()
+      return vim.env.KITTY_SCROLLBACK_NVIM ~= "true"
+    end,
   },
 
   {
@@ -385,7 +387,6 @@ return {
 
   {
     "smart-splits-nvim/smart-splits.nvim",
-    lazy = false,
     config = function()
       require("smart-splits").setup({
       })
@@ -604,6 +605,9 @@ return {
         require("illuminate").goto_next_reference()
       end, { desc = "Next Reference", })
     end,
+    cond = function()
+      return vim.env.KITTY_SCROLLBACK_NVIM ~= "true"
+    end,
   },
 
   {
@@ -617,6 +621,9 @@ return {
         enabled = false,
       },
     },
+    cond = function()
+      return vim.env.KITTY_SCROLLBACK_NVIM ~= "true"
+    end,
   },
 
   {
@@ -625,6 +632,9 @@ return {
       char = "┊",
       highlight = "VirtColumn",
     },
+    cond = function()
+      return vim.env.KITTY_SCROLLBACK_NVIM ~= "true"
+    end,
   },
 
   {
@@ -652,6 +662,9 @@ return {
       vim.diagnostic.config({
         virtual_text = false,
       })
+    end,
+    cond = function()
+      return vim.env.KITTY_SCROLLBACK_NVIM ~= "true"
     end,
   },
 
