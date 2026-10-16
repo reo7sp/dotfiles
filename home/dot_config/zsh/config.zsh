@@ -597,7 +597,7 @@ function cdlll() {
 	command rm -f -- "$tmp"
 }
 
-alias edit-yazi='vim ~/.config/yazi/yazi.toml'
+alias edit-yazi='vim ~/.config/yazi/'
 
 # -----------------------------------------------------------------------------
 # kitty

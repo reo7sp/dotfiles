@@ -265,6 +265,13 @@ cnoreabbrev tcde tcd %:p:h
 
 vim.keymap.set("n", "ZT", "<Cmd>tabclose<CR>", { desc = "Close tab", })
 vim.keymap.set("n", "ZA", "<Cmd>wqa<CR>", { desc = "Write and quit all", })
+vim.keymap.set("n", "<C-c>", function()
+  local buffers = vim.fn.getbufinfo({ buflisted = 1 })
+  if #buffers > 1 and vim.fn.confirm("Quit Neovim?", "&Yes\n&No", 2) ~= 1 then
+    return
+  end
+  vim.cmd("confirm qall")
+end, { desc = "Quit with confirmation", })
 
 -- vim.keymap.set('n', '<C-[>', '<C-w>W')
 vim.keymap.set("n", "<C-ϧ>", "<C-w>W", { desc = "Focus previous window", })
