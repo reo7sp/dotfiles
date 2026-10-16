@@ -24,9 +24,7 @@ def draw_tab(draw_data, screen, tab, before, max_tab_length, index, is_last, ext
     show_status = is_last and not extra_data.for_layout and available > 1
     if show_status:
         max_tab_length = min(max_tab_length, available)
-    end = draw_tab_with_separator(
-        draw_data, screen, tab, before, max_tab_length, index, is_last, extra_data
-    )
+    end = draw_tab_with_separator(draw_data, screen, tab, before, max_tab_length, index, is_last, extra_data)
     if show_status:
         screen.cursor.fg = as_rgb(int(draw_data.inactive_fg))
         screen.cursor.bg = as_rgb(int(draw_data.default_bg))

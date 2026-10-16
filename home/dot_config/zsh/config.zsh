@@ -2,17 +2,30 @@
 
 # =============================================================================
 # env
+can-exec() {
+  (( $+commands[$1] ))
+}
+
+if can-exec brew && [[ :$FPATH: != *:/opt/homebrew/share/zsh/site-functions:* ]]; then
+  eval "$(brew shellenv zsh)"
+fi
+
+typeset -U PATH path
 export PATH="\
 $HOME/.local/bin:\
-$PATH:\
+$HOME/.pyenv/bin:\
+/usr/local/bin:\
+/usr/local/sbin:\
+/opt/homebrew/bin:\
+/opt/homebrew/sbin:\
 /Applications/Sublime Text.app/Contents/SharedSupport/bin:\
 /Applications/Sublime Merge.app/Contents/SharedSupport/bin:\
-/usr/local/sbin:\
-/usr/local/bin:\
-/usr/sbin:\
 /usr/bin:\
+/usr/sbin:\
+/bin:\
 /sbin:\
-/bin"
+$PATH"
+
 export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
 export SHELL_SESSIONS_DISABLE=1
@@ -47,14 +60,6 @@ if (( IS_MACOS )) && [[ $TERM == 'xterm-kitty' && -f "$HOME/.terminfo/78/xterm-k
   export TERMINFO="$HOME/.terminfo"
 fi
 
-can-exec() {
-  (( $+commands[$1] ))
-}
-
-if [[ :$FPATH: != *:/opt/homebrew/share/zsh/site-functions:* ]] && can-exec brew; then
-  eval "$(brew shellenv zsh)"
-fi
-
 if can-exec nvim; then
   export EDITOR='nvim'
 else
@@ -73,22 +78,21 @@ fpath+=~/.zfunc
 fpath+=~/.ya.completion/zsh
 
 export PYENV_ROOT="$HOME/.pyenv"
-export PATH="$PYENV_ROOT/bin:$PATH"
 
 export NVM_DIR="$HOME/.nvm"
 export NVM_LAZY_LOAD=true
 export NVM_LAZY_LOAD_EXTRA_COMMANDS=('open-swagger-ui')
 export NVM_COMPLETION=true
 
+# [OPTIMIZATION] Перепривязываем autosuggestions после настройки vi-mode, а не перед каждым prompt.
 typeset -g ZSH_AUTOSUGGEST_MANUAL_REBIND=1
 
 source "$HOME/.antidote/antidote.zsh"
 
 antidote load
 
+# [OPTIMIZATION] Регистрируем vi-виджеты через widgets и functions без subshell.
 zmodload zsh/parameter
-
-# Заменяем $(zle -l -L ...) и $(declare -f ...) таблицами widgets и functions, чтобы регистрировать vi-виджеты без лишних subshell, сохраняя обёртки существующих виджетов.
 zvm_define_widget() {
   local widget=$1
   local func=${2:-$1}
@@ -107,7 +111,6 @@ zvm_define_widget() {
 }
 
 if (( ! IS_SSH && ! IS_LIMA )); then
-  antidote load "${ZDOTDIR:-$HOME}/.zsh_prompt_plugins.txt"
   antidote load "${ZDOTDIR:-$HOME}/.zsh_editing_plugins.txt"
 fi
 
@@ -137,17 +140,6 @@ typeset -g POWERLEVEL9K_VIRTUALENV_SHOW_WITH_PYENV=true
 typeset -g POWERLEVEL9K_BACKGROUND_JOBS_VERBOSE=true
 
 # -----------------------------------------------------------------------------
-# catppuccin/zsh-fsh
-if (( ! IS_SSH && ! IS_LIMA )); then
-  FSTHEME_DIR="$HOME/.config/fsh"
-  if [[ ! -f "$FSTHEME_DIR/catppuccin-latte.ini" ]]; then
-    mkdir -p "$FSTHEME_DIR"
-    CATPPUCCIN_BUNDLE="$(antidote path catppuccin/zsh-fsh)/themes"
-    ln -sf "$CATPPUCCIN_BUNDLE"/catppuccin-*.ini "$FSTHEME_DIR"/
-  fi
-fi
-
-# -----------------------------------------------------------------------------
 # jeffreytse/zsh-vi-mode
 ZVM_INSERT_MODE_CURSOR=$ZVM_CURSOR_BLINKING_BEAM
 ZVM_NORMAL_MODE_CURSOR=$ZVM_CURSOR_BLOCK
@@ -155,13 +147,13 @@ ZVM_VISUAL_MODE_CURSOR=$ZVM_CURSOR_BLINKING_BLOCK
 ZVM_VISUAL_LINE_MODE_CURSOR=$ZVM_CURSOR_BLINKING_BLOCK
 ZVM_OPPEND_MODE_CURSOR=$ZVM_CURSOR_BLINKING_UNDERLINE
 
-my-zvm-init() {
+_zvm_init() {
   bindkey -M vicmd '^[' undefined-key
 }
-zvm_after_init_commands+=(my-zvm-init)
+zvm_after_init_commands+=(_zvm_init)
 
-# Выбираем escape-последовательность курсора через case вместо $(zvm_cursor_style ...), чтобы избежать лишних subshell при смене vi-режима и восстановлении курсора перед запуском команды.
-my-zvm-set-cursor() {
+# [OPTIMIZATION] Меняем форму курсора через case без subshell.
+_zvm_set_cursor() {
   local style=${(L)1}
   case $ZVM_TERM in
     xterm*|rxvt*|screen*|tmux*|konsole*|alacritty*|st*|foot*|wezterm)
@@ -193,45 +185,45 @@ my-zvm-set-cursor() {
 zvm_update_cursor() {
   $ZVM_CURSOR_STYLE_ENABLED || return
   if $ZVM_OPPEND_MODE; then
-    my-zvm-set-cursor "$ZVM_OPPEND_MODE_CURSOR"
+    _zvm_set_cursor "$ZVM_OPPEND_MODE_CURSOR"
     return
   fi
   case ${1:-$ZVM_MODE} in
-    $ZVM_MODE_NORMAL) my-zvm-set-cursor "$ZVM_NORMAL_MODE_CURSOR";;
-    $ZVM_MODE_INSERT) my-zvm-set-cursor "$ZVM_INSERT_MODE_CURSOR";;
-    $ZVM_MODE_VISUAL) my-zvm-set-cursor "$ZVM_VISUAL_MODE_CURSOR";;
-    $ZVM_MODE_VISUAL_LINE) my-zvm-set-cursor "$ZVM_VISUAL_LINE_MODE_CURSOR";;
+    $ZVM_MODE_NORMAL) _zvm_set_cursor "$ZVM_NORMAL_MODE_CURSOR";;
+    $ZVM_MODE_INSERT) _zvm_set_cursor "$ZVM_INSERT_MODE_CURSOR";;
+    $ZVM_MODE_VISUAL) _zvm_set_cursor "$ZVM_VISUAL_MODE_CURSOR";;
+    $ZVM_MODE_VISUAL_LINE) _zvm_set_cursor "$ZVM_VISUAL_LINE_MODE_CURSOR";;
   esac
 }
 
 zvm_zle-line-finish() {
-  my-zvm-set-cursor "$ZVM_CURSOR_USER_DEFAULT"
+  _zvm_set_cursor "$ZVM_CURSOR_USER_DEFAULT"
   zvm_switch_keyword_history=()
 }
 
 # -----------------------------------------------------------------------------
 # mdumitru/fancy-ctrl-z
-fancy-ctrl-z-with-zvm() {
+_fancy_ctrl_z_with_zvm() {
   fancy-ctrl-z
   zvm_enter_insert_mode
 }
-fancy-ctrl-z-with-zvm-init() {
-  zvm_define_widget fancy-ctrl-z-with-zvm
-  zvm_bindkey viins '^Z' fancy-ctrl-z-with-zvm
-  zvm_bindkey vicmd '^Z' fancy-ctrl-z-with-zvm
+_fancy_ctrl_z_with_zvm_init() {
+  zvm_define_widget fancy_ctrl_z_with_zvm _fancy_ctrl_z_with_zvm
+  zvm_bindkey viins '^Z' fancy_ctrl_z_with_zvm
+  zvm_bindkey vicmd '^Z' fancy_ctrl_z_with_zvm
 }
-zvm_after_init_commands+=(fancy-ctrl-z-with-zvm-init)
+zvm_after_init_commands+=(_fancy_ctrl_z_with_zvm_init)
 
 # -----------------------------------------------------------------------------
 # zsh-users/zsh-autosuggestions
 if (( ! IS_SSH && ! IS_LIMA )); then
   export ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=20
 
-  zsh-autosuggestions-init() {
+  _zsh_autosuggestions_init() {
     bindkey '^ ' autosuggest-accept
     zsh-defer _zsh_autosuggest_bind_widgets
   }
-  zvm_after_init_commands+=(zsh-autosuggestions-init)
+  zvm_after_init_commands+=(_zsh_autosuggestions_init)
   zvm_after_lazy_keybindings_commands+=('zsh-defer _zsh_autosuggest_bind_widgets')
 fi
 
@@ -239,41 +231,17 @@ fi
 # zsh-users/zsh-history-substring-search
 export HISTORY_SUBSTRING_SEARCH_PREFIXED=1
 
-zsh-history-substring-search-init() {
+_zsh_history_substring_search_init() {
   bindkey '^[[A' history-substring-search-up
   bindkey '^[[B' history-substring-search-down
   bindkey '^P' history-substring-search-up
   bindkey '^N' history-substring-search-down
 }
-zvm_after_init_commands+=(zsh-history-substring-search-init)
+zvm_after_init_commands+=(_zsh_history_substring_search_init)
 
 # -----------------------------------------------------------------------------
 # zimfw/git
 export PATH="$(antidote path reo7sp/zimfw-git)/functions:$PATH"
-
-# -----------------------------------------------------------------------------
-# junegunn/fzf-git.sh
-fzf-git-bindkeys() {
-  autoload -Uz up-line-or-beginning-search down-line-or-beginning-search
-  zle -N up-line-or-beginning-search
-  zle -N down-line-or-beginning-search
-  zvm_bindkey viins "^P" up-line-or-beginning-search
-  zvm_bindkey viins "^N" down-line-or-beginning-search
-  for o in files branches tags remotes hashes stashes lreflogs each_ref; do
-    eval "zvm_bindkey viins '^g^${o[1]}' fzf-git-$o-widget"
-    eval "zvm_bindkey viins '^g${o[1]}' fzf-git-$o-widget"
-  done
-}
-fzf-git-lazy-bindkeys() {
-  for o in files branches tags remotes hashes stashes lreflogs each_ref; do
-    eval "zvm_bindkey vicmd '^g^${o[1]}' fzf-git-$o-widget"
-    eval "zvm_bindkey vicmd '^g${o[1]}' fzf-git-$o-widget"
-    eval "zvm_bindkey visual '^g^${o[1]}' fzf-git-$o-widget"
-    eval "zvm_bindkey visual '^g${o[1]}' fzf-git-$o-widget"
-  done
-}
-zvm_after_init_commands+=(fzf-git-bindkeys)
-zvm_after_init_commands+=(fzf-git-lazy-bindkeys)
 
 # -----------------------------------------------------------------------------
 # belak/zsh-utils path:completion
@@ -325,38 +293,44 @@ WORDCHARS=${WORDCHARS/=}
 zmodload zsh/complist
 bindkey -M menuselect '^[[Z' reverse-menu-complete # shift-tab
 
-my-bindkeys() {
+_bindkeys() {
   bindkey '^B' backward-char
   bindkey '^F' forward-char
   bindkey '^[b' backward-word
   bindkey '^[f' forward-word
   bindkey '^A' beginning-of-line
   bindkey '^E' end-of-line
+
+  autoload -Uz up-line-or-beginning-search down-line-or-beginning-search
+  zle -N up-line-or-beginning-search
+  zle -N down-line-or-beginning-search
+  bindkey -M viins '^P' up-line-or-beginning-search
+  bindkey -M viins '^N' down-line-or-beginning-search
 }
-zvm_after_init_commands+=(my-bindkeys)
+zvm_after_init_commands+=(_bindkeys)
 
 if (( IS_MACOS )) && can-exec macism; then
   ZSH_AUTOSUGGEST_IGNORE_WIDGETS+=(.zsh-focus-in .zsh-focus-out)
 
-  zsh-focus-tracking-enable() {
+  _zsh_focus_tracking_enable() {
     printf '\e[?1004h'
   }
 
-  zsh-focus-tracking-disable() {
+  _zsh_focus_tracking_disable() {
     printf '\e[?1004l'
   }
 
-  zsh-focus-in() {
+  _zsh_focus_in() {
     macism com.apple.keylayout.ABC > /dev/null 2>&1 &!
   }
 
-  zsh-focus-out() {
+  _zsh_focus_out() {
     return 0
   }
 
-  zsh-focus-events-init() {
-    zle -N .zsh-focus-in zsh-focus-in
-    zle -N .zsh-focus-out zsh-focus-out
+  _zsh_focus_events_init() {
+    zle -N .zsh-focus-in _zsh_focus_in
+    zle -N .zsh-focus-out _zsh_focus_out
     local keymap
     for keymap in viins vicmd visual viopp isearch command menuselect; do
       bindkey -M "$keymap" $'\e[I' .zsh-focus-in
@@ -364,12 +338,12 @@ if (( IS_MACOS )) && can-exec macism; then
     done
 
     autoload -Uz add-zsh-hook
-    add-zsh-hook precmd zsh-focus-tracking-enable
-    add-zsh-hook precmd zsh-focus-in
-    add-zsh-hook preexec zsh-focus-tracking-disable
-    zsh-focus-tracking-enable
+    add-zsh-hook precmd _zsh_focus_tracking_enable
+    add-zsh-hook precmd _zsh_focus_in
+    add-zsh-hook preexec _zsh_focus_tracking_disable
+    _zsh_focus_tracking_enable
   }
-  zvm_after_init_commands+=(zsh-focus-events-init)
+  zvm_after_init_commands+=(_zsh_focus_events_init)
 fi
 
 
@@ -441,14 +415,11 @@ aliases-ls() {
 
 # -----------------------------------------------------------------------------
 # zsh
-alias edit-autoenv-enter='vim .autoenv.zsh'
-alias edit-autoenv-leave='vim .autoenv_leave.zsh'
-
 if can-exec direnv; then
   eval "$(direnv hook zsh)"
-  functions[_my-direnv-hook]=$functions[_direnv_hook]
+  functions[_direnv_original_hook]=$functions[_direnv_hook]
 
-  # Пропускаем direnv export, если нет активного окружения и файлов .envrc/.env в текущем и родительских каталогах; иначе вызываем исходный hook для загрузки, обновления или выгрузки окружения.
+  # [OPTIMIZATION] Пропускаем direnv без активного окружения и .envrc/.env в текущем или родительских каталогах.
   _direnv_hook() {
     if [[ -z ${DIRENV_DIR-}${DIRENV_FILE-}${DIRENV_DIFF-} ]]; then
       local directory=$PWD
@@ -457,7 +428,7 @@ if can-exec direnv; then
         directory=${directory:h}
       done
     fi
-    _my-direnv-hook "$@"
+    _direnv_original_hook "$@"
   }
 fi
 
@@ -597,7 +568,7 @@ function cdlll() {
 	command rm -f -- "$tmp"
 }
 
-alias edit-yazi='vim ~/.config/yazi/yazi.toml'
+alias edit-yazi='vim ~/.config/yazi/'
 
 # -----------------------------------------------------------------------------
 # kitty
@@ -674,7 +645,7 @@ alias ze='zoxide edit'
 
 # -----------------------------------------------------------------------------
 # fzf
-export FZF_DEFAULT_OPTS='--color=light'
+export FZF_DEFAULT_OPTS='--color=light --layout=reverse'
 export FZF_DEFAULT_COMMAND="$REAL_FD $FD_OPTIONS --type f --strip-cwd-prefix"
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 
@@ -718,10 +689,6 @@ cdf() {
   cd "$(find . -type d -not -path '*/\.*' -print 2> /dev/null | fzf)"
 }
 
-_fzf_git_fzf () {
-  fzf $FZF_DEFAULT_OPTS --height 50% --tmux 90%,70% --layout reverse --multi --min-height 20+ --border --no-separator --header-border horizontal --border-label-pos 2 --color 'label:blue' --preview-window 'right,50%' --preview-border line --bind 'ctrl-/:change-preview-window(down,50%|hidden|)' "$@"
-}
-
 # -----------------------------------------------------------------------------
 # git
 alias gg='lazygit'
@@ -737,7 +704,11 @@ alias gcom='gco master'
 alias gcomm='gco origin/master'
 alias gcoh='gco HEAD'
 gcoi() {
-  _fzf_git_branches --no-multi | xargs git checkout
+  local branch
+  branch=$(git for-each-ref --sort=-committerdate --format='%(refname:short)' refs/heads | fzf --no-multi) || return
+  [[ -n $branch ]] || return
+
+  git checkout "$branch"
 }
 gcsd() {
   gcs "$@" | delta --side-by-side
@@ -748,10 +719,10 @@ alias gcss='git rev-parse HEAD'
 alias gcsj='git show --no-patch'
 alias gcsk='git show --stat'
 alias gcu='git add -A && git commit --amend --reuse-message HEAD'
-alias gc-wip="git add -A && git commit -m 'wip'"
-alias gc-fix="git add -A && git commit -m 'fix'"
-alias gc-upd="git add -A && git commit -m 'update'"
-alias gc-kik="git add -A && git commit -m 'kik'"
+alias gc-wip="git commit -m 'wip'"
+alias gc-fix="git commit -m 'fix'"
+alias gc-upd="git commit -m 'update'"
+alias gc-kik="git commit -m 'kik'"
 alias gcp='git cherry-pick'
 alias gcpa='git cherry-pick --abort'
 alias gcpc='git cherry-pick --continue'
@@ -938,6 +909,13 @@ alias ac='arc commit'
 alias aca='arc commit --all'
 alias acm='arc commit --message'
 alias aco='arc checkout'
+acoi() {
+  local branch
+  branch=$(arc branch --list | sed 's/^[*[:space:]]*//' | fzf --no-multi) || return
+  [[ -n $branch ]] || return
+
+  arc checkout "$branch"
+}
 alias acom='arc checkout trunk'
 alias acf='arc commit --amend --no-edit'
 alias acF='arc commit --amend'
@@ -983,10 +961,10 @@ acsk() {
   arc show --git --stat "$@" | delta
 }
 alias acu='arc add -A && arc commit --amend --no-edit'
-alias ac-wip="arc add -A && arc commit -m 'wip'"
-alias ac-fix="arc add -A && arc commit -m 'fix'"
-alias ac-upd="arc add -A && arc commit -m 'update'"
-alias ac-kik="arc add -A && arc commit -m 'kik'"
+alias ac-wip="arc commit -m 'wip'"
+alias ac-fix="arc commit -m 'fix'"
+alias ac-upd="arc commit -m 'update'"
+alias ac-kik="arc commit -m 'kik'"
 
 alias ad='arc ls-files'
 alias adc='arc ls-files --cached'
@@ -1287,7 +1265,7 @@ fi
 alias d='docker'
 alias dc='docker-compose'
 
-alias install-colima-docker='colima start --vm-type=vz --vz-rosetta'
+alias install-colima-docker='colima start --vm-type=vz --vz-rosetta --cpus 8 --memory 8'
 
 # -----------------------------------------------------------------------------
 # k8s

@@ -2,8 +2,8 @@
 
 My config files:
 
-- zsh: [config.zsh](./home/dot_config/zsh/config.zsh), [zsh_plugins.txt](./home/dot_zsh_plugins.txt).
-- nvim: [init.lua](./home/dot_config/nvim/init.lua), [neovintageousrc](./home/dot_neovintageousrc), [ideavimrc](./home/dot_ideavimrc), [vscodevimrc](./home/dot_vscodevimrc).
+- zsh: [config.zsh](./home/dot_config/zsh/config.zsh).
+- nvim: [init.lua](./home/dot_config/nvim/init.lua).
 - kitty: [kitty.conf](./home/dot_config/kitty/kitty.conf).
 - sublime text: [Preferences.sublime-settings](<./home/private_Library/private_Application Support/Sublime Text/Packages/User/Preferences.sublime-settings>).
 
