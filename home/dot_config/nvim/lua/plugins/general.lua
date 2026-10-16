@@ -38,6 +38,16 @@ return {
     "nvim-tree/nvim-web-devicons",
     opts = {
       color_icons = false,
+      override_by_extension = {
+        yaml = {
+          icon = "",
+          name = "Yaml",
+        },
+        yml = {
+          icon = "",
+          name = "Yml",
+        },
+      },
     },
   },
 

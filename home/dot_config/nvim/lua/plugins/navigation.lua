@@ -375,7 +375,7 @@ return {
       oil_columns.register("icon_gap", {
         render = function(entry, _, bufnr)
           local icon = icon_column.render(entry, { add_padding = false, }, bufnr)
-          return { icon[1] .. " ", icon[2], }
+          return { icon[1] .. " ", icon[2] == "OilDirIcon" and icon[2] or "Normal", }
         end,
         parse = icon_column.parse,
       })
@@ -562,6 +562,11 @@ return {
             enable = true,
           },
           icons = {
+            web_devicons = {
+              file = {
+                color = false,
+              },
+            },
             padding = {
               icon = "  ",
             },

@@ -17,6 +17,7 @@
         "Formatter",
         "Jinja2",
         "Json Colors And Navigation",
+        "JSON Reindent",
         "LSP",
         "LSP-json",
         "LSP-yaml",

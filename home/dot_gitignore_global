@@ -3,6 +3,7 @@
 .autoenv.zsh
 .autoenv_leave.zsh
 .envrc
+.direnv/
 .idea/
 .vscode/
 .claude/
@@ -15,3 +16,4 @@ compile_commands.json
 *.pyc
 pyrightconfig.json
 .ruff_cache/
+nvim.log

@@ -17,16 +17,16 @@ def draw_tab(draw_data, screen, tab, before, max_tab_length, index, is_last, ext
     active_tab = tab_manager.active_tab if tab_manager else None
     layout_name = active_tab.current_layout.name if active_tab else tab.layout_name
 
-    clock = datetime.now().strftime("%I:%M %p").lstrip("0")
+    now = datetime.now()
+    period = "AM" if now.hour < 12 else "PM"
+    clock = f"{now.hour % 12 or 12}:{now.minute:02d} {period}"
     status = f" L:{layout_name}  {clock} "
 
     available = screen.columns - before - len(status)
     show_status = is_last and not extra_data.for_layout and available > 1
     if show_status:
         max_tab_length = min(max_tab_length, available)
-    end = draw_tab_with_separator(
-        draw_data, screen, tab, before, max_tab_length, index, is_last, extra_data
-    )
+    end = draw_tab_with_separator(draw_data, screen, tab, before, max_tab_length, index, is_last, extra_data)
     if show_status:
         screen.cursor.fg = as_rgb(int(draw_data.inactive_fg))
         screen.cursor.bg = as_rgb(int(draw_data.default_bg))

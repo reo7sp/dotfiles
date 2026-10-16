@@ -3,6 +3,7 @@ dark = "catppuccin-latte"
 light = "catppuccin-latte"
 
 [mgr]
+border_symbol = "┃"
 border_style = { fg = "#bcc0cd", bg = "#eff1f6", bold = true }
 
 [filetype]

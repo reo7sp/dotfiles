@@ -73,7 +73,7 @@
           <key>foreground</key>
           <string>#7c7f93</string>
           <key>fontStyle</key>
-          <string>italic</string>
+          <string/>
         </dict>
       </dict>
       <dict>
@@ -144,7 +144,7 @@
           <key>foreground</key>
           <string>#1e66f5</string>
           <key>fontStyle</key>
-          <string>italic</string>
+          <string/>
         </dict>
       </dict>
       <dict>
@@ -157,7 +157,7 @@
           <key>foreground</key>
           <string>#df8e1d</string>
           <key>fontStyle</key>
-          <string>italic</string>
+          <string/>
         </dict>
       </dict>
       <dict>
@@ -170,7 +170,7 @@
           <key>foreground</key>
           <string>#df8e1d</string>
           <key>fontStyle</key>
-          <string>italic</string>
+          <string/>
         </dict>
       </dict>
       <dict>
@@ -205,7 +205,7 @@
           <key>foreground</key>
           <string>#df8e1d</string>
           <key>fontStyle</key>
-          <string>italic</string>
+          <string/>
         </dict>
       </dict>
       <dict>
@@ -227,7 +227,7 @@
           <key>foreground</key>
           <string>#e64553</string>
           <key>fontStyle</key>
-          <string>italic</string>
+          <string/>
         </dict>
       </dict>
       <dict>
@@ -981,7 +981,7 @@
           <key>foreground</key>
           <string>#1e66f5</string>
           <key>fontStyle</key>
-          <string>italic</string>
+          <string/>
         </dict>
       </dict>
       <dict>
@@ -1005,7 +1005,7 @@
           <key>foreground</key>
           <string>#179299</string>
           <key>fontStyle</key>
-          <string>italic</string>
+          <string/>
         </dict>
       </dict>
       <dict>
@@ -1171,7 +1171,7 @@
           <key>foreground</key>
           <string>#d20f39</string>
           <key>fontStyle</key>
-          <string>italic</string>
+          <string/>
         </dict>
       </dict>
       <dict>
@@ -1410,7 +1410,7 @@
           <key>foreground</key>
           <string>#04a5e5</string>
           <key>fontStyle</key>
-          <string>italic</string>
+          <string/>
         </dict>
       </dict>
       <dict>
@@ -1423,7 +1423,7 @@
           <key>foreground</key>
           <string>#d20f39</string>
           <key>fontStyle</key>
-          <string>italic</string>
+          <string/>
         </dict>
       </dict>
       <dict>
@@ -1480,7 +1480,7 @@
           <key>foreground</key>
           <string>#fe640b</string>
           <key>fontStyle</key>
-          <string>italic</string>
+          <string/>
         </dict>
       </dict>
       <dict>
@@ -1537,7 +1537,7 @@
           <key>foreground</key>
           <string>#e64553</string>
           <key>fontStyle</key>
-          <string>italic</string>
+          <string/>
         </dict>
       </dict>
       <dict>
@@ -1550,7 +1550,7 @@
           <key>foreground</key>
           <string>#40a02b</string>
           <key>fontStyle</key>
-          <string>italic</string>
+          <string/>
         </dict>
       </dict>
       <dict>
@@ -1684,7 +1684,7 @@
           <key>foreground</key>
           <string>#df8e1d</string>
           <key>fontStyle</key>
-          <string>italic</string>
+          <string/>
         </dict>
       </dict>
       <dict>
@@ -1745,7 +1745,7 @@
           <key>foreground</key>
           <string>#df8e1d</string>
           <key>fontStyle</key>
-          <string>italic</string>
+          <string/>
         </dict>
       </dict>
       <dict>
@@ -1769,7 +1769,7 @@
           <key>foreground</key>
           <string>#df8e1d</string>
           <key>fontStyle</key>
-          <string>italic</string>
+          <string/>
         </dict>
       </dict>
       <dict>
@@ -1815,7 +1815,7 @@
           <key>foreground</key>
           <string>#1e66f5</string>
           <key>fontStyle</key>
-          <string>italic</string>
+          <string/>
         </dict>
       </dict>
       <dict>
@@ -1828,7 +1828,7 @@
           <key>foreground</key>
           <string>#1e66f5</string>
           <key>fontStyle</key>
-          <string>italic</string>
+          <string/>
         </dict>
       </dict>
       <dict>
@@ -1940,7 +1940,7 @@
           <key>foreground</key>
           <string>#ea76cb</string>
           <key>fontStyle</key>
-          <string>italic</string>
+          <string/>
         </dict>
       </dict>
       <dict>
@@ -1953,7 +1953,7 @@
           <key>foreground</key>
           <string>#179299</string>
           <key>fontStyle</key>
-          <string>italic</string>
+          <string/>
         </dict>
       </dict>
       <dict>
@@ -1977,7 +1977,7 @@
           <key>foreground</key>
           <string>#fe640b</string>
           <key>fontStyle</key>
-          <string>italic</string>
+          <string/>
         </dict>
       </dict>
       <dict>

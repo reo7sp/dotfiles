@@ -13,9 +13,6 @@ zsh-users/zsh-history-substring-search
 # aliases & settings
 reo7sp/zimfw-exa
 reo7sp/zimfw-git
-reo7sp/fzf-git.sh
-zuxfoucault/colored-man-pages_mod
-reo7sp/zsh-autoenv
 qoomon/zsh-lazyload
 lukechilds/zsh-nvm
 

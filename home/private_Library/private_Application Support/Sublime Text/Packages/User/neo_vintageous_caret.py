@@ -9,12 +9,12 @@ class NeoVintageousCaret(sublime_plugin.EventListener):
             return
 
         mode = get_mode(view)
-        if mode not in ('mode_normal', 'mode_insert'):
+        if mode not in ("mode_normal", "mode_insert"):
             return
 
-        style = 'solid' if mode == 'mode_normal' else 'blink'
-        if view.settings().get('caret_style') != style:
-            view.settings().set('caret_style', style)
+        style = "solid" if mode == "mode_normal" else "blink"
+        if view.settings().get("caret_style") != style:
+            view.settings().set("caret_style", style)
 
     def on_activated(self, view):
         self._update(view)
