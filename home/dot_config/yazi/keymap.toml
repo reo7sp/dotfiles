@@ -1,0 +1,93 @@
+[[mgr.prepend_keymap]]
+on = "?"
+run = "help"
+desc = "Show keybindings"
+
+[[mgr.prepend_keymap]]
+on = "%"
+run = "plugin visual-pivot"
+desc = "Move cursor to the other end of the selection"
+
+[[mgr.prepend_keymap]]
+on = "e"
+run = 'shell --block -- ${EDITOR:-nvim} %s'
+desc = "Open in editor"
+
+[[mgr.prepend_keymap]]
+on = "l"
+run = "plugin smart-enter"
+desc = "Enter directory or open file"
+
+[[mgr.prepend_keymap]]
+on = "<Right>"
+run = "plugin smart-enter"
+desc = "Enter directory or open file"
+
+[[mgr.prepend_keymap]]
+on = "<Enter>"
+run = "plugin smart-enter"
+desc = "Enter directory or open file"
+
+[[mgr.prepend_keymap]]
+on = "-"
+run = "leave"
+desc = "Go to parent directory"
+
+[[mgr.prepend_keymap]]
+on = "_"
+run = "noop"
+
+[[mgr.prepend_keymap]]
+on = "d"
+run = "remove --permanently"
+desc = "Permanently delete selected files"
+
+[[mgr.prepend_keymap]]
+on = "D"
+run = "remove"
+desc = "Trash selected files"
+
+[[mgr.prepend_keymap]]
+on = "f"
+run = "plugin smart-filter"
+desc = "Go to file or directory"
+
+[[input.prepend_keymap]]
+on = "<Up>"
+run = 'mgr:lua -- require("smart-filter"):navigate(-1)'
+desc = "Previous filter result or input history"
+
+[[input.prepend_keymap]]
+on = "<Down>"
+run = 'mgr:lua -- require("smart-filter"):navigate(1)'
+desc = "Next filter result or input history"
+
+[[mgr.prepend_keymap]]
+on = "F"
+run = "filter --smart"
+desc = "Filter files"
+
+[[mgr.prepend_keymap]]
+on = "<C-p>"
+run = "shell -- qlmanage -p %s"
+desc = "Preview with Quick Look"
+
+[[mgr.prepend_keymap]]
+on = "<C-d>"
+run = "plugin diff"
+desc = "Diff selected file with hovered file"
+
+[[mgr.prepend_keymap]]
+on = [ "g", "m" ]
+run = "plugin chmod"
+desc = "Chmod selected files"
+
+[[mgr.prepend_keymap]]
+on = [ "g", "l" ]
+run = "link --relative"
+desc = "Create relative symlink"
+
+[[mgr.prepend_keymap]]
+on = [ "g", "L" ]
+run = "link"
+desc = "Create absolute symlink"

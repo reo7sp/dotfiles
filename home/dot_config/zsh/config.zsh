@@ -378,10 +378,12 @@ fi
 
 # -----------------------------------------------------------------------------
 # general
-alias le='less'
+alias l='ls'
+alias lla='ll -a'
 alias o='open'
 alias w='which'
 alias h='history'
+alias le='less'
 
 lcd() {
   cd "$(pwd -P)"
@@ -584,12 +586,18 @@ profile-start-vim() {
 }
 
 # -----------------------------------------------------------------------------
-# ranger
-export HIGHLIGHT_STYLE=bright
+# yazi
+alias lll='yazi'
 
-alias r='ranger'
+function cdlll() {
+	local tmp cwd; tmp="$(mktemp -t "yazi-cwd.XXXXXX")"
+	command yazi "$@" --cwd-file="$tmp"
+	IFS= read -r -d '' cwd < "$tmp"
+	[ "$cwd" != "$PWD" ] && [ -d "$cwd" ] && builtin cd -- "$cwd" || builtin true
+	command rm -f -- "$tmp"
+}
 
-alias edit-ranger='vim ~/.config/ranger/rc.conf'
+alias edit-yazi='vim ~/.config/yazi/yazi.toml'
 
 # -----------------------------------------------------------------------------
 # kitty

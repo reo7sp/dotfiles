@@ -1,0 +1,15 @@
+[mgr]
+linemode = "permissions_size"
+show_hidden = true
+show_symlink = true
+
+[input]
+cursor_blink = true
+
+[plugin]
+prepend_previewers = [
+	{ mime = "image/*", run = "noop" },
+]
+prepend_preloaders = [
+	{ mime = "image/*", run = "noop" },
+]
