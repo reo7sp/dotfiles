@@ -1,0 +1,6 @@
+{
+    "viewer": "Preview",
+    "output_format": "png",
+    "plantuml_server": "http://localhost:18080/",
+    "jar_file": "/usr/local/Cellar/plantuml/1.2024.7/libexec/plantuml.jar",
+}

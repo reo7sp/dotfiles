@@ -1,0 +1,36 @@
+{
+    "bootstrapped": true,
+    "in_process_packages":
+    [
+    ],
+    "installed_packages":
+    [
+        "Advanced CSV",
+        "AlignTab",
+        "Case Conversion",
+        "Catppuccin color schemes",
+        "CloseOtherWindows",
+        "Codec",
+        "Copy Filepath With Line Numbers",
+        "File History",
+        "FileDiffs",
+        "Formatter",
+        "Jinja2",
+        "Json Colors And Navigation",
+        "LSP",
+        "LSP-json",
+        "LSP-yaml",
+        "MarkdownPreview",
+        "Mermaid",
+        "NeoVintageous",
+        "Origami",
+        "Package Control",
+        "ProjectManager",
+        "rainbow_csv",
+        "SideBarEnhancements",
+        "SyncedSideBar",
+        "TOML",
+        "TrailingSpaces",
+        "YAML Nav",
+    ],
+}

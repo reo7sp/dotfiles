@@ -1,0 +1,6 @@
+{
+    "global_max_entries": 1000,
+    "cleanup_on_startup": false,
+    "real_path": true,
+    "max_backup_count": 0,
+}

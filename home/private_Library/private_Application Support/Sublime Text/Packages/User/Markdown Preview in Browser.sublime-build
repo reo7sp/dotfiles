@@ -1,0 +1,4 @@
+{
+    "selector": "text.html.markdown",
+    "shell_cmd": "open $file_base_name.html"
+}

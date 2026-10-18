@@ -1,0 +1,4 @@
+{
+    "selector": "source.plantuml",
+    "shell_cmd": "curl -sS \"http://localhost:18080/png/`cat $file_name | gzip -c | tail -c +11 | base64 | tr ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/ 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-_`\" > $file_base_name.png"
+}

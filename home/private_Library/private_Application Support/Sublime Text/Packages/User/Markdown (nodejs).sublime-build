@@ -1,0 +1,4 @@
+{
+    "selector": "text.html.markdown",
+    "shell_cmd": "marked $file_name -o $file_base_name.html --gfm && echo '<style>body { font: 16px sans-serif; width: 720px; margin: auto; } img { width: 100%; }</style>' >> $file_base_name.html"
+}
