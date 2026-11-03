@@ -3,6 +3,9 @@ linemode = "permissions_size"
 show_hidden = true
 show_symlink = true
 
+[preview]
+tab_size = 4
+
 [input]
 cursor_blink = true
 

@@ -10,6 +10,7 @@ confirm() {
 git config --global init.defaultBranch master
 git config --global core.excludesfile "$HOME/.gitignore_global"
 git config --global merge.conflictStyle zdiff3
+git config --global push.autoSetupRemote true
 
 if confirm "git: Change global user.name and user.email?"; then
   git config --global user.name "Oleg Morozenkov"
