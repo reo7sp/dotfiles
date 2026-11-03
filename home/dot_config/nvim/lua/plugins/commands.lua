@@ -645,6 +645,26 @@ return {
   },
 
   {
+    "rest-nvim/rest.nvim",
+    init = function()
+      vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
+        pattern = "*.http",
+        callback = function(args)
+          vim.bo[args.buf].filetype = "http"
+        end,
+      })
+    end,
+    dependencies = {
+      "nvim-treesitter/nvim-treesitter",
+    },
+    config = function()
+      require("nvim-treesitter").install({ "http" })
+    end,
+    ft = "http",
+    cmd = "Rest",
+  },
+
+  {
     "olimorris/codecompanion.nvim",
     version = "^19.0.0",
     dependencies = {
