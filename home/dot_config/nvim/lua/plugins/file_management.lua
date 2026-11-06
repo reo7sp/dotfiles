@@ -103,87 +103,21 @@ return {
     end,
     keys = {
       {
-        "<leader>Zz",
+        "<leader>xx",
         "<Cmd>AutoSession search<CR>",
         desc = "Find sessions",
       },
       {
-        "<leader>ZZ",
-        "<Cmd>AutoSession search<CR>",
-        desc = "Find sessions",
-      },
-      {
-        "<leader>Zw",
+        "<leader>xw",
         "<Cmd>AutoSession save<CR>",
         desc = "Save session",
       },
       {
-        "<leader>ZW",
-        "<Cmd>AutoSession save<CR>",
-        desc = "Save session",
-      },
-      {
-        "<leader>Zd",
-        "<Cmd>AutoSession deletePicker<CR>",
-        desc = "Pick session to delete",
-      },
-      {
-        "<leader>ZD",
+        "<leader>xd",
         "<Cmd>AutoSession deletePicker<CR>",
         desc = "Pick session to delete",
       },
     },
-  },
-
-  {
-    "natecraddock/workspaces.nvim",
-    config = function()
-      require("workspaces").setup()
-
-      local find_workspaces = function()
-        require("telescope").extensions.workspaces.workspaces({
-          layout_config = {
-            width = 0.7,
-            height = 0.5,
-          },
-        })
-      end
-
-      local delete_workspace = function()
-        local actions = require("telescope.actions")
-        require("telescope.pickers").new({}, {
-          prompt_title = "Delete workspace",
-          finder = require("telescope.finders").new_table({
-            results = require("workspaces").get(),
-            entry_maker = function(workspace)
-              return {
-                value = workspace,
-                display = workspace.name .. "  " .. workspace.path,
-                ordinal = workspace.name .. " " .. workspace.path,
-              }
-            end,
-          }),
-          sorter = require("telescope.config").values.generic_sorter({}),
-          attach_mappings = function(prompt_bufnr)
-            actions.select_default:replace(function()
-              local workspace = require("telescope.actions.state").get_selected_entry()
-              actions.close(prompt_bufnr)
-              if workspace then
-                require("workspaces").remove(workspace.value.name)
-              end
-            end)
-            return true
-          end,
-        }):find()
-      end
-
-      vim.keymap.set("n", "<leader>Mm", find_workspaces, { desc = "Find workspaces", })
-      vim.keymap.set("n", "<leader>MM", find_workspaces, { desc = "Find workspaces", })
-      vim.keymap.set("n", "<leader>Mw", "<Cmd>WorkspacesAdd<CR>", { desc = "Add workspace", })
-      vim.keymap.set("n", "<leader>MW", "<Cmd>WorkspacesAdd<CR>", { desc = "Add workspace", })
-      vim.keymap.set("n", "<leader>Md", delete_workspace, { desc = "Pick workspace to delete", })
-      vim.keymap.set("n", "<leader>MD", delete_workspace, { desc = "Pick workspace to delete", })
-    end,
   },
 
 }

@@ -11,11 +11,11 @@ return {
       "nvim-telescope/telescope-fzf-native.nvim",
       "nvim-telescope/telescope-ui-select.nvim",
       "smartpde/telescope-recent-files",
+      "jvgrootveld/telescope-zoxide",
       "nvim-telescope/telescope-live-grep-args.nvim",
       "princejoogie/dir-telescope.nvim",
       "LukasPietzschmann/telescope-tabs",
       "jmacadie/telescope-hierarchy.nvim",
-      "natecraddock/workspaces.nvim",
       "piersolenski/import.nvim",
       "gbprod/yanky.nvim",
       "stevearc/aerial.nvim",
@@ -175,6 +175,7 @@ return {
       require("telescope").load_extension("fzf")
       require("telescope").load_extension("ui-select")
       require("telescope").load_extension("recent_files")
+      require("telescope").load_extension("zoxide")
       require("telescope").load_extension("live_grep_args")
       require("telescope").load_extension("dir")
       require("telescope").load_extension("telescope-tabs")
@@ -185,7 +186,6 @@ return {
       require("telescope").load_extension("yank_history")
       require("telescope").load_extension("aerial")
       require("telescope").load_extension("hierarchy")
-      require("telescope").load_extension("workspaces")
 
       -- https://github.com/nvim-telescope/telescope.nvim/issues/605
       local actions = require("telescope.actions")
@@ -293,6 +293,7 @@ return {
       vim.keymap.set("n", "<leader>E", function()
         require("telescope").extensions.recent_files.pick({ only_cwd = false })
       end, { desc = "Find all recent files", })
+      vim.keymap.set("n", "<leader>z", "<Cmd>Telescope zoxide list<CR>", { desc = "Change directory", })
       vim.keymap.set("n", "<leader>f", "<Cmd>Telescope find_files<CR>", { desc = "Find files", })
       vim.keymap.set("n", "<leader>Ff", "<Cmd>Telescope dir find_files<CR>", { desc = "Find files in directory", })
       vim.keymap.set("n", "<leader>s", "<Cmd>Telescope live_grep_args<CR>", { desc = "Live grep", })
@@ -335,6 +336,10 @@ return {
 
   {
     "smartpde/telescope-recent-files",
+  },
+
+  {
+    "jvgrootveld/telescope-zoxide",
   },
 
   {
@@ -419,6 +424,10 @@ return {
           end,
         },
         keymaps = {
+          ["<Left>"] = { "actions.parent", mode = "n" },
+          ["h"] = { "actions.parent", mode = "n" },
+          ["<Right>"] = { "actions.select", mode = "n" },
+          ["l"] = { "actions.select", mode = "n" },
           ["q"] = {
             "actions.close",
             mode = "n",
@@ -635,6 +644,11 @@ return {
 
           api.config.mappings.default_on_attach(bufnr)
 
+          vim.keymap.set("n", "<Left>", api.node.navigate.parent_close, opts("Close Directory"))
+          vim.keymap.set("n", "h", api.node.navigate.parent_close, opts("Close Directory"))
+          vim.keymap.set("n", "<Right>", api.node.open.edit, opts("Open"))
+          vim.keymap.set("n", "l", api.node.open.edit, opts("Open"))
+
           vim.keymap.del("n", "<C-]>", {
             buffer = bufnr,
           })
@@ -742,7 +756,16 @@ return {
         end,
       })
 
-      vim.keymap.set("n", "<leader>o", "<Cmd>AerialToggle!<CR>", { desc = "Toggle symbol outline", })
+      vim.keymap.set("n", "<leader>o", function()
+        require("aerial").toggle({ focus = false })
+        local tree_winid = require("nvim-tree.api").tree.winid()
+        if tree_winid and vim.api.nvim_win_get_position(tree_winid)[2] > 0 then
+          vim.api.nvim_win_call(tree_winid, function()
+            vim.cmd("wincmd H")
+          end)
+          vim.api.nvim_win_set_width(tree_winid, sidebar_width)
+        end
+      end, { desc = "Toggle symbol outline", })
     end,
   },
 
@@ -750,6 +773,7 @@ return {
     "nanotee/zoxide.vim",
     init = function()
       vim.g.zoxide_use_select = true
+      vim.g.zoxide_hook = "pwd"
     end,
   },
 
