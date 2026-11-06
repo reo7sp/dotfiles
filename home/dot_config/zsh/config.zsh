@@ -372,7 +372,7 @@ new-tmp() {
   mkcd "$DOCUMENTS_HOME/oneoff-code/$(date '+%Y-%m-%d')"
 }
 
-clear-empty-tmps() {
+rmdir-empty-tmp() {
   local tmp_root="$DOCUMENTS_HOME/oneoff-code"
   [[ -d "$tmp_root" ]] || return 0
 
