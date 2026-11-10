@@ -402,6 +402,11 @@ alias rm='rm -f'
 alias cp='cp -f'
 alias mv='mv -f'
 
+rsync-same() {
+  local relative_path="${2#"$HOME"/}"
+  rsync -vaR "$HOME/./$relative_path" "$1:~/"
+}
+
 alias suz='su -m -c zsh'
 alias sudoz="sudo ZDOTDIR=\$HOME PATH=\$PATH zsh"
 
@@ -1198,6 +1203,31 @@ if [[ -n $REAL_CODEX ]] && ! alias codex &>/dev/null; then
 fi
 
 alias c='codex'
+
+codex-rm-old() {
+  local db="$HOME/.codex/state_5.sqlite"
+  if [[ ! -f $db ]]; then
+    echo "Codex state database not found: $db" >&2
+    return 1
+  fi
+
+  local cutoff=$(( $(date +%s) - 7 * 86400 ))
+  local archived
+  archived=$(sqlite3 -bail "$db" <<SQL
+.timeout 5000
+BEGIN IMMEDIATE;
+UPDATE threads
+SET archived = 1, archived_at = unixepoch()
+WHERE archived = 0
+  AND max(updated_at, recency_at) < $cutoff
+  AND source IN ('cli', 'vscode', 'exec')
+  AND attached_thread_parent_id IS NULL
+RETURNING cwd || ': ' || title;
+COMMIT;
+SQL
+  ) || return
+  [[ -z $archived ]] || echo "$archived"
+}
 
 # -----------------------------------------------------------------------------
 # claude

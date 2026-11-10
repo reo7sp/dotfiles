@@ -639,7 +639,7 @@ return {
     },
     opts = {},
     keys = {
-      { "<leader>v", "<Cmd>TransferUpload<CR>", desc = "Upload to remote", },
+      { "<leader>v", function() vim.cmd.TransferUpload(vim.fn.expand("%:p:h")) end, desc = "Upload file directory to remote", },
       { "<leader>V", "<Cmd>TransferUpload .<CR>", desc = "Upload cwd to remote", },
     },
   },
