@@ -48,6 +48,9 @@ vim.g.mapleader = " "
 vim.g.maplocalleader = " "
 vim.keymap.set("n", "<Space>", "<Nop>")
 
+vim.env.LUA_PATH = data_path .. "/lazy-rocks/rest.nvim/share/lua/5.1/?.lua;" .. (vim.env.LUA_PATH or ";")
+vim.env.LUA_CPATH = data_path .. "/lazy-rocks/rest.nvim/lib/lua/5.1/?.so;" .. (vim.env.LUA_CPATH or ";")
+
 require("lazy").setup({
   spec = require("plugins"),
   root = data_path .. "/lazy",
