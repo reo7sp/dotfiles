@@ -68,10 +68,6 @@ fi
 
 export DOCUMENTS_HOME="${DOCUMENTS_HOME:-$HOME/Documents}"
 
-if (( IS_MACOS )) && can-exec macism; then
-  macism com.apple.keylayout.ABC > /dev/null 2>&1 &!
-fi
-
 # =============================================================================
 # plugins
 fpath+=~/.zfunc
@@ -328,6 +324,15 @@ if (( IS_MACOS )) && can-exec macism; then
     return 0
   }
 
+  _zsh_precmd_input_source() {
+    [[ -n $KITTY_WINDOW_ID && -n $KITTY_LISTEN_ON ]] || return 0
+    # Check live focus: focus tracking is disabled while a command runs.
+    if kitty @ --to "$KITTY_LISTEN_ON" ls --match "id:$KITTY_WINDOW_ID and state:focused" 2>/dev/null |
+        jq -e 'any(.[]; .is_focused)' >/dev/null 2>&1; then
+      _zsh_focus_in
+    fi
+  }
+
   _zsh_focus_events_init() {
     zle -N .zsh-focus-in _zsh_focus_in
     zle -N .zsh-focus-out _zsh_focus_out
@@ -339,7 +344,7 @@ if (( IS_MACOS )) && can-exec macism; then
 
     autoload -Uz add-zsh-hook
     add-zsh-hook precmd _zsh_focus_tracking_enable
-    add-zsh-hook precmd _zsh_focus_in
+    add-zsh-hook precmd _zsh_precmd_input_source
     add-zsh-hook preexec _zsh_focus_tracking_disable
     _zsh_focus_tracking_enable
   }
@@ -448,10 +453,12 @@ alias edit-zsh='vim ~/.config/zsh/config.zsh; source ~/.zshrc'
 alias edit-zsh-plugins='vim ~/.zsh_plugins.txt; source ~/.zshrc'
 alias edit-zsh-p10k='vim ~/.p10k.zsh; source ~/.zshrc'
 alias edit-zshrc='vim ~/.zshrc; source ~/.zshrc'
+alias edit-zsh-custom='vim ~/.config/zsh/custom.zsh; source ~/.zshrc'
 
 bak-edit() {
   local result=0
   bak-edit-zshrc "$@" || result=$?
+  bak-edit-zsh-custom "$@" || result=$?
   bak-edit-vim-custom "$@" || result=$?
   return "$result"
 }
@@ -465,6 +472,17 @@ bak-edit-zshrc() {
 
 rsync-edit-zshrc() {
   rsync -a ~/.zshrc "$1":~/.zshrc
+}
+
+bak-edit-zsh-custom() {
+  if [[ -f "$HOME/.config/zsh/custom.zsh.bak" ]]; then
+    cp "$HOME/.config/zsh/custom.zsh.bak" "$HOME/.config/zsh/custom.zsh.bak.2" || return
+  fi
+  cp "$HOME/.config/zsh/custom.zsh" "$HOME/.config/zsh/custom.zsh.bak"
+}
+
+rsync-edit-zsh-custom() {
+  rsync -a ~/.config/zsh/custom.zsh "$1":~/.config/zsh/custom.zsh
 }
 
 upgrade-edit-zsh() {
@@ -707,6 +725,16 @@ gbdr() {
   echo "$@" | xargs -n1 git branch -D
   echo "$@" | xargs -n1 -P0 git push origin --delete
 }
+gbdm() {
+  local default_branch branch
+  default_branch=$(git symbolic-ref --quiet --short refs/remotes/origin/HEAD) || return
+  git fetch origin || return
+
+  while IFS= read -r branch; do
+    [[ "$branch" == "${default_branch#origin/}" ]] && continue
+    git branch -d -- "$branch"
+  done < <(git for-each-ref --merged "$default_branch" --format='%(refname:short)' refs/heads)
+}
 alias gb-all="find . -maxdepth 1 -type d | xargs -n1 -t -I{} git -C '{}' branch"
 
 alias gcom='gco master'
@@ -907,6 +935,8 @@ alias edit-lazygit-sh='vim ~/.config/lazygit/shell.sh'
 
 # -----------------------------------------------------------------------------
 # arc
+alias aa='lazyarc'
+
 alias ab='arc branch'
 alias abc='arc checkout -b'
 alias abd='arc branch -d'

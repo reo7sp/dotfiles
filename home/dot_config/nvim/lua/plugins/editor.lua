@@ -6,13 +6,6 @@ return {
       "saghen/blink.cmp",
     },
     config = function()
-      local lsp_capabilities = vim.lsp.protocol.make_client_capabilities()
-      lsp_capabilities.workspace.didChangeWatchedFiles.dynamicRegistration = false
-      local lsp_global_config = {
-        capabilities = lsp_capabilities,
-      }
-      vim.lsp.config("*", lsp_global_config)
-
       local pylsp_plugins = {}
       for _, name in ipairs({
         "autopep8", "flake8", "folding", "jedi_completion", "jedi_definition",
@@ -26,14 +19,6 @@ return {
       pylsp_plugins.pylsp_rope = { enabled = true, rename = false }
 
       local lsp_configs = {
-        clangd = {
-          cmd = {
-            "clangd",
-            "--background-index",
-            "--clang-tidy",
-            "--completion-style=detailed",
-          },
-        },
         gopls = {
           cmd = {
             vim.fn.stdpath("config") .. "/bin/custom-gopls",
@@ -46,19 +31,12 @@ return {
             },
           },
         },
-        lua_ls = {
-          settings = {
-            Lua = {
-              diagnostics = {
-                globals = {
-                  "vim",
-                  "box",
-                },
-              },
-            },
-          },
-        },
         pyright = {
+          before_init = function(params, config)
+            if config.root_dir and vim.fs.root(config.root_dir, ".arcadia.root") then
+              params.capabilities.workspace.didChangeWatchedFiles.dynamicRegistration = false
+            end
+          end,
           capabilities = {
             workspace = {
               didChangeWatchedFiles = { dynamicRegistration = true },
@@ -66,7 +44,9 @@ return {
           },
         },
         pylsp = {
-          cmd = { vim.fn.stdpath("data") .. "/pylsp-rope/bin/pylsp" },
+          cmd = {
+            vim.fn.stdpath("data") .. "/pylsp-rope/bin/pylsp",
+          },
           root_dir = function(bufnr, on_dir)
             local root = vim.fs.root(bufnr, "pyrightconfig.json")
             if root then on_dir(root) end
@@ -83,6 +63,23 @@ return {
               plugins = pylsp_plugins,
             },
           },
+        },
+        lua_ls = {
+          settings = {
+            Lua = {
+              diagnostics = {
+                globals = {
+                  "vim",
+                  "box",
+                },
+              },
+            },
+          },
+        },
+        protols = {
+          root_dir = function(bufnr, on_dir)
+            on_dir(vim.fs.dirname(vim.api.nvim_buf_get_name(bufnr)))
+          end,
         },
       }
       for lsp_name, lsp_config in pairs(lsp_configs) do
