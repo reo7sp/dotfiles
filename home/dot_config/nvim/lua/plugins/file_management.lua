@@ -2,10 +2,12 @@ return {
 
   {
     "lewis6991/fileline.nvim",
+    cond = require("utils.if_no_kitty_scrollback"),
   },
 
   {
     "pbrisbin/vim-mkdir",
+    cond = require("utils.if_no_kitty_scrollback"),
   },
 
   {
@@ -13,10 +15,12 @@ return {
     opts = {
       notify = false,
     },
+    cond = require("utils.if_no_kitty_scrollback"),
   },
 
   {
     "farmergreg/vim-lastplace",
+    cond = require("utils.if_no_kitty_scrollback"),
   },
 
   {
@@ -31,9 +35,7 @@ return {
         return true
       end
     },
-    cond = function()
-      return vim.env.KITTY_SCROLLBACK_NVIM ~= "true"
-    end,
+    cond = require("utils.if_no_kitty_scrollback"),
   },
 
   {
@@ -77,9 +79,7 @@ return {
       end,
       notificationOnAutoClose = false,
     },
-    cond = function()
-      return vim.env.KITTY_SCROLLBACK_NVIM ~= "true"
-    end,
+    cond = require("utils.if_no_kitty_scrollback"),
   },
 
   {
@@ -98,9 +98,7 @@ return {
       ]=])
     end,
     lazy = false,
-    cond = function()
-      return vim.env.KITTY_SCROLLBACK_NVIM ~= "true"
-    end,
+    cond = require("utils.if_no_kitty_scrollback"),
     keys = {
       {
         "<leader>xx",

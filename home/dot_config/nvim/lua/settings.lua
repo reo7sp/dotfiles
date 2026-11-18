@@ -209,7 +209,6 @@ vim.keymap.set("x", "ie", ":<C-u>silent normal ggVG<CR>", { silent = true, desc 
 
 -- https://bluz71.github.io/2021/09/10/vim-tips-revisited.html#fast-previous-buffer-switching
 vim.keymap.set("n", "<C-Backspace>", "<C-^>", { desc = "Previous buffer", })
-vim.keymap.set("n", "<C-S-Backspace>", function() require("telescope-tabs").go_to_previous() end, { desc = "Previous tab", })
 
 vim.keymap.set("n", "<C-w>^", "<Cmd>vsplit #<CR>", { desc = "Split previous buffer", })
 vim.keymap.set("n", "<C-w><C-^>", "<Cmd>vsplit #<CR>", { desc = "Split previous buffer", })

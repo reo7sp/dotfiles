@@ -306,6 +306,7 @@ return {
       vim.keymap.set("n", "<leader>Fs", "<Cmd>Telescope dir live_grep<CR>", { desc = "Live grep in directory", })
       vim.keymap.set("n", "<leader>b", "<Cmd>Telescope buffers<CR>", { desc = "Find buffers", })
       vim.keymap.set("n", "<leader>B", "<Cmd>Telescope telescope-tabs list_tabs<CR>", { desc = "Find tabs", })
+      vim.keymap.set("n", "<C-S-Backspace>", function() require("telescope-tabs").go_to_previous() end, { desc = "Previous tab", })
       vim.keymap.set("n", "<leader>y", "<Cmd>Telescope yank_history<CR>", { desc = "Find yank history", })
       vim.keymap.set("n", "<leader>k", "<Cmd>Telescope aerial initial_mode=insert<CR>", { desc = "Find symbols", })
       vim.keymap.set("n", "<leader>K", "<Cmd>Telescope lsp_dynamic_workspace_symbols<CR>", { desc = "Find workspace symbols", })
@@ -323,48 +324,61 @@ return {
         require("telescope.builtin").current_buffer_fuzzy_find()
       end, { desc = "Fuzzy find in current buffer", })
     end,
+    cond = require("utils.if_no_kitty_scrollback"),
   },
 
   {
     "nvim-telescope/telescope-fzf-native.nvim",
     build = "make",
+    cond = require("utils.if_no_kitty_scrollback"),
   },
 
   {
     "nvim-telescope/telescope-ui-select.nvim",
+    cond = require("utils.if_no_kitty_scrollback"),
   },
 
   {
     "smartpde/telescope-recent-files",
+    cond = require("utils.if_no_kitty_scrollback"),
   },
 
   {
     "jvgrootveld/telescope-zoxide",
+    cond = require("utils.if_no_kitty_scrollback"),
   },
 
   {
     "nvim-telescope/telescope-live-grep-args.nvim",
+    cond = require("utils.if_no_kitty_scrollback"),
   },
 
   {
     "princejoogie/dir-telescope.nvim",
+    cond = require("utils.if_no_kitty_scrollback"),
   },
 
   {
     "LukasPietzschmann/telescope-tabs",
+    cond = require("utils.if_no_kitty_scrollback"),
   },
 
   {
     "jmacadie/telescope-hierarchy.nvim",
+    cond = require("utils.if_no_kitty_scrollback"),
   },
 
   {
     "piersolenski/import.nvim",
+    cond = require("utils.if_no_kitty_scrollback"),
   },
 
   {
     "junegunn/fzf",
     build = "./install --bin",
+    cmd = {
+      "FZF",
+    },
   },
 
   {
@@ -478,6 +492,7 @@ return {
         end
       end, { desc = "Open parent directory", })
     end,
+    cond = require("utils.if_no_kitty_scrollback"),
   },
 
   {
@@ -661,12 +676,20 @@ return {
         end,
       })
     end,
+    cond = require("utils.if_no_kitty_scrollback"),
     cmd = {
       "NvimTreeToggle",
       "NvimTreeOpen",
       "NvimTreeClose",
       "NvimTreeFocus",
       "NvimTreeFindFile",
+      "NvimTreeFindFileToggle",
+      "NvimTreeRefresh",
+      "NvimTreeResize",
+      "NvimTreeCollapse",
+      "NvimTreeCollapseKeepBuffers",
+      "NvimTreeClipboard",
+      "NvimTreeHiTest",
     },
     keys = {
       {
@@ -682,10 +705,10 @@ return {
           end
           require("nvim-tree.api").tree.toggle({
             find_file = true,
-            focus = false,
             winid = winid,
           })
           if winid then
+            vim.cmd("wincmd p")
             vim.cmd("wincmd =")
           end
         end,
@@ -767,6 +790,7 @@ return {
         end
       end, { desc = "Toggle symbol outline", })
     end,
+    cond = require("utils.if_no_kitty_scrollback"),
   },
 
   {
@@ -775,6 +799,7 @@ return {
       vim.g.zoxide_use_select = true
       vim.g.zoxide_hook = "pwd"
     end,
+    cond = require("utils.if_no_kitty_scrollback"),
   },
 
   {
@@ -921,6 +946,10 @@ return {
       history = {
         maxHistoryLines = 1000,
       },
+    },
+    cmd = {
+      "GrugFar",
+      "GrugFarWithin",
     },
     keys = {
       {

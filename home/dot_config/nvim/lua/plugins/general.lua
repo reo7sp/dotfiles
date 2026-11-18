@@ -6,6 +6,7 @@ return {
 
   {
     "lewis6991/async.nvim",
+    lazy = true,
   },
 
   {
@@ -15,14 +16,17 @@ return {
         return require("fixes.async")
       end
     end,
+    lazy = true,
   },
 
   {
     "kkharji/sqlite.lua",
+    lazy = true,
   },
 
   {
     "MunifTanjim/nui.nvim",
+    lazy = true,
   },
 
   {
@@ -32,6 +36,7 @@ return {
         split = "<C-x>",
       },
     },
+    lazy = true,
   },
 
   {

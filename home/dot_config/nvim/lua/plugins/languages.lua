@@ -78,9 +78,13 @@ return {
           end
 
           vim.treesitter.start(args.buf)
+          if filetype == "javascriptreact" or filetype == "typescriptreact" then
+            vim.bo[args.buf].syntax = filetype
+          end
         end,
       })
     end,
+    cond = require("utils.if_no_kitty_scrollback"),
   },
 
   {
@@ -93,6 +97,7 @@ return {
         set_jumps = true,
       },
     },
+    cond = require("utils.if_no_kitty_scrollback"),
     keys = {
       {
         "cm",
@@ -279,7 +284,10 @@ return {
         },
       },
     },
-    event = "BufReadPre",
+    event = {
+      "BufReadPre",
+      "BufNewFile",
+    },
   },
 
   {

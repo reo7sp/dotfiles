@@ -44,7 +44,6 @@
   "mason.nvim": { "branch": "main", "commit": "2a6940af80375532e5e9e7c1f2fc6319a1b7a69d" },
   "mini.ai": { "branch": "main", "commit": "c2e6e88a9de01b5aec5c3cffee1277b9ac8a6d69" },
   "mini.align": { "branch": "main", "commit": "757136ffeb168450f0a854aef987b621f37500f5" },
-  "monokai.nvim": { "branch": "master", "commit": "759be78d722e306e4a3aac9cc0738f1be86a1ab8" },
   "neogen": { "branch": "main", "commit": "23e7e9f883d01289ebd90e98025acc860ea26366" },
   "neogit": { "branch": "master", "commit": "17929b7b0b9c05fe3dfc788fbba9881eb9c1cbec" },
   "nui.nvim": { "branch": "main", "commit": "10fc361835c856ba4233ef5ea135b919bf3dce97" },

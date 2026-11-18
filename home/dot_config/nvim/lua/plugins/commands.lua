@@ -2,20 +2,25 @@ return {
 
   {
     "akinsho/toggleterm.nvim",
+    init = function()
+      vim.api.nvim_create_autocmd("TermOpen", {
+        pattern = "term://*",
+        callback = function(ev)
+          local splits = require("smart-splits")
+          vim.keymap.set("t", "<C-h>", splits.move_cursor_left, { buffer = ev.buf, desc = "Focus left window" })
+          vim.keymap.set("t", "<C-j>", splits.move_cursor_down, { buffer = ev.buf, desc = "Focus lower window" })
+          vim.keymap.set("t", "<C-k>", splits.move_cursor_up, { buffer = ev.buf, desc = "Focus upper window" })
+          vim.keymap.set("t", "<C-l>", splits.move_cursor_right, { buffer = ev.buf, desc = "Focus right window" })
+          vim.keymap.set("t", "<C-w>", [[<C-\><C-n><C-w>]], { buffer = ev.buf, desc = "Terminal window command" })
+        end,
+      })
+    end,
     config = function()
       require("toggleterm").setup({
         open_mapping = [[<C-\><C-\>]],
         autochdir = true,
         shade_terminals = false,
       })
-      function _G.set_terminal_keymaps()
-        vim.keymap.set("t", "<C-h>", require("smart-splits").move_cursor_left, { buffer = 0, desc = "Focus left window", })
-        vim.keymap.set("t", "<C-j>", require("smart-splits").move_cursor_down, { buffer = 0, desc = "Focus lower window", })
-        vim.keymap.set("t", "<C-k>", require("smart-splits").move_cursor_up, { buffer = 0, desc = "Focus upper window", })
-        vim.keymap.set("t", "<C-l>", require("smart-splits").move_cursor_right, { buffer = 0, desc = "Focus right window", })
-        vim.keymap.set("t", "<C-w>", [[<C-\><C-n><C-w>]], { buffer = 0, desc = "Terminal window command", })
-      end
-      vim.cmd("autocmd! TermOpen term://* lua set_terminal_keymaps()")
       vim.api.nvim_create_user_command("T", function(opts)
         require("toggleterm").exec(opts.args)
       end, {
@@ -27,6 +32,12 @@ return {
       "ToggleTerm",
       "ToggleTermToggleAll",
       "TermExec",
+      "TermNew",
+      "TermSelect",
+      "ToggleTermSetName",
+      "ToggleTermSendCurrentLine",
+      "ToggleTermSendVisualLines",
+      "ToggleTermSendVisualSelection",
       "T",
     },
     keys = {
@@ -90,19 +101,14 @@ return {
       "OverseerClose",
       "OverseerToggle",
       "OverseerRun",
-      "OverseerBuild",
-      "OverseerQuickAction",
+      "OverseerShell",
       "OverseerTaskAction",
-      "OverseerClearCache",
-      "OverseerLoadBundle",
-      "OverseerSaveBundle",
-      "OverseerDeleteBundle",
-      "OverseerRunCmd",
     },
   },
 
   {
     "tpope/vim-fugitive",
+    cond = require("utils.if_no_kitty_scrollback"),
   },
 
   {
@@ -270,7 +276,9 @@ return {
         end,
       })
     end,
-    cmd = "CodeDiff",
+    cmd = {
+      "CodeDiff",
+    },
     keys = {
       {
         "<leader>gd",
@@ -369,6 +377,9 @@ return {
       "dlyongemallo/diffview-plus.nvim",
       name = "diffview.nvim",
       version = "*",
+      dependencies = {
+        "nvim-lua/plenary.nvim",
+      },
       init = function()
         vim.api.nvim_create_autocmd("TabLeave", {
           group = vim.api.nvim_create_augroup("DiffviewSaveFolds", { clear = true }),
@@ -391,9 +402,6 @@ return {
           end,
         })
       end,
-      dependencies = {
-        "nvim-lua/plenary.nvim",
-      },
       opts = function()
         local function copy_hunk(target_type, missing_message)
           local view = require("diffview.lib").get_current_view()
@@ -590,6 +598,7 @@ return {
         "DiffviewToggleFiles",
         "DiffviewFocusFiles",
         "DiffviewRefresh",
+        "DiffviewLog",
       },
     }
   end)(),
@@ -607,7 +616,13 @@ return {
         codediff = true,
       },
     },
-    cmd = "Neogit",
+    cond = require("utils.if_no_kitty_scrollback"),
+    cmd = {
+      "Neogit",
+      "NeogitCommit",
+      "NeogitLogCurrent",
+      "NeogitResetState",
+    },
     keys = {
       {
         "<leader>gg",
@@ -629,6 +644,7 @@ return {
 
   {
     "coffebar/transfer.nvim",
+    opts = {},
     cmd = {
       "TransferInit",
       "DiffRemote",
@@ -637,7 +653,6 @@ return {
       "TransferDirDiff",
       "TransferRepeat",
     },
-    opts = {},
     keys = {
       { "<leader>v", function() vim.cmd.TransferUpload(vim.fn.expand("%:p:h")) end, desc = "Upload file directory to remote", },
       { "<leader>V", "<Cmd>TransferUpload .<CR>", desc = "Upload cwd to remote", },
@@ -646,6 +661,9 @@ return {
 
   {
     "rest-nvim/rest.nvim",
+    dependencies = {
+      "nvim-treesitter/nvim-treesitter",
+    },
     init = function()
       vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
         pattern = "*.http",
@@ -654,14 +672,14 @@ return {
         end,
       })
     end,
-    dependencies = {
-      "nvim-treesitter/nvim-treesitter",
-    },
     config = function()
       require("nvim-treesitter").install({ "http" })
     end,
+    cond = require("utils.if_no_kitty_scrollback"),
     ft = "http",
-    cmd = "Rest",
+    cmd = {
+      "Rest",
+    },
   },
 
   {
@@ -740,6 +758,8 @@ return {
     },
     cmd = {
       "CodeCompanionChat",
+      "CodeCompanion",
+      "CodeCompanionCmd",
       "CodeCompanionActions",
       "CodeCompanionCodeReview",
       "CodeCompanionCLI",
@@ -761,18 +781,20 @@ return {
 
   {
     "mikesmithgh/kitty-scrollback.nvim",
-    cmd = {
-      "KittyScrollbackGenerateKittens",
-      "KittyScrollbackCheckHealth",
-      "KittyScrollbackGenerateCommandLineEditing",
-    },
-    event = "User KittyScrollbackLaunch",
     opts = {
       {
         status_window = {
           style_simple = true,
         },
       },
+    },
+    event = {
+      "User KittyScrollbackLaunch",
+    },
+    cmd = {
+      "KittyScrollbackGenerateKittens",
+      "KittyScrollbackCheckHealth",
+      "KittyScrollbackGenerateCommandLineEditing",
     },
   },
 

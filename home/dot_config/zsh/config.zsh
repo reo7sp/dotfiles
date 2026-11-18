@@ -388,6 +388,13 @@ rmdir-empty-tmps() {
   find "$tmp_root" -mindepth 1 -maxdepth 1 -type d -empty -exec rmdir {} +
 }
 
+cd-ob() {
+  if [[ ! -e ~/obsidian ]]; then
+    ln -sf "$HOME/Library/Mobile Documents/iCloud~md~obsidian/Documents/Oleg" ~/obsidian || return 1
+  fi
+  cd ~/obsidian
+}
+
 alias grep='grep --color=auto'
 alias fgrep='fgrep --color=auto'
 alias egrep='egrep --color=auto'

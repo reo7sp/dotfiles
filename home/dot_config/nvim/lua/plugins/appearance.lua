@@ -79,10 +79,6 @@ return {
   },
 
   {
-    "tanvirtin/monokai.nvim",
-  },
-
-  {
     "nvim-lualine/lualine.nvim",
     config = function()
       require("lualine").setup({
@@ -258,9 +254,7 @@ return {
         set noruler
       ]=])
     end,
-    cond = function()
-      return vim.env.KITTY_SCROLLBACK_NVIM ~= "true"
-    end,
+    cond = require("utils.if_no_kitty_scrollback"),
   },
 
   {
@@ -348,9 +342,7 @@ return {
       vim.keymap.set("n", "<C-,>", "<Cmd>BufferMovePrevious<CR>", { desc = "Move buffer left", })
       vim.keymap.set("n", "<C-.>", "<Cmd>BufferMoveNext<CR>", { desc = "Move buffer right", })
     end,
-    cond = function()
-      return vim.env.KITTY_SCROLLBACK_NVIM ~= "true"
-    end,
+    cond = require("utils.if_no_kitty_scrollback"),
   },
 
   {
@@ -413,6 +405,9 @@ return {
         return require("window-picker").pick_window()
       end,
     },
+    cmd = {
+      "WinShift",
+    },
     keys = {
       {
         "<C-w>x",
@@ -463,27 +458,28 @@ return {
         },
       })
 
-      vim.api.nvim_create_autocmd("BufRead", {
+      vim.api.nvim_create_autocmd("FileType", {
+        pattern = "qf",
         callback = function(ev)
-          if vim.bo[ev.buf].buftype == "quickfix" then
-            vim.schedule(function()
-              vim.keymap.set("n", "<C-t>", function()
-                vim.cmd([[cclose]])
-                vim.cmd([[Trouble qflist open]])
-              end, { buffer = ev.buf, desc = "Open quickfix list in Trouble", })
+          vim.schedule(function()
+            vim.keymap.set("n", "<C-t>", function()
+              vim.cmd([[cclose]])
+              vim.cmd([[Trouble qflist open]])
+            end, { buffer = ev.buf, desc = "Open quickfix list in Trouble", })
 
-              vim.keymap.set("n", "zx", function()
-                require("quicker").refresh()
-              end, { buffer = ev.buf, desc = "Refresh quickfix list", })
+            vim.keymap.set("n", "zx", function()
+              require("quicker").refresh()
+            end, { buffer = ev.buf, desc = "Refresh quickfix list", })
 
-              vim.keymap.set("n", "q", function()
-                vim.cmd("cclose")
-              end, { buffer = ev.buf, desc = "Close quickfix list", })
-            end)
-          end
+            vim.keymap.set("n", "q", function()
+              vim.cmd("cclose")
+            end, { buffer = ev.buf, desc = "Close quickfix list", })
+          end)
         end,
       })
     end,
+    cond = require("utils.if_no_kitty_scrollback"),
+    ft = "qf",
   },
 
   {
@@ -499,12 +495,16 @@ return {
           lsp = false,
         },
       })
-      vim.keymap.set("n", "<leader>q", function()
-        require("quicker").toggle({
-          focus = true,
-        })
-      end, { desc = "Toggle quickfix list", })
     end,
+    cond = require("utils.if_no_kitty_scrollback"),
+    ft = "qf",
+    keys = {
+      {
+        "<leader>q",
+        function() require("quicker").toggle({ focus = true }) end,
+        desc = "Toggle quickfix list",
+      },
+    },
   },
 
   {
@@ -580,6 +580,7 @@ return {
         require("trouble").toggle()
       end, { desc = "Toggle Trouble", })
     end,
+    cond = require("utils.if_no_kitty_scrollback"),
   },
 
   {
@@ -605,9 +606,7 @@ return {
         require("illuminate").goto_next_reference()
       end, { desc = "Next Reference", })
     end,
-    cond = function()
-      return vim.env.KITTY_SCROLLBACK_NVIM ~= "true"
-    end,
+    cond = require("utils.if_no_kitty_scrollback"),
   },
 
   {
@@ -621,9 +620,7 @@ return {
         enabled = false,
       },
     },
-    cond = function()
-      return vim.env.KITTY_SCROLLBACK_NVIM ~= "true"
-    end,
+    cond = require("utils.if_no_kitty_scrollback"),
   },
 
   {
@@ -632,13 +629,12 @@ return {
       char = "┊",
       highlight = "VirtColumn",
     },
-    cond = function()
-      return vim.env.KITTY_SCROLLBACK_NVIM ~= "true"
-    end,
+    cond = require("utils.if_no_kitty_scrollback"),
   },
 
   {
     "sitiom/nvim-numbertoggle",
+    cond = require("utils.if_no_kitty_scrollback"),
   },
 
   {
@@ -663,15 +659,12 @@ return {
         virtual_text = false,
       })
     end,
-    cond = function()
-      return vim.env.KITTY_SCROLLBACK_NVIM ~= "true"
-    end,
+    cond = require("utils.if_no_kitty_scrollback"),
   },
 
   {
     "rachartier/tiny-code-action.nvim",
     opts = {},
-    event = "LspAttach",
     keys = {
       {
         "g:",
@@ -719,6 +712,7 @@ return {
         },
       })
     end,
+    cond = require("utils.if_no_kitty_scrollback"),
   },
 
   {
@@ -782,7 +776,17 @@ return {
         after = "empty",
       },
     },
-    event = { "BufReadPost", "BufNewFile", },
+    cond = require("utils.if_no_kitty_scrollback"),
+    event = {
+      "BufReadPost",
+      "BufNewFile",
+    },
+    cmd = {
+      "TodoQuickFix",
+      "TodoLocList",
+      "TodoTelescope",
+      "TodoTrouble",
+    },
     keys = {
       {
         "]n",
@@ -826,7 +830,9 @@ return {
         require("which-key").show()
       end, { desc = "Show keymaps", })
     end,
-    event = "VeryLazy",
+    event = {
+      "VeryLazy",
+    },
   },
 
 }

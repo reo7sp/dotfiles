@@ -105,17 +105,13 @@ return {
       vim.keymap.set("n", "gr", vim.lsp.buf.rename, { nowait = true, desc = "Rename symbol", })
       vim.keymap.set("n", "gO", "<Nop>")
     end,
-    cond = function()
-      return vim.env.KITTY_SCROLLBACK_NVIM ~= "true"
-    end,
+    cond = require("utils.if_no_kitty_scrollback"),
   },
 
   {
     "williamboman/mason.nvim",
     opts = {},
-    cond = function()
-      return vim.env.KITTY_SCROLLBACK_NVIM ~= "true"
-    end,
+    cond = require("utils.if_no_kitty_scrollback"),
   },
 
   {
@@ -145,9 +141,7 @@ return {
         ensure_installed = lsps,
       })
     end,
-    cond = function()
-      return vim.env.KITTY_SCROLLBACK_NVIM ~= "true"
-    end,
+    cond = require("utils.if_no_kitty_scrollback"),
   },
 
   {
@@ -156,9 +150,10 @@ return {
       "williamboman/mason.nvim",
     },
     opts = {},
-    cond = function()
-      return vim.env.KITTY_SCROLLBACK_NVIM ~= "true"
-    end,
+    cond = require("utils.if_no_kitty_scrollback"),
+    cmd = {
+      "MasonUpdateAll",
+    },
   },
 
   {
@@ -169,11 +164,15 @@ return {
     config = function()
       require("luasnip.loaders.from_vscode").lazy_load()
     end,
-    event = "InsertEnter",
+    cond = require("utils.if_no_kitty_scrollback"),
+    event = {
+      "InsertEnter",
+    },
   },
 
   {
     "rafamadriz/friendly-snippets",
+    cond = require("utils.if_no_kitty_scrollback"),
   },
 
   {
@@ -181,7 +180,10 @@ return {
     opts = {
       max_width = 76,
     },
-    event = "InsertEnter",
+    cond = require("utils.if_no_kitty_scrollback"),
+    event = {
+      "InsertEnter",
+    },
   },
 
   {
@@ -265,12 +267,17 @@ return {
         },
       })
     end,
-    event = "InsertEnter",
+    cond = require("utils.if_no_kitty_scrollback"),
+    event = {
+      "InsertEnter",
+    },
   },
 
   {
     "folke/flash.nvim",
-    event = "VeryLazy",
+    event = {
+      "VeryLazy",
+    },
     keys = {
       {
         "s",
@@ -304,7 +311,6 @@ return {
     opts = {
       move_cursor = false,
     },
-    event = "InsertEnter",
   },
 
   {
@@ -353,19 +359,23 @@ return {
   {
     "windwp/nvim-autopairs",
     opts = {},
-    event = "InsertEnter",
+    cond = require("utils.if_no_kitty_scrollback"),
+    event = {
+      "InsertEnter",
+    },
   },
 
   {
     "alvan/vim-closetag",
+    init = function(plugin)
+      vim.g.closetag_filetypes = table.concat(plugin.ft, ",")
+    end,
     ft = {
       "html",
-      "htm",
+      "xhtml",
       "xml",
-      "js",
-      "jsx",
-      "ts",
-      "tsx",
+      "javascriptreact",
+      "typescriptreact",
     },
   },
 
@@ -493,6 +503,9 @@ return {
       vim.g.netrw_nogx = 1
     end,
     opts = {},
+    cmd = {
+      "Browse",
+    },
     keys = {
       {
         "gx",
@@ -500,9 +513,6 @@ return {
         mode = { "n", "x" },
         desc = "Open URL",
       },
-    },
-    cmd = {
-      "Browse",
     },
   },
 
@@ -539,7 +549,6 @@ return {
 
   {
     "ysmb-wtsg/in-and-out.nvim",
-    event = "InsertEnter",
     keys = {
       {
         "<C-CR>",
@@ -555,6 +564,7 @@ return {
   {
     "nmac427/guess-indent.nvim",
     opts = {},
+    cond = require("utils.if_no_kitty_scrollback"),
   },
 
   {
@@ -576,6 +586,10 @@ return {
       "DisableWhitespace",
       "ToggleWhitespace",
       "StripWhitespace",
+      "StripWhitespaceOnChangedLines",
+      "EnableStripWhitespaceOnSave",
+      "DisableStripWhitespaceOnSave",
+      "ToggleStripWhitespaceOnSave",
       "NextTrailingWhitespace",
       "PrevTrailingWhitespace",
     },
@@ -723,7 +737,13 @@ return {
         let g:undotree_SplitWidth = 80
       ]=])
     end,
-    cmd = "UndotreeToggle",
+    cmd = {
+      "UndotreeToggle",
+      "UndotreeShow",
+      "UndotreeHide",
+      "UndotreeFocus",
+      "UndotreePersistUndo",
+    },
     keys = {
       {
         "<leader>u",
@@ -755,6 +775,7 @@ return {
       vim.keymap.set("n", "zr", require("ufo").openFoldsExceptKinds, { desc = "Open folds except kinds", })
       vim.keymap.set("n", "zm", require("ufo").closeFoldsWith, { desc = "Close folds with level", })
     end,
+    cond = require("utils.if_no_kitty_scrollback"),
   },
 
   {
@@ -767,6 +788,7 @@ return {
         return require("ts_context_commentstring.integrations.comment_nvim").create_pre_hook()(...)
       end,
     },
+    cond = require("utils.if_no_kitty_scrollback"),
   },
 
   {
@@ -777,6 +799,7 @@ return {
     opts = {
       enable_autocmd = false,
     },
+    cond = require("utils.if_no_kitty_scrollback"),
   },
 
   {
@@ -787,6 +810,12 @@ return {
     opts = {
       use_default_keymaps = false,
       max_join_length = 9999,
+    },
+    cond = require("utils.if_no_kitty_scrollback"),
+    cmd = {
+      "TSJToggle",
+      "TSJSplit",
+      "TSJJoin",
     },
     keys = {
       {
@@ -817,6 +846,7 @@ return {
       end, { desc = "Convert to space-delimited case" })
       vim.keymap.set("n", "gT", "<Nop>")
     end,
+    cond = require("utils.if_no_kitty_scrollback"),
   },
 
   {
@@ -842,6 +872,9 @@ return {
       "lewis6991/async.nvim",
     },
     opts = {},
+    cmd = {
+      "Refactor",
+    },
     keys = {
       {
         "gR",
@@ -939,15 +972,15 @@ return {
         require("conform").format({})
       end, { desc = "Format buffer", })
     end,
-    cond = function()
-      return vim.env.KITTY_SCROLLBACK_NVIM ~= "true"
-    end,
+    cond = require("utils.if_no_kitty_scrollback"),
   },
 
   {
     "danymat/neogen",
     opts = {},
-    cmd = "Neogen",
+    cmd = {
+      "Neogen",
+    },
   },
 
   {
@@ -1031,9 +1064,7 @@ return {
         end, 200)
       end, { silent = true, desc = "Open git blame", })
     end,
-    cond = function()
-      return vim.env.KITTY_SCROLLBACK_NVIM ~= "true"
-    end,
+    cond = require("utils.if_no_kitty_scrollback"),
   },
 
   {
@@ -1042,9 +1073,7 @@ return {
     opts = {
       disable_diagnostics = true,
     },
-    cond = function()
-      return vim.env.KITTY_SCROLLBACK_NVIM ~= "true"
-    end,
+    cond = require("utils.if_no_kitty_scrollback"),
   },
 
 }
