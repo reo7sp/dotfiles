@@ -16,7 +16,6 @@ direnv
 colordiff
 delta
 difftastic
-hunk
 lazygit
 clang-format
 goimports

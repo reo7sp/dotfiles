@@ -3,7 +3,7 @@ os:
 git:
   diffRenderers:
     - colorArg: always
-      command: delta --light --paging=never
+      command: delta --paging=never
 gui:
   commandLogSize: 3
   border: single

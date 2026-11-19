@@ -26,7 +26,7 @@ if confirm "git: Change pager to delta?"; then
   git config --global core.pager delta
   git config --global interactive.diffFilter 'delta --color-only'
   git config --global delta.navigate true
-  git config --global delta.light true
+  git config --global --unset-all delta.light || [[ $? == 5 ]]
   git config --global merge.conflictStyle zdiff3
 fi
 

@@ -78,7 +78,11 @@ return {
         },
         protols = {
           root_dir = function(bufnr, on_dir)
-            on_dir(vim.fs.dirname(vim.api.nvim_buf_get_name(bufnr)))
+            local filename = vim.api.nvim_buf_get_name(bufnr)
+            if filename == "" or filename:match("^%a[%w+.-]*://") then
+              return
+            end
+            on_dir(vim.fs.dirname(filename))
           end,
         },
       }

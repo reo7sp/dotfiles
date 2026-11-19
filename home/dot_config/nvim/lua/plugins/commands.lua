@@ -510,9 +510,27 @@ return {
           return true
         end
 
+        local file_panel_highlights = {
+          "DiffviewFolderName:NvimTreeFolderName",
+          "DiffviewFolderSign:NvimTreeFolderIcon",
+          "DiffviewFilePanelSelected:DiffviewFilePanelFileName",
+          "DevIconDefault:DiffviewFilePanelFileName",
+          opt = { method = "append" },
+        }
+        for _, icon in pairs(require("nvim-web-devicons").get_icons()) do
+          table.insert(file_panel_highlights, "DevIcon" .. icon.name .. ":DiffviewFilePanelFileName")
+        end
+
         return {
           enhanced_diff_hl = true,
           show_help_hints = false,
+          file_panel = {
+            win_config = {
+              win_opts = {
+                winhl = file_panel_highlights,
+              },
+            },
+          },
           view = {
             default = { disable_diagnostics = true },
             merge_tool = { disable_diagnostics = true },
