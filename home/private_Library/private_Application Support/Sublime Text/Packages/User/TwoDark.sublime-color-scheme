@@ -1,0 +1,8 @@
+{
+    "variables": {
+        "white": "#d5d9df"
+    },
+    "globals": {
+        "foreground": "var(white)"
+    }
+}

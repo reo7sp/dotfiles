@@ -9,7 +9,7 @@ border_style = { fg = "#5c6370", bg = "#282c34", bold = true }
 [filetype]
 rules = [
   { url = "*/", fg = "#61afef" },
-  { url = "*", fg = "#abb2bf" },
+  { url = "*", fg = "#d5d9df" },
 ]
 
 [indicator]

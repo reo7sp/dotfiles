@@ -1197,7 +1197,7 @@ export DFT_PARSE_ERROR_LIMIT=9999
 
 # -----------------------------------------------------------------------------
 # bat
-export BAT_THEME=TwoDark
+export BAT_THEME='TwoDark Custom'
 export BAT_PAGING=never
 
 # -----------------------------------------------------------------------------
