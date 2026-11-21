@@ -6,6 +6,7 @@ return {
     config = function()
       require("onedark").setup({
         style = "dark",
+        colors = { fg = "#d5d9df" },
       })
       vim.cmd.colorscheme("onedark")
     end,
