@@ -3,7 +3,8 @@ os:
 git:
   diffRenderers:
     - colorArg: always
-      command: delta --paging=never
+      command: delta --config "$HOME/.config/delta/config" --paging=never --side-by-side
 gui:
-  commandLogSize: 3
+  sidePanelWidth: 0.20
+  commandLogSize: 1
   border: single

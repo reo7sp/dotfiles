@@ -7,6 +7,10 @@ return {
       require("onedark").setup({
         style = "dark",
         colors = { fg = "#d5d9df" },
+        highlights = {
+          IblIndent = { fg = "#454b59" },
+          Visual = { bg = "#474b59" },
+        },
       })
       vim.cmd.colorscheme("onedark")
     end,

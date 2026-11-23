@@ -9,7 +9,11 @@ confirm() {
 
 git config --global init.defaultBranch master
 git config --global core.excludesfile "$HOME/.gitignore_global"
-git config --global merge.conflictStyle zdiff3
+if git merge-file --zdiff3 -p /dev/null /dev/null /dev/null >/dev/null 2>&1; then
+  git config --global merge.conflictStyle zdiff3
+else
+  git config --global merge.conflictStyle diff3
+fi
 git config --global push.autoSetupRemote true
 
 if confirm "git: Change global user.name and user.email?"; then
@@ -23,11 +27,8 @@ if confirm "git: Change GitHub transport from HTTPS to SSH?"; then
 fi
 
 if confirm "git: Change pager to delta?"; then
-  git config --global core.pager delta
-  git config --global interactive.diffFilter 'delta --color-only'
-  git config --global delta.navigate true
-  git config --global --unset-all delta.light || [[ $? == 5 ]]
-  git config --global merge.conflictStyle zdiff3
+  git config --global core.pager 'delta --config "$HOME/.config/delta/config"'
+  git config --global interactive.diffFilter 'delta --config "$HOME/.config/delta/config" --color-only'
 fi
 
 if confirm "git: Change diff tool to difftastic?"; then

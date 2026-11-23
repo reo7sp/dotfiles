@@ -11,6 +11,12 @@ return {
   },
 
   {
+    "aymericbeaumet/vim-symlink",
+    priority = 1,
+    cond = require("utils.if_no_kitty_scrollback"),
+  },
+
+  {
     "awalland/nvim-file-watch",
     opts = {
       notify = false,

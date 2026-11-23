@@ -513,21 +513,15 @@ if can-exec nvim; then
     nvim "$@"
   }
 elif can-exec vim; then
-  if [[ -z $REAL_VIM ]]; then
-    export REAL_VIM=${commands[vim]}
-  fi
   vim() {
     lcd
-    $REAL_VIM "$@"
+    command vim "$@"
   }
 fi
 
 if can-exec v; then
-  if [[ -z $REAL_V ]]; then
-    export REAL_V=${commands[v]}
-  fi
   vlang() {
-    $REAL_V "$@"
+    command v "$@"
   }
 fi
 alias v='vim'
@@ -654,18 +648,16 @@ alias edit-rg="vim $RIPGREP_CONFIG_PATH"
 
 # -----------------------------------------------------------------------------
 # fd
-if [[ -z $REAL_FD ]]; then
-  if can-exec fdfind; then
-    export REAL_FD=${commands[fdfind]}
-  else
-    export REAL_FD=${commands[fd]}
-  fi
+if can-exec fdfind; then
+  FD_BIN=fdfind
+else
+  FD_BIN=fd
 fi
 
 export FD_OPTIONS='--no-require-git'
 
 fd() {
-  "$REAL_FD" $FD_OPTIONS "$@"
+  command "$FD_BIN" $FD_OPTIONS "$@"
 }
 
 # -----------------------------------------------------------------------------
@@ -680,7 +672,7 @@ alias ze='zoxide edit'
 # -----------------------------------------------------------------------------
 # fzf
 export FZF_DEFAULT_OPTS='--layout=reverse'
-export FZF_DEFAULT_COMMAND="$REAL_FD $FD_OPTIONS --type f --strip-cwd-prefix"
+export FZF_DEFAULT_COMMAND="$FD_BIN $FD_OPTIONS --type f --strip-cwd-prefix"
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 
 if can-exec fzf; then
@@ -1186,6 +1178,9 @@ alias install-ya='sudo ln -sfn "$HOME/arcadia/ya" /usr/local/bin/ya'
 
 # -----------------------------------------------------------------------------
 # delta
+delta() {
+  command delta --config "$HOME/.config/delta/config" "$@"
+}
 alias deltad='DELTA_FEATURES=+side-by-side delta'
 
 # -----------------------------------------------------------------------------
@@ -1228,15 +1223,9 @@ m() {
 
 # -----------------------------------------------------------------------------
 # codex
-if can-exec codex && [[ "${NO_PROXY_CODEX:-0}" != '1' ]]; then
-  if [[ -z $REAL_CODEX ]]; then
-    export REAL_CODEX=${commands[codex]}
-  fi
-fi
-
-if [[ -n $REAL_CODEX ]] && ! alias codex &>/dev/null; then
+if can-exec codex && [[ "${NO_PROXY_CODEX:-0}" != '1' ]] && ! alias codex &>/dev/null; then
   function codex {
-    ALL_PROXY=socks5h://127.0.0.1:1086 $REAL_CODEX "$@"
+    ALL_PROXY=socks5h://127.0.0.1:1086 command codex "$@"
   }
 fi
 
@@ -1254,51 +1243,56 @@ codex-rm-old() {
   archived=$(sqlite3 -bail "$db" <<SQL
 .timeout 5000
 BEGIN IMMEDIATE;
+CREATE TEMP TABLE chats_to_archive AS
+WITH chats AS (
+  SELECT id, cwd, recency_at, max(updated_at, recency_at) AS last_message_at,
+         ltrim(replace(coalesce(nullif(trim(name), ''), title), char(13), char(10)), char(10)) AS title
+  FROM threads
+  WHERE archived = 0
+    AND source IN ('cli', 'vscode', 'exec')
+    AND attached_thread_parent_id IS NULL
+)
+SELECT id, cwd, recency_at, last_message_at, title
+FROM chats
+WHERE last_message_at < $cutoff;
 UPDATE threads
 SET archived = 1, archived_at = unixepoch()
-WHERE archived = 0
-  AND max(updated_at, recency_at) < $cutoff
-  AND source IN ('cli', 'vscode', 'exec')
-  AND attached_thread_parent_id IS NULL
-RETURNING cwd || ': ' || title;
+WHERE id IN (SELECT id FROM chats_to_archive);
 COMMIT;
+SELECT cwd || ':' || char(10) ||
+       group_concat(substr(title, 1, instr(title || char(10), char(10)) - 1) ||
+                    ' (last message at ' || datetime(last_message_at, 'unixepoch', 'localtime') || ')',
+                    char(10) ORDER BY recency_at DESC, id) || char(10)
+FROM chats_to_archive
+GROUP BY cwd
+ORDER BY cwd;
 SQL
   ) || return
-  [[ -z $archived ]] || echo "$archived"
+  [[ -z $archived ]] || echo -E "$archived"
 }
 
 # -----------------------------------------------------------------------------
 # claude
-if can-exec claude && [[ "${NO_PROXY_CLAUDE:-0}" != '1' ]]; then
-  if [[ -z $REAL_CLAUDE ]]; then
-    export REAL_CLAUDE=${commands[claude]}
-  fi
-fi
-
-if [[ -n $REAL_CLAUDE ]] && ! alias claude &>/dev/null; then
+if can-exec claude && [[ "${NO_PROXY_CLAUDE:-0}" != '1' ]] && ! alias claude &>/dev/null; then
   function claude {
-    ALL_PROXY=socks5h://127.0.0.1:1086 $REAL_CLAUDE "$@"
+    ALL_PROXY=socks5h://127.0.0.1:1086 command claude "$@"
   }
 fi
 
 # -----------------------------------------------------------------------------
 # cursor-agent
 if can-exec cursor-agent && [[ "${NO_PROXY_CURSOR:-0}" != '1' ]] && [[ "${NO_PROXY_CURSOR_AGENT:-0}" != '1' ]]; then
-  if [[ -z $REAL_CURSOR_AGENT ]]; then
-    export REAL_CURSOR_AGENT=${commands[cursor-agent]}
+  if ! alias cursor-agent &>/dev/null; then
+    function cursor-agent {
+      ALL_PROXY=socks5h://127.0.0.1:1086 command cursor-agent "$@"
+    }
   fi
-fi
 
-if [[ -n $REAL_CURSOR_AGENT ]] && ! alias cursor-agent &>/dev/null; then
-  function cursor-agent {
-    ALL_PROXY=socks5h://127.0.0.1:1086 $REAL_CURSOR_AGENT "$@"
-  }
-fi
-
-if [[ -n $REAL_CURSOR_AGENT ]] && ! alias agent &>/dev/null; then
-  function agent {
-    ALL_PROXY=socks5h://127.0.0.1:1086 $REAL_CURSOR_AGENT "$@"
-  }
+  if ! alias agent &>/dev/null; then
+    function agent {
+      ALL_PROXY=socks5h://127.0.0.1:1086 command cursor-agent "$@"
+    }
+  fi
 fi
 
 # -----------------------------------------------------------------------------
