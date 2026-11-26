@@ -1,21 +1,21 @@
 [flavor]
-dark = "onedark"
-light = "onedark"
+dark = "catppuccin-latte"
+light = "catppuccin-latte"
 
 [mgr]
 border_symbol = "┃"
-border_style = { fg = "#5c6370", bg = "#282c34", bold = true }
+border_style = { fg = "#bcc0cd", bg = "#eff1f6", bold = true }
 
 [filetype]
 rules = [
-  { url = "*/", fg = "#61afef" },
-  { url = "*", fg = "#d5d9df" },
+  { url = "*/", fg = "#1e66f5" },
+  { url = "*", fg = "#4c4f69" },
 ]
 
 [indicator]
-parent = { bg = "#31353f", reversed = false }
-current = { bg = "#393f4a", reversed = false }
-preview = { bg = "#31353f", reversed = false, underline = false }
+parent = { bg = "#e6e9f0", reversed = false }
+current = { bg = "#d6d9e2", reversed = false }
+preview = { bg = "#e6e9f0", reversed = false, underline = false }
 padding = { open = " ", close = " " }
 
 [tabs]
@@ -23,14 +23,14 @@ sep_inner = { open = "", close = "" }
 sep_outer = { open = "", close = "" }
 
 [status]
-overall = { fg = "#abb2bf", bg = "#393f4a" }
+overall = { fg = "#4c4f6a", bg = "#bcc0cd" }
 sep_left = { open = "", close = "" }
 sep_right = { open = "", close = "" }
 
 [mode]
-normal_main = { fg = "#282c34", bg = "#61afef", bold = true }
-normal_alt = { fg = "#61afef", bg = "#31353f" }
-select_main = { fg = "#282c34", bg = "#c678dd", bold = true }
-select_alt = { fg = "#c678dd", bg = "#31353f" }
-unset_main = { fg = "#282c34", bg = "#e86671", bold = true }
-unset_alt = { fg = "#e86671", bg = "#31353f" }
+normal_main = { fg = "#e6e9f0", bg = "#1e66f6", bold = true }
+normal_alt = { fg = "#1e66f6", bg = "#ccd0db" }
+select_main = { fg = "#eff1f6", bg = "#8839f0", bold = true }
+select_alt = { fg = "#8839f0", bg = "#ccd0db" }
+unset_main = { fg = "#eff1f6", bg = "#d20f3a", bold = true }
+unset_alt = { fg = "#d20f3a", bg = "#ccd0db" }

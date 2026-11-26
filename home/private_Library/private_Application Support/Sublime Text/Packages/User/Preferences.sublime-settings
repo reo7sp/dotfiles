@@ -1,6 +1,6 @@
 {
     "theme": "Adaptive.sublime-theme",
-    "color_scheme": "Packages/Theme - TwoDark/TwoDark.tmTheme",
+    "color_scheme": "Catppuccin Latte.sublime-color-scheme",
     "font_face": "Iosevka Medium",
     "font_options":
     [
@@ -23,6 +23,7 @@
         120
     ],
     "caret_style": "blink",
+    "highlight_line": true,
     "create_window_at_startup": true,
     "close_windows_when_empty": false,
     "show_full_path": true,

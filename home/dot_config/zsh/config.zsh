@@ -671,7 +671,7 @@ alias ze='zoxide edit'
 
 # -----------------------------------------------------------------------------
 # fzf
-export FZF_DEFAULT_OPTS='--layout=reverse'
+export FZF_DEFAULT_OPTS='--color=light --layout=reverse'
 export FZF_DEFAULT_COMMAND="$FD_BIN $FD_OPTIONS --type f --strip-cwd-prefix"
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 
@@ -1192,7 +1192,7 @@ export DFT_PARSE_ERROR_LIMIT=9999
 
 # -----------------------------------------------------------------------------
 # bat
-export BAT_THEME='TwoDark Custom'
+export BAT_THEME='Catppuccin Latte'
 export BAT_PAGING=never
 
 # -----------------------------------------------------------------------------

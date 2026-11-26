@@ -1,18 +1,80 @@
 return {
 
   {
-    "navarasu/onedark.nvim",
+    "catppuccin/nvim",
+    name = "catppuccin",
     priority = 1000,
     config = function()
-      require("onedark").setup({
-        style = "dark",
-        colors = { fg = "#d5d9df" },
-        highlights = {
-          IblIndent = { fg = "#454b59" },
-          Visual = { bg = "#474b59" },
+      require("catppuccin").setup({
+        integrations = {
+          aerial = true,
+          barbar = true,
+          blink_cmp = true,
+          neogit = true,
+          fidget = true,
+          gitsigns = true,
+          grug_far = true,
+          mason = true,
+          nvim_surround = true,
+          ufo = true,
+          window_picker = true,
+          overseer = true,
+          flash = true,
+          render_markdown = true,
+          telescope = {
+            enabled = true,
+          },
+          lsp_trouble = true,
+          illuminate = {
+            enabled = true,
+            lsp = false,
+          },
+          lualine = {
+            latte = function(colors)
+              return {
+                normal = {
+                  c = {
+                    bg = colors.surface1,
+                  },
+                },
+                inactive = {
+                  a = {
+                    bg = colors.surface1,
+                    fg = colors.text,
+                  },
+                  b = {
+                    bg = colors.surface1,
+                    fg = colors.text,
+                  },
+                  c = {
+                    bg = colors.surface1,
+                    fg = colors.text,
+                  },
+                },
+              }
+            end,
+          },
+          which_key = true,
+          native_lsp = {
+            enabled = true,
+            underlines = {
+              errors = {
+                "undercurl",
+              },
+              hints = {
+                "undercurl",
+              },
+              warnings = {
+                "undercurl",
+              },
+              information = {
+                "undercurl",
+              },
+            },
+          },
         },
       })
-      vim.cmd.colorscheme("onedark")
+      vim.cmd([[colorscheme catppuccin-latte]])
     end,
   },
 
@@ -21,6 +83,12 @@ return {
     config = function()
       require("lualine").setup({
         options = {
+          theme = function()
+            if vim.g.colors_name and vim.g.colors_name:match("^catppuccin") then
+              return "catppuccin-nvim"
+            end
+            return "auto"
+          end,
           icons_enabled = false,
           component_separators = {
             left = "",

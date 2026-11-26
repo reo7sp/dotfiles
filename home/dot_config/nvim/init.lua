@@ -7,7 +7,6 @@ vim.g.loaded_node_provider = 0
 vim.g.loaded_netrwPlugin = 1
 vim.g.loaded_netrw = 1
 vim.opt.termguicolors = true
-vim.o.background = "dark"
 
 local data_path = vim.fn.stdpath("data")
 local state_path = vim.fn.stdpath("state")
@@ -55,7 +54,7 @@ vim.env.LUA_CPATH = data_path .. "/lazy-rocks/rest.nvim/lib/lua/5.1/?.so;" .. (v
 require("lazy").setup({
   spec = require("plugins"),
   root = data_path .. "/lazy",
-  install = { colorscheme = { "onedark" } },
+  install = { colorscheme = { "catppuccin-latte" } },
 })
 
 require("commands")
