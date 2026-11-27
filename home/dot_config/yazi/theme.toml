@@ -4,7 +4,7 @@ light = "catppuccin-latte"
 
 [mgr]
 border_symbol = "┃"
-border_style = { fg = "#bcc0cd", bg = "#eff1f6", bold = true }
+border_style = { fg = "#cbced8", bg = "#ffffff", bold = true }
 
 [filetype]
 rules = [
@@ -13,9 +13,9 @@ rules = [
 ]
 
 [indicator]
-parent = { bg = "#e6e9f0", reversed = false }
-current = { bg = "#d6d9e2", reversed = false }
-preview = { bg = "#e6e9f0", reversed = false, underline = false }
+parent = { bg = "#dbdee6", reversed = false }
+current = { bg = "#e1e4eb", reversed = false }
+preview = { bg = "#dbdee6", reversed = false, underline = false }
 padding = { open = " ", close = " " }
 
 [tabs]
@@ -23,14 +23,14 @@ sep_inner = { open = "", close = "" }
 sep_outer = { open = "", close = "" }
 
 [status]
-overall = { fg = "#4c4f6a", bg = "#bcc0cd" }
+overall = { fg = "#4c4f69", bg = "#dbdee6" }
 sep_left = { open = "", close = "" }
 sep_right = { open = "", close = "" }
 
 [mode]
-normal_main = { fg = "#e6e9f0", bg = "#1e66f6", bold = true }
-normal_alt = { fg = "#1e66f6", bg = "#ccd0db" }
-select_main = { fg = "#eff1f6", bg = "#8839f0", bold = true }
-select_alt = { fg = "#8839f0", bg = "#ccd0db" }
-unset_main = { fg = "#eff1f6", bg = "#d20f3a", bold = true }
-unset_alt = { fg = "#d20f3a", bg = "#ccd0db" }
+normal_main = { fg = "#f0f1f6", bg = "#1e66f5", bold = true }
+normal_alt = { fg = "#1e66f5", bg = "#dbdee6" }
+select_main = { fg = "#ffffff", bg = "#8839ef", bold = true }
+select_alt = { fg = "#8839ef", bg = "#dbdee6" }
+unset_main = { fg = "#ffffff", bg = "#d20f39", bold = true }
+unset_alt = { fg = "#d20f39", bg = "#dbdee6" }

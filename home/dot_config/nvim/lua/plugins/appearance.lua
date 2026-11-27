@@ -6,6 +6,30 @@ return {
     priority = 1000,
     config = function()
       require("catppuccin").setup({
+        kitty = false,
+        color_overrides = {
+          latte = {
+            overlay0 = "#aaaebc",
+            surface2 = "#babeca",
+            surface1 = "#cbced8",
+            surface0 = "#dbdee6",
+            base = "#ffffff",
+            mantle = "#f0f1f6",
+            crust = "#eceef3",
+          },
+        },
+        highlight_overrides = {
+          latte = function(colors)
+            local reference_bg = require("catppuccin.utils.colors").blend(colors.surface0, colors.mantle, 0.7)
+            return {
+              IlluminatedWordText = { bg = reference_bg },
+              IlluminatedWordRead = { bg = reference_bg },
+              IlluminatedWordWrite = { bg = reference_bg },
+              QuickFixLine = { bg = reference_bg, style = { "bold" } },
+              TelescopePreviewLine = { bg = colors.surface0, style = { "bold" } },
+            }
+          end,
+        },
         integrations = {
           aerial = true,
           barbar = true,
@@ -34,20 +58,20 @@ return {
               return {
                 normal = {
                   c = {
-                    bg = colors.surface1,
+                    bg = colors.surface0,
                   },
                 },
                 inactive = {
                   a = {
-                    bg = colors.surface1,
+                    bg = colors.surface0,
                     fg = colors.text,
                   },
                   b = {
-                    bg = colors.surface1,
+                    bg = colors.surface0,
                     fg = colors.text,
                   },
                   c = {
-                    bg = colors.surface1,
+                    bg = colors.surface0,
                     fg = colors.text,
                   },
                 },

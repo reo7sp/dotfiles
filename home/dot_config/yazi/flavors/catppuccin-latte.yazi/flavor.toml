@@ -16,9 +16,9 @@ marker_marked   = { fg = "#179299", bg = "#179299" }
 marker_selected = { fg = "#df8e1d", bg = "#df8e1d" }
 
 # Count
-count_copied   = { fg = "#eff1f5", bg = "#40a02b" }
-count_cut      = { fg = "#eff1f5", bg = "#d20f39" }
-count_selected = { fg = "#eff1f5", bg = "#df8e1d" }
+count_copied   = { fg = "#ffffff", bg = "#40a02b" }
+count_cut      = { fg = "#ffffff", bg = "#d20f39" }
+count_selected = { fg = "#ffffff", bg = "#df8e1d" }
 
 # Border
 border_symbol = "│"
@@ -30,8 +30,8 @@ border_style  = { fg = "#8c8fa1" }
 # : Tabs {{{
 
 [tabs]
-active   = { fg = "#eff1f5", bg = "#1e66f5", bold = true }
-inactive = { fg = "#1e66f5", bg = "#ccd0da" }
+active   = { fg = "#ffffff", bg = "#1e66f5", bold = true }
+inactive = { fg = "#1e66f5", bg = "#dbdee6" }
 
 # : }}}
 
@@ -40,16 +40,16 @@ inactive = { fg = "#1e66f5", bg = "#ccd0da" }
 
 [mode]
 
-normal_main = { fg = "#eff1f5", bg = "#1e66f5", bold = true }
-normal_alt  = { fg = "#1e66f5", bg = "#ccd0da" }
+normal_main = { fg = "#ffffff", bg = "#1e66f5", bold = true }
+normal_alt  = { fg = "#1e66f5", bg = "#dbdee6" }
 
 # Select mode
-select_main = { fg = "#eff1f5", bg = "#179299", bold = true }
-select_alt  = { fg = "#179299", bg = "#ccd0da" }
+select_main = { fg = "#ffffff", bg = "#179299", bold = true }
+select_alt  = { fg = "#179299", bg = "#dbdee6" }
 
 # Unset mode
-unset_main = { fg = "#eff1f5", bg = "#dd7878", bold = true }
-unset_alt  = { fg = "#dd7878", bg = "#ccd0da" }
+unset_main = { fg = "#ffffff", bg = "#dd7878", bold = true }
+unset_alt  = { fg = "#dd7878", bg = "#dbdee6" }
 
 # : }}}
 
@@ -66,7 +66,7 @@ perm_exec  = { fg = "#40a02b" }
 
 # Progress
 progress_label  = { fg = "#ffffff", bold = true }
-progress_normal = { fg = "#40a02b", bg = "#bcc0cc" }
+progress_normal = { fg = "#40a02b", bg = "#cbced8" }
 progress_error  = { fg = "#df8e1d", bg = "#d20f39" }
 
 # : }}}
@@ -119,7 +119,7 @@ cand            = { fg = "#179299" }
 rest            = { fg = "#7c7f93" }
 desc            = { fg = "#ea76cb" }
 separator       = "  "
-separator_style = { fg = "#acb0be" }
+separator_style = { fg = "#babeca" }
 
 # : }}}
 
@@ -130,7 +130,7 @@ separator_style = { fg = "#acb0be" }
 on      = { fg = "#179299" }
 run     = { fg = "#ea76cb" }
 hovered = { reversed = true, bold = true }
-footer  = { fg = "#ccd0da", bg = "#4c4f69" }
+footer  = { fg = "#dbdee6", bg = "#4c4f69" }
 
 # : }}}
 
@@ -141,7 +141,7 @@ footer  = { fg = "#ccd0da", bg = "#4c4f69" }
 border   = { fg = "#1e66f5" }
 title    = { fg = "#1e66f5" }
 tbl_col  = { fg = "#179299" }
-tbl_cell = { fg = "#ea76cb", bg = "#bcc0cc" }
+tbl_cell = { fg = "#ea76cb", bg = "#cbced8" }
 
 # : }}}
 

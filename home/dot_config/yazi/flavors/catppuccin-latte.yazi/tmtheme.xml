@@ -18,21 +18,21 @@
         <key>settings</key>
         <dict>
           <key>background</key>
-          <string>#eff1f5</string>
+          <string>#ffffff</string>
           <key>foreground</key>
           <string>#4c4f69</string>
           <key>caret</key>
           <string>#dc8a78</string>
           <key>lineHighlight</key>
-          <string>#ccd0da</string>
+          <string>#dbdee6</string>
           <key>misspelling</key>
           <string>#d20f39</string>
           <key>accent</key>
           <string>#8839ef</string>
           <key>selection</key>
-          <string>#7c7f934d</string>
+          <string>#cbced8</string>
           <key>activeGuide</key>
-          <string>#bcc0cc</string>
+          <string>#cbced8</string>
           <key>findHighlight</key>
           <string>#a9daf0</string>
           <key>gutterForeground</key>
