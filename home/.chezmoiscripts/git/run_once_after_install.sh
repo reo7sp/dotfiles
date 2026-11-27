@@ -16,16 +16,6 @@ else
 fi
 git config --global push.autoSetupRemote true
 
-if confirm "git: Change global user.name and user.email?"; then
-  git config --global user.name "Oleg Morozenkov"
-  git config --global user.email "m@oleg.rocks"
-fi
-
-if confirm "git: Change GitHub transport from HTTPS to SSH?"; then
-  git config --global --replace-all url.ssh://git@github.com/.insteadOf https://github.com/
-  git config --global --add url.ssh://git@github.com/.insteadOf https://reo7sp@github.com/
-fi
-
 if confirm "git: Change pager to delta?"; then
   git config --global core.pager 'delta --config "$HOME/.config/delta/config"'
   git config --global interactive.diffFilter 'delta --config "$HOME/.config/delta/config" --color-only'
@@ -41,4 +31,14 @@ fi
 
 if confirm "git: Change merge tool to Sublime Merge?"; then
   git config --global merge.tool smerge
+fi
+
+if confirm "git: Change global user.name and user.email?"; then
+  git config --global user.name "Oleg Morozenkov"
+  git config --global user.email "m@oleg.rocks"
+fi
+
+if confirm "git: Change GitHub transport from HTTPS to SSH?"; then
+  git config --global --replace-all url.ssh://git@github.com/.insteadOf https://github.com/
+  git config --global --add url.ssh://git@github.com/.insteadOf https://reo7sp@github.com/
 fi
